@@ -89,6 +89,7 @@ class ProductRowBuilder implements ExportRowBuilderInterface {
 			'link'         => get_permalink( $product->get_id() ),
 			'image_link'   => $image_url,
 			'price'        => ( $is_price_set ? $regular_price : '0' ) . ' ' . $currency,
+			'sale_price'   => '',
 			'gtin'         => $product->get_global_unique_id(),
 		);
 

@@ -134,7 +134,8 @@ class ProductIdCacheBuilder implements CacheBuilderInterface {
 			'page'          => $page,
 			'status'        => 'publish',
 			'return'        => 'ids',
-			'snap_meta_key' => Helper::with_prefix( ProductMetaFields::CATALOG_ITEM ),
+			// @TODO: uncomment
+			// 'snap_meta_key' => Helper::with_prefix( ProductMetaFields::CATALOG_ITEM ),
 		);
 
 		$query   = new \WC_Product_Query( $query_args );
