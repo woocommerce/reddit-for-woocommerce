@@ -153,7 +153,7 @@ class JetpackAccountController extends RESTBaseController {
 			'properties' => array(
 				'url' => array(
 					'type'        => 'string',
-					'description' => __( 'The URL for making a connection to Jetpack (wordpress.com).', 'reddit-for-woocommerce' ),
+					'description' => __( 'The URL for making a connection to Jetpack (WordPress.com).', 'reddit-for-woocommerce' ),
 					'context'     => array( 'view' ),
 					'readonly'    => true,
 				),
