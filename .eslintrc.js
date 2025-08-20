@@ -44,7 +44,7 @@ module.exports = {
 	rules: {
 		'@wordpress/i18n-text-domain': [
 			'error',
-			{ allowedTextDomain: 'snapchat-for-woo' },
+			{ allowedTextDomain: 'reddit-for-woo' },
 		],
 		'@wordpress/no-unsafe-wp-apis': 1,
 		'react/react-in-jsx-scope': 'off',
