@@ -111,7 +111,7 @@ final class WcsClient {
 		return apply_filters(
 			Helper::with_prefix( 'wcs_base_url' ),
 			sprintf(
-				'https://public-api.wordpress.com/wpcom/v2/sites/%s/wc',
+				'https://api.woocommerce.com/wpcom/v2/sites/%s/wc',
 				Jetpack_Options::get_option( 'id' )
 			)
 		);

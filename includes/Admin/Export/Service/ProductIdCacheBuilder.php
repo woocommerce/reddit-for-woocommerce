@@ -130,12 +130,11 @@ class ProductIdCacheBuilder implements CacheBuilderInterface {
 		$page = $page > 1 ? $page : 1;
 
 		$query_args = array(
-			'limit'         => self::BATCH_SIZE,
-			'page'          => $page,
-			'status'        => 'publish',
-			'return'        => 'ids',
-			// @TODO: uncomment
-			// 'snap_meta_key' => Helper::with_prefix( ProductMetaFields::CATALOG_ITEM ),
+			'limit'           => self::BATCH_SIZE,
+			'page'            => $page,
+			'status'          => 'publish',
+			'return'          => 'ids',
+			'reddit_meta_key' => Helper::with_prefix( ProductMetaFields::CATALOG_ITEM ),
 		);
 
 		$query   = new \WC_Product_Query( $query_args );
@@ -185,16 +184,16 @@ class ProductIdCacheBuilder implements CacheBuilderInterface {
 	 * @return array
 	 */
 	public function query_products_by_meta( $query, $query_vars ) {
-		if ( ! empty( $query_vars['snap_meta_key'] ) ) {
+		if ( ! empty( $query_vars['reddit_meta_key'] ) ) {
 			$query['meta_query'][] = array(
 				'relation' => 'OR',
 				array(
-					'key'     => $query_vars['snap_meta_key'],
+					'key'     => $query_vars['reddit_meta_key'],
 					'value'   => '1',
 					'compare' => '=',
 				),
 				array(
-					'key'     => $query_vars['snap_meta_key'],
+					'key'     => $query_vars['reddit_meta_key'],
 					'compare' => 'NOT EXISTS',
 				),
 			);

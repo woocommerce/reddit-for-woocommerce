@@ -392,14 +392,13 @@ class ProductExportService {
 	 * @return void
 	 */
 	public function create_feed() {
-		// @TODO: uncomment
-		// $response = $this->job->ad_partner_api->feed->create();
+		$response = $this->job->ad_partner_api->feed->create();
 
-		// if ( is_wp_error( $response ) ) {
-		// 	$logger = wc_get_logger();
-		// 	$logger->alert(
-		// 		'Feed generation failed with error code' . $response->get_error_code(),
-		// 	);
-		// }
+		if ( is_wp_error( $response ) ) {
+			$logger = wc_get_logger();
+			$logger->alert(
+				'Feed generation failed with error code' . $response->get_error_code(),
+			);
+		}
 	}
 }
