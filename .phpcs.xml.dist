@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<ruleset name="WooCommerce Coding Standards">
+	<description>Snapchat for WooCommerce Ruleset</description>
+	
+	<!-- Configs -->
+	<config name="minimum_supported_wp_version" value="6.7" />
+	<config name="testVersion" value="7.4-" />
+
+	<!-- Rules -->
+	<rule ref="WordPress">
+		<exclude name="WordPress.Files.FileName.NotHyphenatedLowercase" />
+		<exclude name="WordPress.Files.FileName.InvalidClassFileName" />
+		<exclude name="Squiz.Commenting.FunctionComment.ParamCommentFullStop" />
+	</rule>
+
+	<rule ref="WordPress.WP.I18n">
+		<properties>
+			<property name="text_domain" type="array">
+				<element value="snapchat-for-woocommerce" />
+			</property>
+		</properties>
+	</rule>
+
+	<rule ref="WordPress.WP.Capabilities">
+		<properties>
+			<property name="custom_capabilities" type="array">
+				<element value="manage_woocommerce"/>
+			</property>
+		</properties>
+	</rule>
+
+	<rule ref="PHPCompatibilityWP" />
+
+	<arg name="extensions" value="php"/>
+	<file>./includes</file>
+	<file>./snapchat-for-woocommerce.php</file>
+
+	<exclude-pattern>tests/</exclude-pattern>
+	<exclude-pattern>vendor/</exclude-pattern>
+	<exclude-pattern>node_modules/</exclude-pattern>
+</ruleset>

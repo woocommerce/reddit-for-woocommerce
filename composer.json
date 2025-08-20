@@ -1,0 +1,49 @@
+{
+	"name": "woocommerce/reddit-for-woocommerce",
+	"description": "Reddit for WooCommerce",
+	"license": "GPL-3.0-or-later",
+	"autoload": {
+		"psr-4": {
+			"RedditForWooCommerce\\": "includes/"
+		}
+	},
+	"require-dev": {
+		"phpunit/phpunit": "^9.0",
+		"sirbrillig/phpcs-changed": "^2.11",
+		"yoast/phpunit-polyfills": "^4.0",
+		"dg/bypass-finals": "^1.9",
+		"wp-coding-standards/wpcs": "^3.1",
+		"phpcompatibility/phpcompatibility-wp": "*"
+	},
+	"archive": {
+		"exclude": [
+			"!/js/build",
+			"!/languages",
+			"!/vendor/**",
+			"./js/src",
+			"./bin",
+			"tests",
+			"node_modules",
+			"reddit-for-woocommerce.zip",
+			"phpunit.xml.dist",
+			"README.md",
+			"composer.json",
+			"composer.lock",
+			"package.json",
+			"package-lock.json",
+			"phpcs.xml.dist",
+			"phpcs-compat.xml.dist",
+			"webpack.config.js",
+			".*"
+		]
+	},
+	"config": {
+		"allow-plugins": {
+			"dealerdirect/phpcodesniffer-composer-installer": true,
+			"automattic/jetpack-autoloader": true
+		}
+	},
+	"require": {
+		"automattic/jetpack-autoloader": "^5.0"
+	}
+}
