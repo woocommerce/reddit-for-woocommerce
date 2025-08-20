@@ -244,7 +244,7 @@ class JetpackAccountController extends RESTBaseController {
 	 *
 	 * @return bool
 	 */
-	protected function is_jetpack_connection_owner() {
+	protected function is_jetpack_connection_owner(): bool {
 		return $this->manager->is_connection_owner();
 	}
 
