@@ -187,7 +187,6 @@ class JetpackAccountController extends RESTBaseController {
 	protected function get_disconnect_callback(): callable {
 		return function () {
 			$this->manager->remove_connection();
-			Options::delete( OptionDefaults::WP_TOS_ACCEPTED );
 			Options::delete( OptionDefaults::IS_JETPACK_CONNECTED );
 
 			return rest_ensure_response(
@@ -267,15 +266,6 @@ class JetpackAccountController extends RESTBaseController {
 	protected function get_jetpack_user_data(): array {
 		$user_data = $this->manager->get_connected_user_data();
 		return is_array( $user_data ) ? $user_data : array();
-	}
-
-	/**
-	 * Logs TOS acceptance to WCS and stores local option.
-	 */
-	protected function log_wp_tos_accepted(): void {
-		$user = wp_get_current_user();
-		$this->mark_tos_accepted( $user->user_email );
-		Options::set( OptionDefaults::WP_TOS_ACCEPTED, 'yes' );
 	}
 
 	/**
