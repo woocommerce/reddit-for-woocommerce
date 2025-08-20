@@ -13,6 +13,9 @@ namespace RedditForWooCommerce;
 use RedditForWooCommerce\Connection\WcsClient;
 use RedditForWooCommerce\Connection;
 use RedditForWooCommerce\Admin;
+use RedditForWooCommerce\Admin\Export;
+use RedditForWooCommerce\API\AdPartner\AdPartnerApi;
+use RedditForWooCommerce\Utils\ProductData\ProductCategoryProvider;
 
 /**
  * Static service container for resolving shared instances across the Ad Partner plugin.
@@ -70,6 +73,22 @@ final class ServiceContainer {
 				return new WcsClient(
 					self::get( ServiceKey::JETPACK_AUTHENTICATOR ),
 					new Connection\JetpackClient()
+				);
+			case ServiceKey::PRODUCT_EXPORT_SERVICE:
+				return new Export\Service\ProductExportService(
+					new Export\BatchExportJob(
+						new Export\Service\ProductIdCacheBuilder(),
+						new Export\EntityProvider\ProductEntityProvider(),
+						new Export\RowBuilder\ProductRowBuilder(
+							array(
+								new ProductCategoryProvider(),
+							)
+						),
+						new Export\Writer\CsvExportWriter(),
+						AdPartnerApi::get_instance(
+							self::get( ServiceKey::WCS_CLIENT )
+						),
+					)
 				);
 			case ServiceKey::ADMIN_SETUP:
 				return new Admin\Setup(
