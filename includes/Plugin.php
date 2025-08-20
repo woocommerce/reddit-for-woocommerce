@@ -10,6 +10,7 @@
 namespace RedditForWooCommerce;
 
 use RedditForWooCommerce\Compatibility;
+use RedditForWooCommerce\API;
 use RedditForWooCommerce\MultichannelMarketing\Marketing;
 
 /**
@@ -57,7 +58,10 @@ final class Plugin {
 	 *
 	 * @return void
 	 */
-	public static function register_rest_routes(): void {}
+	public static function register_rest_routes(): void {
+		$settings_controller = new API\SetupService();
+		$settings_controller->register_routes();
+	}
 
 	/**
 	 * Initializes feature hooks during the `init` action.
