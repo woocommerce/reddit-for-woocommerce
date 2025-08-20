@@ -68,11 +68,11 @@ final class ServiceContainer {
 	 */
 	private static function resolve( string $service ) {
 		switch ( $service ) {
-			case ServiceKey::JETPACK_AUTHENTICATOR:
-				return new Connection\JetpackAuthenticator();
+			case ServiceKey::SETTINGS_REST_CONTROLLER_SETUP:
+				return new API\SetupService();
 			case ServiceKey::WCS_CLIENT:
 				return new WcsClient(
-					self::get( ServiceKey::JETPACK_AUTHENTICATOR ),
+					new Connection\JetpackAuthenticator(),
 					new Connection\JetpackClient()
 				);
 			case ServiceKey::PRODUCT_EXPORT_SERVICE:
