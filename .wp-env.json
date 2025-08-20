@@ -4,7 +4,7 @@
 	"plugins": [
 		"https://downloads.wordpress.org/plugin/woocommerce.zip",
 		".",
-		"./tests/e2e/plugins/snapchat-options.php"
+		"./tests/e2e/plugins/reddit-options.php"
 	],
 	"themes": [
 		"https://downloads.wordpress.org/theme/storefront.zip"

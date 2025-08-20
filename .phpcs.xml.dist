@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <ruleset name="WooCommerce Coding Standards">
-	<description>Snapchat for WooCommerce Ruleset</description>
+	<description>Reddit for WooCommerce Ruleset</description>
 	
 	<!-- Configs -->
 	<config name="minimum_supported_wp_version" value="6.7" />
@@ -16,7 +16,7 @@
 	<rule ref="WordPress.WP.I18n">
 		<properties>
 			<property name="text_domain" type="array">
-				<element value="snapchat-for-woocommerce" />
+				<element value="reddit-for-woocommerce" />
 			</property>
 		</properties>
 	</rule>
@@ -33,7 +33,7 @@
 
 	<arg name="extensions" value="php"/>
 	<file>./includes</file>
-	<file>./snapchat-for-woocommerce.php</file>
+	<file>./reddit-for-woocommerce.php</file>
 
 	<exclude-pattern>tests/</exclude-pattern>
 	<exclude-pattern>vendor/</exclude-pattern>
