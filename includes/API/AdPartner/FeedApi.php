@@ -57,7 +57,7 @@ class FeedApi extends BaseAdPartnerApi {
 		if ( ! $catalog_id ) {
 			return new WP_Error(
 				'catalog_id_not_set',
-				__( 'Catalog ID not found.', 'snapchat-for-woocommerce' ),
+				__( 'Catalog ID not found.', 'reddit-for-woocommerce' ),
 			);
 		}
 

@@ -56,7 +56,7 @@ class CatalogApi extends BaseAdPartnerApi {
 		if ( ! $business_id ) {
 			return new WP_Error(
 				'business_id_not_set',
-				__( 'Business ID not found.', 'snapchat-for-woocommerce' ),
+				__( 'Business ID not found.', 'reddit-for-woocommerce' ),
 			);
 		}
 
@@ -65,7 +65,7 @@ class CatalogApi extends BaseAdPartnerApi {
 		if ( ! $pixel_id ) {
 			return new WP_Error(
 				'pixel_id_not_set',
-				__( 'Pixel ID not found.', 'snapchat-for-woocommerce' ),
+				__( 'Pixel ID not found.', 'reddit-for-woocommerce' ),
 			);
 		}
 
