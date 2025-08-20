@@ -14,6 +14,7 @@ use RedditForWooCommerce\Connection\WcsClient;
 use RedditForWooCommerce\Connection;
 use RedditForWooCommerce\Admin;
 use RedditForWooCommerce\Admin\Export;
+use RedditForWooCommerce\Admin\ProductMeta;
 use RedditForWooCommerce\API\AdPartner\AdPartnerApi;
 use RedditForWooCommerce\Utils\ProductData\ProductCategoryProvider;
 
@@ -95,6 +96,7 @@ final class ServiceContainer {
 					new Admin\Assets(),
 					new Admin\Menu(),
 					new Admin\Onboarding(),
+					new ProductMeta\ProductMetaFields(),
 				);
 
 			default:

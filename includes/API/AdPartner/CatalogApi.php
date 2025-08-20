@@ -71,12 +71,10 @@ class CatalogApi extends BaseAdPartnerApi {
 
 		$payload = array(
 			'data' => array(
-				array(
-					'name'             => Helper::get_store_name( 'catalog' ),
-					'default_language' => 'en',
-					'default_currency' => get_woocommerce_currency(),
-					'event_sources'    => array( $pixel_id ),
-				),
+				'name'             => Helper::get_store_name( 'catalog' ),
+				'default_language' => 'en',
+				'default_currency' => get_woocommerce_currency(),
+				'event_sources'    => array( $pixel_id ),
 			),
 		);
 
