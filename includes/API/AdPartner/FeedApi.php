@@ -64,15 +64,15 @@ class FeedApi extends BaseAdPartnerApi {
 		$payload = array(
 			'product_feeds' => array(
 				array(
-					'name'             => Helper::get_store_name( 'feed' ),
-					'url'              => sprintf(
+					'name'     => Helper::get_store_name( 'feed' ),
+					'url'      => sprintf(
 						'%1$s/%2$s/products-%3$s.csv',
 						$this->wcs->get_wcs_url(),
 						CsvExportWriter::EXPORT_FOLDER,
 						Options::get( OptionDefaults::WCS_PRODUCTS_TOKEN )
 					),
-					'mode'             => 'UPDATE',
-					'schedule'         => array(
+					'mode'     => 'UPDATE',
+					'schedule' => array(
 						'interval' => 'DAILY',
 						'timezone' => get_option( 'timezone_string' ),
 					),
