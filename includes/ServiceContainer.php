@@ -11,19 +11,8 @@
 namespace RedditForWooCommerce;
 
 use RedditForWooCommerce\Connection\WcsClient;
-use RedditForWooCommerce\Tracking\PixelTrackingService;
-use RedditForWooCommerce\Tracking\RemotePixelTracker;
-use RedditForWooCommerce\API;
 use RedditForWooCommerce\Connection;
-use RedditForWooCommerce\Tracking;
 use RedditForWooCommerce\Admin;
-use RedditForWooCommerce\Admin\Export;
-use RedditForWooCommerce\Admin\ProductMeta;
-use RedditForWooCommerce\Tracking\ConversionEventLogger;
-use RedditForWooCommerce\API\AdPartner\AdPartnerApi;
-use RedditForWooCommerce\Utils\ProductData\ProductCategoryProvider;
-use function wc_get_logger;
-
 
 /**
  * Static service container for resolving shared instances across the Ad Partner plugin.
@@ -81,6 +70,12 @@ final class ServiceContainer {
 				return new WcsClient(
 					self::get( ServiceKey::JETPACK_AUTHENTICATOR ),
 					new Connection\JetpackClient()
+				);
+			case ServiceKey::ADMIN_SETUP:
+				return new Admin\Setup(
+					new Admin\Assets(),
+					new Admin\Menu(),
+					new Admin\Onboarding(),
 				);
 
 			default:

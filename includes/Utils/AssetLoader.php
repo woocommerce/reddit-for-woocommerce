@@ -33,7 +33,7 @@ class AssetLoader {
 	 * @param string $file_name The script file name.
 	 */
 	public static function enqueue_script( $handle, $file_name ) {
-		$script_path       = REDDIT_FOR_WOOCOMMERCE_PLUGIN_BUILD_PATH . $file_name;
+		$script_path       = REDDIT_FOR_WOOCOMMERCE_PLUGIN_BUILD_PATH . $file_name . '.js';
 		$script_url        = REDDIT_FOR_WOOCOMMERCE_BUILD_URL . $file_name . '.js';
 		$script_asset_path = $script_path . '.asset.php';
 
@@ -42,7 +42,7 @@ class AssetLoader {
 		} else {
 			$asset_data = array(
 				'dependencies' => array(),
-				'version'      => filemtime( $script_path ),
+				'version'      => file_exists( $script_path ) ? filemtime( $script_path ) : REDDIT_FOR_WOOCOMMERCE_VERSION,
 			);
 		}
 
@@ -64,7 +64,7 @@ class AssetLoader {
 	 * @param string $file_name The script file name.
 	 */
 	public static function enqueue_style( $handle, $file_name ) {
-		$style_path       = REDDIT_FOR_WOOCOMMERCE_PLUGIN_BUILD_PATH . $file_name;
+		$style_path       = REDDIT_FOR_WOOCOMMERCE_PLUGIN_BUILD_PATH . $file_name . '.css';
 		$style_url        = REDDIT_FOR_WOOCOMMERCE_BUILD_URL . $file_name . '.css';
 		$style_asset_path = $style_path . '.asset.php';
 
@@ -73,7 +73,7 @@ class AssetLoader {
 		} else {
 			$asset_data = array(
 				'dependencies' => array(),
-				'version'      => filemtime( $style_path ),
+				'version'      => file_exists( $style_path ) ? filemtime( $style_path ) : REDDIT_FOR_WOOCOMMERCE_VERSION,
 			);
 		}
 

@@ -75,5 +75,7 @@ final class Plugin {
 	 *
 	 * @since 0.1.0
 	 */
-	public static function bootstrap_admin_features(): void {}
+	public static function bootstrap_admin_features(): void {
+		ServiceContainer::get( ServiceKey::ADMIN_SETUP )->init();
+	}
 }

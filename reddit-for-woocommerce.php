@@ -19,14 +19,11 @@
  * @package reddit-for-woocommerce
  */
 
-use RedditForWooCommerce\Utils\Storage\Options;
-use RedditForWooCommerce\Utils\Storage\OptionDefaults;
-use RedditForWooCommerce\ServiceContainer;
-use RedditForWooCommerce\ServiceKey;
-use RedditForWooCommerce\Config;
-use RedditForWooCommerce\Utils\Helper;
-
 defined( 'ABSPATH' ) || exit;
+
+if ( ! defined( 'REDDIT_FOR_WOOCOMMERCE_VERSION' ) ) {
+	define( 'REDDIT_FOR_WOOCOMMERCE_VERSION', '0.1.0' );
+}
 
 if ( ! defined( 'REDDIT_FOR_WOOCOMMERCE_FILE' ) ) {
 	define( 'REDDIT_FOR_WOOCOMMERCE_FILE', __FILE__ );
