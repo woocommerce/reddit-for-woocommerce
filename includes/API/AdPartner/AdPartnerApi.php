@@ -43,7 +43,7 @@ class AdPartnerApi {
 	 * @since 0.1.0
 	 * @var CatalogApi
 	 */
-	// public CatalogApi $catalog;
+	public CatalogApi $catalog;
 
 	/**
 	 * Handles product feed operations.
@@ -51,7 +51,7 @@ class AdPartnerApi {
 	 * @since 0.1.0
 	 * @var FeedApi
 	 */
-	// public FeedApi $feed;
+	public FeedApi $feed;
 
 	/**
 	 * Private constructor to enforce singleton pattern.
@@ -64,9 +64,8 @@ class AdPartnerApi {
 	 * @param WcsClient $wcs WCS client used for authenticated proxy API requests.
 	 */
 	private function __construct( WcsClient $wcs ) {
-		// @TODO: uncomment
-		// $this->catalog = new CatalogApi( $wcs );
-		// $this->feed    = new FeedApi( $wcs );
+		$this->catalog = new CatalogApi( $wcs );
+		$this->feed    = new FeedApi( $wcs );
 	}
 
 	/**

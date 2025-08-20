@@ -52,14 +52,6 @@ final class OptionDefaults {
 	public const IS_JETPACK_CONNECTED = 'is_jetpack_connected';
 
 	/**
-	 * Option key for storing the status of the acceptance
-	 * of WordPress's Terms & Conditions.
-	 *
-	 * @since 0.1.0
-	 */
-	public const WP_TOS_ACCEPTED = 'wp_tos_accepted';
-
-	/**
 	 * Option key for storing the generated Reddit config ID.
 	 *
 	 * This ID identifies configuration the merchant created for
@@ -84,20 +76,20 @@ final class OptionDefaults {
 	public const AD_ACCOUNT_NAME = 'ad_account_name';
 
 	/**
-	 * Option key for the Reddit organization ID.
+	 * Option key for the Reddit Business ID.
 	 *
 	 * @since 0.1.0
 	 */
-	public const ORGANIZATION_ID = 'organization_id';
+	public const BUSINESS_ID = 'business_id';
 
 	/**
-	 * Option key for storing the name of the selected Reddit organization.
+	 * Option key for storing the name of the selected Reddit business.
 	 *
-	 * Stored locally after fetching the organization from the Reddit API.
+	 * Stored locally after fetching the business from the Reddit API.
 	 *
 	 * @since 0.1.0
 	 */
-	public const ORGANIZATION_NAME = 'organization_name';
+	public const BUSINESS_NAME = 'business_name';
 
 	/**
 	 * Option key that toggles whether pixel tracking is enabled.
@@ -201,12 +193,11 @@ final class OptionDefaults {
 			self::ONBOARDING_STATUS       => 'incomplete',
 			self::ONBOARDING_STEP         => 'accounts',
 			self::IS_JETPACK_CONNECTED    => 'no',
-			self::WP_TOS_ACCEPTED         => 'no',
 			self::CONFIG_ID               => '',
 			self::AD_ACCOUNT_ID           => '',
 			self::AD_ACCOUNT_NAME         => '',
-			self::ORGANIZATION_ID         => '',
-			self::ORGANIZATION_NAME       => '',
+			self::BUSINESS_ID             => '',
+			self::BUSINESS_NAME           => '',
 			self::PIXEL_ENABLED           => 'yes',
 			self::PIXEL_ID                => '',
 			self::CONVERSIONS_ENABLED     => 'no',
