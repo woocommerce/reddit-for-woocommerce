@@ -146,10 +146,7 @@ export async function fetchSetup() {
 	} catch ( error ) {
 		handleApiError(
 			error,
-			__(
-				'There was an error loading Reddit setup.',
-				'reddit-for-woo'
-			)
+			__( 'There was an error loading Reddit setup.', 'reddit-for-woo' )
 		);
 	}
 }
@@ -176,10 +173,7 @@ export async function disconnectRedditAccount(
 	} catch ( error ) {
 		handleApiError(
 			error,
-			__(
-				'Unable to disconnect your Reddit account.',
-				'reddit-for-woo'
-			)
+			__( 'Unable to disconnect your Reddit account.', 'reddit-for-woo' )
 		);
 		throw error;
 	}
