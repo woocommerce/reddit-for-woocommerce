@@ -1,0 +1,41 @@
+.rfw-section {
+	display: flex;
+	flex-direction: column;
+	margin-bottom: wpVariables.$grid-unit-30;
+
+	&--is-disabled,
+	&--is-disabled-left &__header {
+		opacity: 0.5;
+	}
+
+	@include wpMixins.break-small {
+		flex-direction: row;
+		gap: var(--main-gap);
+	}
+
+	&__header {
+		padding-bottom: wpVariables.$grid-unit-10;
+
+		@include wpMixins.break-small {
+			width: 33%;
+			padding-top: var(--main-gap);
+		}
+
+		h1 {
+			font-size: wpVariables.$editor-font-size;
+			font-style: normal;
+			font-weight: 600;
+			margin-bottom: wpVariables.$grid-unit;
+			padding: 0;
+		}
+
+		p {
+			margin: 0 0 wpVariables.$grid-unit;
+			line-height: variables.$rfw-line-height-smaller;
+		}
+	}
+
+	.rfw-section__body {
+		flex: 1;
+	}
+}

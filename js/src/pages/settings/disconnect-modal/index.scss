@@ -1,0 +1,19 @@
+.rfw-disconnect-accounts-modal {
+	@include wpMixins.break-small {
+		max-width: variables.$rfw-width-large;
+	}
+
+	.components-modal__header-heading {
+		display: flex;
+		align-items: center;
+	}
+
+	.gridicon.gridicons-notice-outline {
+		margin-right: wpVariables.$grid-unit-10;
+		fill: wpColors.$alert-red;
+	}
+
+	.components-base-control {
+		margin: var(--main-gap) 0 var(--large-gap);
+	}
+}
