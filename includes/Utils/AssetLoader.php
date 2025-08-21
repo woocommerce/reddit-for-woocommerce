@@ -42,7 +42,7 @@ class AssetLoader {
 		} else {
 			$asset_data = array(
 				'dependencies' => array(),
-				'version'      => file_exists( $script_path ) ? filemtime( $script_path ) : REDDIT_FOR_WOOCOMMERCE_VERSION,
+				'version'      => file_exists( $script_path . '.js' ) ? filemtime( $script_path . '.js' ) : REDDIT_FOR_WOOCOMMERCE_VERSION,
 			);
 		}
 
@@ -73,7 +73,7 @@ class AssetLoader {
 		} else {
 			$asset_data = array(
 				'dependencies' => array(),
-				'version'      => file_exists( $style_path ) ? filemtime( $style_path ) : REDDIT_FOR_WOOCOMMERCE_VERSION,
+				'version'      => file_exists( $style_path . 'css' ) ? filemtime( $style_path . 'css' ) : REDDIT_FOR_WOOCOMMERCE_VERSION,
 			);
 		}
 
