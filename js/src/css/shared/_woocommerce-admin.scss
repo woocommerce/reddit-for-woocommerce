@@ -62,18 +62,20 @@
 // If a style is expected to apply to a WC core component as its base style across SFW admin pages,
 // it's preferred to add them here.
 .rfw-admin-page {
-	.woocommerce-stepper__steps {
-		align-items: center;
-		justify-content: center;
-		height: wpVariables.$grid-unit-40 * 2;
-		background-color: wpColors.$white;
-		box-shadow: inset 0 -1px 0 wpColors.$gray-400;
-		margin-bottom: 0;
+	.woocommerce-stepper {
+		.woocommerce-stepper__steps {
+			align-items: center;
+			justify-content: center;
+			height: wpVariables.$grid-unit-40 * 2;
+			background-color: wpColors.$white;
+			box-shadow: inset 0 -1px 0 wpColors.$gray-400;
+			margin-bottom: 0;
 
-		.woocommerce-stepper__step-divider {
-			margin-top: 0;
-			align-self: auto;
-			max-width: wpVariables.$grid-unit-60;
+			.woocommerce-stepper__step-divider {
+				margin-top: 0;
+				align-self: auto;
+				max-width: wpVariables.$grid-unit-60;
+			}
 		}
 	}
 
