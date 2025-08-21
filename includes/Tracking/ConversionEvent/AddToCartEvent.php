@@ -89,7 +89,7 @@ final class AddToCartEvent extends EventPayloadBase implements ConversionEventIn
 		$base    = parent::build_payload();
 		$default = array(
 			'event_type'     => array(
-				'tracking_type' => self::ID
+				'tracking_type' => self::ID,
 			),
 			'event_metadata' => $meta_data,
 		);

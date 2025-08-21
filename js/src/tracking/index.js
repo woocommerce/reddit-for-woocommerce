@@ -29,9 +29,7 @@ if ( hasUserConsent() ) {
 
 document.addEventListener( 'DOMContentLoaded', () => {
 	if ( ! hasUserConsent() ) {
-		console.info(
-			'[Reddit] Marketing consent denied. Tracking skipped.'
-		);
+		console.info( '[Reddit] Marketing consent denied. Tracking skipped.' );
 		return;
 	}
 

@@ -111,7 +111,9 @@ export function setRedditClickId() {
 	const scClickId = url.searchParams.get( 'rdt_cid' );
 
 	if ( scClickId ) {
-		document.cookie = `rdtCid=${ encodeURIComponent( scClickId ) }; path=/;`;
+		document.cookie = `rdtCid=${ encodeURIComponent(
+			scClickId
+		) }; path=/;`;
 	}
 }
 
