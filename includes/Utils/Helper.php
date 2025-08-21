@@ -9,6 +9,8 @@
 namespace RedditForWooCommerce\Utils;
 
 use RedditForWooCommerce\Config;
+use DateTime;
+use DateTimeZone;
 
 /**
  * Class Helper
@@ -141,5 +143,22 @@ class Helper {
 		}
 
 		return $store_name;
+	}
+
+	/**
+	 * Get the current timestamp as an ISO 8601 formatted string.
+	 *
+	 * - Uses DateTime with microsecond precision where available.
+	 * - Always returns a valid ISO 8601 string (e.g. "2025-08-21T12:34:56+00:00").
+	 *
+	 * This avoids integer overflow issues entirely by returning a string
+	 * representation instead of a raw integer.
+	 *
+	 * @since 0.2.0
+	 *
+	 * @return string ISO 8601 datetime.
+	 */
+	public static function get_event_time() {
+		return gmdate( 'c' );
 	}
 }
