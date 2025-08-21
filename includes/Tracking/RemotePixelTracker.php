@@ -173,19 +173,17 @@ final class RemotePixelTracker implements PixelTrackerInterface {
 
 		// Make sure there is a valid order object and it is not already marked as tracked.
 		if ( ! $order || 1 === (int) $order->get_meta( self::ORDER_PIXEL_TRACKED_META_KEY, true ) ) {
-			return;
+			// return;
 		}
 
 		// Mark the order as tracked, to avoid double-reporting if the confirmation page is reloaded.
 		$order->update_meta_data( self::ORDER_PIXEL_TRACKED_META_KEY, 1 );
 		$order->save_meta_data();
 
-		$order_key       = $order->get_order_key();
-		$total           = $order->get_total();
-		$currency        = $order->get_currency();
-		$item_ids        = array();
-		$item_categories = array();
-		$number_items    = 0;
+		$order_key = $order->get_order_key();
+		$total     = $order->get_total();
+		$currency  = $order->get_currency();
+		$products  = array();
 
 		foreach ( $order->get_items() as $item ) {
 			/**
@@ -195,8 +193,10 @@ final class RemotePixelTracker implements PixelTrackerInterface {
 			 */
 			$product = $item->get_product();
 			if ( $product ) {
-				$item_ids[]    = (string) $product->get_id();
-				$number_items += $item->get_quantity();
+				$products[]    = array(
+					'id'   => $product->get_id(),
+					'name' => $product->get_name(),
+				);
 			}
 		}
 
@@ -204,8 +204,8 @@ final class RemotePixelTracker implements PixelTrackerInterface {
 			'value'        => $total,
 			'currency'     => $currency,
 			'conversionId' => $order_key,
-			'item_ids'     => $item_ids,
-			'itemCount'    => $number_items,
+			'products'     => $products,
+			'itemCount'    => $order->get_item_count(),
 		);
 
 		$tracking_data = sprintf(
