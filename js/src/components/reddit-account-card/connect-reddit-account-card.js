@@ -87,7 +87,7 @@ const ConnectRedditAccountCard = ( { disabled, configId } ) => {
 			appearance={ APPEARANCE.REDDIT }
 			disabled={ disabled }
 			description={ __(
-				'Connect your Reddit Business Account to sync your catalog and run Dynamic Ads.',
+				'Connect your Reddit Business Account to sync your catalog and launch campaigns.',
 				'reddit-for-woo'
 			) }
 			indicator={ getIndicator() }
