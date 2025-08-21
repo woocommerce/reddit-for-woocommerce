@@ -28,7 +28,7 @@ export function sendCapiEvent( event, payload = {} ) {
 		credentials: 'same-origin',
 		keepalive: true,
 		body: new URLSearchParams( {
-			action: with_prefix( event.toLowerCase() ),
+			action: with_prefix( event ),
 			payload: JSON.stringify( payload ),
 			security: TRACKING_DATA_VAR.capi_nonce,
 		} ),

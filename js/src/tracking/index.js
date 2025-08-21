@@ -10,7 +10,6 @@ import {
 	hasUserConsent,
 	setRedditClickId,
 	onSingleProductPageVisit,
-	onCheckoutPageVisit,
 	onPageView,
 } from './utils';
 import { singleAddToCartClick, addToCartClick } from './pixel/utils';
@@ -65,7 +64,6 @@ document.addEventListener( 'DOMContentLoaded', () => {
 	} );
 
 	onSingleProductPageVisit();
-	onCheckoutPageVisit();
 	onPageView();
 } );
 

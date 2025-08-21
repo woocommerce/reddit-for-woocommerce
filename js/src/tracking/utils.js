@@ -188,41 +188,6 @@ export const onSingleProductPageVisit = () => {
 };
 
 /**
- * Fires a Reddit `START_CHECKOUT` event when a user reaches the Checkout page.
- *
- * This method is designed to be called on the Checkout page.
- * It ensures the event is only fired only on fresh navigations — such as arriving
- * via a link click, redirect, or back/forward traversal — and not on manual page reloads
- * to inflating analytics or triggering duplicate events.
- *
- * A unique `eventId` is generated and included in both the Pixel and Conversions API payloads
- * to support deduplication.
- *
- * @since 0.1.0
- *
- * @return {void}
- */
-export const onCheckoutPageVisit = () => {
-	if ( isFreshPageVisit() && TRACKING_DATA_VAR.START_CHECKOUT ) {
-		const eventId = window.crypto.randomUUID();
-
-		const eventData = {
-			...TRACKING_DATA_VAR.START_CHECKOUT,
-			event_id: eventId,
-			client_dedup_id: eventId,
-		};
-
-		if ( TRACKING_DATA_VAR.is_pixel_enabled ) {
-			sendPixelEvent( RedditEvent.START_CHECKOUT, eventData );
-		}
-
-		if ( TRACKING_DATA_VAR.is_conversion_enabled ) {
-			sendCapiEvent( RedditEvent.START_CHECKOUT, eventData );
-		}
-	}
-};
-
-/**
  * Fires a Reddit `PAGE_VIEW` event when a user visits any page on the site.
  *
  * This method is designed to run on all frontend pages where general page view tracking

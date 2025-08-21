@@ -70,9 +70,9 @@ class ConversionTrackingService implements ServiceStatusInterface {
 
 		add_action( 'woocommerce_thankyou', array( $this, 'handle_purchase' ) );
 		add_action( 'woocommerce_add_to_cart', array( $this, 'handle_single_product_add_to_cart' ), 10, 4 );
-		Helper::register_ajax_action( 'add_cart', array( $this, 'handle_async_add_to_cart' ) );
-		Helper::register_ajax_action( 'view_content', array( $this, 'handle_async_view_content' ) );
-		Helper::register_ajax_action( 'page_view', array( $this, 'handle_async_page_view' ) );
+		Helper::register_ajax_action( 'AddToCart', array( $this, 'handle_async_add_to_cart' ) );
+		Helper::register_ajax_action( 'ViewContent', array( $this, 'handle_async_view_content' ) );
+		Helper::register_ajax_action( 'PageView', array( $this, 'handle_async_page_view' ) );
 		add_action( 'woocommerce_after_add_to_cart_quantity', array( $this, 'render_event_id_field' ) );
 		add_action( Helper::with_prefix( 'send_conversion_event' ), array( $this->tracker, 'send' ), 10, 2 );
 		add_action( Helper::with_prefix( 'conversion_sent' ), array( $this, 'mark_as_tracked' ), 10, 2 );
