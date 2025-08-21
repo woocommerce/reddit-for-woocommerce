@@ -65,7 +65,7 @@ final class UserIdentifier {
 	 * The user agent string provides information about the client's browser, operating system,
 	 * and device. This information is commonly used for device identification and analytics.
 	 *
-	 * This method accesses the 'HTTP_USER_AGENT' server variable and sanitizes the input to 
+	 * This method accesses the 'HTTP_USER_AGENT' server variable and sanitizes the input to
 	 * ensure it is safe for further processing or storage.
 	 *
 	 * @since 0.1.0
@@ -97,8 +97,8 @@ final class UserIdentifier {
 		if ( isset( $_SERVER['HTTP_CF_CONNECTING_IP'] ) ) {
 			$ip_address = sanitize_text_field( wp_unslash( $_SERVER['HTTP_CF_CONNECTING_IP'] ) );
 		} elseif ( isset( $_SERVER['HTTP_X_FORWARDED_FOR'] ) ) {
-			$raw  = sanitize_text_field( wp_unslash( $_SERVER['HTTP_X_FORWARDED_FOR'] ) );
-			$list = explode( ',', $raw );
+			$raw        = sanitize_text_field( wp_unslash( $_SERVER['HTTP_X_FORWARDED_FOR'] ) );
+			$list       = explode( ',', $raw );
 			$ip_address = trim( $list[0] );
 		} elseif ( isset( $_SERVER['REMOTE_ADDR'] ) ) {
 			$ip_address = sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ) );

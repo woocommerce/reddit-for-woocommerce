@@ -61,7 +61,7 @@ class Assets {
 	public function enqueue_scripts() {
 		// @TODO: uncomment later.
 		// if ( ! ( PixelTrackingService::is_enabled() || ConversionTrackingService::is_enabled() ) ) {
-		// 	return;
+		// return;
 		// }
 
 		AssetLoader::enqueue_script( 'tracking', 'tracking' );

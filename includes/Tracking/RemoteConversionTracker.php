@@ -216,7 +216,7 @@ class RemoteConversionTracker implements ConversionTrackerInterface {
 		$payload = $event->build_payload(
 			array(
 				'conversion_id' => $event_id,
-				'user_data'    => UserIdentifier::get_user_data(),
+				'user_data'     => UserIdentifier::get_user_data(),
 			)
 		);
 
