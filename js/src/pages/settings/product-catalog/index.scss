@@ -1,0 +1,11 @@
+.rfw-product-catalog {
+	.rfw-product-catalog__help {
+		padding: 0 var(--large-gap) var(--large-gap);
+
+		p {
+			color: wpColors.$gray-700;
+			font-size: variables.$rfw-font-smaller;
+			margin: 0;
+		}
+	}
+}
