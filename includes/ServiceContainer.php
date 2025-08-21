@@ -15,8 +15,10 @@ use RedditForWooCommerce\Connection;
 use RedditForWooCommerce\Admin;
 use RedditForWooCommerce\Admin\Export;
 use RedditForWooCommerce\Admin\ProductMeta;
+use RedditForWooCommerce\Tracking\ConversionEventLogger;
 use RedditForWooCommerce\API\AdPartner\AdPartnerApi;
 use RedditForWooCommerce\Utils\ProductData\ProductCategoryProvider;
+use function wc_get_logger;
 
 /**
  * Static service container for resolving shared instances across the Ad Partner plugin.
@@ -74,6 +76,15 @@ final class ServiceContainer {
 				return new WcsClient(
 					new Connection\JetpackAuthenticator(),
 					new Connection\JetpackClient()
+				);
+			case ServiceKey::CONVERSION_TRACKING:
+				return new Tracking\ConversionTrackingService(
+					new Tracking\RemoteConversionTracker(
+						self::get( ServiceKey::WCS_CLIENT ),
+						new ConversionEventLogger(
+							wc_get_logger()
+						)
+					)
 				);
 			case ServiceKey::PRODUCT_EXPORT_SERVICE:
 				return new Export\Service\ProductExportService(
