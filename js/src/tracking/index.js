@@ -12,7 +12,11 @@ import {
 	onSingleProductPageVisit,
 	onPageVisit,
 } from './utils';
-import { singleAddToCartClick, addToCartClick, retrievedVariation } from './pixel/utils';
+import {
+	singleAddToCartClick,
+	addToCartClick,
+	retrievedVariation,
+} from './pixel/utils';
 import { sendCapiEvent } from './conversions/utils';
 import { RedditEvent } from './pixel/events';
 
@@ -29,9 +33,7 @@ if ( hasUserConsent() ) {
 
 document.addEventListener( 'DOMContentLoaded', () => {
 	if ( ! hasUserConsent() ) {
-		console.info(
-			'[Reddit] Marketing consent denied. Tracking skipped.'
-		);
+		console.info( '[Reddit] Marketing consent denied. Tracking skipped.' );
 		return;
 	}
 

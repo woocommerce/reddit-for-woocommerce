@@ -216,7 +216,7 @@ final class PixelTrackingService implements ServiceStatusInterface {
 
 		$tracking_data['event_id_el_name'] = Helper::with_prefix( 'event_id' );
 		$tracking_data['VIEW_CONTENT']     = array(
-			'products'    => array(
+			'products'   => array(
 				'id'   => $product->get_id(),
 				'name' => $product->get_name(),
 			),

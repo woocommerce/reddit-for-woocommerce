@@ -111,7 +111,9 @@ export function setRedditClickId() {
 	const scClickId = url.searchParams.get( 'rdt_cid' );
 
 	if ( scClickId ) {
-		document.cookie = `rdtCid=${ encodeURIComponent( scClickId ) }; path=/;`;
+		document.cookie = `rdtCid=${ encodeURIComponent(
+			scClickId
+		) }; path=/;`;
 	}
 }
 
@@ -171,8 +173,8 @@ export const onSingleProductPageVisit = () => {
 	if ( isFreshPageVisit() && TRACKING_DATA_VAR.VIEW_CONTENT ) {
 		const eventData = {
 			...TRACKING_DATA_VAR.VIEW_CONTENT,
-			conversionId: window.crypto.randomUUID()
-		}
+			conversionId: window.crypto.randomUUID(),
+		};
 
 		if ( TRACKING_DATA_VAR.is_pixel_enabled ) {
 			sendPixelEvent( RedditEvent.VIEW_CONTENT, eventData );
@@ -201,7 +203,7 @@ export const onSingleProductPageVisit = () => {
 export const onPageVisit = () => {
 	if ( isFreshPageVisit() && TRACKING_DATA_VAR.PAGE_VIEW ) {
 		const eventData = {
-			conversionId: window.crypto.randomUUID()
+			conversionId: window.crypto.randomUUID(),
 		};
 
 		if ( TRACKING_DATA_VAR.is_pixel_enabled ) {

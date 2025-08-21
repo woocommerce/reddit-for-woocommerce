@@ -40,8 +40,8 @@ final class PageVisitEvent extends EventPayloadBase implements ConversionEventIn
 	public function build_payload( array $args = array() ): array {
 		$base    = parent::build_payload();
 		$default = array(
-			'event_type'     => array(
-				'tracking_type' => self::ID
+			'event_type' => array(
+				'tracking_type' => self::ID,
 			),
 		);
 

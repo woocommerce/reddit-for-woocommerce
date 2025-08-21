@@ -103,7 +103,7 @@ const trackAddToCartEvent = ( product, quantity = 1, eventId = null ) => {
 			{
 				id,
 				name,
-			}
+			},
 		],
 	};
 
