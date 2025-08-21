@@ -5,20 +5,20 @@ import { TRACKING_DATA_VAR } from '../constants';
 import { RedditEvent } from './events';
 
 /**
- * Tracks a Reddit event using the global `snaptr` function.
+ * Tracks a Reddit event using the global `rdt` function.
  *
  * @since 0.1.0
  *
  * @param {string} eventName Name of the event to track.
  * @param {Object} eventParams Additional event parameters to send.
- * @throws Will throw an error if `snaptr` is not available globally.
+ * @throws Will throw an error if `rdt` is not available globally.
  */
-export const trackEvent = ( eventName, eventParams ) => {
-	if ( typeof snaptr !== 'function' ) {
-		throw new Error( 'Function snaptr not implemented.' );
+export const sendPixelEvent = ( eventName, eventParams ) => {
+	if ( typeof rdt !== 'function' ) {
+		throw new Error( 'Function rdt not implemented.' );
 	}
 
-	window.snaptr( 'track', eventName, {
+	window.rdt( 'track', eventName, {
 		...eventParams,
 	} );
 };
@@ -50,6 +50,7 @@ const getPriceObject = ( price ) => {
  */
 const getProductObject = ( product ) => {
 	if ( TRACKING_DATA_VAR.pixel_data.products[ product.id ] ) {
+		product.name = TRACKING_DATA_VAR.pixel_data.products[ product.id ].name;
 		product.prices = getPriceObject(
 			TRACKING_DATA_VAR.pixel_data.products[ product.id ].price
 		);
@@ -69,6 +70,7 @@ const getProductObject = ( product ) => {
 export const getCartItemObject = ( product, quantity ) => {
 	const item = {
 		id: product.id,
+		name: product.name,
 		quantity,
 	};
 
@@ -91,20 +93,25 @@ export const getCartItemObject = ( product, quantity ) => {
  * @param {string|null} [eventId=null] Optional unique event identifier for deduplication.
  */
 const trackAddToCartEvent = ( product, quantity = 1, eventId = null ) => {
-	const { id, price } = getCartItemObject( product, quantity );
+	const { id, name, price } = getCartItemObject( product, quantity );
 
 	const data = {
-		item_ids: [ id ],
-		number_items: parseInt( quantity, 10 ),
-		price,
+		itemCount: parseInt( quantity, 10 ),
+		value: price * parseInt( quantity, 10 ),
+		currency: TRACKING_DATA_VAR.currency,
+		products: [
+			{
+				id,
+				name,
+			},
+		],
 	};
 
 	if ( eventId ) {
-		data.event_id = eventId;
-		data.client_dedup_id = eventId;
+		data.conversionId = eventId;
 	}
 
-	trackEvent( RedditEvent.ADD_CART, data );
+	sendPixelEvent( RedditEvent.ADD_TO_CART, data );
 };
 
 /**
@@ -170,5 +177,6 @@ export const retrievedVariation = ( variation ) => {
 
 	TRACKING_DATA_VAR.pixel_data.products[ variation.variation_id ] = {
 		price: variation.display_price,
+		name: TRACKING_DATA_VAR.VIEW_CONTENT.products.name,
 	};
 };

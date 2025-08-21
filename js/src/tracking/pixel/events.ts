@@ -1,5 +1,5 @@
 export enum RedditEvent {
-	PAGE_VIEW = 'PAGE_VIEW',
-	VIEW_CONTENT = 'VIEW_CONTENT',
-	ADD_CART = 'ADD_CART',
+	PAGE_VIEW = 'PageVisit',
+	VIEW_CONTENT = 'ViewContent',
+	ADD_TO_CART = 'AddToCart',
 }

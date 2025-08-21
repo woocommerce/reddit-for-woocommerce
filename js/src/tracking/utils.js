@@ -1,4 +1,12 @@
 /**
+ * Internal dependencies
+ */
+import { TRACKING_DATA_VAR } from './constants';
+import { RedditEvent } from './pixel/events';
+import { sendPixelEvent } from './pixel/utils';
+import { sendCapiEvent } from './conversions/utils';
+
+/**
  * Internal utility to register click event listeners for given selectors.
  *
  * Hooks are attached after DOMContentLoaded to ensure all target elements
@@ -80,14 +88,14 @@ export function hasUserConsent() {
 }
 
 /**
- * Stores the Reddit Click ID (sc_click_id) in a first-party cookie for use in CAPI events.
+ * Stores the Reddit Click ID (rdt_cid) in a first-party cookie for use in CAPI events.
  *
- * Reddit appends the `sc_click_id` query parameter to the landing page URL after an ad click.
+ * Reddit appends the `rdt_cid` query parameter to the landing page URL after an ad click.
  * This value is required for server-side event attribution (CAPI), but only appears on the first
  * page view of a session. To persist it for the rest of the session, we store it in a cookie
- * named `ScCid`.
+ * named `rdtCid`.
  *
- * The cookie can later be read in PHP via `$_COOKIE['ScCid']` and included in the user_data
+ * The cookie can later be read in PHP via `$_COOKIE['rdtCid']` and included in the user_data
  * payload for Reddit Conversion API events.
  *
  * ⚠️ This logic is specific to Reddit's tracking requirements.
@@ -100,9 +108,110 @@ export function hasUserConsent() {
  */
 export function setRedditClickId() {
 	const url = new URL( window.location.href );
-	const scClickId = url.searchParams.get( 'sc_click_id' );
+	const scClickId = url.searchParams.get( 'rdt_cid' );
 
 	if ( scClickId ) {
-		document.cookie = `ScCid=${ encodeURIComponent( scClickId ) }; path=/;`;
+		document.cookie = `rdtCid=${ encodeURIComponent(
+			scClickId
+		) }; path=/;`;
 	}
 }
+
+/**
+ * Determines whether the current page load is a fresh navigation
+ * (e.g., from a link, address bar, or redirect) and not a reload.
+ *
+ * Uses the Performance Navigation API (Level 2 where supported) to inspect
+ * the navigation type. Falls back to legacy `performance.navigation.type`
+ * if needed.
+ *
+ * Returns `true` only for:
+ * - 'navigate' (link click, address bar entry, redirect)
+ * - 'back_forward' (history traversal – optional, still counts as non-reload)
+ *
+ * Returns `false` for:
+ * - 'reload' (user manually reloaded the page)
+ *
+ * @since 0.1.0
+ *
+ * @return {boolean} Whether the page load was a fresh visit.
+ */
+export function isFreshPageVisit() {
+	if ( typeof performance === 'undefined' ) {
+		return true;
+	}
+
+	if ( performance.getEntriesByType ) {
+		const entries = performance.getEntriesByType( 'navigation' );
+
+		if ( entries.length > 0 ) {
+			const type = entries[ 0 ].type;
+			return type === 'navigate' || type === 'back_forward';
+		}
+	}
+
+	// Fallback for older browsers (0 = TYPE_NAVIGATE)
+	return performance.navigation?.type === 0;
+}
+
+/**
+ * Fires a Reddit `VIEW_CONTENT` event when a user lands on a single product page.
+ *
+ * This method is designed to be called on Single Product pages.
+ * It ensures the event is only fired only on fresh navigations — such as arriving
+ * via a link click, redirect, or back/forward traversal — and not on manual page reloads
+ * to inflating analytics or triggering duplicate events.
+ *
+ * A unique `eventId` is generated and included in both the Pixel and Conversions API payloads
+ * to support deduplication.
+ *
+ * @since 0.1.0
+ *
+ * @return {void}
+ */
+export const onSingleProductPageVisit = () => {
+	if ( isFreshPageVisit() && TRACKING_DATA_VAR.VIEW_CONTENT ) {
+		const eventData = {
+			...TRACKING_DATA_VAR.VIEW_CONTENT,
+			conversionId: window.crypto.randomUUID(),
+		};
+
+		if ( TRACKING_DATA_VAR.is_pixel_enabled ) {
+			sendPixelEvent( RedditEvent.VIEW_CONTENT, eventData );
+		}
+
+		if ( TRACKING_DATA_VAR.is_conversion_enabled ) {
+			sendCapiEvent( RedditEvent.VIEW_CONTENT, eventData );
+		}
+	}
+};
+
+/**
+ * Fires a Reddit `PAGE_VIEW` event when a user visits any page on the site.
+ *
+ * This method is designed to run on all frontend pages where general page view tracking
+ * is required — including content, category, and landing pages.
+ *
+ * It ensures the event is only fired only on fresh navigations — such as arriving
+ * via a link click, redirect, or back/forward traversal — and not on manual page reloads
+ * to inflating analytics or triggering duplicate events.
+ *
+ * @since 0.1.0
+ *
+ * @return {void}
+ */
+export const onPageVisit = () => {
+	if ( isFreshPageVisit() && TRACKING_DATA_VAR.PAGE_VIEW ) {
+		const eventData = {
+			conversionId: window.crypto.randomUUID(),
+		};
+
+		if ( TRACKING_DATA_VAR.is_pixel_enabled ) {
+			sendPixelEvent( RedditEvent.PAGE_VIEW, eventData );
+		}
+
+		if ( TRACKING_DATA_VAR.is_conversion_enabled ) {
+			sendCapiEvent( RedditEvent.PAGE_VIEW, eventData );
+		}
+	}
+};

@@ -83,14 +83,14 @@ class ProductRowBuilder implements ExportRowBuilderInterface {
 		$currency      = get_woocommerce_currency();
 
 		$row = array(
-			'id'           => (string) $product->get_id(),
-			'title'        => $product->get_name(),
-			'description'  => $product->get_description(),
-			'link'         => get_permalink( $product->get_id() ),
-			'image_link'   => $image_url,
-			'price'        => ( $is_price_set ? $regular_price : '0' ) . ' ' . $currency,
-			'sale_price'   => '',
-			'gtin'         => $product->get_global_unique_id(),
+			'id'          => (string) $product->get_id(),
+			'title'       => $product->get_name(),
+			'description' => $product->get_description(),
+			'link'        => get_permalink( $product->get_id() ),
+			'image_link'  => $image_url,
+			'price'       => ( $is_price_set ? $regular_price : '0' ) . ' ' . $currency,
+			'sale_price'  => '',
+			'gtin'        => $product->get_global_unique_id(),
 		);
 
 		$sale_price = $product->get_sale_price();
@@ -115,7 +115,7 @@ class ProductRowBuilder implements ExportRowBuilderInterface {
 			$row['availability'] = 'in_stock';
 		} elseif ( $product->is_in_stock() && ! $is_price_set ) {
 			$row['availability'] = 'out_of_stock';
-		} else if ( ! $product->is_in_stock() ) {
+		} elseif ( ! $product->is_in_stock() ) {
 			$row['availability'] = 'out_of_stock';
 		}
 
