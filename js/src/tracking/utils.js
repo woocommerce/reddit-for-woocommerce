@@ -169,13 +169,10 @@ export function isFreshPageVisit() {
  */
 export const onSingleProductPageVisit = () => {
 	if ( isFreshPageVisit() && TRACKING_DATA_VAR.VIEW_CONTENT ) {
-		const eventId = window.crypto.randomUUID();
-
 		const eventData = {
 			...TRACKING_DATA_VAR.VIEW_CONTENT,
-			event_id: eventId,
-			client_dedup_id: eventId,
-		};
+			conversionId: window.crypto.randomUUID()
+		}
 
 		if ( TRACKING_DATA_VAR.is_pixel_enabled ) {
 			sendPixelEvent( RedditEvent.VIEW_CONTENT, eventData );
@@ -201,13 +198,10 @@ export const onSingleProductPageVisit = () => {
  *
  * @return {void}
  */
-export const onPageView = () => {
+export const onPageVisit = () => {
 	if ( isFreshPageVisit() && TRACKING_DATA_VAR.PAGE_VIEW ) {
-		const eventId = window.crypto.randomUUID();
-
 		const eventData = {
-			event_id: eventId,
-			client_dedup_id: eventId,
+			conversionId: window.crypto.randomUUID()
 		};
 
 		if ( TRACKING_DATA_VAR.is_pixel_enabled ) {

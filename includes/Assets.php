@@ -59,10 +59,9 @@ class Assets {
 	 * @return void
 	 */
 	public function enqueue_scripts() {
-		// @TODO: uncomment later.
-		// if ( ! ( PixelTrackingService::is_enabled() || ConversionTrackingService::is_enabled() ) ) {
-		// 	return;
-		// }
+		if ( ! ( PixelTrackingService::is_enabled() || ConversionTrackingService::is_enabled() ) ) {
+			return;
+		}
 
 		AssetLoader::enqueue_script( 'tracking', 'tracking' );
 		AssetLoader::localize_script(
@@ -101,11 +100,11 @@ class Assets {
 				Helper::with_prefix( 'filter_tracking_data' ),
 				array(
 					'ajax_url'              => admin_url( 'admin-ajax.php' ),
-					// @TODO: uncomment later.
-					// 'is_pixel_enabled'      => PixelTrackingService::is_enabled(),
+					'is_pixel_enabled'      => PixelTrackingService::is_enabled(),
 					'is_conversion_enabled' => ConversionTrackingService::is_enabled(),
 					'capi_nonce'            => wp_create_nonce( 'capi_nonce' ),
 					'prefix'                => Helper::with_prefix( '' ),
+					'currency'              => get_woocommerce_currency(),
 				)
 			)
 		);
