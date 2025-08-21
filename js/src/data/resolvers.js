@@ -15,6 +15,7 @@ import {
 	receiveJetpackAccount,
 	receiveRedditAccountDetails,
 	receiveTrackConversionsStatus,
+	receiveSettings,
 } from './actions';
 
 /**
@@ -102,6 +103,35 @@ export function getTrackConversions() {
 					'There was an error getting the conversions tracking status.',
 					'reddit-for-woo'
 				)
+			);
+		}
+	};
+}
+
+/**
+ * Fetches the settings data from the API.
+ *
+ * @return {Function} An async thunk function that takes a Redux-like dispatch object.
+ */
+export function getSettings() {
+	return async function ( { dispatch } ) {
+		try {
+			const response = await apiFetch( {
+				path: `${ API_NAMESPACE }/snapchat/settings`,
+			} );
+
+			dispatch(
+				receiveSettings( {
+					trackConversions: Boolean( response.capi_enabled ),
+					triggerExport: Boolean( response.trigger_export ),
+					lastExportTimeStamp: response.last_export_timestamp,
+					exportFileUrl: response.export_file_url,
+				} )
+			);
+		} catch ( error ) {
+			handleApiError(
+				error,
+				__( 'There was an error fetching settings.', 'reddit-for-woo' )
 			);
 		}
 	};

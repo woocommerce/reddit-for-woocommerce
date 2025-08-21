@@ -44,6 +44,20 @@ const useProductCatalogExport = (
 				return;
 			}
 
+			if (
+				! res.success &&
+				res.data?.code === 'reddit_for_woocommerce_no_products_found'
+			) {
+				createNotice(
+					'error',
+					__(
+						'No products found. Please create products to generate the CSV.',
+						'reddit-for-woo'
+					)
+				);
+				return;
+			}
+
 			createNotice(
 				'error',
 				__( 'An error occurred', 'reddit-for-woo' )

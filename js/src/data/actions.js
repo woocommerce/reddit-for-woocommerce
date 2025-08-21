@@ -65,6 +65,19 @@ export function receiveSetup( setup ) {
 }
 
 /**
+ * Creates an action to receive the settings data from the API.
+ *
+ * @param {Object} settings - Settings object, e.g., { trackConversions: boolean, triggerExport: boolean }.
+ * @return {Object} Action object.
+ */
+export function receiveSettings( settings ) {
+	return {
+		type: TYPES.RECEIVE_SETTINGS,
+		settings,
+	};
+}
+
+/**
  * Creates an action to receive Reddit account details.
  *
  * @param {Object} redditAccountDetails - The Reddit account details to be received.
@@ -101,6 +114,35 @@ export async function updateTrackConversionsStatus( status ) {
 				'There was an error updating the conversions tracking status.',
 				'reddit-for-woo'
 			)
+		);
+		throw error;
+	}
+}
+
+/**
+ * Updates one or more settings on the server.
+ *
+ * @param {Object} updatedSettings - Partial settings to update, e.g. { trackConversions: true }.
+ * @return {Function} Action object to update settings locally.
+ */
+export async function updateSettings( updatedSettings ) {
+	try {
+		const response = await apiFetch( {
+			path: `${ API_NAMESPACE }/snapchat/settings`,
+			method: 'POST',
+			data: {
+				// Convert settings keys to match REST keys
+				capi_enabled: updatedSettings.trackConversions,
+			},
+		} );
+
+		return receiveSettings( {
+			trackConversions: Boolean( response.capi_enabled ),
+		} );
+	} catch ( error ) {
+		handleApiError(
+			error,
+			__( 'There was an error updating the settings.', 'reddit-for-woo' )
 		);
 		throw error;
 	}

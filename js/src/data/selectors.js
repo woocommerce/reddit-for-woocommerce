@@ -89,3 +89,13 @@ export const getRedditAccountDetails = ( state ) => {
 export const getTrackConversions = ( state ) => {
 	return state.trackConversions;
 };
+
+/**
+ * Retrieves the settings state.
+ *
+ * @param {Object} state - The Redux state.
+ * @return {{ trackConversions: boolean, triggerExport: boolean }} The settings object.
+ */
+export const getSettings = ( state ) => {
+	return state.settings;
+};

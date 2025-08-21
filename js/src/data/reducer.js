@@ -121,6 +121,11 @@ const reducer = ( state, action ) => {
 			return setIn( state, 'trackConversions', status );
 		}
 
+		case TYPES.RECEIVE_SETTINGS: {
+			const { settings } = action;
+			return setIn( state, 'settings', settings );
+		}
+
 		case TYPES.DISCONNECT_ACCOUNTS_REDDIT: {
 			return setIn( state, 'accounts.reddit', null );
 		}
