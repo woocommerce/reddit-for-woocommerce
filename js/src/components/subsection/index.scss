@@ -1,0 +1,5 @@
+.rfw-subsection {
+	&:not(:first-child) {
+		margin-top: var(--main-gap);
+	}
+}
