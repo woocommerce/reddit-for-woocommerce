@@ -99,7 +99,8 @@ class RemoteConversionTracker implements ConversionTrackerInterface {
 		$event   = new PurchaseEvent( $order_id );
 		$payload = $event->build_payload(
 			array(
-				'user_data' => UserIdentifier::get_user_data(),
+				'conversion_id' => $order->get_order_key(),
+				'user_data'     => UserIdentifier::get_user_data(),
 			)
 		);
 		$args    = array( 'order_id' => $order_id );
@@ -245,7 +246,7 @@ class RemoteConversionTracker implements ConversionTrackerInterface {
 			return;
 		}
 
-		$path    = "/v2.0/conversions/events/" . $pixel_id;
+		$path    = '/v2.0/conversions/events/' . $pixel_id;
 		$payload = array( 'events' => array( $event_payload ) );
 
 		/* @var WP_REST_Response|WP_Error $response The response from the WCS proxy. */

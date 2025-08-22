@@ -185,7 +185,7 @@ final class WcsClient {
 			$args['headers']['Content-Type'] = 'application/json';
 		}
 
-		// Merge in any custom headers
+		// Merge in any custom headers.
 		$args['headers'] = array_merge( $args['headers'], $headers );
 
 		$response = $this->jetpack_client->remote_request(
@@ -195,9 +195,6 @@ final class WcsClient {
 			),
 			'POST' === $method && $body ? wp_json_encode( $body ) : null
 		);
-
-		$args['body'] = 'POST' === $method && $body ? wp_json_encode( $body ) : null;
-		$response = wp_remote_request( $url, $args );
 
 		return $this->handle_response( $response );
 	}

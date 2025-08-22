@@ -15,6 +15,7 @@
 
 namespace RedditForWooCommerce\API\Site\Controllers;
 
+use WP_REST_Request;
 use WP_REST_Response;
 use WP_Error;
 use RedditForWooCommerce\Config;
@@ -311,7 +312,7 @@ class RedditConnectionController extends RESTBaseController {
 	 *
 	 * @return WP_REST_Response|WP_Error
 	 */
-	public function do_config( \WP_REST_Request $request ) {
+	public function do_config( WP_REST_Request $request ) {
 		if ( 'GET' === $request->get_method() ) {
 			return $this->get_connection_details();
 		}
@@ -517,27 +518,27 @@ class RedditConnectionController extends RESTBaseController {
 			'title'      => 'reddit_merchant_config',
 			'type'       => 'object',
 			'properties' => array(
-				'business_id'      => array(
+				'business_id'   => array(
 					'description' => "Selected Business's id.",
 					'type'        => 'string',
 				),
-				'business_name'    => array(
+				'business_name' => array(
 					'description' => "Selected Business's name.",
 					'type'        => 'string',
 				),
-				'ad_acc_id'   => array(
+				'ad_acc_id'     => array(
 					'description' => 'Selected Ad Account id.',
 					'type'        => 'string',
 				),
-				'ad_acc_name' => array(
+				'ad_acc_name'   => array(
 					'description' => 'Selected Ad Account name.',
 					'type'        => 'string',
 				),
-				'pixel_id'    => array(
+				'pixel_id'      => array(
 					'description' => 'Selected Pixel id.',
 					'type'        => 'string',
 				),
-				'capi_token'  => array(
+				'capi_token'    => array(
 					'description' => 'Conversion Access token.',
 					'type'        => 'string',
 				),
