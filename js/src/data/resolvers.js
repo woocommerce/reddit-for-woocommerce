@@ -117,7 +117,7 @@ export function getSettings() {
 	return async function ( { dispatch } ) {
 		try {
 			const response = await apiFetch( {
-				path: `${ API_NAMESPACE }/snapchat/settings`,
+				path: `${ API_NAMESPACE }/reddit/settings`,
 			} );
 
 			dispatch(
