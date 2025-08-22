@@ -173,7 +173,7 @@ final class RemotePixelTracker implements PixelTrackerInterface {
 
 		// Make sure there is a valid order object and it is not already marked as tracked.
 		if ( ! $order || 1 === (int) $order->get_meta( self::ORDER_PIXEL_TRACKED_META_KEY, true ) ) {
-			// return;
+			return;
 		}
 
 		// Mark the order as tracked, to avoid double-reporting if the confirmation page is reloaded.
@@ -193,7 +193,7 @@ final class RemotePixelTracker implements PixelTrackerInterface {
 			 */
 			$product = $item->get_product();
 			if ( $product ) {
-				$products[]    = array(
+				$products[] = array(
 					'id'   => $product->get_id(),
 					'name' => $product->get_name(),
 				);
