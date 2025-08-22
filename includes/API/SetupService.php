@@ -49,7 +49,7 @@ class SetupService {
 		$ad_partner_api = AdPartnerApi::get_instance( $wcs_client );
 
 		( new Controllers\JetpackAccountController( $wcs_client, $manager ) )->register_routes();
-		( new Controllers\RedditAccountController() )->register_routes();
 		( new Controllers\OnboardingController() )->register_routes();
+		( new Controllers\RedditConnectionController( $wcs_client, $ad_partner_api ) )->register_routes();
 	}
 }

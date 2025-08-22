@@ -74,11 +74,12 @@ final class WcsClient {
 	 * @param string $path           Path within the WCS API (relative to service base).
 	 * @param mixed  $body           Body payload to send in JSON format.
 	 * @param bool   $requires_auth  Whether to include the Jetpack auth header.
+	 * @param array  $headers        Optional additional headers to include in the request.
 	 *
 	 * @return WP_REST_Response|WP_Error API response or error.
 	 */
-	public function proxy_post( string $path, $body, bool $requires_auth = true ) {
-		return $this->proxy_request( 'POST', $path, $body, $requires_auth );
+	public function proxy_post( string $path, $body, bool $requires_auth = true, array $headers = array() ) {
+		return $this->proxy_request( 'POST', $path, $body, $requires_auth, $headers );
 	}
 
 	/**
@@ -111,7 +112,7 @@ final class WcsClient {
 		return apply_filters(
 			Helper::with_prefix( 'wcs_base_url' ),
 			sprintf(
-				'https://api.woocommerce.com/wpcom/v2/sites/%s/wc',
+				'https://public-api.wordpress.com/wpcom/v2/sites/%s/wc',
 				Jetpack_Options::get_option( 'id' )
 			)
 		);
@@ -149,10 +150,11 @@ final class WcsClient {
 	 * @param string     $path           Endpoint path relative to the service root.
 	 * @param array|null $body           Optional request body (for POST) or query parameters (for GET).
 	 * @param bool       $requires_auth  Whether to include the Jetpack auth header.
+	 * @param array      $headers        Optional additional headers to include in the request.
 	 *
 	 * @return WP_REST_Response|WP_Error Parsed response or error.
 	 */
-	public function proxy_request( string $method, string $path, $body = null, $requires_auth = true ) {
+	public function proxy_request( string $method, string $path, $body = null, $requires_auth = true, array $headers = array() ) {
 		$url = sprintf(
 			'%s/%s/%s',
 			$this->get_wcs_url(),
@@ -183,6 +185,9 @@ final class WcsClient {
 			$args['headers']['Content-Type'] = 'application/json';
 		}
 
+		// Merge in any custom headers
+		$args['headers'] = array_merge( $args['headers'], $headers );
+
 		$response = $this->jetpack_client->remote_request(
 			array_merge(
 				$args,
@@ -190,6 +195,9 @@ final class WcsClient {
 			),
 			'POST' === $method && $body ? wp_json_encode( $body ) : null
 		);
+
+		$args['body'] = 'POST' === $method && $body ? wp_json_encode( $body ) : null;
+		$response = wp_remote_request( $url, $args );
 
 		return $this->handle_response( $response );
 	}
