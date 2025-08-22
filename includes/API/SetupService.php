@@ -12,6 +12,7 @@
 
 namespace RedditForWooCommerce\API;
 
+use Action_Scheduler\Migration\Controller;
 use Automattic\Jetpack\Connection\Manager;
 use RedditForWooCommerce\ServiceContainer;
 use RedditForWooCommerce\ServiceKey;
@@ -48,5 +49,7 @@ class SetupService {
 		$ad_partner_api = AdPartnerApi::get_instance( $wcs_client );
 
 		( new Controllers\JetpackAccountController( $wcs_client, $manager ) )->register_routes();
+		( new Controllers\RedditAccountController() )->register_routes();
+		( new Controllers\OnboardingController() )->register_routes();
 	}
 }
