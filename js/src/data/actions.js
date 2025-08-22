@@ -128,7 +128,7 @@ export async function updateTrackConversionsStatus( status ) {
 export async function updateSettings( updatedSettings ) {
 	try {
 		const response = await apiFetch( {
-			path: `${ API_NAMESPACE }/snapchat/settings`,
+			path: `${ API_NAMESPACE }/reddit/settings`,
 			method: 'POST',
 			data: {
 				// Convert settings keys to match REST keys

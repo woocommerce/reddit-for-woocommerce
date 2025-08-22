@@ -52,7 +52,7 @@ class ConversionEventLogger {
 	 *
 	 * @since 0.1.0
 	 *
-	 * @param string $event_name  Event identifier (e.g. 'PURCHASE', 'ADD_CART').
+	 * @param string $event_name  Event identifier (e.g. 'PURCHASE', 'ADD_TO_CART').
 	 * @param int    $status_code HTTP status code returned from the API.
 	 * @param array  $context     Optional structured context.
 	 * @return void
@@ -81,7 +81,7 @@ class ConversionEventLogger {
 	/**
 	 * Determine the appropriate log level based on event name.
 	 *
-	 * @param string $event_name The name of the conversion event (e.g., 'PURCHASE', 'ADD_CART').
+	 * @param string $event_name The name of the conversion event (e.g., 'PURCHASE', 'ADD_TO_CART').
 	 */
 	protected function determine_log_level( string $event_name ): string {
 		switch ( $event_name ) {

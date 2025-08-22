@@ -9,7 +9,7 @@
 namespace RedditForWooCommerce\Tracking\ConversionEvent;
 
 /**
- * Constructs a Conversion request payload for the PageView event type.
+ * Constructs a Conversion request payload for the PageVisit event type.
  *
  * This class captures minimal single product page data for tracking
  * view content conversions.
@@ -25,7 +25,7 @@ final class PageVisitEvent extends EventPayloadBase implements ConversionEventIn
 	 *
 	 * @since 0.1.0
 	 */
-	public const ID = 'PageView';
+	public const ID = 'PageVisit';
 
 
 	/**
