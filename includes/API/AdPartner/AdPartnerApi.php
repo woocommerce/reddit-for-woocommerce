@@ -54,6 +54,22 @@ class AdPartnerApi {
 	public FeedApi $feed;
 
 	/**
+	 * Handles business operations.
+	 *
+	 * @since 0.1.0
+	 * @var BusinessApi
+	 */
+	public BusinessApi $business;
+
+	/**
+	 * Handles Ad Account operations.
+	 *
+	 * @since 0.1.0
+	 * @var AdAccounstApi
+	 */
+	public AdAccountsApi $ad_accounts;
+
+	/**
 	 * Private constructor to enforce singleton pattern.
 	 *
 	 * Initializes all API submodules with the shared {@see WcsClient} instance,
@@ -64,8 +80,10 @@ class AdPartnerApi {
 	 * @param WcsClient $wcs WCS client used for authenticated proxy API requests.
 	 */
 	private function __construct( WcsClient $wcs ) {
-		$this->catalog = new CatalogApi( $wcs );
-		$this->feed    = new FeedApi( $wcs );
+		$this->catalog     = new CatalogApi( $wcs );
+		$this->feed        = new FeedApi( $wcs );
+		$this->business    = new BusinessApi( $wcs );
+		$this->ad_accounts = new AdAccountsApi( $wcs );
 	}
 
 	/**

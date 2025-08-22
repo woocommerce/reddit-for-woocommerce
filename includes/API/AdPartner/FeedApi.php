@@ -78,11 +78,9 @@ class FeedApi extends BaseAdPartnerApi {
 			),
 		);
 
-		$response = $this->wcs->proxy_post(
+		return $this->wcs->proxy_post(
 			'/v3/product_catalogs/' . $catalog_id . '/product_feeds',
 			$payload
 		);
-
-		return $response;
 	}
 }
