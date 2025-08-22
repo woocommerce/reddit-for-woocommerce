@@ -77,6 +77,12 @@ final class ServiceContainer {
 					new Connection\JetpackAuthenticator(),
 					new Connection\JetpackClient()
 				);
+			case ServiceKey::PIXEL_TRACKING:
+				return new Tracking\PixelTrackingService(
+					new Tracking\RemotePixelTracker(
+						self::get( ServiceKey::WCS_CLIENT )
+					)
+				);
 			case ServiceKey::CONVERSION_TRACKING:
 				return new Tracking\ConversionTrackingService(
 					new Tracking\RemoteConversionTracker(
