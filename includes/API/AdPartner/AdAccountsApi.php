@@ -57,7 +57,7 @@ class AdAccountsApi extends BaseAdPartnerApi {
 		}
 
 		return $this->wcs->proxy_get(
-			'/v3/businesses/' . $business_id . '/ad_accounts'
+			sprintf( '/ads/businesses/%s/ad_accounts', rawurlencode( $business_id ) )
 		);
 	}
 
