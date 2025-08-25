@@ -99,7 +99,8 @@ class RemoteConversionTracker implements ConversionTrackerInterface {
 		$event   = new PurchaseEvent( $order_id );
 		$payload = $event->build_payload(
 			array(
-				'user_data' => UserIdentifier::get_user_data(),
+				'conversion_id' => $order->get_order_key(),
+				'user_data'     => UserIdentifier::get_user_data(),
 			)
 		);
 		$args    = array( 'order_id' => $order_id );
@@ -245,15 +246,21 @@ class RemoteConversionTracker implements ConversionTrackerInterface {
 			return;
 		}
 
-		$query   = http_build_query( array( 'access_token' => $token ) );
-		$path    = "/v2.0/{$pixel_id}/events?{$query}";
+		$path    = sprintf( '/conversions/events/%s', rawurldecode( $pixel_id ) );
 		$payload = array( 'events' => array( $event_payload ) );
 
 		/* @var WP_REST_Response|WP_Error $response The response from the WCS proxy. */
-		$response = $this->client->proxy_post( $path, $payload, false );
+		$response = $this->client->proxy_post(
+			$path,
+			$payload,
+			false,
+			array(
+				'reddit-authorization' => sprintf( 'Bearer %s', $token ),
+			)
+		);
 
 		if ( Helper::is_logging_enabled() ) {
-			$event = $event_payload['event_name'] ?? '';
+			$event = $event_payload['event_type']['tracking_type'] ?? '';
 
 			if ( is_wp_error( $response ) ) {
 				$error_data = $response->get_error_data();
