@@ -161,10 +161,7 @@ export default class MockRequests {
 	 * @return {Promise<void>}
 	 */
 	async mockRedditConnection( payload ) {
-		await this.fulfillRequest(
-			/\/wc\/sfw\/reddit\/connection\b/,
-			payload
-		);
+		await this.fulfillRequest( /\/wc\/sfw\/reddit\/connection\b/, payload );
 	}
 
 	/**

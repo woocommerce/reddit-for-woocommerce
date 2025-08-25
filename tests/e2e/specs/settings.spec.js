@@ -162,9 +162,7 @@ test.describe.skip( 'Reddit Settings', () => {
 			'Organization: RedditForWooV105'
 		);
 
-		await expect(
-			locator.getRedditFinalDisconnectButton()
-		).toBeDisabled();
+		await expect( locator.getRedditFinalDisconnectButton() ).toBeDisabled();
 		await expect(
 			locator.getRedditDisconnectConfirmCheckbox()
 		).not.toBeChecked();
@@ -172,9 +170,7 @@ test.describe.skip( 'Reddit Settings', () => {
 		await expect(
 			locator.getRedditDisconnectConfirmCheckbox()
 		).toBeChecked();
-		await expect(
-			locator.getRedditFinalDisconnectButton()
-		).toBeEnabled();
+		await expect( locator.getRedditFinalDisconnectButton() ).toBeEnabled();
 		await locator.getRedditFinalDisconnectButton().click();
 
 		await page.waitForURL(

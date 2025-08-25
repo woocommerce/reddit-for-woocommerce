@@ -41,7 +41,9 @@ test.describe( 'AddToCart event', () => {
 			expect( payload.conversionId ).toMatch( anyUuidRegex );
 			expect( payload.products ).toEqual(
 				expect.arrayContaining( [
-					expect.objectContaining( { id: expect.stringMatching( /^\d+$/ ) } ),
+					expect.objectContaining( {
+						id: expect.stringMatching( /^\d+$/ ),
+					} ),
 					expect.objectContaining( { name: 'Product Five' } ),
 				] )
 			);

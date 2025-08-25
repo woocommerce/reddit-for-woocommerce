@@ -184,9 +184,9 @@ export const onSingleProductPageVisit = () => {
 			sendCapiEvent( RedditEvent.VIEW_CONTENT, {
 				conversionId: eventData.conversionId,
 				products: {
-					id: eventData.products[0]?.id,
-					name: eventData.products[0]?.name,
-				}
+					id: eventData.products[ 0 ]?.id,
+					name: eventData.products[ 0 ]?.name,
+				},
 			} );
 		}
 	}
