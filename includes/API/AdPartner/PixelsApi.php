@@ -57,7 +57,7 @@ class PixelsApi extends BaseAdPartnerApi {
 		}
 
 		return $this->wcs->proxy_get(
-			'/v3/businesses/' . $business_id . '/pixels'
+			sprintf( '/ads/businesses/%s/pixels', rawurlencode( $business_id ) )
 		);
 	}
 }

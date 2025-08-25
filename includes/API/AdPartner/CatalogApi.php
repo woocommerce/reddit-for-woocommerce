@@ -79,7 +79,7 @@ class CatalogApi extends BaseAdPartnerApi {
 		);
 
 		return $this->wcs->proxy_post(
-			'/v3/businesses/' . $business_id . '/product_catalogs',
+			sprintf( '/ads/businesses/%s/product_catalogs', rawurlencode( $business_id ) ),
 			$payload
 		);
 	}

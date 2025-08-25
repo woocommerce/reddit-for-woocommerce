@@ -246,11 +246,18 @@ class RemoteConversionTracker implements ConversionTrackerInterface {
 			return;
 		}
 
-		$path    = '/v2.0/conversions/events/' . $pixel_id;
+		$path    = sprintf( '/conversions/events/%s', rawurldecode( $pixel_id ) );
 		$payload = array( 'events' => array( $event_payload ) );
 
 		/* @var WP_REST_Response|WP_Error $response The response from the WCS proxy. */
-		$response = $this->client->proxy_post( $path, $payload, false );
+		$response = $this->client->proxy_post(
+			$path,
+			$payload,
+			false,
+			array(
+				'reddit-authorization' => sprintf( 'Bearer %s', $token )
+			)
+		);
 
 		if ( Helper::is_logging_enabled() ) {
 			$event = $event_payload['event_type']['tracking_type'] ?? '';
