@@ -91,7 +91,7 @@ final class PurchaseEvent extends EventPayloadBase implements ConversionEventInt
 		$meta_data = array(
 			'conversion_id' => $args['conversion_id'] ?? '',
 			'item_count'    => (int) $this->order->get_item_count(),
-			'value_decimal' => $this->order->get_total(),
+			'value_decimal' => floatval( $this->order->get_total() ),
 			'currency'      => get_woocommerce_currency(),
 			'products'      => $products,
 		);

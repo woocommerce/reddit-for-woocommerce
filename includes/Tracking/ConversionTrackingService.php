@@ -171,9 +171,12 @@ class ConversionTrackingService implements ServiceStatusInterface {
 	public function handle_async_add_to_cart(): void {
 		check_ajax_referer( 'capi_nonce', 'security' );
 
-		$product_id = absint( wp_unslash( $_POST['product_id'] ?? 0 ) );
-		$quantity   = absint( wp_unslash( $_POST['quantity'] ?? 0 ) );
-		$event_id   = sanitize_text_field( wp_unslash( $_POST['event_id'] ?? '' ) );
+		$raw_input  = filter_input( INPUT_POST, 'payload', FILTER_UNSAFE_RAW );
+		$raw_input  = wp_unslash( $raw_input );
+		$data       = json_decode( $raw_input, true );
+		$product_id = isset( $data['product_id'] ) ? absint( $data['product_id'] ) : 0;
+		$quantity   = isset( $data['quantity'] ) ? absint( $data['quantity'] ) : 0;
+		$event_id   = isset( $data['event_id'] ) ? sanitize_text_field( $data['event_id'] ) : '';
 
 		$this->tracker->track_add_to_cart( $product_id, $quantity, $event_id );
 	}
@@ -195,8 +198,9 @@ class ConversionTrackingService implements ServiceStatusInterface {
 		$raw_input  = filter_input( INPUT_POST, 'payload', FILTER_UNSAFE_RAW );
 		$raw_input  = wp_unslash( $raw_input );
 		$data       = json_decode( $raw_input, true );
-		$product_id = isset( $data['item_ids'][0] ) ? absint( $data['item_ids'][0] ) : 0;
-		$event_id   = isset( $data['event_id'] ) ? sanitize_text_field( $data['event_id'] ) : '';
+		$products   = $data['products'] ?? array();
+		$product_id = absint( $products['id'] ?? 0 );
+		$event_id   = sanitize_text_field( $data['conversionId'] ?? '' );
 
 		$this->tracker->track_view_content( $product_id, $event_id );
 	}
@@ -222,7 +226,7 @@ class ConversionTrackingService implements ServiceStatusInterface {
 		$raw_input = filter_input( INPUT_POST, 'payload', FILTER_UNSAFE_RAW );
 		$raw_input = wp_unslash( $raw_input );
 		$data      = json_decode( $raw_input, true );
-		$event_id  = isset( $data['event_id'] ) ? sanitize_text_field( $data['event_id'] ) : '';
+		$event_id  = sanitize_text_field( $data['conversionId'] ?? '' );
 
 		$this->tracker->track_page_view( $event_id );
 	}
