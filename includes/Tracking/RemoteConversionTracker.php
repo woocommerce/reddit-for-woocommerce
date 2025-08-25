@@ -255,7 +255,7 @@ class RemoteConversionTracker implements ConversionTrackerInterface {
 			$payload,
 			false,
 			array(
-				'reddit-authorization' => sprintf( 'Bearer %s', $token )
+				'reddit-authorization' => sprintf( 'Bearer %s', $token ),
 			)
 		);
 
