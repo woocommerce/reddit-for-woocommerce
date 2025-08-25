@@ -146,8 +146,8 @@ final class PixelTrackingService implements ServiceStatusInterface {
 	 * Injects inline tracking data into the page footer.
 	 *
 	 * Conditionally populates tracking data with relevant event payloads
-	 * such as `VIEW_CONTENT`, `START_CHECKOUT`, and `PAGE_VIEW`, then
-	 * localizes it to the frontend as a global JS variable.
+	 * such as `VIEW_CONTENT`, and `PAGE_VIEW`, then localizes it to the
+	 * frontend as a global JS variable.
 	 *
 	 * @since 0.1.0
 	 */

@@ -181,7 +181,13 @@ export const onSingleProductPageVisit = () => {
 		}
 
 		if ( TRACKING_DATA_VAR.is_conversion_enabled ) {
-			sendCapiEvent( RedditEvent.VIEW_CONTENT, eventData );
+			sendCapiEvent( RedditEvent.VIEW_CONTENT, {
+				conversionId: eventData.conversionId,
+				products: {
+					id: eventData.products[0]?.id,
+					name: eventData.products[0]?.name,
+				}
+			} );
 		}
 	}
 };
