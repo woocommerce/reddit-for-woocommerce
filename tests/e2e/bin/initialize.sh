@@ -22,7 +22,7 @@ wp-env run tests-cli wp option set woocommerce_allow_tracking "no"
 wp-env run tests-cli wp option set woocommerce_coming_soon "no"
 wp-env run tests-cli wp wc payment_gateway update cod --enabled=1 --user=1
 
-wp-env run tests-cli wp user create customer customer@bulkstockmgmttestsuite.com --user_pass=password --role=customer
+wp-env run tests-cli wp user create customer customer@reddittestsuite.com --user_pass=password --role=customer
 
 wp-env run tests-cli wp wc product create --user=1 \
   --name="Product One" \
