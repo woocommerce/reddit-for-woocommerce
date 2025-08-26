@@ -146,8 +146,8 @@ final class PixelTrackingService implements ServiceStatusInterface {
 	 * Injects inline tracking data into the page footer.
 	 *
 	 * Conditionally populates tracking data with relevant event payloads
-	 * such as `VIEW_CONTENT`, `START_CHECKOUT`, and `PAGE_VIEW`, then
-	 * localizes it to the frontend as a global JS variable.
+	 * such as `VIEW_CONTENT`, and `PAGE_VIEW`, then localizes it to the
+	 * frontend as a global JS variable.
 	 *
 	 * @since 0.1.0
 	 */
@@ -216,11 +216,12 @@ final class PixelTrackingService implements ServiceStatusInterface {
 
 		$tracking_data['event_id_el_name'] = Helper::with_prefix( 'event_id' );
 		$tracking_data['VIEW_CONTENT']     = array(
-			'products'   => array(
-				'id'   => $product->get_id(),
-				'name' => $product->get_name(),
+			'products' => array(
+				array(
+					'id'   => $product->get_id(),
+					'name' => $product->get_name(),
+				),
 			),
-			'item_count' => 1,
 		);
 	}
 
