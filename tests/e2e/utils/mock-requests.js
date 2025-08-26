@@ -112,7 +112,7 @@ export default class MockRequests {
 	 * @param {string} url
 	 */
 	async mockJetpackConnect( url ) {
-		await this.fulfillRequest( /\/wc\/sfw\/jetpack\/connect\b/, { url } );
+		await this.fulfillRequest( /\/wc\/rfw\/jetpack\/connect\b/, { url } );
 	}
 
 	/**
@@ -125,7 +125,7 @@ export default class MockRequests {
 		displayName = 'Test user',
 		email = 'jetpack@example.com'
 	) {
-		await this.fulfillRequest( /\/wc\/sfw\/jetpack\/connected\b/, {
+		await this.fulfillRequest( /\/wc\/rfw\/jetpack\/connected\b/, {
 			active: 'yes',
 			owner: 'yes',
 			displayName,
@@ -137,7 +137,7 @@ export default class MockRequests {
 	 * Mock Jetpack as not connected.
 	 */
 	async mockJetpackNotConnected() {
-		await this.fulfillRequest( /\/wc\/sfw\/jetpack\/connected\b/, {
+		await this.fulfillRequest( /\/wc\/rfw\/jetpack\/connected\b/, {
 			active: 'no',
 			displayName: '',
 			email: '',
@@ -151,7 +151,7 @@ export default class MockRequests {
 	 * @return {Promise<void>}
 	 */
 	async mockRedditConnect( url ) {
-		await this.fulfillRequest( /\/wc\/sfw\/reddit\/connect\b/, { url } );
+		await this.fulfillRequest( /\/wc\/rfw\/reddit\/connect\b/, { url } );
 	}
 
 	/**
@@ -161,7 +161,7 @@ export default class MockRequests {
 	 * @return {Promise<void>}
 	 */
 	async mockRedditConnection( payload ) {
-		await this.fulfillRequest( /\/wc\/sfw\/reddit\/connection\b/, payload );
+		await this.fulfillRequest( /\/wc\/rfw\/reddit\/connection\b/, payload );
 	}
 
 	/**
@@ -171,7 +171,7 @@ export default class MockRequests {
 	 * @return {Promise<void>}
 	 */
 	async mockOnboardingSetup( payload ) {
-		await this.fulfillRequest( /\/wc\/sfw\/reddit\/setup\b/, payload );
+		await this.fulfillRequest( /\/wc\/rfw\/reddit\/setup\b/, payload );
 	}
 
 	/**
@@ -181,7 +181,7 @@ export default class MockRequests {
 	 * @return {Promise<void>}
 	 */
 	async mockRedditAccount( payload ) {
-		await this.fulfillRequest( /\/wc\/sfw\/reddit\/account\b/, payload );
+		await this.fulfillRequest( /\/wc\/rfw\/reddit\/config\b/, payload );
 	}
 
 	/**
@@ -192,7 +192,7 @@ export default class MockRequests {
 	 */
 	async mockRedditDisconnection( status = 200 ) {
 		await this.fulfillRequest(
-			/\/wc\/sfw\/reddit\/connection\b/,
+			/\/wc\/rfw\/reddit\/connection\b/,
 			{ status: 'disconnected' },
 			status,
 			[ 'DELETE' ]

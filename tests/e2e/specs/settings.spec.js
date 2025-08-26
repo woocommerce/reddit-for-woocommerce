@@ -8,6 +8,7 @@ const { test, expect } = require( '@playwright/test' );
  */
 import SettingPage from '../utils/pages/settings.js';
 import ElementLocators from '../utils/element-locators.js';
+import { connectedConfigPayload } from '../utils/mockPayloads.js';
 
 /**
  * @type {import('../utils/pages/settings.js').default} settingPage
@@ -24,7 +25,7 @@ let locator = null;
  */
 let page = null;
 
-test.describe.skip( 'Reddit Settings', () => {
+test.describe( 'Reddit Settings', () => {
 	test.use( { storageState: process.env.ADMINSTATE } );
 
 	test.beforeAll( async ( { browser } ) => {
@@ -44,7 +45,7 @@ test.describe.skip( 'Reddit Settings', () => {
 		await settingPage.closePage();
 	} );
 
-	test( 'Can see onboarding success modal', async () => {
+	test.skip( 'Can see onboarding success modal', async () => {
 		await settingPage.mockJetpackConnected();
 		await settingPage.mockRedditConnection( { status: 'connected' } );
 		await page.goto(
@@ -79,17 +80,17 @@ test.describe.skip( 'Reddit Settings', () => {
 		settingPage.goto();
 
 		await expect(
-			page.locator( '.sfw-section__header', {
+			page.locator( '.rfw-section__header', {
 				hasText: 'Product Catalog',
 			} )
 		).toBeVisible();
 		await expect(
-			page.locator( '.sfw-section__header', {
+			page.locator( '.rfw-section__header', {
 				hasText: 'Track Conversions',
 			} )
 		).toBeVisible();
 		await expect(
-			page.locator( '.sfw-section__header', {
+			page.locator( '.rfw-section__header', {
 				hasText: 'Manage Reddit Connection',
 			} )
 		).toBeVisible();
@@ -120,46 +121,30 @@ test.describe.skip( 'Reddit Settings', () => {
 	} );
 
 	test( 'Reddit card details', async () => {
-		const payload = {
-			org_id: '244753a0-2021-482c-af9b-dd6e7677d562',
-			org_name: 'RedditForWooV105',
-			ad_acc_id: '89b3e14b-bac9-409e-857c-ab006cd1c96e',
-			ad_acc_name: 'RedditForWooV105 Self Service',
-			pixel_id: 'fd014a21-2e25-41a8-9e12-de8c9fe512b4',
-		};
-
-		await settingPage.mockRedditAccount( payload );
+		await settingPage.mockRedditAccount( connectedConfigPayload );
 		settingPage.goto();
 
 		await expect( locator.getRedditAccountCard() ).toContainText(
-			'Organization: RedditForWooV105'
+			'Business: R4W Business'
 		);
 		await expect( locator.getRedditAccountCard() ).toContainText(
-			'Ads Account: RedditForWooV105 Self Service (89b3e14b-bac9-409e-857c-ab006cd1c96e)'
+			'Ads Account: R4W Ad Account (ad-account-def123)'
 		);
 		await expect( locator.getRedditAccountCard() ).toContainText(
-			'Pixel ID: fd014a21-2e25-41a8-9e12-de8c9fe512b4'
+			'Pixel ID: pixel-def123'
 		);
 		await expect( locator.getRedditConnectedLabel() ).toBeVisible();
 	} );
 
-	test( 'Reddit account disconnection', async () => {
-		const payload = {
-			org_id: '244753a0-2021-482c-af9b-dd6e7677d562',
-			org_name: 'RedditForWooV105',
-			ad_acc_id: '89b3e14b-bac9-409e-857c-ab006cd1c96e',
-			ad_acc_name: 'RedditForWooV105 Self Service',
-			pixel_id: 'fd014a21-2e25-41a8-9e12-de8c9fe512b4',
-		};
-
-		await settingPage.mockRedditAccount( payload );
+	test.skip( 'Reddit account disconnection', async () => {
+		await settingPage.mockRedditAccount( connectedConfigPayload );
 		await settingPage.mockRedditDisconnection();
 		settingPage.goto();
 
 		await locator.getRedditDisconnectButton().click();
 
 		await expect( locator.getRedditAccountCard() ).toContainText(
-			'Organization: RedditForWooV105'
+			'Business: R4W Business'
 		);
 
 		await expect( locator.getRedditFinalDisconnectButton() ).toBeDisabled();

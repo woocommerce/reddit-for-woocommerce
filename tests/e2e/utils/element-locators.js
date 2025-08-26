@@ -16,8 +16,8 @@ export default class ElementLocators {
 	 * @return {import('@playwright/test').Locator} The locator for the matching account card.
 	 */
 	getCard( title = '' ) {
-		return this.page.locator( '.sfw-account-card', {
-			has: this.page.locator( '.sfw-account-card__title', {
+		return this.page.locator( '.rfw-account-card', {
+			has: this.page.locator( '.rfw-account-card__title', {
 				hasText: title,
 			} ),
 		} );
@@ -49,7 +49,7 @@ export default class ElementLocators {
 	 * @return {import('@playwright/test').Locator} The connected label locator.
 	 */
 	getWpConnectedLabel() {
-		return this.getWPAccountCard().locator( '.sfw-connected-icon-label' );
+		return this.getWPAccountCard().locator( '.rfw-connected-icon-label' );
 	}
 
 	/**
@@ -87,7 +87,7 @@ export default class ElementLocators {
 	 * @return {import('@playwright/test').Locator} The onboarding successful modal.
 	 */
 	getOnboardingSuccessfulModal() {
-		return this.page.locator( '.sfw-onboarding-success-modal', {
+		return this.page.locator( '.rfw-onboarding-success-modal', {
 			hasText: 'You’ve successfully set up Reddit for WooCommerce!',
 		} );
 	}
@@ -120,7 +120,7 @@ export default class ElementLocators {
 	 * @return {import('@playwright/test').Locator} The Disconnect confirmation modal.
 	 */
 	getRedditDisconnectModal() {
-		return this.page.locator( '.sfw-disconnect-accounts-modal', {
+		return this.page.locator( '.rfw-disconnect-accounts-modal', {
 			hasText:
 				'I understand that I am disconnecting my Reddit account from this WooCommerce extension.',
 		} );
@@ -155,7 +155,7 @@ export default class ElementLocators {
 	 */
 	getRedditConnectedLabel() {
 		return this.getRedditAccountCard().locator(
-			'.sfw-connected-icon-label'
+			'.rfw-connected-icon-label'
 		);
 	}
 

@@ -8,6 +8,7 @@ const { test, expect } = require( '@playwright/test' );
  */
 import SetupPage from '../utils/pages/setup.js';
 import ElementLocators from '../utils/element-locators.js';
+import { connectedConfigPayload } from '../utils/mockPayloads.js';
 
 /**
  * @type {import('../utils/pages/setup.js').default} setupPage
@@ -24,7 +25,7 @@ let locator = null;
  */
 let page = null;
 
-test.describe.skip( 'Merchant Onboarding', () => {
+test.describe( 'Merchant Onboarding', () => {
 	test.use( { storageState: process.env.ADMINSTATE } );
 
 	test.beforeAll( async ( { browser } ) => {
@@ -83,31 +84,30 @@ test.describe.skip( 'Merchant Onboarding', () => {
 			status: 'connected',
 			step: 'accounts',
 		} );
+		await setupPage.mockRedditAccount( connectedConfigPayload );
 		await setupPage.goto();
 
 		await expect( locator.getRedditConnectedLabel() ).toBeVisible();
 	} );
 
 	test( 'Reddit card details', async () => {
-		const payload = {
-			org_id: '244753a0-2021-482c-af9b-dd6e7677d562',
-			org_name: 'RedditForWooV105',
-			ad_acc_id: '89b3e14b-bac9-409e-857c-ab006cd1c96e',
-			ad_acc_name: 'RedditForWooV105 Self Service',
-			pixel_id: 'fd014a21-2e25-41a8-9e12-de8c9fe512b4',
-		};
-
-		await setupPage.mockRedditAccount( payload );
+		await setupPage.mockJetpackConnected();
+		await setupPage.mockRedditConnection( { status: 'connected' } );
+		await setupPage.mockOnboardingSetup( {
+			status: 'connected',
+			step: 'accounts',
+		} );
+		await setupPage.mockRedditAccount( connectedConfigPayload );
 		setupPage.goto();
 
 		await expect( locator.getRedditAccountCard() ).toContainText(
-			'Organization: RedditForWooV105'
+			'Business: R4W Business'
 		);
 		await expect( locator.getRedditAccountCard() ).toContainText(
-			'Ads Account: RedditForWooV105 Self Service (89b3e14b-bac9-409e-857c-ab006cd1c96e)'
+			'Ads Account: R4W Ad Account (ad-account-def123)'
 		);
 		await expect( locator.getRedditAccountCard() ).toContainText(
-			'Pixel ID: fd014a21-2e25-41a8-9e12-de8c9fe512b4'
+			'Pixel ID: pixel-def123'
 		);
 		await expect( locator.getRedditConnectedLabel() ).toBeVisible();
 	} );
