@@ -58,8 +58,8 @@ document.addEventListener( 'DOMContentLoaded', () => {
 
 		if ( isConversionEnabled && data?.product_id ) {
 			sendCapiEvent( RedditEvent.ADD_TO_CART, {
-				event_id: eventId,
-				product_id: data.product_id,
+				conversionId: eventId,
+				productId: data.product_id,
 				quantity: 1,
 			} );
 		}
