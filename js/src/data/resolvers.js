@@ -64,7 +64,7 @@ export function getRedditAccountDetails() {
 	return async function ( { dispatch } ) {
 		try {
 			const response = await apiFetch( {
-				path: `${ API_NAMESPACE }/reddit/account`,
+				path: `${ API_NAMESPACE }/reddit/config`,
 			} );
 			dispatch( receiveRedditAccountDetails( response ) );
 		} catch ( error ) {

@@ -11,18 +11,17 @@ import './account-detail.scss';
 
 const AccountDetails = () => {
 	const {
-		org_name: organizationName,
-		ad_acc_id: adsId,
-		ad_acc_name: adsName,
+		business_name: businessName,
+		ad_account_id: adsId,
+		ad_account_name: adsName,
 		pixel_id: pixelId,
 	} = useRedditAccountDetails();
 
 	return (
 		<div className="rfw-reddit-account-details">
-			{ organizationName && (
+			{ businessName && (
 				<p>
-					{ __( 'Organization:', 'reddit-for-woo' ) }{ ' ' }
-					{ organizationName }
+					{ __( 'Business:', 'reddit-for-woo' ) } { businessName }
 				</p>
 			) }
 
