@@ -14,9 +14,9 @@ namespace RedditForWooCommerce\Tracking;
 use RedditForWooCommerce\Connection\WcsClient;
 use RedditForWooCommerce\Utils\Storage\Options;
 use RedditForWooCommerce\Utils\Storage\OptionDefaults;
+use RedditForWooCommerce\Utils\Helper;
 use RedditForWooCommerce\Tracking\Consent;
 use RedditForWooCommerce\Config;
-use WC_Product;
 
 /**
  * Fetches and injects Reddit pixel tracking code into WooCommerce frontend pages.
@@ -134,6 +134,12 @@ final class RemotePixelTracker implements PixelTrackerInterface {
 	 * @return string The sanitized pixel script, or empty string on failure.
 	 */
 	private function get_pixel_script() {
+		$script = apply_filters( Helper::with_prefix( 'filter_pixel_script' ), false );
+
+		if ( false !== $script ) {
+			return $script;
+		}
+
 		$pixel_id = Options::get( OptionDefaults::PIXEL_ID );
 
 		if ( empty( $pixel_id ) ) {
