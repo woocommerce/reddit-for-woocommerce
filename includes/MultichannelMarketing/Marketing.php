@@ -55,7 +55,7 @@ class Marketing {
 	 * @return MarketingChannelInterface[] Modified array of marketing channels including the Reddit channel.
 	 */
 	public static function add_reddit_channel( $channels ) {
-		$reddit_channel  = new RedditChannel();
+		$reddit_channel    = new RedditChannel();
 		$slug              = $reddit_channel->get_slug();
 		$channels[ $slug ] = $reddit_channel;
 
