@@ -1,18 +1,14 @@
 /**
  * External dependencies
  */
-import { __ } from '@wordpress/i18n';
 import { useState } from '@wordpress/element';
 
 /**
  * Internal dependencies
  */
 import useRedditAccountStatus from '~/hooks/useRedditAccountStatus';
-import AppButton from '~/components/app-button';
 import SpinnerCard from '~/components/spinner-card';
-import Section from '~/components/section';
-// import { ConnectedRedditAccountCard } from '~/components/reddit-account-card';
-import DisconnectModal, { REDDIT_ACCOUNT } from './disconnect-modal';
+import DisconnectModal from './disconnect-modal';
 
 /**
  * Accounts are disconnected from the Setting page
@@ -27,10 +23,7 @@ import DisconnectModal, { REDDIT_ACCOUNT } from './disconnect-modal';
 export default function LinkedAccounts() {
 	const { hasFinishedResolution: hasResolvedRedditAccount } =
 		useRedditAccountStatus();
-
 	const [ openedModal, setOpenedModal ] = useState( null );
-	const openDisconnectAdsAccountModal = () =>
-		setOpenedModal( REDDIT_ACCOUNT );
 	const dismissModal = () => setOpenedModal( null );
 
 	const handleDisconnected = () => {
@@ -49,23 +42,6 @@ export default function LinkedAccounts() {
 			) }
 
 			{ ! hasResolvedRedditAccount && <SpinnerCard /> }
-
-			{ /* { hasResolvedRedditAccount && (
-				<ConnectedRedditAccountCard hideAccountSwitch>
-					<Section.Card.Footer>
-						<AppButton
-							isDestructive
-							isLink
-							onClick={ openDisconnectAdsAccountModal }
-						>
-							{ __(
-								'Disconnect Reddit account',
-								'reddit-for-woo'
-							) }
-						</AppButton>
-					</Section.Card.Footer>
-				</ConnectedRedditAccountCard>
-			) } */ }
 		</>
 	);
 }
