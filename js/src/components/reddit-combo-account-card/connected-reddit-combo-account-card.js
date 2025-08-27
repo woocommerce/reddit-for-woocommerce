@@ -51,12 +51,12 @@ const ConnectedRedditComboAccountCard = () => {
 	};
 
 	const canShowConnectBusiness =
-		hasBusinessConnection && existingBusinessAccounts?.length > 0;
+		hasBusinessConnection || existingBusinessAccounts?.length > 0;
 	const showConnectBusiness =
 		canShowConnectBusiness && ( editMode || ! hasBusinessConnection );
 
 	const canShowConnectAds =
-		hasAdsConnection && existingAdsAccounts?.length > 0;
+		hasAdsConnection || existingAdsAccounts?.length > 0;
 	const showConnectAds =
 		canShowConnectAds && ( editMode || ! hasAdsConnection );
 

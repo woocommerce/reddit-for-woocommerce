@@ -50,7 +50,7 @@ const ConnectExistingAccount = ( { onCreateClick } ) => {
 			const businessAccount = existingAccounts?.find(
 				( acc ) => acc.business_id === value
 			);
-			const businessAccountName = businessAccount?.business_account_name;
+			const businessAccountName = businessAccount?.business_name;
 
 			await upsertBusinessAccount( value, businessAccountName );
 			await refetchRedditAccountConfig();
