@@ -17,6 +17,7 @@ import { useAppDispatch } from '~/data';
 import { handleApiError } from '~/utils/handleError';
 import useRedditBusinessAccount from '~/hooks/useRedditBusinessAccount';
 import useRedditAccountConfig from '~/hooks/useRedditAccountConfig';
+import useExistingBusinessAccounts from '~/hooks/useExistingBusinessAccounts';
 
 /**
  * Renders an account card to connect to an existing Reddit Business account.
@@ -29,6 +30,7 @@ const ConnectExistingAccount = ( { onCreateClick } ) => {
 	const [ isLoading, setLoading ] = useState( false );
 	const { upsertBusinessAccount } = useAppDispatch();
 	const { refetchRedditAccountConfig } = useRedditAccountConfig();
+	const { existingAccounts } = useExistingBusinessAccounts();
 	const { hasConnection, businessId, hasFinishedResolution } =
 		useRedditBusinessAccount();
 
@@ -45,7 +47,12 @@ const ConnectExistingAccount = ( { onCreateClick } ) => {
 
 		setLoading( true );
 		try {
-			await upsertBusinessAccount( value );
+			const businessAccount = existingAccounts?.find(
+				( acc ) => acc.business_id === value
+			);
+			const businessAccountName = businessAccount?.business_account_name;
+
+			await upsertBusinessAccount( value, businessAccountName );
 			await refetchRedditAccountConfig();
 		} catch ( error ) {
 			handleApiError(

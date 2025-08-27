@@ -55,10 +55,16 @@ const useAutoConnectAdsBusinessAccounts = () => {
 			const handleConnectAccountCallback = async () => {
 				if ( which === CONNECTING_ADS_ACCOUNT ) {
 					const adsAccount = existingAdsAccounts[ 0 ];
-					await upsertAdsAccount( adsAccount.ad_account_id );
+					await upsertAdsAccount(
+						adsAccount.ad_account_id,
+						adsAccount.ad_account_name
+					);
 				} else if ( which === CONNECTING_BUSINESS_ACCOUNT ) {
 					const businessAccount = existingBusinessAccounts[ 0 ];
-					await upsertBusinessAccount( businessAccount.business_id );
+					await upsertBusinessAccount(
+						businessAccount.business_id,
+						businessAccount.business_name
+					);
 					invalidateResolution( 'getExistingAdsAccounts', [] );
 				}
 				setConnectingWhich( null );

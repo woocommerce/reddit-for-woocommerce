@@ -17,6 +17,7 @@ import { useAppDispatch } from '~/data';
 import { handleApiError } from '~/utils/handleError';
 import useRedditAdsAccount from '~/hooks/useRedditAdsAccount';
 import useRedditAccountConfig from '~/hooks/useRedditAccountConfig';
+import useExistingAdsAccounts from '~/hooks/useExistingAdsAccounts';
 
 /**
  * Renders an account card to connect to an existing Reddit Ads account.
@@ -29,6 +30,7 @@ const ConnectExistingAccount = ( { onCreateClick } ) => {
 	const [ isLoading, setLoading ] = useState( false );
 	const { upsertAdsAccount } = useAppDispatch();
 	const { refetchRedditAccountConfig } = useRedditAccountConfig();
+	const { existingAccounts } = useExistingAdsAccounts();
 	const { hasConnection, adAccountId, hasFinishedResolution } =
 		useRedditAdsAccount();
 
@@ -45,7 +47,12 @@ const ConnectExistingAccount = ( { onCreateClick } ) => {
 
 		setLoading( true );
 		try {
-			await upsertAdsAccount( value );
+			const adsAccount = existingAccounts?.find(
+				( acc ) => acc.ad_account_id === value
+			);
+			const adsAccountName = adsAccount?.ad_account_name;
+
+			await upsertAdsAccount( value, adsAccountName );
 			await refetchRedditAccountConfig();
 		} catch ( error ) {
 			handleApiError(

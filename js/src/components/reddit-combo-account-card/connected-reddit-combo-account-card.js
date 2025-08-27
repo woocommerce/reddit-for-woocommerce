@@ -74,7 +74,8 @@ const ConnectedRedditComboAccountCard = () => {
 			) {
 				setIsConnectingAdsAccount( true );
 				await upsertAdsAccount(
-					existingAdsAccounts[ 0 ].ad_account_id
+					existingAdsAccounts[ 0 ].ad_account_id,
+					existingAdsAccounts[ 0 ].ad_account_name
 				);
 				setIsConnectingAdsAccount( false );
 			}
@@ -98,6 +99,10 @@ const ConnectedRedditComboAccountCard = () => {
 	const switchAccountButton = <SwitchAccountButton isTertiary />;
 
 	const getCardActions = () => {
+		if ( connectingWhich || isConnectingAdsAccount ) {
+			return null;
+		}
+
 		if ( editMode ) {
 			return (
 				<div className="rfw-reddit-combo-account-card__description-actions">

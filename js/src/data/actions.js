@@ -266,16 +266,21 @@ export async function disconnectRedditAccount(
  *
  * @async
  * @param {string} businessAccountId - The unique identifier for the business.
+ * @param {string} businessAccountName - The name of the business account.
  * @return {Object} The updated Reddit account configuration.
  * @throws Will throw an error if the API request fails.
  */
-export async function upsertBusinessAccount( businessAccountId ) {
+export async function upsertBusinessAccount(
+	businessAccountId,
+	businessAccountName
+) {
 	try {
 		const response = await apiFetch( {
 			path: `${ API_NAMESPACE }/reddit/config`,
 			method: 'POST',
 			data: {
 				business_id: businessAccountId,
+				business_name: businessAccountName,
 			},
 		} );
 
@@ -301,16 +306,18 @@ export async function upsertBusinessAccount( businessAccountId ) {
  *
  * @async
  * @param {string} adsAccountId - The ID of the Reddit ads account.
+ * @param {string} adsAccountName - The name of the Reddit ads account.
  * @return {Object} The received Reddit account configuration.
  * @throws {Error} If there is an error connecting the ad account.
  */
-export async function upsertAdsAccount( adsAccountId ) {
+export async function upsertAdsAccount( adsAccountId, adsAccountName ) {
 	try {
 		const response = await apiFetch( {
 			path: `${ API_NAMESPACE }/reddit/config`,
 			method: 'POST',
 			data: {
 				ad_account_id: adsAccountId,
+				ad_account_name: adsAccountName,
 			},
 		} );
 
@@ -341,7 +348,7 @@ export async function disconnectBusinessAccount(
 	if ( disconnectAllAccounts ) {
 		await dispatch( STORE_KEY ).disconnectAdsAccount();
 	}
-	return dispatch( STORE_KEY ).upsertBusinessAccount( '' );
+	return dispatch( STORE_KEY ).upsertBusinessAccount( '', '' );
 }
 
 /**
@@ -352,5 +359,5 @@ export async function disconnectBusinessAccount(
  * @return {Promise<void>} A promise that resolves when the ads account has been disconnected.
  */
 export async function disconnectAdsAccount() {
-	return dispatch( STORE_KEY ).upsertAdsAccount( '' );
+	return dispatch( STORE_KEY ).upsertAdsAccount( '', '' );
 }
