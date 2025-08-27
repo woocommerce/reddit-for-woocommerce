@@ -6,30 +6,29 @@ import { __ } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
-import useRedditAccountDetails from '~/hooks/useRedditAccountDetails';
+import useRedditAccountConfig from '~/hooks/useRedditAccountConfig';
 import './account-detail.scss';
 
 const AccountDetails = () => {
 	const {
-		org_name: organizationName,
-		ad_acc_id: adsId,
-		ad_acc_name: adsName,
+		business_name: businessName,
+		ad_account_id: adsAccountId,
+		ad_account_name: adsAccountName,
 		pixel_id: pixelId,
-	} = useRedditAccountDetails();
+	} = useRedditAccountConfig();
 
 	return (
 		<div className="rfw-reddit-account-details">
-			{ organizationName && (
+			{ businessName && (
 				<p>
-					{ __( 'Organization:', 'reddit-for-woo' ) }{ ' ' }
-					{ organizationName }
+					{ __( 'Business:', 'reddit-for-woo' ) } { businessName }
 				</p>
 			) }
 
-			{ adsId && adsName && (
+			{ adsAccountId && adsAccountName && (
 				<p>
-					{ __( 'Ads Account:', 'reddit-for-woo' ) } { adsName } (
-					{ adsId })
+					{ __( 'Ads Account:', 'reddit-for-woo' ) }{ ' ' }
+					{ adsAccountName } ({ adsAccountId })
 				</p>
 			) }
 

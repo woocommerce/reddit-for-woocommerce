@@ -13,6 +13,14 @@ import { handleApiError } from '~/utils/handleError';
 import TYPES from './action-types';
 
 /**
+ * @typedef {import('../data/selectors').RedditAdsAccount} RedditAdsAccount
+ */
+
+/**
+ * @typedef {import('../data/selectors').RedditBusinessAccount} RedditBusinessAccount
+ */
+
+/**
  * Creates an action to receive a Jetpack account.
  *
  * @param {Object} account - The Jetpack account object to be received.
@@ -78,15 +86,43 @@ export function receiveSettings( settings ) {
 }
 
 /**
- * Creates an action to receive Reddit account details.
+ * Creates an action to receive Reddit account config.
  *
- * @param {Object} redditAccountDetails - The Reddit account details to be received.
- * @return {Object} Action object with type RECEIVE_REDDIT_ACCOUNT_DETAILS and the Reddit account details.
+ * @param {Object} redditAccountConfig - The Reddit account config to be received.
+ * @return {Object} Action object with type RECEIVE_REDDIT_ACCOUNT_CONFIG and the Reddit account config.
  */
-export function receiveRedditAccountDetails( redditAccountDetails ) {
+export function receiveRedditAccountConfig( redditAccountConfig ) {
 	return {
-		type: TYPES.RECEIVE_REDDIT_ACCOUNT_DETAILS,
-		redditAccountDetails,
+		type: TYPES.RECEIVE_REDDIT_ACCOUNT_CONFIG,
+		redditAccountConfig,
+	};
+}
+
+/**
+ * Creates an action to receive existing ads accounts.
+ *
+ * @param {Array<RedditAdsAccount>} accounts - The list or object of existing ads accounts.
+ * @param {string} businessId - The Reddit business ID associated with the ads accounts.
+ * @return {Object} Redux action with type RECEIVE_EXISTING_ADS_ACCOUNTS and accounts payload.
+ */
+export function receiveExistingAdsAccounts( accounts, businessId ) {
+	return {
+		type: TYPES.RECEIVE_EXISTING_ADS_ACCOUNTS,
+		accounts,
+		businessId,
+	};
+}
+
+/**
+ * Creates an action to receive existing business accounts.
+ *
+ * @param {Array<RedditBusinessAccount>} accounts - The list or object of business accounts to be received.
+ * @return {Object} Action object with type and accounts payload.
+ */
+export function receiveExistingBusinessAccounts( accounts ) {
+	return {
+		type: TYPES.RECEIVE_EXISTING_BUSINESS_ACCOUNTS,
+		accounts,
 	};
 }
 
@@ -219,4 +255,78 @@ export async function disconnectRedditAccount(
 		);
 		throw error;
 	}
+}
+
+/**
+ * Upserts (creates or updates) a business account configuration for Reddit integration.
+ *
+ * Sends a POST request to the Reddit config API endpoint with the provided business ID.
+ * On success, dispatches the received Reddit account configuration.
+ * On failure, handles the API error and throws it.
+ *
+ * @async
+ * @param {string} businessAccountId - The unique identifier for the business.
+ * @return {Object} The updated Reddit account configuration.
+ * @throws Will throw an error if the API request fails.
+ */
+export async function upsertBusinessAccount( businessAccountId ) {
+	try {
+		const response = await apiFetch( {
+			path: `${ API_NAMESPACE }/reddit/config`,
+			method: 'POST',
+			data: {
+				business_id: businessAccountId,
+			},
+		} );
+
+		return receiveRedditAccountConfig( response );
+	} catch ( error ) {
+		handleApiError(
+			error,
+			__(
+				'There was an error connecting your business account.',
+				'reddit-for-woo'
+			)
+		);
+		throw error;
+	}
+}
+
+/**
+ * Upserts (creates or updates) a Reddit ads account configuration.
+ *
+ * Sends a POST request to the Reddit config API endpoint with the provided
+ * ads account ID, then dispatches the received configuration.
+ * Handles API errors and throws them after displaying an error message.
+ *
+ * @async
+ * @param {string} adsAccountId - The ID of the Reddit ads account.
+ * @return {Object} The received Reddit account configuration.
+ * @throws {Error} If there is an error connecting the ad account.
+ */
+export async function upsertAdsAccount( adsAccountId ) {
+	try {
+		const response = await apiFetch( {
+			path: `${ API_NAMESPACE }/reddit/config`,
+			method: 'POST',
+			data: {
+				ad_account_id: adsAccountId,
+			},
+		} );
+
+		return receiveRedditAccountConfig( response );
+	} catch ( error ) {
+		handleApiError(
+			error,
+			__(
+				'There was an error connecting your Ad account.',
+				'reddit-for-woo'
+			)
+		);
+		throw error;
+	}
+}
+
+export async function disconnectBusinessAccount() {
+	return dispatch( STORE_KEY ).upsertBusinessAccount( '' );
 }

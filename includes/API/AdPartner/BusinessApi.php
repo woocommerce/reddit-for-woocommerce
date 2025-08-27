@@ -45,7 +45,7 @@ class BusinessApi extends BaseAdPartnerApi {
 	 */
 	public function list() {
 		return $this->wcs->proxy_get(
-			'/v3/me/businesses'
+			'/ads/me/businesses'
 		);
 	}
 

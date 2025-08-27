@@ -7,11 +7,11 @@ import { useState } from '@wordpress/element';
 /**
  * Internal dependencies
  */
-import useRedditAccount from '~/hooks/useRedditAccount';
+import useRedditAccountStatus from '~/hooks/useRedditAccountStatus';
 import AppButton from '~/components/app-button';
 import SpinnerCard from '~/components/spinner-card';
 import Section from '~/components/section';
-import { ConnectedRedditAccountCard } from '~/components/reddit-account-card';
+// import { ConnectedRedditAccountCard } from '~/components/reddit-account-card';
 import DisconnectModal, { REDDIT_ACCOUNT } from './disconnect-modal';
 
 /**
@@ -26,7 +26,7 @@ import DisconnectModal, { REDDIT_ACCOUNT } from './disconnect-modal';
  */
 export default function LinkedAccounts() {
 	const { hasFinishedResolution: hasResolvedRedditAccount } =
-		useRedditAccount();
+		useRedditAccountStatus();
 
 	const [ openedModal, setOpenedModal ] = useState( null );
 	const openDisconnectAdsAccountModal = () =>
@@ -50,7 +50,7 @@ export default function LinkedAccounts() {
 
 			{ ! hasResolvedRedditAccount && <SpinnerCard /> }
 
-			{ hasResolvedRedditAccount && (
+			{ /* { hasResolvedRedditAccount && (
 				<ConnectedRedditAccountCard hideAccountSwitch>
 					<Section.Card.Footer>
 						<AppButton
@@ -65,7 +65,7 @@ export default function LinkedAccounts() {
 						</AppButton>
 					</Section.Card.Footer>
 				</ConnectedRedditAccountCard>
-			) }
+			) } */ }
 		</>
 	);
 }

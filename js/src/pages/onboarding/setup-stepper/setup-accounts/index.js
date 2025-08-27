@@ -11,10 +11,10 @@ import Section from '~/components/section';
 import AppButton from '~/components/app-button';
 import AppSpinner from '~/components/app-spinner';
 import useJetpackAccount from '~/hooks/useJetpackAccount';
-import useRedditAccount from '~/hooks/useRedditAccount';
+import useRedditAccountStatus from '~/hooks/useRedditAccountStatus';
 import StepContent from '~/components/stepper/step-content';
 import WPComAccountCard from '~/components/wpcom-account-card';
-import RedditAccountCard from '~/components/reddit-account-card';
+import RedditComboAccountCard from '~/components/reddit-combo-account-card';
 import StepContentHeader from '~/components/stepper/step-content-header';
 import StepContentFooter from '~/components/stepper/step-content-footer';
 import StepContentActions from '~/components/stepper/step-content-actions';
@@ -26,7 +26,7 @@ const SetupAccounts = ( props ) => {
 	const {
 		isConnected: isRedditConnected,
 		hasFinishedResolution: hasResolvedRedditAccount,
-	} = useRedditAccount();
+	} = useRedditAccountStatus();
 
 	/**
 	 * When jetpack is loading, or when Reddit account is loading,
@@ -67,7 +67,7 @@ const SetupAccounts = ( props ) => {
 				) }
 			>
 				<WPComAccountCard jetpack={ jetpack } />
-				<RedditAccountCard disabled={ ! isJetpackActive } />
+				<RedditComboAccountCard disabled={ ! isJetpackActive } />
 			</Section>
 
 			<StepContentFooter>
