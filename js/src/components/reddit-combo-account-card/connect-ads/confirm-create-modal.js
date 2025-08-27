@@ -12,8 +12,8 @@ import WarningIcon from '~/components/warning-icon';
 import './confirm-create-modal.scss';
 
 /**
- * Reddit Business account creation confirmation modal.
- * This modal is shown when the user tries to create a new Reddit Business account.
+ * Reddit Ads account creation confirmation modal.
+ * This modal is shown when the user tries to create a new Reddit Ads account.
  *
  * @param {Object} props Component props.
  * @param {Function} props.onContinue Callback to continue with account creation.
@@ -23,8 +23,8 @@ import './confirm-create-modal.scss';
 const ConfirmCreateModal = ( { onContinue, onRequestClose } ) => {
 	return (
 		<AppModal
-			className="rfw-create-business-account-warning-modal"
-			title={ __( 'Create Business Account', 'reddit-for-woo' ) }
+			className="rfw-create-ads-account-warning-modal"
+			title={ __( 'Create Ads Account', 'reddit-for-woo' ) }
 			buttons={ [
 				<AppButton key="confirm" isSecondary onClick={ onContinue }>
 					{ __( 'Yes, I want a new account', 'reddit-for-woo' ) }
@@ -35,18 +35,18 @@ const ConfirmCreateModal = ( { onContinue, onRequestClose } ) => {
 			] }
 			onRequestClose={ onRequestClose }
 		>
-			<p className="rfw-create-business-account-warning-modal__warning-text">
+			<p className="rfw-create-ads-account-warning-modal__warning-text">
 				<WarningIcon />
 				<span>
 					{ __(
-						'Are you sure you want to create a new Business account?',
+						'Are you sure you want to create a new Ads account?',
 						'reddit-for-woo'
 					) }
 				</span>
 			</p>
 			<p>
 				{ __(
-					'You already have another Business account associated with this Reddit account.',
+					'You already have another Ads account associated with this Reddit account.',
 					'reddit-for-woo'
 				) }
 			</p>

@@ -327,6 +327,30 @@ export async function upsertAdsAccount( adsAccountId ) {
 	}
 }
 
-export async function disconnectBusinessAccount() {
+/**
+ * Disconnects the currently connected business account.
+ *
+ * Dispatches an action to update the business account in the store to `null`.
+ *
+ * @param {boolean} [disconnectAllAccounts=false] Whether to also disconnect other accounts as well.
+ * @return {Promise<void>} A promise that resolves when the business account has been disconnected.
+ */
+export async function disconnectBusinessAccount(
+	disconnectAllAccounts = false
+) {
+	if ( disconnectAllAccounts ) {
+		await dispatch( STORE_KEY ).disconnectAdsAccount();
+	}
 	return dispatch( STORE_KEY ).upsertBusinessAccount( '' );
+}
+
+/**
+ * Disconnects the ads account by updating the store with a null value.
+ *
+ * @async
+ * @function disconnectAdsAccount
+ * @return {Promise<void>} A promise that resolves when the ads account has been disconnected.
+ */
+export async function disconnectAdsAccount() {
+	return dispatch( STORE_KEY ).upsertAdsAccount( '' );
 }

@@ -2,11 +2,13 @@
  * External dependencies
  */
 import { __ } from '@wordpress/i18n';
-import { useState } from '@wordpress/element';
+import { useState, useEffect } from '@wordpress/element';
 
 /**
  * Internal dependencies
  */
+import { useAppDispatch } from '~/data';
+import { CONNECTING_ADS_ACCOUNT } from '~/constants';
 import AccountCard, { APPEARANCE } from '~/components/account-card';
 import AccountDetails from './account-details';
 import AppButton from '~/components/app-button';
@@ -20,24 +22,25 @@ import ConnectBusiness from './connect-business';
 import SwitchAccountButton from './switch-account-button';
 import getAccountConnectionTexts from './getAccountConnectionTexts';
 import Indicator from './indicator';
+import SpinnerCard from '~/components/spinner-card';
+import './connected-reddit-combo-account-card.scss';
 
 const ConnectedRedditComboAccountCard = () => {
 	const [ editMode, setEditMode ] = useState( false );
+	const [ isConnectingAdsAccount, setIsConnectingAdsAccount ] =
+		useState( false );
+	const { upsertAdsAccount } = useAppDispatch();
 	const { hasDetermined, connectingWhich } =
 		useAutoConnectAdsBusinessAccounts();
 	const { hasConnection: hasBusinessConnection } = useRedditBusinessAccount();
 	const { hasConnection: hasAdsConnection } = useRedditAdsAccount();
-	const {
-		existingAccounts: existingBusinessAccounts,
-		hasFinishedResolution: hasResolvedExistingBusinessAccounts,
-	} = useExistingBusinessAccounts();
-	const {
-		existingAccounts: existingRedditAdsAccounts,
-		hasFinishedResolution: hasResolvedExistingRedditAdsAccounts,
-	} = useExistingAdsAccounts();
+	const { existingAccounts: existingBusinessAccounts } =
+		useExistingBusinessAccounts();
+	const { existingAccounts: existingAdsAccounts } = useExistingAdsAccounts();
 	const { text, subText } = getAccountConnectionTexts( connectingWhich );
-
-	console.log( connectingWhich, hasDetermined );
+	const { text: connectingAdText } = getAccountConnectionTexts(
+		CONNECTING_ADS_ACCOUNT
+	);
 
 	const handleCancelClick = () => {
 		setEditMode( false );
@@ -47,14 +50,51 @@ const ConnectedRedditComboAccountCard = () => {
 		setEditMode( true );
 	};
 
-	const showConnectAds =
-		( hasBusinessConnection &&
-			! hasAdsConnection &&
-			existingRedditAdsAccounts?.length > 1 ) ||
-		editMode;
+	const canShowConnectBusiness =
+		hasBusinessConnection && existingBusinessAccounts?.length > 0;
 	const showConnectBusiness =
-		( ! hasBusinessConnection && existingBusinessAccounts?.length > 1 ) ||
-		editMode;
+		canShowConnectBusiness && ( editMode || ! hasBusinessConnection );
+
+	const canShowConnectAds =
+		hasAdsConnection && existingAdsAccounts?.length > 0;
+	const showConnectAds =
+		canShowConnectAds && ( editMode || ! hasAdsConnection );
+
+	useEffect( () => {
+		const upsertAccount = async () => {
+			// Auto connect a single Ads account once a Business account is first connected.
+			// The initial business connection happens in the useAutoConnectAdsBusinessAccounts hook.
+			if (
+				hasDetermined &&
+				! hasAdsConnection &&
+				existingAdsAccounts?.length === 1 &&
+				hasBusinessConnection &&
+				connectingWhich === null &&
+				! isConnectingAdsAccount
+			) {
+				setIsConnectingAdsAccount( true );
+				await upsertAdsAccount(
+					existingAdsAccounts[ 0 ].ad_account_id
+				);
+				setIsConnectingAdsAccount( false );
+			}
+		};
+
+		upsertAccount();
+	}, [
+		hasDetermined,
+		hasAdsConnection,
+		hasBusinessConnection,
+		existingAdsAccounts,
+		upsertAdsAccount,
+		connectingWhich,
+		isConnectingAdsAccount,
+	] );
+
+	if ( ! hasDetermined ) {
+		return <SpinnerCard />;
+	}
+
 	const switchAccountButton = <SwitchAccountButton isTertiary />;
 
 	const getCardActions = () => {
@@ -73,7 +113,8 @@ const ConnectedRedditComboAccountCard = () => {
 		// button would change the visibility of the ConnectAds or ConnectBusiness cards.
 		return (
 			<div className="rfw-reddit-combo-account-card__description-actions">
-				{ ! hasBusinessConnection || ! hasAdsConnection ? (
+				{ ( showConnectAds || ! canShowConnectAds ) &&
+				( showConnectBusiness || ! canShowConnectBusiness ) ? (
 					switchAccountButton
 				) : (
 					<AppButton
@@ -86,7 +127,11 @@ const ConnectedRedditComboAccountCard = () => {
 		);
 	};
 
-	const showSpinner = Boolean( connectingWhich );
+	const showSpinner = Boolean( connectingWhich ) || isConnectingAdsAccount;
+	let description = text || <AccountDetails />;
+	if ( isConnectingAdsAccount ) {
+		description = connectingAdText;
+	}
 
 	return (
 		<div className="rfw-reddit-combo-account-card-wrapper">
@@ -94,16 +139,15 @@ const ConnectedRedditComboAccountCard = () => {
 				appearance={ APPEARANCE.REDDIT }
 				alignIcon="top"
 				className="rfw-reddit-combo-account-card rfw-reddit-combo-account-card--connected rfw-reddit-combo-service-account-card--reddit"
-				description={ text || <AccountDetails /> }
+				description={ description }
 				actions={ getCardActions() }
 				helper={ subText }
 				indicator={ <Indicator showSpinner={ showSpinner } /> }
 				expandedDetail
 			/>
 
-			{ showConnectAds && <ConnectAds /> }
-
 			{ showConnectBusiness && <ConnectBusiness /> }
+			{ showConnectAds && <ConnectAds /> }
 		</div>
 	);
 };

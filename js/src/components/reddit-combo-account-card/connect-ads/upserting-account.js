@@ -10,7 +10,7 @@ import AccountCard from '~/components/account-card';
 import LoadingLabel from '~/components/loading-label';
 
 /**
- * Renders indication that the user is in the process of creating or connecting a Reddit Business account.
+ * Renders indication that the user is in the process of creating or connecting a Reddit Ads account.
  *
  * @param {Object} props Component props.
  * @param {string} props.upsertingAction The action the user is performing.

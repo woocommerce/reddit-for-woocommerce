@@ -16,6 +16,7 @@ import ConnectedIconLabel from '~/components/connected-icon-label';
 import { useAppDispatch } from '~/data';
 import { handleApiError } from '~/utils/handleError';
 import useRedditBusinessAccount from '~/hooks/useRedditBusinessAccount';
+import useRedditAccountConfig from '~/hooks/useRedditAccountConfig';
 
 /**
  * Renders an account card to connect to an existing Reddit Business account.
@@ -27,6 +28,7 @@ const ConnectExistingAccount = ( { onCreateClick } ) => {
 	const [ value, setValue ] = useState();
 	const [ isLoading, setLoading ] = useState( false );
 	const { upsertBusinessAccount } = useAppDispatch();
+	const { refetchRedditAccountConfig } = useRedditAccountConfig();
 	const { hasConnection, businessId, hasFinishedResolution } =
 		useRedditBusinessAccount();
 
@@ -44,8 +46,7 @@ const ConnectExistingAccount = ( { onCreateClick } ) => {
 		setLoading( true );
 		try {
 			await upsertBusinessAccount( value );
-			// await fetchGoogleAdsAccountStatus();
-			// await refetchGoogleAdsAccount();
+			await refetchRedditAccountConfig();
 		} catch ( error ) {
 			handleApiError(
 				error,
@@ -89,7 +90,7 @@ const ConnectExistingAccount = ( { onCreateClick } ) => {
 			<AppButton
 				isSecondary
 				disabled={ hasConnection }
-				eventName="gla_ads_account_connect_button_click"
+				eventName="rfw_ads_account_connect_button_click"
 				// eventProps={ getEventProps( {
 				// 	id: Number( value ),
 				// } ) }
@@ -105,10 +106,6 @@ const ConnectExistingAccount = ( { onCreateClick } ) => {
 			className="rfw-reddit-combo-account-card rfw-reddit-combo-service-account-card--business"
 			title={ __(
 				'Connect to existing Reddit Business account',
-				'reddit-for-woo'
-			) }
-			helper={ __(
-				'Required to set up conversion measurement for your store.',
 				'reddit-for-woo'
 			) }
 			alignIndicator="toDetail"

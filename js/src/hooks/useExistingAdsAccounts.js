@@ -21,7 +21,7 @@ const useExistingAdsAccounts = () => {
 		( select ) => {
 			if ( ! hasBusinessConnection || ! hasResolvedBusinessAccount ) {
 				return {
-					existingAccounts: [],
+					existingAccounts: null,
 					hasFinishedResolution: hasResolvedBusinessAccount,
 				};
 			}

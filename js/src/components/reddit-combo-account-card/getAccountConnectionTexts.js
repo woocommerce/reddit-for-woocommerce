@@ -23,18 +23,12 @@ const getAccountConnectionTexts = ( connectingWhich ) => {
 	switch ( connectingWhich ) {
 		case CONNECTING_ADS_ACCOUNT:
 			text = __( 'Connecting ads account…', 'reddit-for-woo' );
-			subText = __(
-				'Required to set up conversion measurement for your store.', // @TODO: review
-				'reddit-for-woo'
-			);
+			subText = '';
 			break;
 
 		case CONNECTING_BUSINESS_ACCOUNT:
 			text = __( 'Connecting business account…', 'reddit-for-woo' );
-			subText = __(
-				'Required to sync products so they show on Reddit.', // @TODO: review
-				'reddit-for-woo'
-			);
+			subText = '';
 			break;
 	}
 

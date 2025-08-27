@@ -17,11 +17,11 @@ import {
 } from '~/constants';
 
 const useAutoConnectAdsBusinessAccounts = () => {
-	const { upsertAdsAccount, upsertBusinessAccount } = useAppDispatch();
+	const { upsertAdsAccount, upsertBusinessAccount, invalidateResolution } =
+		useAppDispatch();
 	const lockedRef = useRef( false );
 	const [ connectingWhich, setConnectingWhich ] = useState( null );
 	const [ hasDetermined, setDetermined ] = useState( false );
-
 	const shouldConnectAds = useShouldConnectAdsAccount();
 	const shouldConnectBusiness = useShouldConnectBusinessAccount();
 	const { existingAccounts: existingBusinessAccounts } =
@@ -59,6 +59,7 @@ const useAutoConnectAdsBusinessAccounts = () => {
 				} else if ( which === CONNECTING_BUSINESS_ACCOUNT ) {
 					const businessAccount = existingBusinessAccounts[ 0 ];
 					await upsertBusinessAccount( businessAccount.business_id );
+					invalidateResolution( 'getExistingAdsAccounts', [] );
 				}
 				setConnectingWhich( null );
 			};
@@ -72,6 +73,7 @@ const useAutoConnectAdsBusinessAccounts = () => {
 		shouldConnectBusiness,
 		existingBusinessAccounts,
 		existingAdsAccounts,
+		invalidateResolution,
 	] );
 
 	return {

@@ -16,9 +16,10 @@ import ConnectedIconLabel from '~/components/connected-icon-label';
 import { useAppDispatch } from '~/data';
 import { handleApiError } from '~/utils/handleError';
 import useRedditAdsAccount from '~/hooks/useRedditAdsAccount';
+import useRedditAccountConfig from '~/hooks/useRedditAccountConfig';
 
 /**
- * Renders an account card to connect to an existing Reddit Business account.
+ * Renders an account card to connect to an existing Reddit Ads account.
  *
  * @param {Object} props Component props.
  * @param {Function} props.onCreateClick Callback when clicking on the button to connect a new account
@@ -27,6 +28,7 @@ const ConnectExistingAccount = ( { onCreateClick } ) => {
 	const [ value, setValue ] = useState();
 	const [ isLoading, setLoading ] = useState( false );
 	const { upsertAdsAccount } = useAppDispatch();
+	const { refetchRedditAccountConfig } = useRedditAccountConfig();
 	const { hasConnection, adAccountId, hasFinishedResolution } =
 		useRedditAdsAccount();
 
@@ -44,14 +46,13 @@ const ConnectExistingAccount = ( { onCreateClick } ) => {
 		setLoading( true );
 		try {
 			await upsertAdsAccount( value );
-			// await fetchGoogleAdsAccountStatus();
-			// await refetchGoogleAdsAccount();
+			await refetchRedditAccountConfig();
 		} catch ( error ) {
 			handleApiError(
 				error,
 				null,
 				__(
-					'Unable to connect your Reddit Business account. Please try again later.',
+					'Unable to connect your Reddit Ads account. Please try again later.',
 					'reddit-for-woo'
 				)
 			);
@@ -63,7 +64,7 @@ const ConnectExistingAccount = ( { onCreateClick } ) => {
 	const handleDisconnected = () => {
 		/*
 		 * Prevent the `value` from staying on the unclaimed and disconnected account ID.
-		 * Please note that the reset works because the `BusinessAccountSelectControl` happens to
+		 * Please note that the reset works because the `AdsAccountSelectControl` happens to
 		 * switch between two different `AppSelectControls` so that `autoSelectFirstOption`
 		 * can be triggered again.
 		 */
@@ -89,7 +90,8 @@ const ConnectExistingAccount = ( { onCreateClick } ) => {
 			<AppButton
 				isSecondary
 				disabled={ hasConnection }
-				eventName="gla_ads_account_connect_button_click"
+				eventName="rfw_ads_account_connect_button_click"
+				// @TODO: Review tracking
 				// eventProps={ getEventProps( {
 				// 	id: Number( value ),
 				// } ) }
@@ -105,10 +107,6 @@ const ConnectExistingAccount = ( { onCreateClick } ) => {
 			className="rfw-reddit-combo-account-card rfw-reddit-combo-service-account-card--ads"
 			title={ __(
 				'Connect to existing Reddit Ads account',
-				'reddit-for-woo'
-			) }
-			helper={ __(
-				'Required to set up conversion measurement for your store.',
 				'reddit-for-woo'
 			) }
 			alignIndicator="toDetail"

@@ -32,7 +32,7 @@ const ConnectExistingAccountActions = ( {
 	const { existingAccounts } = useExistingBusinessAccounts();
 	const { hasConnection } = useRedditBusinessAccount();
 
-	if ( hasConnection && existingAccounts.length > 0 ) {
+	if ( hasConnection && existingAccounts.length > 1 ) {
 		return <DisconnectAccountButton onDisconnected={ onDisconnected } />;
 	}
 

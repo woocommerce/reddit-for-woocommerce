@@ -18,14 +18,14 @@ const AccountDetails = () => {
 		pixel_id: pixelId,
 	} = useRedditAccountConfig();
 	const { existingAccounts: existingAdsAccounts } = useExistingAdsAccounts();
-	const adsAccount = existingAdsAccounts.find(
+	const adsAccount = existingAdsAccounts?.find(
 		( acc ) => acc.ad_account_id === adsAccountId
 	);
 	const adsAccountName = adsAccount?.ad_account_name;
 
 	const { existingAccounts: existingBusinessAccounts } =
 		useExistingBusinessAccounts();
-	const businessAccount = existingBusinessAccounts.find(
+	const businessAccount = existingBusinessAccounts?.find(
 		( acc ) => acc.business_id === businessId
 	);
 	const businessName = businessAccount?.business_name;

@@ -12,7 +12,7 @@ const BusinessAccountSelectControl = ( props ) => {
 	const { existingAccounts } = useExistingBusinessAccounts();
 
 	const options = existingAccounts?.map( ( acc ) => ( {
-		value: acc.id,
+		value: acc.business_id,
 		label: `${ acc.business_name } (${ acc.business_id })`,
 	} ) );
 
