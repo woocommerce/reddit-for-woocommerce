@@ -9,7 +9,7 @@ import { __ } from '@wordpress/i18n';
 import useExistingBusinessAccounts from '~/hooks/useExistingBusinessAccounts';
 import useExistingAdsAccounts from '~/hooks/useExistingAdsAccounts';
 import useRedditAccountConfig from '~/hooks/useRedditAccountConfig';
-import './account-detail.scss';
+import './account-details.scss';
 
 const AccountDetails = () => {
 	const {
