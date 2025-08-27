@@ -317,40 +317,34 @@ class RedditConnectionController extends RESTBaseController {
 			return $this->get_connection_details();
 		}
 
-		$business_id     = sanitize_text_field( $request['business_id'] );
-		$business_name   = sanitize_text_field( $request['business_name'] );
-		$ad_account_id   = sanitize_text_field( $request['ad_account_id'] );
-		$ad_account_name = sanitize_text_field( $request['ad_account_name'] );
-		$pixel_id        = sanitize_text_field( $request['pixel_id'] );
-		$products_token  = sanitize_text_field( $request['products_token'] );
-		$capi_token      = sanitize_text_field( $request['capi_token'] );
+		$params = $request->get_json_params();
 
-		if ( ! empty( $business_id ) ) {
-			Options::set( OptionDefaults::BUSINESS_ID, $business_id );
+		if ( isset( $params['business_id'] ) ) {
+			Options::set( OptionDefaults::BUSINESS_ID, sanitize_text_field( $params['business_id'] ) );
 		}
 
-		if ( ! empty( $business_name ) ) {
-			Options::set( OptionDefaults::BUSINESS_NAME, $business_name );
+		if ( isset( $params['business_name'] ) ) {
+			Options::set( OptionDefaults::BUSINESS_NAME, sanitize_text_field( $params['business_name'] ) );
 		}
 
-		if ( ! empty( $ad_account_id ) ) {
-			Options::set( OptionDefaults::AD_ACCOUNT_ID, $ad_account_id );
+		if ( isset( $params['ad_account_id'] ) ) {
+			Options::set( OptionDefaults::AD_ACCOUNT_ID, sanitize_text_field( $params['ad_account_id'] ) );
 		}
 
-		if ( ! empty( $ad_account_name ) ) {
-			Options::set( OptionDefaults::AD_ACCOUNT_NAME, $ad_account_name );
+		if ( isset( $params['ad_account_name'] ) ) {
+			Options::set( OptionDefaults::AD_ACCOUNT_NAME, sanitize_text_field( $params['ad_account_name'] ) );
 		}
 
-		if ( ! empty( $pixel_id ) ) {
-			Options::set( OptionDefaults::PIXEL_ID, $pixel_id );
+		if ( isset( $params['pixel_id'] ) ) {
+			Options::set( OptionDefaults::PIXEL_ID, sanitize_text_field( $params['pixel_id'] ) );
 		}
 
-		if ( ! empty( $products_token ) ) {
-			Options::set( OptionDefaults::WCS_PRODUCTS_TOKEN, $products_token );
+		if ( isset( $params['products_token'] ) ) {
+			Options::set( OptionDefaults::WCS_PRODUCTS_TOKEN, sanitize_text_field( $params['products_token'] ) );
 		}
 
-		if ( ! empty( $capi_token ) ) {
-			Options::set( OptionDefaults::CONVERSION_ACCESS_TOKEN, $capi_token );
+		if ( isset( $params['capi_token'] ) ) {
+			Options::set( OptionDefaults::CONVERSION_ACCESS_TOKEN, sanitize_text_field( $params['capi_token'] ) );
 		}
 
 		return $this->get_connection_details();
