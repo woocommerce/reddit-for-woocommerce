@@ -1,0 +1,8 @@
+.rfw-create-pixel-id-warning-modal {
+
+	.rfw-create-pixel-id-warning-modal__warning-text {
+		display: flex;
+		align-items: center;
+		gap: calc(var(--main-gap) / 3);
+	}
+}
