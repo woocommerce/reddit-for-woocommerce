@@ -16,10 +16,8 @@ import useExistingPixels from './useExistingPixels';
 const useShouldConnectPixelId = () => {
 	const { hasFinishedResolution, hasConnection } = useRedditPixelId();
 
-	const {
-		hasFinishedResolution: hasResolvedExistingPixels,
-		existingPixels,
-	} = useExistingPixels();
+	const { hasFinishedResolution: hasResolvedExistingPixels, existingPixels } =
+		useExistingPixels();
 
 	// Return null if the account hasn't been resolved or the existing accounts haven't been resolved
 	if ( ! hasFinishedResolution || ! hasResolvedExistingPixels ) {

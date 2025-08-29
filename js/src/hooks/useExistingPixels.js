@@ -24,10 +24,16 @@ const useExistingPixels = () => {
 
 	return useSelect(
 		( select ) => {
-			if ( ! hasBusinessConnection || ! hasResolvedBusinessAccount || ! hasAdsConnection || ! hasResolvedAdsAccount ) {
+			if (
+				! hasBusinessConnection ||
+				! hasResolvedBusinessAccount ||
+				! hasAdsConnection ||
+				! hasResolvedAdsAccount
+			) {
 				return {
 					existingPixels: null,
-					hasFinishedResolution: hasResolvedBusinessAccount && hasResolvedAdsAccount,
+					hasFinishedResolution:
+						hasResolvedBusinessAccount && hasResolvedAdsAccount,
 				};
 			}
 
@@ -40,7 +46,12 @@ const useExistingPixels = () => {
 				),
 			};
 		},
-		[ hasBusinessConnection, hasResolvedBusinessAccount, hasAdsConnection, hasResolvedAdsAccount ]
+		[
+			hasBusinessConnection,
+			hasResolvedBusinessAccount,
+			hasAdsConnection,
+			hasResolvedAdsAccount,
+		]
 	);
 };
 

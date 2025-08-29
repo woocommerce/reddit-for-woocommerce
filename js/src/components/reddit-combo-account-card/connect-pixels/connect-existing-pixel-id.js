@@ -105,10 +105,7 @@ const ConnectExistingPixelId = ( { onCreateClick } ) => {
 	return (
 		<AccountCard
 			className="rfw-reddit-combo-account-card rfw-reddit-combo-service-account-card--pixel-id"
-			title={ __(
-				'Connect to existing Pixel ID',
-				'reddit-for-woo'
-			) }
+			title={ __( 'Connect to existing Pixel ID', 'reddit-for-woo' ) }
 			alignIndicator="toDetail"
 			indicator={ getIndicator() }
 			detail={

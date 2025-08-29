@@ -130,7 +130,6 @@ export function receiveExistingBusinessAccounts( accounts ) {
 	};
 }
 
-
 /**
  * Creates an action to receive existing pixel IDs.
  *

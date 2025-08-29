@@ -14,10 +14,8 @@ import useRedditAccountConfig from './useRedditAccountConfig';
  * @return {RedditPixelId} The Reddit Pixel ID.
  */
 const useRedditPixelId = () => {
-	const {
-		pixel_id: pixelId,
-		hasFinishedResolution,
-	} = useRedditAccountConfig();
+	const { pixel_id: pixelId, hasFinishedResolution } =
+		useRedditAccountConfig();
 
 	return {
 		pixelId,

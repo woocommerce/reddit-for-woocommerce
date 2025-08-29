@@ -47,9 +47,8 @@ const ConnectedRedditComboAccountCard = () => {
 	const { text: connectingAdText } = getAccountConnectionTexts(
 		CONNECTING_ADS_ACCOUNT
 	);
-	const { text: connectingPixelIdText } = getAccountConnectionTexts(
-		CONNECTING_PIXEL_ID
-	);
+	const { text: connectingPixelIdText } =
+		getAccountConnectionTexts( CONNECTING_PIXEL_ID );
 
 	const handleCancelClick = () => {
 		setEditMode( false );
@@ -119,9 +118,7 @@ const ConnectedRedditComboAccountCard = () => {
 				! isConnectingPixelId
 			) {
 				setIsConnectingPixelId( true );
-				await upsertPixelId(
-					existingPixels[ 0 ].pixel_id
-				);
+				await upsertPixelId( existingPixels[ 0 ].pixel_id );
 				setIsConnectingPixelId( false );
 			}
 		};

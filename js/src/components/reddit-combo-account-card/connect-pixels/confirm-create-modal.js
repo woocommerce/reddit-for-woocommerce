@@ -24,7 +24,7 @@ const ConfirmCreateModal = ( { onContinue, onRequestClose } ) => {
 	return (
 		<AppModal
 			className="rfw-create-pixel-id-warning-modal"
-			title={ __( 'Create Pixel', 'reddit-for-woo' ) }
+			title={ __( 'Create Pixel ID', 'reddit-for-woo' ) }
 			buttons={ [
 				<AppButton key="confirm" isSecondary onClick={ onContinue }>
 					{ __( 'Yes, I want a new Pixel ID', 'reddit-for-woo' ) }

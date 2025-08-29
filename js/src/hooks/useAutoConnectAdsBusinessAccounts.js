@@ -20,8 +20,12 @@ import {
 } from '~/constants';
 
 const useAutoConnectAdsBusinessAccounts = () => {
-	const { upsertAdsAccount, upsertBusinessAccount, upsertPixelId, invalidateResolution } =
-		useAppDispatch();
+	const {
+		upsertAdsAccount,
+		upsertBusinessAccount,
+		upsertPixelId,
+		invalidateResolution,
+	} = useAppDispatch();
 	const lockedRef = useRef( false );
 	const [ connectingWhich, setConnectingWhich ] = useState( null );
 	const [ hasDetermined, setDetermined ] = useState( false );
