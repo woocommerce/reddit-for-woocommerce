@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { __ } from '@wordpress/i18n';
-import { useEffect } from '@wordpress/element';
 import { addQueryArgs } from '@wordpress/url';
 
 /**
@@ -11,7 +10,6 @@ import { addQueryArgs } from '@wordpress/url';
 import { rfwData } from '~/constants';
 import { API_NAMESPACE } from '~/data/constants';
 import AppButton from '~/components/app-button';
-import useUpsertRedditConfig from '~/hooks/useUpsertRedditConfig';
 import AccountCard, { APPEARANCE } from '~/components/account-card';
 import useDispatchCoreNotices from '~/hooks/useDispatchCoreNotices';
 import useApiFetchCallback from '~/hooks/useApiFetchCallback';
@@ -26,22 +24,14 @@ import useApiFetchCallback from '~/hooks/useApiFetchCallback';
 /**
  * @fires rfw_reddit_account_connect_button_click
  */
-const ConnectRedditAccountCard = ( { disabled, configId } ) => {
+const ConnectRedditComboAccountCard = ( { disabled } ) => {
 	const { createNotice } = useDispatchCoreNotices();
-	const { upsertRedditConfig, loading: loadingUpsertRedditConfig } =
-		useUpsertRedditConfig( configId );
 	const nextPageName = rfwData?.setupComplete ? 'reconnect' : 'setup-reddit';
 	const query = { next_page_name: nextPageName };
 	const path = addQueryArgs( `${ API_NAMESPACE }/reddit/connect`, query );
 	const [ fetchRedditConnect, { loading, data } ] = useApiFetchCallback( {
 		path,
 	} );
-
-	useEffect( () => {
-		if ( configId ) {
-			upsertRedditConfig( configId );
-		}
-	}, [ configId, upsertRedditConfig ] );
 
 	const handleConnectClick = async () => {
 		try {
@@ -58,30 +48,6 @@ const ConnectRedditAccountCard = ( { disabled, configId } ) => {
 		}
 	};
 
-	const getIndicator = () => {
-		if ( loadingUpsertRedditConfig ) {
-			return (
-				<AppButton
-					loading
-					text={ __( 'Connecting…', 'reddit-for-woo' ) }
-				/>
-			);
-		}
-
-		return (
-			<AppButton
-				isSecondary
-				disabled={ disabled }
-				loading={ loading || data }
-				eventName="rfw_reddit_account_connect_button_click"
-				eventProps={ { context: nextPageName } }
-				onClick={ handleConnectClick }
-			>
-				{ __( 'Connect', 'reddit-for-woo' ) }
-			</AppButton>
-		);
-	};
-
 	return (
 		<AccountCard
 			appearance={ APPEARANCE.REDDIT }
@@ -90,9 +56,20 @@ const ConnectRedditAccountCard = ( { disabled, configId } ) => {
 				'Connect your Reddit Business Account to sync your catalog and launch campaigns.',
 				'reddit-for-woo'
 			) }
-			indicator={ getIndicator() }
+			indicator={
+				<AppButton
+					isSecondary
+					disabled={ disabled }
+					loading={ loading || data }
+					eventName="rfw_reddit_account_connect_button_click"
+					eventProps={ { context: nextPageName } }
+					onClick={ handleConnectClick }
+				>
+					{ __( 'Connect', 'reddit-for-woo' ) }
+				</AppButton>
+			}
 		/>
 	);
 };
 
-export default ConnectRedditAccountCard;
+export default ConnectRedditComboAccountCard;
