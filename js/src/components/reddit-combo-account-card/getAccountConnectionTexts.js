@@ -9,6 +9,7 @@ import { __ } from '@wordpress/i18n';
 import {
 	CONNECTING_ADS_ACCOUNT,
 	CONNECTING_BUSINESS_ACCOUNT,
+	CONNECTING_PIXEL_ID,
 } from '~/constants';
 
 /**
@@ -28,6 +29,11 @@ const getAccountConnectionTexts = ( connectingWhich ) => {
 
 		case CONNECTING_BUSINESS_ACCOUNT:
 			text = __( 'Connecting business account…', 'reddit-for-woo' );
+			subText = '';
+			break;
+
+		case CONNECTING_PIXEL_ID:
+			text = __( 'Connecting pixel ID…', 'reddit-for-woo' );
 			subText = '';
 			break;
 	}
