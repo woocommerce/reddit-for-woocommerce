@@ -15,3 +15,6 @@ export const SETUP_STATUS = {
 	CONNECTED: 'connected',
 	DISCONNECTED: 'disconnected',
 };
+
+export const CONNECTING_ADS_ACCOUNT = 'connecting_ads';
+export const CONNECTING_BUSINESS_ACCOUNT = 'connecting_business';
