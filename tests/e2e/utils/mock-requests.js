@@ -1,3 +1,13 @@
+/**
+ * Internal dependencies
+ */
+import {
+	connectedConfigPayload,
+	businesses,
+	adAccounts,
+	pixels,
+} from '../utils/mockPayloads.js';
+
 const proxyFulfill = ( instance, options ) => {
 	return new Proxy( instance.originalTarget || instance, {
 		get( target, property ) {
@@ -180,8 +190,41 @@ export default class MockRequests {
 	 * @param {Object} payload The account or organization data to return.
 	 * @return {Promise<void>}
 	 */
-	async mockRedditAccount( payload ) {
+	async mockRedditAccount( payload = connectedConfigPayload ) {
 		await this.fulfillRequest( /\/wc\/rfw\/reddit\/config\b/, payload );
+	}
+
+	/**
+	 * Mock the Reddit Businesses data endpoint.
+	 *
+	 * @param {Object} payload The list of Business data to return.
+	 * @return {Promise<void>}
+	 */
+	async mockRedditBusiness( payload = businesses ) {
+		await this.fulfillRequest( /\/wc\/rfw\/reddit\/businesses\b/, payload );
+	}
+
+	/**
+	 * Mock the Reddit Ad Accounts data endpoint.
+	 *
+	 * @param {Object} payload The list of Ad Accounts data to return.
+	 * @return {Promise<void>}
+	 */
+	async mockRedditAdAccounts( payload = adAccounts ) {
+		await this.fulfillRequest(
+			/\/wc\/rfw\/reddit\/ad_accounts\b/,
+			payload
+		);
+	}
+
+	/**
+	 * Mock the Reddit Pixels data endpoint.
+	 *
+	 * @param {Object} payload The list of Pixel data to return.
+	 * @return {Promise<void>}
+	 */
+	async mockRedditPixels( payload = pixels ) {
+		await this.fulfillRequest( /\/wc\/rfw\/reddit\/pixels\b/, payload );
 	}
 
 	/**

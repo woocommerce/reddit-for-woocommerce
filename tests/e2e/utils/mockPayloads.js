@@ -7,11 +7,47 @@ export const connectedConfigPayload = {
 	capi_token: 'capi-token-ghi-123',
 };
 
-export const disconnectedConfigPayload = {
-	business_id: '',
-	business_name: '',
-	ad_account_id: '',
-	ad_account_name: '',
-	pixel_id: '',
-	capi_token: '',
-};
+export const businesses = [
+	{
+		business_id: 'business-id-a',
+		business_name: 'Business Name (A)',
+	},
+	{
+		business_id: 'business-id-b',
+		business_name: 'Business Name (B)',
+	},
+	{
+		business_id: 'business-id-c',
+		business_name: 'Business Name (C)',
+	},
+];
+
+export const adAccounts = [
+	{
+		ad_account_id: 'ad-account-id-a',
+		ad_account_name: 'Ad Account Name (A)',
+	},
+	{
+		ad_account_id: 'ad-account-id-b',
+		ad_account_name: 'Ad Account Name (B)',
+	},
+	{
+		ad_account_id: 'ad-account-id-c',
+		ad_account_name: 'Ad Account Name (C)',
+	},
+];
+
+export const pixels = [
+	{
+		pixel_id: 'pixel-id-a',
+		pixel_name: 'Pixel Name (A)',
+	},
+	{
+		pixel_id: 'pixel-id-b',
+		pixel_name: 'Pixel Name (B)',
+	},
+	{
+		pixel_id: 'pixel-id-c',
+		pixel_name: 'Pixel Name (C)',
+	},
+];

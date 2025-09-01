@@ -73,6 +73,88 @@ export default class ElementLocators {
 	}
 
 	/**
+	 * Get the Edit button inside the Reddit account card.
+	 *
+	 * @return {import('@playwright/test').Locator} The connect button locator.
+	 */
+	getRedditCardEditButton() {
+		return this.getRedditAccountCard().getByRole( 'button', {
+			name: 'Edit',
+		} );
+	}
+
+	/**
+	 * Get the Cancel button inside the Reddit account card.
+	 *
+	 * @return {import('@playwright/test').Locator} The connect button locator.
+	 */
+	getRedditCardCancelButton() {
+		return this.getRedditAccountCard().getByRole( 'button', {
+			name: 'Cancel',
+		} );
+	}
+
+	/**
+	 * Get the Connect to a different Business button inside the Reddit account card.
+	 *
+	 * @return {import('@playwright/test').Locator} The connect button locator.
+	 */
+	getConnectToDifferentBusinessButton() {
+		return this.getRedditAccountCard().getByRole( 'button', {
+			name: 'Or, connect to a different Reddit account',
+		} );
+	}
+
+	/**
+	 * Get the Connect to a different Ad Accounts button inside the Reddit account card.
+	 *
+	 * @return {import('@playwright/test').Locator} The connect button locator.
+	 */
+	getConnectToDifferentAdAccountsButton() {
+		return this.getRedditAccountCard().getByRole( 'button', {
+			name: 'Or, connect to a different Ads account',
+		} );
+	}
+
+	/**
+	 * Get the Connect to a different Ad Accounts button inside the Reddit account card.
+	 *
+	 * @return {import('@playwright/test').Locator} The connect button locator.
+	 */
+	getConnectToDifferentPixelIdButton() {
+		return this.getRedditAccountCard().getByRole( 'button', {
+			name: 'Or, connect to a different Pixel ID',
+		} );
+	}
+
+	/**
+	 * Get the Reddit Business Edit card.
+	 *
+	 * @return {import('@playwright/test').Locator} The connect button locator.
+	 */
+	getRedditBusinessCard() {
+		return this.getCard( 'Connect to existing Reddit Business account' );
+	}
+
+	/**
+	 * Get the Reddit Business Edit card.
+	 *
+	 * @return {import('@playwright/test').Locator} The connect button locator.
+	 */
+	getRedditAdsAccountCard() {
+		return this.getCard( 'Connect to existing Reddit Ads account' );
+	}
+
+	/**
+	 * Get the Reddit Pixel Edit card.
+	 *
+	 * @return {import('@playwright/test').Locator} The connect button locator.
+	 */
+	getRedditPixelCard() {
+		return this.getCard( 'Connect to existing Pixel ID' );
+	}
+
+	/**
 	 * Get the continue button that navigates to the setup screen after click.
 	 *
 	 * @return {import('@playwright/test').Locator} The continue button locator.

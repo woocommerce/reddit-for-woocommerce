@@ -84,7 +84,7 @@ test.describe( 'Merchant Onboarding', () => {
 			status: 'connected',
 			step: 'accounts',
 		} );
-		await setupPage.mockRedditAccount( connectedConfigPayload );
+		await setupPage.mockRedditAccount();
 		await setupPage.goto();
 
 		await expect( locator.getRedditConnectedLabel() ).toBeVisible();
@@ -97,7 +97,7 @@ test.describe( 'Merchant Onboarding', () => {
 			status: 'connected',
 			step: 'accounts',
 		} );
-		await setupPage.mockRedditAccount( connectedConfigPayload );
+		await setupPage.mockRedditAccount();
 		setupPage.goto();
 
 		await expect( locator.getRedditAccountCard() ).toContainText(
@@ -110,5 +110,32 @@ test.describe( 'Merchant Onboarding', () => {
 			'Pixel ID: pixel-def123'
 		);
 		await expect( locator.getRedditConnectedLabel() ).toBeVisible();
+	} );
+
+	test( 'Reddit card edit state', async () => {
+		await setupPage.mockJetpackConnected();
+		await setupPage.mockRedditBusiness();
+		await setupPage.mockRedditAdAccounts();
+		await setupPage.mockRedditPixels();
+		await setupPage.mockRedditConnection( { status: 'connected' } );
+		await setupPage.mockOnboardingSetup( {
+			status: 'connected',
+			step: 'accounts',
+		} );
+		await setupPage.mockRedditAccount();
+		setupPage.goto();
+
+		await locator.getRedditCardEditButton().click();
+		await expect(
+			locator.getConnectToDifferentBusinessButton()
+		).toBeVisible();
+		await expect( locator.getRedditCardCancelButton() ).toBeVisible();
+		await expect( locator.getRedditCardEditButton() ).not.toBeVisible();
+		await expect( locator.getRedditBusinessCard() ).toBeVisible();
+		await expect( locator.getRedditAdsAccountCard() ).toBeVisible();
+		await expect( locator.getRedditPixelCard() ).toBeVisible();
+
+		await locator.getRedditCardCancelButton().click();
+		await expect( locator.getRedditCardEditButton() ).toBeVisible();
 	} );
 } );
