@@ -85,6 +85,10 @@ class SettingsController extends RESTBaseController {
 		if ( isset( $request['capi_token'] ) ) {
 			$capi_token = sanitize_text_field( $request['capi_token'] );
 			Options::set( OptionDefaults::CONVERSION_ACCESS_TOKEN, $capi_token );
+
+			if ( empty( $capi_token ) ) {
+				Options::set( OptionDefaults::CONVERSIONS_ENABLED, 'no' );
+			}
 		}
 
 		return rest_ensure_response(

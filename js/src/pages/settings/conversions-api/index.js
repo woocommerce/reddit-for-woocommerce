@@ -4,7 +4,6 @@
 import { __ } from '@wordpress/i18n';
 import { CheckboxControl, TextControl } from '@wordpress/components';
 import { useState, useCallback, useEffect } from '@wordpress/element';
-import { useDebouncedInput } from '@wordpress/compose';
 
 /**
  * Internal dependencies
@@ -12,6 +11,7 @@ import { useDebouncedInput } from '@wordpress/compose';
 import { useAppDispatch } from '~/data';
 import useSettings from '~/hooks/useSettings';
 import useDispatchCoreNotices from '~/hooks/useDispatchCoreNotices';
+import useDebouncedInput from '~/hooks/useDebouncedInput';
 import AccountCard from '~/components/account-card';
 import SpinnerCard from '~/components/spinner-card';
 import './index.scss';
@@ -28,7 +28,8 @@ import './index.scss';
 const ConversionsAPI = () => {
 	const { isCapiEnabled, capiToken, hasFinishedResolution } = useSettings();
 	const [ isSaving, setIsSaving ] = useState( false );
-	const [ localCapiToken, setLocalCapiToken, debouncedLocalCapiToken ] = useDebouncedInput( '' );
+	const [ localCapiToken, setLocalCapiToken, debouncedLocalCapiToken ] =
+		useDebouncedInput( '' );
 	const { createNotice } = useDispatchCoreNotices();
 	const { updateSettings } = useAppDispatch();
 
@@ -36,9 +37,12 @@ const ConversionsAPI = () => {
 		await updateSettings( { trackConversions: ! isCapiEnabled } );
 	}, [ updateSettings, isCapiEnabled ] );
 
-	const updateConversionAccessToken = useCallback( async ( val ) => {
-		await updateSettings( { capiToken: val } )
-	}, [ updateSettings, capiToken ] );
+	const updateConversionAccessToken = useCallback(
+		async ( val ) => {
+			await updateSettings( { capiToken: val } );
+		},
+		[ updateSettings ]
+	);
 
 	const handleCapiStatusOnChange = async () => {
 		try {
@@ -59,30 +63,33 @@ const ConversionsAPI = () => {
 		}
 	};
 
-	const handleCapiTokenOnChange = async ( val = '' ) => {
-		try {
-			setIsSaving( true );
-			await updateConversionAccessToken( val );
+	const handleCapiTokenOnChange = useCallback(
+		async ( val = '' ) => {
+			try {
+				setIsSaving( true );
+				await updateConversionAccessToken( val );
 
-			createNotice(
-				'success',
-				__(
-					'Conversions API Access Token updated successfully.',
-					'reddit-for-woo'
-				)
-			);
-		} catch ( error ) {
-			// Silently fail because the error is handled within `updateSettings` action.
-		} finally {
-			setIsSaving( false );
-		}
-	};
+				createNotice(
+					'success',
+					__(
+						'Conversions API Access Token updated successfully.',
+						'reddit-for-woo'
+					)
+				);
+			} catch ( error ) {
+				// Silently fail because the error is handled within `updateSettings` action.
+			} finally {
+				setIsSaving( false );
+			}
+		},
+		[ updateConversionAccessToken, createNotice ]
+	);
 
 	useEffect( () => {
 		if ( hasFinishedResolution ) {
 			setLocalCapiToken( capiToken );
 		}
-	}, [ hasFinishedResolution ] );
+	}, [ hasFinishedResolution, setLocalCapiToken, capiToken ] );
 
 	useEffect( () => {
 		if ( undefined === capiToken ) {
@@ -92,7 +99,8 @@ const ConversionsAPI = () => {
 		if ( capiToken !== debouncedLocalCapiToken ) {
 			handleCapiTokenOnChange( debouncedLocalCapiToken );
 		}
-	}, [ debouncedLocalCapiToken ] );
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ debouncedLocalCapiToken, handleCapiTokenOnChange ] );
 
 	if ( ! hasFinishedResolution ) {
 		return <SpinnerCard />;
@@ -110,9 +118,28 @@ const ConversionsAPI = () => {
 				<>
 					<div>
 						<TextControl
-							label={ __( 'Conversion Access Token', 'reddit-for-woocommerce' ) }
+							label={ __(
+								'Conversion Access Token',
+								'reddit-for-woo'
+							) }
 							value={ localCapiToken }
+							readOnly={ isSaving }
 							onChange={ ( val ) => setLocalCapiToken( val ) }
+							help={
+								<>
+									{ __( 'Need help?', 'reddit-for-woo' ) }{ ' ' }
+									<a
+										href="https://business.reddithelp.com/s/article/conversion-access-token"
+										target="_blank"
+										rel="noopener noreferrer"
+									>
+										{ __(
+											'Follow this guide',
+											'reddit-for-woo'
+										) }
+									</a>
+								</>
+							}
 						/>
 					</div>
 					<div className="rfw-settings-track-conversions__actions">
