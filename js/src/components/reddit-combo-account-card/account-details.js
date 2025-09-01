@@ -27,16 +27,25 @@ const AccountDetails = () => {
 				isDismissible={ false }
 				className="rfw-reddit-account-details__notice"
 			>
-				<p>{ __( 'We couldn\'t find a Reddit Business Account connected to your user.', 'reddit-for-woo' ) }</p>
+				<p>
+					{ __(
+						"We couldn't find a Reddit Business Account connected to your user.",
+						'reddit-for-woo'
+					) }
+				</p>
 				<AppButton
 					isPrimary
 					text={ __( 'Create Business Account', 'reddit-for-woo' ) }
 					onClick={ () => {
-						window.open( 'https://accounts.reddit.com/adsregister', '_blank', 'noopener,noreferrer' );
+						window.open(
+							'https://accounts.reddit.com/adsregister',
+							'_blank',
+							'noopener,noreferrer'
+						);
 					} }
 				/>
 			</AppNotice>
-		)
+		);
 	}
 
 	return (
