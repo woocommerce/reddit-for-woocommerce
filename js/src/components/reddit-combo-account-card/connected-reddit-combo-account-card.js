@@ -61,17 +61,29 @@ const ConnectedRedditComboAccountCard = () => {
 	const canShowConnectBusiness =
 		hasBusinessConnection || existingBusinessAccounts?.length > 0;
 	const showConnectBusiness =
-		canShowConnectBusiness && ( editMode || ! hasBusinessConnection );
+		canShowConnectBusiness &&
+		! isConnectingAdsAccount &&
+		! isConnectingPixelId &&
+		! connectingWhich &&
+		( editMode || ! hasBusinessConnection );
 
 	const canShowConnectAds =
 		hasAdsConnection || existingAdsAccounts?.length > 0;
 	const showConnectAds =
-		canShowConnectAds && ( editMode || ! hasAdsConnection );
+		canShowConnectAds &&
+		! connectingWhich &&
+		! isConnectingAdsAccount &&
+		! isConnectingPixelId &&
+		( editMode || ! hasAdsConnection );
 
 	const canShowConnectPixelId =
 		hasPixelIdConnection || existingPixels?.length > 0;
 	const showConnectPixelId =
-		canShowConnectPixelId && ( editMode || ! hasPixelIdConnection );
+		canShowConnectPixelId &&
+		! connectingWhich &&
+		! isConnectingAdsAccount &&
+		! isConnectingPixelId &&
+		( editMode || ! hasPixelIdConnection );
 
 	useEffect( () => {
 		const upsertAccount = async () => {
@@ -176,7 +188,10 @@ const ConnectedRedditComboAccountCard = () => {
 		);
 	};
 
-	const showSpinner = Boolean( connectingWhich ) || isConnectingAdsAccount;
+	const showSpinner =
+		Boolean( connectingWhich ) ||
+		isConnectingAdsAccount ||
+		isConnectingPixelId;
 	let description = text || <AccountDetails />;
 	if ( isConnectingAdsAccount ) {
 		description = connectingAdText;

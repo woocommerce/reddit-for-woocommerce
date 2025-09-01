@@ -19,3 +19,8 @@ export const SETUP_STATUS = {
 export const CONNECTING_ADS_ACCOUNT = 'connecting_ads';
 export const CONNECTING_BUSINESS_ACCOUNT = 'connecting_business';
 export const CONNECTING_PIXEL_ID = 'connecting_pixel_id';
+export const ACCOUNT_TYPE = {
+	ADS: 'ads',
+	BUSINESS: 'business',
+	PIXEL: 'pixel',
+};

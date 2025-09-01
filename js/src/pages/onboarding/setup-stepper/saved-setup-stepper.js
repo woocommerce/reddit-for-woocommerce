@@ -54,12 +54,6 @@ const SavedSetupStepper = ( { savedStep } ) => {
 					),
 					onClick: handleStepClick,
 				},
-				{
-					key: STEP_NAME_KEY_MAP.paid_ads,
-					label: __( 'Create a campaign', 'reddit-for-woo' ),
-					content: <>Create campaign</>,
-					onClick: handleStepClick,
-				},
 			] }
 		/>
 	);
