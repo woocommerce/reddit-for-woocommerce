@@ -9,7 +9,7 @@ import { __ } from '@wordpress/i18n';
  */
 import AppButton from '~/components/app-button';
 import AccountCard from '~/components/account-card';
-import ConnectExistingPixelIdActions from './connect-existing-pixel-id-actions';
+import ConnectExistingAccountActions from './connect-existing-account-actions';
 import LoadingLabel from '~/components/loading-label';
 import ConnectedIconLabel from '~/components/connected-icon-label';
 import { useAppDispatch } from '~/data';
@@ -24,7 +24,7 @@ import PixelIdSelectControl from '~/components/pixel-id-select-control';
  * @param {Object} props Component props.
  * @param {Function} props.onCreateClick Callback when clicking on the button to connect a new account
  */
-const ConnectExistingPixelId = ( { onCreateClick } ) => {
+const ConnectExistingAccount = ( { onCreateClick } ) => {
 	const [ value, setValue ] = useState();
 	const [ isLoading, setLoading ] = useState( false );
 	const { upsertPixelId } = useAppDispatch();
@@ -121,7 +121,7 @@ const ConnectExistingPixelId = ( { onCreateClick } ) => {
 				/>
 			}
 			actions={
-				<ConnectExistingPixelIdActions
+				<ConnectExistingAccountActions
 					disabled={ isLoading }
 					isConnected={ hasConnection }
 					onCreateNewClick={ onCreateClick }
@@ -132,4 +132,4 @@ const ConnectExistingPixelId = ( { onCreateClick } ) => {
 	);
 };
 
-export default ConnectExistingPixelId;
+export default ConnectExistingAccount;

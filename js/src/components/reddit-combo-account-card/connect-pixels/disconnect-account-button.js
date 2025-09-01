@@ -8,6 +8,7 @@ import { useState } from '@wordpress/element';
 /**
  * Internal dependencies
  */
+import { ACCOUNT_TYPE } from '~/constants';
 import { useAppDispatch } from '~/data';
 import AppButton from '~/components/app-button';
 
@@ -28,12 +29,12 @@ import AppButton from '~/components/app-button';
  * @param {Function} [props.onDisconnected] Callback after the account is disconnected.
  */
 const DisconnectPixelIdButton = ( { onDisconnected = noop } ) => {
-	const { disconnectPixelId } = useAppDispatch();
+	const { resetRedditAccountConfig } = useAppDispatch();
 	const [ isDisconnecting, setDisconnecting ] = useState( false );
 
 	const handleSwitch = () => {
 		setDisconnecting( true );
-		disconnectPixelId()
+		resetRedditAccountConfig( ACCOUNT_TYPE.PIXEL )
 			.then( () => onDisconnected() )
 			.catch( () => setDisconnecting( false ) );
 	};
