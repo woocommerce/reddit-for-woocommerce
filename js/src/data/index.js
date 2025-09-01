@@ -31,6 +31,7 @@ const store = createReduxStore( STORE_KEY, {
 			reddit: null,
 			existingAdsAccounts: [],
 			existingBusinessAccounts: [],
+			existingPixels: [],
 		},
 		reddit: null,
 		trackConversions: null,

@@ -79,17 +79,17 @@ test.describe.skip( 'Reddit Settings', () => {
 		settingPage.goto();
 
 		await expect(
-			page.locator( '.sfw-section__header', {
+			page.locator( '.rfw-section__header', {
 				hasText: 'Product Catalog',
 			} )
 		).toBeVisible();
 		await expect(
-			page.locator( '.sfw-section__header', {
+			page.locator( '.rfw-section__header', {
 				hasText: 'Track Conversions',
 			} )
 		).toBeVisible();
 		await expect(
-			page.locator( '.sfw-section__header', {
+			page.locator( '.rfw-section__header', {
 				hasText: 'Manage Reddit Connection',
 			} )
 		).toBeVisible();

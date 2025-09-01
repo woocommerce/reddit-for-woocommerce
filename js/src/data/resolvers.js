@@ -18,6 +18,7 @@ import {
 	receiveRedditAccountConfig,
 	receiveTrackConversionsStatus,
 	receiveSettings,
+	receiveExistingPixels,
 } from './actions';
 
 /**
@@ -196,6 +197,34 @@ export function getExistingBusinessAccounts() {
 				error,
 				__(
 					'There was an error loading existing business accounts.',
+					'reddit-for-woo'
+				)
+			);
+		}
+	};
+}
+
+/**
+ * Asynchronous resolver to fetch existing pixel IDs from the API.
+ *
+ * Dispatches the received pixel IDs to the store.
+ * Handles API errors and displays a localized error message if the request fails.
+ *
+ * @return {Function} Thunk function for Redux dispatch.
+ */
+export function getExistingPixels() {
+	return async function ( { dispatch } ) {
+		try {
+			const response = await apiFetch( {
+				path: `${ API_NAMESPACE }/reddit/pixels`,
+			} );
+
+			dispatch( receiveExistingPixels( response ) );
+		} catch ( error ) {
+			handleApiError(
+				error,
+				__(
+					'There was an error loading existing pixel IDs.',
 					'reddit-for-woo'
 				)
 			);
