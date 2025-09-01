@@ -285,6 +285,7 @@ class RedditConnectionController extends RESTBaseController {
 		Options::delete( OptionDefaults::EXPORT_FILE_URL );
 		Options::delete( OptionDefaults::EXPORT_PRODUCT_IDS );
 		Options::delete( OptionDefaults::FEED_STATUS );
+		Options::delete( OptionDefaults::WCS_PRODUCTS_TOKEN );
 		Transients::delete( TransientDefaults::PIXEL_SCRIPT );
 
 		/**
@@ -337,10 +338,6 @@ class RedditConnectionController extends RESTBaseController {
 
 		if ( isset( $params['pixel_id'] ) ) {
 			Options::set( OptionDefaults::PIXEL_ID, sanitize_text_field( $params['pixel_id'] ) );
-		}
-
-		if ( isset( $params['products_token'] ) ) {
-			Options::set( OptionDefaults::WCS_PRODUCTS_TOKEN, sanitize_text_field( $params['products_token'] ) );
 		}
 
 		if ( isset( $params['capi_token'] ) ) {

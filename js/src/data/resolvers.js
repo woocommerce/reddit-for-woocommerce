@@ -130,6 +130,7 @@ export function getSettings() {
 					triggerExport: Boolean( response.trigger_export ),
 					lastExportTimeStamp: response.last_export_timestamp,
 					exportFileUrl: response.export_file_url,
+					productsToken: response.products_token,
 				} )
 			);
 		} catch ( error ) {

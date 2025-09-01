@@ -91,6 +91,10 @@ class SettingsController extends RESTBaseController {
 			}
 		}
 
+		if ( isset( $request['products_token'] ) ) {
+			Options::set( OptionDefaults::WCS_PRODUCTS_TOKEN, sanitize_text_field( $request['products_token'] ) );
+		}
+
 		return rest_ensure_response(
 			$this->get_settings_response()
 		);
@@ -116,6 +120,7 @@ class SettingsController extends RESTBaseController {
 				'trigger_export'        => ! file_exists( $csv_path ) && Helper::has_products() && (int) $timestamp <= ( time() - DAY_IN_SECONDS ),
 				'last_export_timestamp' => Helper::get_formatted_timestamp( $timestamp ),
 				'export_file_url'       => file_exists( $csv_path ) ? Options::get( OptionDefaults::EXPORT_FILE_URL ) : '',
+				'products_token'        => Options::get( OptionDefaults::WCS_PRODUCTS_TOKEN ),
 			)
 		);
 	}
