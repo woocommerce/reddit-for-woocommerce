@@ -1,5 +1,14 @@
 .rfw-reddit-account-details {
 
+	&__notice.rfw-app-notice {
+		margin: 0;
+		width: 100%;
+
+		p {
+			margin-top: 0;
+		}
+	}
+
 	p {
 		margin: 0;
 	}
