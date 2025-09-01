@@ -10,6 +10,7 @@ import apiFetch from '@wordpress/api-fetch';
  */
 import { API_NAMESPACE, STORE_KEY } from './constants';
 import { handleApiError } from '~/utils/handleError';
+import { ACCOUNT_TYPE } from '~/constants';
 import TYPES from './action-types';
 
 /**
@@ -317,6 +318,69 @@ export async function upsertBusinessAccount(
 }
 
 /**
+ * Resets the Reddit account configuration by sending empty values to the API.
+ *
+ * Sends a POST request to the Reddit config API endpoint with empty values for
+ * business ID, business name, ad account ID, ad account name, and pixel ID.
+ * On success, dispatches the received Reddit account configuration.
+ * On failure, handles the API error and throws it.
+ *
+ * @async
+ * @function resetRedditAccountConfig
+ * @return {Promise<Object>} The updated Reddit account configuration.
+ * @throws {Error} If the API request fails.
+ */
+export async function resetRedditAccountConfig(
+	accountType = ACCOUNT_TYPE.BUSINESS
+) {
+	try {
+		let data = {};
+		switch ( accountType ) {
+			case ACCOUNT_TYPE.BUSINESS:
+				data = {
+					business_id: '',
+					business_name: '',
+					ad_account_id: '',
+					ad_account_name: '',
+					pixel_id: '',
+				};
+				break;
+			case ACCOUNT_TYPE.ADS:
+				data = {
+					ad_account_id: '',
+					ad_account_name: '',
+					pixel_id: '',
+				};
+				break;
+			case ACCOUNT_TYPE.PIXEL:
+				data = {
+					pixel_id: '',
+				};
+				break;
+		}
+
+		if ( Object.keys( data ).length > 0 ) {
+			const response = await apiFetch( {
+				path: `${ API_NAMESPACE }/reddit/config`,
+				method: 'POST',
+				data,
+			} );
+
+			return receiveRedditAccountConfig( response );
+		}
+	} catch ( error ) {
+		handleApiError(
+			error,
+			__(
+				'There was an error disconnecting your account.',
+				'reddit-for-woo'
+			)
+		);
+		throw error;
+	}
+}
+
+/**
  * Upserts (creates or updates) a Reddit ads account configuration.
  *
  * Sends a POST request to the Reddit config API endpoint with the provided
@@ -386,44 +450,4 @@ export async function upsertPixelId( pixelId ) {
 		);
 		throw error;
 	}
-}
-
-/**
- * Disconnects the currently connected business account.
- *
- * Dispatches an action to update the business account in the store to `null`.
- *
- * @param {boolean} [disconnectAllAccounts=false] Whether to also disconnect other accounts as well.
- * @return {Promise<void>} A promise that resolves when the business account has been disconnected.
- */
-export async function disconnectBusinessAccount(
-	disconnectAllAccounts = false
-) {
-	if ( disconnectAllAccounts ) {
-		await dispatch( STORE_KEY ).disconnectPixelId();
-		await dispatch( STORE_KEY ).disconnectAdsAccount();
-	}
-	return dispatch( STORE_KEY ).upsertBusinessAccount( '', '' );
-}
-
-/**
- * Disconnects the ads account by updating the store with a null value.
- *
- * @async
- * @function disconnectAdsAccount
- * @return {Promise<void>} A promise that resolves when the ads account has been disconnected.
- */
-export async function disconnectAdsAccount() {
-	return dispatch( STORE_KEY ).upsertAdsAccount( '', '' );
-}
-
-/**
- * Disconnects the pixel ID by updating the store with a null value.
- *
- * @async
- * @function disconnectPixelId
- * @return {Promise<void>} A promise that resolves when the pixel ID has been disconnected.
- */
-export async function disconnectPixelId() {
-	return dispatch( STORE_KEY ).upsertPixelId( '' );
 }
