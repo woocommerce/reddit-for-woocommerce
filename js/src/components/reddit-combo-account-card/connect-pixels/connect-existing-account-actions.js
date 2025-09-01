@@ -7,12 +7,12 @@ import { __ } from '@wordpress/i18n';
  * Internal dependencies
  */
 import AppButton from '~/components/app-button';
-import DisconnectPixelIdButton from './disconnect-pixel-id-button';
+import DisconnectAccountButton from './disconnect-account-button';
 import useExistingPixels from '~/hooks/useExistingPixels';
 import useRedditPixelId from '~/hooks/useRedditPixelId';
 
 /**
- * Footer component.
+ * ConnectExistingAccountActions component.
  *
  * @param {Object} props Props.
  * @param {boolean} props.isConnected Whether the account is connected.
@@ -22,7 +22,7 @@ import useRedditPixelId from '~/hooks/useRedditPixelId';
  * @param {Object} props.restProps Rest props. Passed to AppButton.
  * @return {JSX.Element} Footer component.
  */
-const ConnectExistingPixelIdActions = ( {
+const ConnectExistingAccountActions = ( {
 	isConnected,
 	onCreateNewClick,
 	onDisconnected,
@@ -33,7 +33,7 @@ const ConnectExistingPixelIdActions = ( {
 	const { hasConnection } = useRedditPixelId();
 
 	if ( hasConnection && existingPixels?.length > 1 ) {
-		return <DisconnectPixelIdButton onDisconnected={ onDisconnected } />;
+		return <DisconnectAccountButton onDisconnected={ onDisconnected } />;
 	}
 
 	const disabledButton = disabled || ! existingPixels?.length;
@@ -49,4 +49,4 @@ const ConnectExistingPixelIdActions = ( {
 	);
 };
 
-export default ConnectExistingPixelIdActions;
+export default ConnectExistingAccountActions;

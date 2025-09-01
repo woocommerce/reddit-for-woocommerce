@@ -28,12 +28,12 @@ import AppButton from '~/components/app-button';
  * @param {Function} [props.onDisconnected] Callback after the account is disconnected.
  */
 const DisconnectAccountButton = ( { onDisconnected = noop } ) => {
-	const { disconnectBusinessAccount } = useAppDispatch();
+	const { resetRedditAccountConfig } = useAppDispatch();
 	const [ isDisconnecting, setDisconnecting ] = useState( false );
 
 	const handleSwitch = () => {
 		setDisconnecting( true );
-		disconnectBusinessAccount( true )
+		resetRedditAccountConfig()
 			.then( () => onDisconnected() )
 			.catch( () => setDisconnecting( false ) );
 	};
