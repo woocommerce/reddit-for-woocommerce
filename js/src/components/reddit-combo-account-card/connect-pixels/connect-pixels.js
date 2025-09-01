@@ -8,7 +8,7 @@ import { useState } from '@wordpress/element';
  */
 import AccountCard from '~/components/account-card';
 import ConfirmCreateModal from './confirm-create-modal';
-import ConnectExistingPixelId from './connect-existing-pixel-id';
+import ConnectExistingAccount from './connect-existing-account';
 import UpsertingPixel from './upserting-pixel';
 
 /**
@@ -41,7 +41,7 @@ const ConnectPixels = ( { onRequestCreate, upsertingAction } ) => {
 
 	return (
 		<>
-			<ConnectExistingPixelId onCreateClick={ handleCreateClick } />
+			<ConnectExistingAccount onCreateClick={ handleCreateClick } />
 
 			{ showCreateNewModal && (
 				<ConfirmCreateModal
