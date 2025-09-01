@@ -349,11 +349,30 @@ class RedditConnectionController extends RESTBaseController {
 		$ad_account_id        = Options::get( OptionDefaults::AD_ACCOUNT_ID );
 		$pixel_id             = Options::get( OptionDefaults::PIXEL_ID );
 
-		// Mark the onboarding process as connected. If the Jetpack is connected and the business id, ad account id, and pixel id are set.
+		// Mark the onboarding process as connected, if Jetpack is connected, and the business id, ad account id, and pixel id are set.
 		if ( $is_jetpack_connected && ! empty( $business_id ) && ! empty( $ad_account_id ) && ! empty( $pixel_id ) ) {
 			Options::set( OptionDefaults::ONBOARDING_STATUS, 'connected' );
 
-			// @todo Create a product catalog and save the catalog id.
+			$response = $this->ad_partner_api->catalog->create();
+
+			if ( is_wp_error( $response ) ) {
+				return new WP_REST_Response(
+					array(
+						'status'  => 'error',
+						'message' => $response->get_error_message(),
+					),
+					500
+				);
+			}
+
+			$data         = $response->get_data();
+			$catalog_data = $data['catalogs'];
+
+			if ( ! empty( $catalog_data ) && ! empty( $catalog_data[0] ) ) {
+				$catalog = $catalog_data[0]['catalog'];
+
+				Options::set( OptionDefaults::CATALOG_ID, $catalog['id'] );
+			}
 
 			/**
 			 * Triggers when the Reddit onboarding process is completed.
