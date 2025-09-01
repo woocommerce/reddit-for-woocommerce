@@ -25,6 +25,7 @@ const useAutoConnectAdsBusinessAccounts = () => {
 		upsertBusinessAccount,
 		upsertPixelId,
 		invalidateResolution,
+		fetchSetup,
 	} = useAppDispatch();
 	const lockedRef = useRef( false );
 	const [ connectingWhich, setConnectingWhich ] = useState( null );
@@ -65,7 +66,7 @@ const useAutoConnectAdsBusinessAccounts = () => {
 
 		if ( which ) {
 			const handleConnectAccountCallback = async () => {
-				if ( which === CONNECTING_ADS_ACCOUNT ) {
+				if ( which === CONNECTING_PIXEL_ID ) {
 					const pixelId = existingPixels[ 0 ];
 					await upsertPixelId( pixelId );
 				} else if ( which === CONNECTING_ADS_ACCOUNT ) {
@@ -84,6 +85,15 @@ const useAutoConnectAdsBusinessAccounts = () => {
 					invalidateResolution( 'getExistingPixels', [] );
 					invalidateResolution( 'getExistingAdsAccounts', [] );
 				}
+
+				if (
+					which === CONNECTING_PIXEL_ID ||
+					which === CONNECTING_ADS_ACCOUNT ||
+					which === CONNECTING_BUSINESS_ACCOUNT
+				) {
+					fetchSetup();
+				}
+
 				setConnectingWhich( null );
 			};
 
@@ -100,6 +110,7 @@ const useAutoConnectAdsBusinessAccounts = () => {
 		existingAdsAccounts,
 		existingPixels,
 		invalidateResolution,
+		fetchSetup,
 	] );
 
 	return {
