@@ -33,7 +33,7 @@ const ConnectedRedditComboAccountCard = () => {
 	const [ isConnectingAdsAccount, setIsConnectingAdsAccount ] =
 		useState( false );
 	const [ isConnectingPixelId, setIsConnectingPixelId ] = useState( false );
-	const { upsertAdsAccount, upsertPixelId } = useAppDispatch();
+	const { upsertAdsAccount, upsertPixelId, fetchSetup } = useAppDispatch();
 	const { hasDetermined, connectingWhich } =
 		useAutoConnectAdsBusinessAccounts();
 	const { hasConnection: hasBusinessConnection } = useRedditBusinessAccount();
@@ -102,6 +102,7 @@ const ConnectedRedditComboAccountCard = () => {
 					existingAdsAccounts[ 0 ].ad_account_id,
 					existingAdsAccounts[ 0 ].ad_account_name
 				);
+				fetchSetup();
 				setIsConnectingAdsAccount( false );
 			}
 		};
@@ -115,6 +116,7 @@ const ConnectedRedditComboAccountCard = () => {
 		upsertAdsAccount,
 		connectingWhich,
 		isConnectingAdsAccount,
+		fetchSetup,
 	] );
 
 	useEffect( () => {
@@ -131,6 +133,7 @@ const ConnectedRedditComboAccountCard = () => {
 			) {
 				setIsConnectingPixelId( true );
 				await upsertPixelId( existingPixels[ 0 ].pixel_id );
+				fetchSetup();
 				setIsConnectingPixelId( false );
 			}
 		};
@@ -145,6 +148,7 @@ const ConnectedRedditComboAccountCard = () => {
 		upsertPixelId,
 		connectingWhich,
 		isConnectingPixelId,
+		fetchSetup,
 	] );
 
 	if ( ! hasDetermined ) {

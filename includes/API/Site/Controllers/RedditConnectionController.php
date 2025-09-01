@@ -347,6 +347,25 @@ class RedditConnectionController extends RESTBaseController {
 			Options::set( OptionDefaults::CONVERSION_ACCESS_TOKEN, sanitize_text_field( $params['capi_token'] ) );
 		}
 
+		$is_jetpack_connected = 'yes' === Options::get( OptionDefaults::IS_JETPACK_CONNECTED );
+		$business_id          = Options::get( OptionDefaults::BUSINESS_ID );
+		$ad_account_id        = Options::get( OptionDefaults::AD_ACCOUNT_ID );
+		$pixel_id             = Options::get( OptionDefaults::PIXEL_ID );
+
+		// Mark the onboarding process as connected. If the Jetpack is connected and the business id, ad account id, and pixel id are set.
+		if ( $is_jetpack_connected && ! empty( $business_id ) && ! empty( $ad_account_id ) && ! empty( $pixel_id ) ) {
+			Options::set( OptionDefaults::ONBOARDING_STATUS, 'connected' );
+
+			// @todo Create a product catalog and save the catalog id.
+
+			/**
+			 * Triggers when the Reddit onboarding process is completed.
+			 *
+			 * @since 0.1.0
+			 */
+			do_action( Helper::with_prefix( 'onboarding_complete' ) );
+		}
+
 		return $this->get_connection_details();
 	}
 
