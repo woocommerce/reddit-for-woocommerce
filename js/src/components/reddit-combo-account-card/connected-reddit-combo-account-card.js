@@ -26,6 +26,7 @@ import SwitchAccountButton from './switch-account-button';
 import getAccountConnectionTexts from './getAccountConnectionTexts';
 import Indicator from './indicator';
 import SpinnerCard from '~/components/spinner-card';
+import CreateBusinessAccountNotice from './create-business-account-notice';
 import './connected-reddit-combo-account-card.scss';
 
 const ConnectedRedditComboAccountCard = () => {
@@ -210,7 +211,12 @@ const ConnectedRedditComboAccountCard = () => {
 				alignIcon="top"
 				className="rfw-reddit-combo-account-card rfw-reddit-combo-account-card--connected rfw-reddit-combo-service-account-card--reddit"
 				description={ description }
-				actions={ getCardActions() }
+				actions={
+					<>
+						{ getCardActions() }
+						<CreateBusinessAccountNotice />
+					</>
+				}
 				helper={ subText }
 				indicator={ <Indicator showSpinner={ showSpinner } /> }
 				expandedDetail
