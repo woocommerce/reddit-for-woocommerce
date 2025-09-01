@@ -27,6 +27,7 @@ const useSettings = () => {
 		const settings = selector[ selectorName ]();
 
 		return {
+			capiToken: settings.capiToken,
 			isCapiEnabled: settings.trackConversions,
 			shouldTriggerExport: settings.triggerExport,
 			lastExportTimeStamp: settings.lastExportTimeStamp,

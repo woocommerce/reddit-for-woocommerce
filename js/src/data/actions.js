@@ -186,11 +186,13 @@ export async function updateSettings( updatedSettings ) {
 			data: {
 				// Convert settings keys to match REST keys
 				capi_enabled: updatedSettings.trackConversions,
+				capi_token: updatedSettings.capiToken,
 			},
 		} );
 
 		return receiveSettings( {
 			trackConversions: Boolean( response.capi_enabled ),
+			capiToken: response.capi_token,
 		} );
 	} catch ( error ) {
 		handleApiError(

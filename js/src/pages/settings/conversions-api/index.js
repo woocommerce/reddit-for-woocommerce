@@ -2,8 +2,9 @@
  * External dependencies
  */
 import { __ } from '@wordpress/i18n';
-import { CheckboxControl } from '@wordpress/components';
-import { useState, useCallback } from '@wordpress/element';
+import { CheckboxControl, TextControl } from '@wordpress/components';
+import { useState, useCallback, useEffect } from '@wordpress/element';
+import { useDebouncedInput } from '@wordpress/compose';
 
 /**
  * Internal dependencies
@@ -25,8 +26,9 @@ import './index.scss';
  * @return {JSX.Element} The rendered ConversionsAPI settings card.
  */
 const ConversionsAPI = () => {
-	const { isCapiEnabled, hasFinishedResolution } = useSettings();
+	const { isCapiEnabled, capiToken, hasFinishedResolution } = useSettings();
 	const [ isSaving, setIsSaving ] = useState( false );
+	const [ localCapiToken, setLocalCapiToken, debouncedLocalCapiToken ] = useDebouncedInput( '' );
 	const { createNotice } = useDispatchCoreNotices();
 	const { updateSettings } = useAppDispatch();
 
@@ -34,7 +36,11 @@ const ConversionsAPI = () => {
 		await updateSettings( { trackConversions: ! isCapiEnabled } );
 	}, [ updateSettings, isCapiEnabled ] );
 
-	const handleOnChange = async () => {
+	const updateConversionAccessToken = useCallback( async ( val ) => {
+		await updateSettings( { capiToken: val } )
+	}, [ updateSettings, capiToken ] );
+
+	const handleCapiStatusOnChange = async () => {
 		try {
 			setIsSaving( true );
 			await toggleTrackConversions();
@@ -53,6 +59,41 @@ const ConversionsAPI = () => {
 		}
 	};
 
+	const handleCapiTokenOnChange = async ( val = '' ) => {
+		try {
+			setIsSaving( true );
+			await updateConversionAccessToken( val );
+
+			createNotice(
+				'success',
+				__(
+					'Conversions API Access Token updated successfully.',
+					'reddit-for-woo'
+				)
+			);
+		} catch ( error ) {
+			// Silently fail because the error is handled within `updateSettings` action.
+		} finally {
+			setIsSaving( false );
+		}
+	};
+
+	useEffect( () => {
+		if ( hasFinishedResolution ) {
+			setLocalCapiToken( capiToken );
+		}
+	}, [ hasFinishedResolution ] );
+
+	useEffect( () => {
+		if ( undefined === capiToken ) {
+			return;
+		}
+
+		if ( capiToken !== debouncedLocalCapiToken ) {
+			handleCapiTokenOnChange( debouncedLocalCapiToken );
+		}
+	}, [ debouncedLocalCapiToken ] );
+
 	if ( ! hasFinishedResolution ) {
 		return <SpinnerCard />;
 	}
@@ -66,17 +107,26 @@ const ConversionsAPI = () => {
 				'reddit-for-woo'
 			) }
 			actions={
-				<div className="rfw-settings-track-conversions__actions">
-					<CheckboxControl
-						label={ __(
-							'Enable Conversions API tracking',
-							'reddit-for-woo'
-						) }
-						checked={ isCapiEnabled }
-						disabled={ isSaving }
-						onChange={ handleOnChange }
-					/>
-				</div>
+				<>
+					<div>
+						<TextControl
+							label={ __( 'Conversion Access Token', 'reddit-for-woocommerce' ) }
+							value={ localCapiToken }
+							onChange={ ( val ) => setLocalCapiToken( val ) }
+						/>
+					</div>
+					<div className="rfw-settings-track-conversions__actions">
+						<CheckboxControl
+							label={ __(
+								'Enable Conversions API tracking',
+								'reddit-for-woo'
+							) }
+							checked={ isCapiEnabled }
+							disabled={ isSaving }
+							onChange={ handleCapiStatusOnChange }
+						/>
+					</div>
+				</>
 			}
 		/>
 	);
