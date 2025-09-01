@@ -8,7 +8,6 @@ const { test, expect } = require( '@playwright/test' );
  */
 import SetupPage from '../utils/pages/setup.js';
 import ElementLocators from '../utils/element-locators.js';
-import { connectedConfigPayload } from '../utils/mockPayloads.js';
 
 /**
  * @type {import('../utils/pages/setup.js').default} setupPage
