@@ -144,6 +144,11 @@ const reducer = ( state, action ) => {
 			);
 		}
 
+		case TYPES.RECEIVE_EXISTING_PIXELS: {
+			const { pixels } = action;
+			return setIn( state, 'accounts.existingPixels', pixels );
+		}
+
 		// Page will be reloaded after all accounts have been disconnected, so no need to mutate state.
 		case TYPES.DISCONNECT_ACCOUNTS_ALL:
 		default:

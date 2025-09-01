@@ -23,6 +23,12 @@
  */
 
 /**
+ * @typedef {Object} RedditPixel
+ * @property {string} pixel_id The Reddit pixel ID.
+ * @property {string} pixel_name The name of the Reddit pixel.
+ */
+
+/**
  * @typedef {Object} RedditAdsAccount
  * @property {string} ad_account_id The Reddit ad account ID.
  * @property {string} ad_account_name The name of the Reddit ad account.
@@ -163,4 +169,14 @@ export const getExistingAdsAccounts = ( state ) => {
  */
 export const getExistingBusinessAccounts = ( state ) => {
 	return state.accounts.existingBusinessAccounts;
+};
+
+/**
+ * Retrieves the list of existing pixel IDs from the Redux state.
+ *
+ * @param {Object} state - The Redux state object.
+ * @return {Array<RedditPixel>} The array of existing pixel IDs.
+ */
+export const getExistingPixels = ( state ) => {
+	return state.accounts.existingPixels;
 };

@@ -10,6 +10,7 @@ import ConnectedIconLabel from '~/components/connected-icon-label';
 import LoadingLabel from '~/components/loading-label';
 import useRedditAdsAccount from '~/hooks/useRedditAdsAccount';
 import useRedditBusinessAccount from '~/hooks/useRedditBusinessAccount';
+import useRedditPixelId from '~/hooks/useRedditPixelId';
 
 /**
  * Account connection indicator.
@@ -21,12 +22,13 @@ import useRedditBusinessAccount from '~/hooks/useRedditBusinessAccount';
 const Indicator = ( { showSpinner } ) => {
 	const { hasConnection: hasBusinessConnection } = useRedditBusinessAccount();
 	const { hasConnection: hasAdsConnection } = useRedditAdsAccount();
+	const { hasConnection: hasPixelIdConnection } = useRedditPixelId();
 
 	if ( showSpinner ) {
 		return <LoadingLabel text={ __( 'Connecting…', 'reddit-for-woo' ) } />;
 	}
 
-	if ( hasBusinessConnection && hasAdsConnection ) {
+	if ( hasBusinessConnection && hasAdsConnection && hasPixelIdConnection ) {
 		return <ConnectedIconLabel />;
 	}
 

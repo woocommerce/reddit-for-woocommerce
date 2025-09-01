@@ -16,8 +16,8 @@ export default class ElementLocators {
 	 * @return {import('@playwright/test').Locator} The locator for the matching account card.
 	 */
 	getCard( title = '' ) {
-		return this.page.locator( '.sfw-account-card', {
-			has: this.page.locator( '.sfw-account-card__title', {
+		return this.page.locator( '.rfw-account-card', {
+			has: this.page.locator( '.rfw-account-card__title', {
 				hasText: title,
 			} ),
 		} );
@@ -49,7 +49,7 @@ export default class ElementLocators {
 	 * @return {import('@playwright/test').Locator} The connected label locator.
 	 */
 	getWpConnectedLabel() {
-		return this.getWPAccountCard().locator( '.sfw-connected-icon-label' );
+		return this.getWPAccountCard().locator( '.rfw-connected-icon-label' );
 	}
 
 	/**
@@ -73,6 +73,88 @@ export default class ElementLocators {
 	}
 
 	/**
+	 * Get the Edit button inside the Reddit account card.
+	 *
+	 * @return {import('@playwright/test').Locator} The connect button locator.
+	 */
+	getRedditCardEditButton() {
+		return this.getRedditAccountCard().getByRole( 'button', {
+			name: 'Edit',
+		} );
+	}
+
+	/**
+	 * Get the Cancel button inside the Reddit account card.
+	 *
+	 * @return {import('@playwright/test').Locator} The connect button locator.
+	 */
+	getRedditCardCancelButton() {
+		return this.getRedditAccountCard().getByRole( 'button', {
+			name: 'Cancel',
+		} );
+	}
+
+	/**
+	 * Get the Connect to a different Business button inside the Reddit account card.
+	 *
+	 * @return {import('@playwright/test').Locator} The connect button locator.
+	 */
+	getConnectToDifferentBusinessButton() {
+		return this.getRedditAccountCard().getByRole( 'button', {
+			name: 'Or, connect to a different Reddit account',
+		} );
+	}
+
+	/**
+	 * Get the Connect to a different Ad Accounts button inside the Reddit account card.
+	 *
+	 * @return {import('@playwright/test').Locator} The connect button locator.
+	 */
+	getConnectToDifferentAdAccountsButton() {
+		return this.getRedditAccountCard().getByRole( 'button', {
+			name: 'Or, connect to a different Ads account',
+		} );
+	}
+
+	/**
+	 * Get the Connect to a different Ad Accounts button inside the Reddit account card.
+	 *
+	 * @return {import('@playwright/test').Locator} The connect button locator.
+	 */
+	getConnectToDifferentPixelIdButton() {
+		return this.getRedditAccountCard().getByRole( 'button', {
+			name: 'Or, connect to a different Pixel ID',
+		} );
+	}
+
+	/**
+	 * Get the Reddit Business Edit card.
+	 *
+	 * @return {import('@playwright/test').Locator} The connect button locator.
+	 */
+	getRedditBusinessCard() {
+		return this.getCard( 'Connect to existing Reddit Business account' );
+	}
+
+	/**
+	 * Get the Reddit Business Edit card.
+	 *
+	 * @return {import('@playwright/test').Locator} The connect button locator.
+	 */
+	getRedditAdsAccountCard() {
+		return this.getCard( 'Connect to existing Reddit Ads account' );
+	}
+
+	/**
+	 * Get the Reddit Pixel Edit card.
+	 *
+	 * @return {import('@playwright/test').Locator} The connect button locator.
+	 */
+	getRedditPixelCard() {
+		return this.getCard( 'Connect to existing Pixel ID' );
+	}
+
+	/**
 	 * Get the continue button that navigates to the setup screen after click.
 	 *
 	 * @return {import('@playwright/test').Locator} The continue button locator.
@@ -87,7 +169,7 @@ export default class ElementLocators {
 	 * @return {import('@playwright/test').Locator} The onboarding successful modal.
 	 */
 	getOnboardingSuccessfulModal() {
-		return this.page.locator( '.sfw-onboarding-success-modal', {
+		return this.page.locator( '.rfw-onboarding-success-modal', {
 			hasText: 'You’ve successfully set up Reddit for WooCommerce!',
 		} );
 	}
@@ -120,7 +202,7 @@ export default class ElementLocators {
 	 * @return {import('@playwright/test').Locator} The Disconnect confirmation modal.
 	 */
 	getRedditDisconnectModal() {
-		return this.page.locator( '.sfw-disconnect-accounts-modal', {
+		return this.page.locator( '.rfw-disconnect-accounts-modal', {
 			hasText:
 				'I understand that I am disconnecting my Reddit account from this WooCommerce extension.',
 		} );
@@ -155,7 +237,7 @@ export default class ElementLocators {
 	 */
 	getRedditConnectedLabel() {
 		return this.getRedditAccountCard().locator(
-			'.sfw-connected-icon-label'
+			'.rfw-connected-icon-label'
 		);
 	}
 

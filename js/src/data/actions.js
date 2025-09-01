@@ -13,6 +13,10 @@ import { handleApiError } from '~/utils/handleError';
 import TYPES from './action-types';
 
 /**
+ * @typedef {import('../data/selectors').RedditPixel} RedditPixel
+ */
+
+/**
  * @typedef {import('../data/selectors').RedditAdsAccount} RedditAdsAccount
  */
 
@@ -123,6 +127,19 @@ export function receiveExistingBusinessAccounts( accounts ) {
 	return {
 		type: TYPES.RECEIVE_EXISTING_BUSINESS_ACCOUNTS,
 		accounts,
+	};
+}
+
+/**
+ * Creates an action to receive existing pixel IDs.
+ *
+ * @param {Array<RedditPixel>} pixels - The list or object of pixel IDs to be received.
+ * @return {Object} Action object with type and accounts payload.
+ */
+export function receiveExistingPixels( pixels ) {
+	return {
+		type: TYPES.RECEIVE_EXISTING_PIXELS,
+		pixels,
 	};
 }
 
@@ -335,6 +352,41 @@ export async function upsertAdsAccount( adsAccountId, adsAccountName ) {
 }
 
 /**
+ * Upserts (creates or updates) a Reddit pixel ID configuration.
+ *
+ * Sends a POST request to the Reddit config API endpoint with the provided
+ * pixel ID, then dispatches the received configuration.
+ * Handles API errors and throws them after displaying an error message.
+ *
+ * @async
+ * @param {string} pixelId - The ID of the Reddit pixel ID.
+ * @return {Object} The received Reddit account configuration.
+ * @throws {Error} If there is an error connecting the pixel ID.
+ */
+export async function upsertPixelId( pixelId ) {
+	try {
+		const response = await apiFetch( {
+			path: `${ API_NAMESPACE }/reddit/config`,
+			method: 'POST',
+			data: {
+				pixel_id: pixelId,
+			},
+		} );
+
+		return receiveRedditAccountConfig( response );
+	} catch ( error ) {
+		handleApiError(
+			error,
+			__(
+				'There was an error connecting your Pixel ID.',
+				'reddit-for-woo'
+			)
+		);
+		throw error;
+	}
+}
+
+/**
  * Disconnects the currently connected business account.
  *
  * Dispatches an action to update the business account in the store to `null`.
@@ -346,6 +398,7 @@ export async function disconnectBusinessAccount(
 	disconnectAllAccounts = false
 ) {
 	if ( disconnectAllAccounts ) {
+		await dispatch( STORE_KEY ).disconnectPixelId();
 		await dispatch( STORE_KEY ).disconnectAdsAccount();
 	}
 	return dispatch( STORE_KEY ).upsertBusinessAccount( '', '' );
@@ -360,4 +413,15 @@ export async function disconnectBusinessAccount(
  */
 export async function disconnectAdsAccount() {
 	return dispatch( STORE_KEY ).upsertAdsAccount( '', '' );
+}
+
+/**
+ * Disconnects the pixel ID by updating the store with a null value.
+ *
+ * @async
+ * @function disconnectPixelId
+ * @return {Promise<void>} A promise that resolves when the pixel ID has been disconnected.
+ */
+export async function disconnectPixelId() {
+	return dispatch( STORE_KEY ).upsertPixelId( '' );
 }
