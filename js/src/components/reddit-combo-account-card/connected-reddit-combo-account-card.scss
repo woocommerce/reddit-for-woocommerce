@@ -1,0 +1,18 @@
+.rfw-reddit-combo-account-card-wrapper {
+
+	.components-card + .components-card {
+		margin-top: var(--main-gap);
+	}
+}
+
+.rfw-reddit-combo-account-card--connected {
+
+	.rfw-account-card__description {
+		gap: 0;
+	}
+
+	.rfw-reddit-combo-account-card__description-actions {
+		display: flex;
+		gap: var(--large-gap);
+	}
+}

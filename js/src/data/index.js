@@ -29,6 +29,9 @@ const store = createReduxStore( STORE_KEY, {
 		accounts: {
 			jetpack: null,
 			reddit: null,
+			existingAdsAccounts: [],
+			existingBusinessAccounts: [],
+			existingPixels: [],
 		},
 		reddit: null,
 		trackConversions: null,

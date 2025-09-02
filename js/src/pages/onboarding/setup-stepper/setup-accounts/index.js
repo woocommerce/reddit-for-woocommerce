@@ -11,22 +11,28 @@ import Section from '~/components/section';
 import AppButton from '~/components/app-button';
 import AppSpinner from '~/components/app-spinner';
 import useJetpackAccount from '~/hooks/useJetpackAccount';
-import useRedditAccount from '~/hooks/useRedditAccount';
+import useRedditAccountStatus from '~/hooks/useRedditAccountStatus';
 import StepContent from '~/components/stepper/step-content';
 import WPComAccountCard from '~/components/wpcom-account-card';
-import RedditAccountCard from '~/components/reddit-account-card';
+import RedditComboAccountCard from '~/components/reddit-combo-account-card';
 import StepContentHeader from '~/components/stepper/step-content-header';
 import StepContentFooter from '~/components/stepper/step-content-footer';
 import StepContentActions from '~/components/stepper/step-content-actions';
+import useRedditAdsAccount from '~/hooks/useRedditAdsAccount';
+import useRedditBusinessAccount from '~/hooks/useRedditBusinessAccount';
+import useRedditPixelId from '~/hooks/useRedditPixelId';
 import './index.scss';
 
 const SetupAccounts = ( props ) => {
 	const { onContinue = noop } = props;
 	const { jetpack } = useJetpackAccount();
+	const { hasConnection: hasBusinessConnection } = useRedditBusinessAccount();
+	const { hasConnection: hasAdsConnection } = useRedditAdsAccount();
+	const { hasConnection: hasPixelIdConnection } = useRedditPixelId();
 	const {
 		isConnected: isRedditConnected,
 		hasFinishedResolution: hasResolvedRedditAccount,
-	} = useRedditAccount();
+	} = useRedditAccountStatus();
 
 	/**
 	 * When jetpack is loading, or when Reddit account is loading,
@@ -46,7 +52,12 @@ const SetupAccounts = ( props ) => {
 		onContinue();
 	};
 
-	const isContinueButtonDisabled = ! isJetpackActive || ! isRedditConnected;
+	const isContinueButtonDisabled =
+		! isJetpackActive ||
+		! isRedditConnected ||
+		! hasBusinessConnection ||
+		! hasAdsConnection ||
+		! hasPixelIdConnection;
 	const isSubmitting = false;
 
 	return (
@@ -67,7 +78,7 @@ const SetupAccounts = ( props ) => {
 				) }
 			>
 				<WPComAccountCard jetpack={ jetpack } />
-				<RedditAccountCard disabled={ ! isJetpackActive } />
+				<RedditComboAccountCard disabled={ ! isJetpackActive } />
 			</Section>
 
 			<StepContentFooter>

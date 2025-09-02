@@ -10,7 +10,20 @@ import apiFetch from '@wordpress/api-fetch';
  */
 import { API_NAMESPACE, STORE_KEY } from './constants';
 import { handleApiError } from '~/utils/handleError';
+import { ACCOUNT_TYPE } from '~/constants';
 import TYPES from './action-types';
+
+/**
+ * @typedef {import('../data/selectors').RedditPixel} RedditPixel
+ */
+
+/**
+ * @typedef {import('../data/selectors').RedditAdsAccount} RedditAdsAccount
+ */
+
+/**
+ * @typedef {import('../data/selectors').RedditBusinessAccount} RedditBusinessAccount
+ */
 
 /**
  * Creates an action to receive a Jetpack account.
@@ -78,15 +91,56 @@ export function receiveSettings( settings ) {
 }
 
 /**
- * Creates an action to receive Reddit account details.
+ * Creates an action to receive Reddit account config.
  *
- * @param {Object} redditAccountDetails - The Reddit account details to be received.
- * @return {Object} Action object with type RECEIVE_REDDIT_ACCOUNT_DETAILS and the Reddit account details.
+ * @param {Object} redditAccountConfig - The Reddit account config to be received.
+ * @return {Object} Action object with type RECEIVE_REDDIT_ACCOUNT_CONFIG and the Reddit account config.
  */
-export function receiveRedditAccountDetails( redditAccountDetails ) {
+export function receiveRedditAccountConfig( redditAccountConfig ) {
 	return {
-		type: TYPES.RECEIVE_REDDIT_ACCOUNT_DETAILS,
-		redditAccountDetails,
+		type: TYPES.RECEIVE_REDDIT_ACCOUNT_CONFIG,
+		redditAccountConfig,
+	};
+}
+
+/**
+ * Creates an action to receive existing ads accounts.
+ *
+ * @param {Array<RedditAdsAccount>} accounts - The list or object of existing ads accounts.
+ * @param {string} businessId - The Reddit business ID associated with the ads accounts.
+ * @return {Object} Redux action with type RECEIVE_EXISTING_ADS_ACCOUNTS and accounts payload.
+ */
+export function receiveExistingAdsAccounts( accounts, businessId ) {
+	return {
+		type: TYPES.RECEIVE_EXISTING_ADS_ACCOUNTS,
+		accounts,
+		businessId,
+	};
+}
+
+/**
+ * Creates an action to receive existing business accounts.
+ *
+ * @param {Array<RedditBusinessAccount>} accounts - The list or object of business accounts to be received.
+ * @return {Object} Action object with type and accounts payload.
+ */
+export function receiveExistingBusinessAccounts( accounts ) {
+	return {
+		type: TYPES.RECEIVE_EXISTING_BUSINESS_ACCOUNTS,
+		accounts,
+	};
+}
+
+/**
+ * Creates an action to receive existing pixel IDs.
+ *
+ * @param {Array<RedditPixel>} pixels - The list or object of pixel IDs to be received.
+ * @return {Object} Action object with type and accounts payload.
+ */
+export function receiveExistingPixels( pixels ) {
+	return {
+		type: TYPES.RECEIVE_EXISTING_PIXELS,
+		pixels,
 	};
 }
 
@@ -216,6 +270,181 @@ export async function disconnectRedditAccount(
 		handleApiError(
 			error,
 			__( 'Unable to disconnect your Reddit account.', 'reddit-for-woo' )
+		);
+		throw error;
+	}
+}
+
+/**
+ * Upserts (creates or updates) a business account configuration for Reddit integration.
+ *
+ * Sends a POST request to the Reddit config API endpoint with the provided business ID.
+ * On success, dispatches the received Reddit account configuration.
+ * On failure, handles the API error and throws it.
+ *
+ * @async
+ * @param {string} businessAccountId - The unique identifier for the business.
+ * @param {string} businessAccountName - The name of the business account.
+ * @return {Object} The updated Reddit account configuration.
+ * @throws Will throw an error if the API request fails.
+ */
+export async function upsertBusinessAccount(
+	businessAccountId,
+	businessAccountName
+) {
+	try {
+		const response = await apiFetch( {
+			path: `${ API_NAMESPACE }/reddit/config`,
+			method: 'POST',
+			data: {
+				business_id: businessAccountId,
+				business_name: businessAccountName,
+			},
+		} );
+
+		return receiveRedditAccountConfig( response );
+	} catch ( error ) {
+		handleApiError(
+			error,
+			__(
+				'There was an error connecting your business account.',
+				'reddit-for-woo'
+			)
+		);
+		throw error;
+	}
+}
+
+/**
+ * Resets the Reddit account configuration by sending empty values to the API.
+ *
+ * Sends a POST request to the Reddit config API endpoint with empty values for
+ * business ID, business name, ad account ID, ad account name, and pixel ID.
+ * On success, dispatches the received Reddit account configuration.
+ * On failure, handles the API error and throws it.
+ *
+ * @async
+ * @function resetRedditAccountConfig
+ * @return {Promise<Object>} The updated Reddit account configuration.
+ * @throws {Error} If the API request fails.
+ */
+export async function resetRedditAccountConfig(
+	accountType = ACCOUNT_TYPE.BUSINESS
+) {
+	try {
+		let data = {};
+		switch ( accountType ) {
+			case ACCOUNT_TYPE.BUSINESS:
+				data = {
+					business_id: '',
+					business_name: '',
+					ad_account_id: '',
+					ad_account_name: '',
+					pixel_id: '',
+				};
+				break;
+			case ACCOUNT_TYPE.ADS:
+				data = {
+					ad_account_id: '',
+					ad_account_name: '',
+					pixel_id: '',
+				};
+				break;
+			case ACCOUNT_TYPE.PIXEL:
+				data = {
+					pixel_id: '',
+				};
+				break;
+		}
+
+		if ( Object.keys( data ).length > 0 ) {
+			const response = await apiFetch( {
+				path: `${ API_NAMESPACE }/reddit/config`,
+				method: 'POST',
+				data,
+			} );
+
+			return receiveRedditAccountConfig( response );
+		}
+	} catch ( error ) {
+		handleApiError(
+			error,
+			__(
+				'There was an error disconnecting your account.',
+				'reddit-for-woo'
+			)
+		);
+		throw error;
+	}
+}
+
+/**
+ * Upserts (creates or updates) a Reddit ads account configuration.
+ *
+ * Sends a POST request to the Reddit config API endpoint with the provided
+ * ads account ID, then dispatches the received configuration.
+ * Handles API errors and throws them after displaying an error message.
+ *
+ * @async
+ * @param {string} adsAccountId - The ID of the Reddit ads account.
+ * @param {string} adsAccountName - The name of the Reddit ads account.
+ * @return {Object} The received Reddit account configuration.
+ * @throws {Error} If there is an error connecting the ad account.
+ */
+export async function upsertAdsAccount( adsAccountId, adsAccountName ) {
+	try {
+		const response = await apiFetch( {
+			path: `${ API_NAMESPACE }/reddit/config`,
+			method: 'POST',
+			data: {
+				ad_account_id: adsAccountId,
+				ad_account_name: adsAccountName,
+			},
+		} );
+
+		return receiveRedditAccountConfig( response );
+	} catch ( error ) {
+		handleApiError(
+			error,
+			__(
+				'There was an error connecting your Ad account.',
+				'reddit-for-woo'
+			)
+		);
+		throw error;
+	}
+}
+
+/**
+ * Upserts (creates or updates) a Reddit pixel ID configuration.
+ *
+ * Sends a POST request to the Reddit config API endpoint with the provided
+ * pixel ID, then dispatches the received configuration.
+ * Handles API errors and throws them after displaying an error message.
+ *
+ * @async
+ * @param {string} pixelId - The ID of the Reddit pixel ID.
+ * @return {Object} The received Reddit account configuration.
+ * @throws {Error} If there is an error connecting the pixel ID.
+ */
+export async function upsertPixelId( pixelId ) {
+	try {
+		const response = await apiFetch( {
+			path: `${ API_NAMESPACE }/reddit/config`,
+			method: 'POST',
+			data: {
+				pixel_id: pixelId,
+			},
+		} );
+
+		return receiveRedditAccountConfig( response );
+	} catch ( error ) {
+		handleApiError(
+			error,
+			__(
+				'There was an error connecting your Pixel ID.',
+				'reddit-for-woo'
+			)
 		);
 		throw error;
 	}

@@ -109,10 +109,10 @@ const reducer = ( state, action ) => {
 			return setIn( state, 'accounts.reddit', redditAccount );
 		}
 
-		case TYPES.RECEIVE_REDDIT_ACCOUNT_DETAILS: {
-			const { redditAccountDetails } = action;
+		case TYPES.RECEIVE_REDDIT_ACCOUNT_CONFIG: {
+			const { redditAccountConfig } = action;
 
-			return setIn( state, 'reddit', redditAccountDetails );
+			return setIn( state, 'reddit', redditAccountConfig );
 		}
 
 		case TYPES.RECEIVE_TRACK_CONVERSIONS_STATUS: {
@@ -128,6 +128,25 @@ const reducer = ( state, action ) => {
 
 		case TYPES.DISCONNECT_ACCOUNTS_REDDIT: {
 			return setIn( state, 'accounts.reddit', null );
+		}
+
+		case TYPES.RECEIVE_EXISTING_ADS_ACCOUNTS: {
+			const { accounts } = action;
+			return setIn( state, 'accounts.existingAdsAccounts', accounts );
+		}
+
+		case TYPES.RECEIVE_EXISTING_BUSINESS_ACCOUNTS: {
+			const { accounts } = action;
+			return setIn(
+				state,
+				'accounts.existingBusinessAccounts',
+				accounts
+			);
+		}
+
+		case TYPES.RECEIVE_EXISTING_PIXELS: {
+			const { pixels } = action;
+			return setIn( state, 'accounts.existingPixels', pixels );
 		}
 
 		// Page will be reloaded after all accounts have been disconnected, so no need to mutate state.

@@ -12,10 +12,13 @@ import { handleApiError } from '~/utils/handleError';
 import {
 	fetchSetup,
 	fetchRedditAccount,
+	receiveExistingAdsAccounts,
+	receiveExistingBusinessAccounts,
 	receiveJetpackAccount,
-	receiveRedditAccountDetails,
+	receiveRedditAccountConfig,
 	receiveTrackConversionsStatus,
 	receiveSettings,
+	receiveExistingPixels,
 } from './actions';
 
 /**
@@ -56,22 +59,22 @@ export function getRedditAccount() {
 }
 
 /**
- * Fetches the Reddit account details information from the API.
+ * Fetches the Reddit account config information from the API.
  *
  * @return {Function} An async thunk function that takes a Redux-like dispatch object.
  */
-export function getRedditAccountDetails() {
+export function getRedditAccountConfig() {
 	return async function ( { dispatch } ) {
 		try {
 			const response = await apiFetch( {
-				path: `${ API_NAMESPACE }/reddit/account`,
+				path: `${ API_NAMESPACE }/reddit/config`,
 			} );
-			dispatch( receiveRedditAccountDetails( response ) );
+			dispatch( receiveRedditAccountConfig( response ) );
 		} catch ( error ) {
 			handleApiError(
 				error,
 				__(
-					'There was an error loading Reddit account details info.',
+					'There was an error loading Reddit account config info.',
 					'reddit-for-woo'
 				)
 			);
@@ -144,4 +147,87 @@ export function getSettings() {
  */
 export function getSetup() {
 	return fetchSetup;
+}
+
+/**
+ * Asynchronous resolver to fetch existing Reddit ads accounts.
+ *
+ * Dispatches the received accounts to the store or handles API errors.
+ *
+ * @return {Function} Thunk function that performs the API call and dispatches actions.
+ */
+export function getExistingAdsAccounts() {
+	return async function ( { dispatch } ) {
+		try {
+			const response = await apiFetch( {
+				path: `${ API_NAMESPACE }/reddit/ad_accounts`,
+			} );
+
+			dispatch( receiveExistingAdsAccounts( response ) );
+		} catch ( error ) {
+			handleApiError(
+				error,
+				__(
+					'There was an error loading existing ads accounts.',
+					'reddit-for-woo'
+				)
+			);
+		}
+	};
+}
+
+/**
+ * Asynchronous resolver to fetch existing business accounts from the API.
+ *
+ * Dispatches the received business accounts to the store.
+ * Handles API errors and displays a localized error message if the request fails.
+ *
+ * @return {Function} Thunk function for Redux dispatch.
+ */
+export function getExistingBusinessAccounts() {
+	return async function ( { dispatch } ) {
+		try {
+			const response = await apiFetch( {
+				path: `${ API_NAMESPACE }/reddit/businesses`,
+			} );
+
+			dispatch( receiveExistingBusinessAccounts( response ) );
+		} catch ( error ) {
+			handleApiError(
+				error,
+				__(
+					'There was an error loading existing business accounts.',
+					'reddit-for-woo'
+				)
+			);
+		}
+	};
+}
+
+/**
+ * Asynchronous resolver to fetch existing pixel IDs from the API.
+ *
+ * Dispatches the received pixel IDs to the store.
+ * Handles API errors and displays a localized error message if the request fails.
+ *
+ * @return {Function} Thunk function for Redux dispatch.
+ */
+export function getExistingPixels() {
+	return async function ( { dispatch } ) {
+		try {
+			const response = await apiFetch( {
+				path: `${ API_NAMESPACE }/reddit/pixels`,
+			} );
+
+			dispatch( receiveExistingPixels( response ) );
+		} catch ( error ) {
+			handleApiError(
+				error,
+				__(
+					'There was an error loading existing pixel IDs.',
+					'reddit-for-woo'
+				)
+			);
+		}
+	};
 }

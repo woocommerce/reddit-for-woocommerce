@@ -1,0 +1,9 @@
+.rfw-app-select-control {
+	.components-base-control__field {
+		margin-bottom: 0;
+	}
+
+	&.rfw-app-select-control--is-non-interactive {
+		pointer-events: none;
+	}
+}
