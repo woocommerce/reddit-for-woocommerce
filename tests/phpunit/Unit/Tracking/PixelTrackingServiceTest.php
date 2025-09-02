@@ -137,7 +137,12 @@ class PixelTrackingServiceTest extends WP_UnitTestCase {
 
 		$this->assertArrayHasKey( 'VIEW_CONTENT', $tracking_data );
 		$this->assertArrayHasKey( 'products' , $tracking_data['VIEW_CONTENT'] );
-		$this->assertEquals( array( 'id' => $product->get_id(), 'name' => $product->get_name() ), $tracking_data['VIEW_CONTENT']['products'] );
+		$this->assertEquals(
+			array(
+				array( 'id' => $product->get_id(), 'name' => $product->get_name() )
+			),
+			$tracking_data['VIEW_CONTENT']['products'],
+		);
 		$this->assertArrayHasKey( 'event_id_el_name', $tracking_data );
 	}
 
