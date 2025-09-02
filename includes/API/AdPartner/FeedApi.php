@@ -73,7 +73,7 @@ class FeedApi extends BaseAdPartnerApi {
 				'mode'     => 'UPDATE',
 				'schedule' => array(
 					'interval' => 'DAILY',
-					'timezone' => get_option( 'timezone_string' ),
+					'timezone' => Helper::get_timezone_string(),
 				),
 			),
 		);
