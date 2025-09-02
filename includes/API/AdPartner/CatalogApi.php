@@ -83,4 +83,30 @@ class CatalogApi extends BaseAdPartnerApi {
 			$payload
 		);
 	}
+
+	/**
+	 * Deletes a product catalog for a given ID.
+	 *
+	 * This method submits the catalog deletion request for a given
+	 * catalog ID.
+	 *
+	 * It returns a {@see WP_REST_Response} on success or a {@see WP_Error} on failure.
+	 *
+	 * @since 0.1.0
+	 *
+	 * @param string $catalog_id The ID of the catalog to delete.
+	 * @return \WP_REST_Response|WP_Error REST response from WCS or error if inputs are missing.
+	 */
+	public function delete( $catalog_id ) {
+		if ( ! $catalog_id ) {
+			return new WP_Error(
+				'catalog_id_not_set',
+				__( 'Catalog ID not found.', 'reddit-for-woocommerce' ),
+			);
+		}
+
+		return $this->wcs->proxy_delete(
+			sprintf( '/ads/product_catalogs/%s', rawurlencode( $catalog_id ) )
+		);
+	}
 }
