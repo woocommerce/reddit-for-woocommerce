@@ -360,13 +360,13 @@ class RedditConnectionController extends RESTBaseController {
 				$logger->alert(
 					'Catalog generation failed with error code' . $response->get_error_code(),
 				);
-			}
+			} else {
+				$data         = $response->get_data();
+				$catalog_data = $data['data'] ?? array();
 
-			$data         = $response->get_data();
-			$catalog_data = $data['data'] ?? array();
-
-			if ( ! empty( $catalog_data ) ) {
-				Options::set( OptionDefaults::CATALOG_ID, $catalog_data['id'] );
+				if ( ! empty( $catalog_data ) ) {
+					Options::set( OptionDefaults::CATALOG_ID, $catalog_data['id'] );
+				}
 			}
 
 			/**
