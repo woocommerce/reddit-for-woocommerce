@@ -255,7 +255,7 @@ class ConversionTrackingService implements ServiceStatusInterface {
 		$order = wc_get_order( $args['order_id'] );
 
 		// Mark the order as tracked, to avoid double-reporting if the confirmation page is reloaded.
-		$order->update_meta_data( RemoteConversionTracker::ORDER_CONVERSION_TRACKED_META_KEY, 1 );
+		$order->update_meta_data( RemoteConversionTracker::ORDER_CONVERSION_TRACKED_META_KEY, 'tracked' );
 		$order->save_meta_data();
 	}
 }
