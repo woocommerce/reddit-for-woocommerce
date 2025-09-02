@@ -14,7 +14,6 @@ import AppButton from '~/components/app-button';
 import AppSpinner from '~/components/app-spinner';
 import useJetpackAccount from '~/hooks/useJetpackAccount';
 import useRedditAccountStatus from '~/hooks/useRedditAccountStatus';
-import useSettings from '~/hooks/useSettings';
 import StepContent from '~/components/stepper/step-content';
 import WPComAccountCard from '~/components/wpcom-account-card';
 import RedditComboAccountCard from '~/components/reddit-combo-account-card';
@@ -31,7 +30,6 @@ const SetupAccounts = ( props ) => {
 	const { onContinue = noop } = props;
 	const { products_token: productsTokenParam } = getQuery();
 	const { jetpack } = useJetpackAccount();
-	const { productsToken } = useSettings();
 	const { updateSettings } = useAppDispatch();
 	const { hasConnection: hasBusinessConnection } = useRedditBusinessAccount();
 	const { hasConnection: hasAdsConnection } = useRedditAdsAccount();
