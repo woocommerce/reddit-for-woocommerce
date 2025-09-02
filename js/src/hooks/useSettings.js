@@ -27,6 +27,8 @@ const useSettings = () => {
 		const settings = selector[ selectorName ]();
 
 		return {
+			productsToken: settings.productsToken,
+			capiToken: settings.capiToken,
 			isCapiEnabled: settings.trackConversions,
 			shouldTriggerExport: settings.triggerExport,
 			lastExportTimeStamp: settings.lastExportTimeStamp,

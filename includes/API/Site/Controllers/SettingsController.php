@@ -60,8 +60,6 @@ class SettingsController extends RESTBaseController {
 	 * @return WP_REST_Response
 	 */
 	public function get_settings() {
-		$timestamp = Options::get( OptionDefaults::LAST_EXPORT_TIMESTAMP );
-
 		return rest_ensure_response(
 			$this->get_settings_response()
 		);
@@ -80,11 +78,21 @@ class SettingsController extends RESTBaseController {
 		$capi_token = null;
 
 		if ( isset( $request['capi_enabled'] ) ) {
-			$capi_token = rest_sanitize_boolean( $request['capi_enabled'] );
+			$capi_status = rest_sanitize_boolean( $request['capi_enabled'] );
+			Options::set( OptionDefaults::CONVERSIONS_ENABLED, $capi_status ? 'yes' : 'no' );
 		}
 
-		if ( ! is_null( $capi_token ) ) {
-			Options::set( OptionDefaults::CONVERSIONS_ENABLED, $capi_token ? 'yes' : 'no' );
+		if ( isset( $request['capi_token'] ) ) {
+			$capi_token = sanitize_text_field( $request['capi_token'] );
+			Options::set( OptionDefaults::CONVERSION_ACCESS_TOKEN, $capi_token );
+
+			if ( empty( $capi_token ) ) {
+				Options::set( OptionDefaults::CONVERSIONS_ENABLED, 'no' );
+			}
+		}
+
+		if ( isset( $request['products_token'] ) ) {
+			Options::set( OptionDefaults::WCS_PRODUCTS_TOKEN, sanitize_text_field( $request['products_token'] ) );
 		}
 
 		return rest_ensure_response(
@@ -107,10 +115,12 @@ class SettingsController extends RESTBaseController {
 
 		return rest_ensure_response(
 			array(
+				'capi_token'            => Options::get( OptionDefaults::CONVERSION_ACCESS_TOKEN ),
 				'capi_enabled'          => 'yes' === Options::get( OptionDefaults::CONVERSIONS_ENABLED ),
 				'trigger_export'        => ! file_exists( $csv_path ) && Helper::has_products() && (int) $timestamp <= ( time() - DAY_IN_SECONDS ),
 				'last_export_timestamp' => Helper::get_formatted_timestamp( $timestamp ),
 				'export_file_url'       => file_exists( $csv_path ) ? Options::get( OptionDefaults::EXPORT_FILE_URL ) : '',
+				'products_token'        => Options::get( OptionDefaults::WCS_PRODUCTS_TOKEN ),
 			)
 		);
 	}

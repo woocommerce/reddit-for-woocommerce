@@ -89,11 +89,17 @@ class RemoteConversionTracker implements ConversionTrackerInterface {
 			return;
 		}
 
-		$order = wc_get_order( $order_id );
+		$order         = wc_get_order( $order_id );
+		$track_states  = array( 'queued', 'tracked' );
+		$current_state = $order->get_meta( self::ORDER_CONVERSION_TRACKED_META_KEY, true );
 
 		// Make sure there is a valid order object and it is not already marked as tracked.
-		if ( ! $order || 1 === (int) $order->get_meta( self::ORDER_CONVERSION_TRACKED_META_KEY, true ) ) {
+		if ( ! $order || in_array( $current_state, $track_states, true ) ) {
 			return;
+		} else {
+			// Mark the order as queued for tracking.
+			$order->update_meta_data( self::ORDER_CONVERSION_TRACKED_META_KEY, 'queued' );
+			$order->save_meta_data();
 		}
 
 		$event   = new PurchaseEvent( $order_id );
