@@ -252,6 +252,24 @@ class RedditConnectionController extends RESTBaseController {
 	 * @return WP_REST_Response
 	 */
 	public function delete_connection() {
+		$catalog_id = Options::get( OptionDefaults::CATALOG_ID );
+
+		// Delete the catalog if it exists.
+		if ( $catalog_id ) {
+			$delete_catalog_response = $this->ad_partner_api->catalog->delete( $catalog_id );
+
+			if ( is_wp_error( $delete_catalog_response ) ) {
+				return new WP_REST_Response(
+					array(
+						'status'  => 'error',
+						'message' => $delete_catalog_response->get_error_message(),
+						'data'    => $delete_catalog_response->get_error_data(),
+					),
+					500
+				);
+			}
+		}
+
 		$response = $this->stop_connection();
 
 		if ( is_wp_error( $response ) ) {
@@ -284,6 +302,7 @@ class RedditConnectionController extends RESTBaseController {
 		Options::delete( OptionDefaults::EXPORT_FILE_PATH );
 		Options::delete( OptionDefaults::EXPORT_FILE_URL );
 		Options::delete( OptionDefaults::EXPORT_PRODUCT_IDS );
+		Options::delete( OptionDefaults::CATALOG_ID );
 		Options::delete( OptionDefaults::FEED_STATUS );
 		Options::delete( OptionDefaults::WCS_PRODUCTS_TOKEN );
 		Transients::delete( TransientDefaults::PIXEL_SCRIPT );

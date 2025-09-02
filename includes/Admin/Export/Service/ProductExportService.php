@@ -375,7 +375,7 @@ class ProductExportService {
 	}
 
 	/**
-	 * Invokes the Ad Partner API to create a product feed after export completes.
+	 * Invokes the Ad Partner API to create a product feed after export completes if it hasn't been created yet.
 	 *
 	 * This method is hooked to {@see Helper::with_prefix( 'batch_export_job_complete' )}.
 	 * It is triggered automatically after the final export batch has finished and the
@@ -392,13 +392,20 @@ class ProductExportService {
 	 * @return void
 	 */
 	public function create_feed() {
-		$response = $this->job->ad_partner_api->feed->create();
+		/**
+		 * Only create the feed if it hasn't been created yet.
+		 */
+		if ( 'empty' === Options::get( OptionDefaults::FEED_STATUS ) ) {
+			$response = $this->job->ad_partner_api->feed->create();
 
-		if ( is_wp_error( $response ) ) {
-			$logger = wc_get_logger();
-			$logger->alert(
-				'Feed generation failed with error code' . $response->get_error_code(),
-			);
+			if ( is_wp_error( $response ) ) {
+				$logger = wc_get_logger();
+				$logger->alert(
+					'Feed generation failed with error code' . $response->get_error_code(),
+				);
+			} else {
+				Options::set( OptionDefaults::FEED_STATUS, 'created' );
+			}
 		}
 	}
 }
