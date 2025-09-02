@@ -366,12 +366,10 @@ class RedditConnectionController extends RESTBaseController {
 			}
 
 			$data         = $response->get_data();
-			$catalog_data = $data['catalogs'];
+			$catalog_data = $data['data'] ?? array();
 
-			if ( ! empty( $catalog_data ) && ! empty( $catalog_data[0] ) ) {
-				$catalog = $catalog_data[0]['catalog'];
-
-				Options::set( OptionDefaults::CATALOG_ID, $catalog['id'] );
+			if ( ! empty( $catalog_data ) ) {
+				Options::set( OptionDefaults::CATALOG_ID, $catalog_data['id'] );
 			}
 
 			/**

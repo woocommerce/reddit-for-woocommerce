@@ -161,4 +161,34 @@ class Helper {
 	public static function get_event_time() {
 		return gmdate( 'c' );
 	}
+
+	/**
+	 * Retrieve a valid IANA timezone string for the site.
+	 *
+	 * Behavior:
+	 * - If `timezone_string` is set in WordPress options, that value is returned.
+	 * - If only a numeric GMT offset is set (e.g. +5.5), it is converted into
+	 *   the closest matching timezone identifier.
+	 * - If no valid timezone can be determined, "UTC" is returned as fallback.
+	 *
+	 * @since 0.1.0
+	 *
+	 * @return string A valid IANA timezone string.
+	 */
+	public static function get_timezone_string() {
+		$timezone_string = get_option( 'timezone_string' );
+
+		if ( ! $timezone_string ) {
+			// Fallback if the site uses UTC offset instead of a proper timezone.
+			$gmt_offset      = get_option( 'gmt_offset' );
+			$timezone_string = timezone_name_from_abbr( '', $gmt_offset * 3600, 0 );
+
+			// Still empty? Default to UTC.
+			if ( ! $timezone_string ) {
+				$timezone_string = 'UTC';
+			}
+		}
+
+		return $timezone_string;
+	}
 }
