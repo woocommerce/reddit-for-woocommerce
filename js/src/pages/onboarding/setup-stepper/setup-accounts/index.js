@@ -78,18 +78,18 @@ const SetupAccounts = ( props ) => {
 	return (
 		<StepContent>
 			<StepContentHeader
-				title={ __( 'Set up your accounts', 'reddit-for-woo' ) }
+				title={ __( 'Set up your accounts', 'reddit-for-woocommerce' ) }
 				description={ __(
 					'Connect the accounts required to use Reddit integration.',
-					'reddit-for-woo'
+					'reddit-for-woocommerce'
 				) }
 			/>
 			<Section
 				className="rfw-wp-reddit-accounts-section"
-				title={ __( 'Connect accounts', 'reddit-for-woo' ) }
+				title={ __( 'Connect accounts', 'reddit-for-woocommerce' ) }
 				description={ __(
 					'The following accounts are required to use the Reddit plugin.',
-					'reddit-for-woo'
+					'reddit-for-woocommerce'
 				) }
 			>
 				<WPComAccountCard jetpack={ jetpack } />
@@ -102,7 +102,7 @@ const SetupAccounts = ( props ) => {
 						isPrimary
 						disabled={ isContinueButtonDisabled }
 						loading={ isSubmitting }
-						text={ __( 'Continue', 'reddit-for-woo' ) }
+						text={ __( 'Continue', 'reddit-for-woocommerce' ) }
 						onClick={ handleOnClick }
 					/>
 				</StepContentActions>

@@ -46,7 +46,10 @@ const SavedSetupStepper = ( { savedStep } ) => {
 			steps={ [
 				{
 					key: STEP_NAME_KEY_MAP.accounts,
-					label: __( 'Set up your accounts', 'reddit-for-woo' ),
+					label: __(
+						'Set up your accounts',
+						'reddit-for-woocommerce'
+					),
 					content: (
 						<SetupAccounts
 							onContinue={ handleSetupAccountsContinue }

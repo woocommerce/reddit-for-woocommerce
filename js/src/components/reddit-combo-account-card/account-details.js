@@ -21,20 +21,21 @@ const AccountDetails = () => {
 		<div className="rfw-reddit-account-details">
 			{ businessName && (
 				<p>
-					{ __( 'Business:', 'reddit-for-woo' ) } { businessName }
+					{ __( 'Business:', 'reddit-for-woocommerce' ) }{ ' ' }
+					{ businessName }
 				</p>
 			) }
 
 			{ adsAccountId && adsAccountName && (
 				<p>
-					{ __( 'Ads Account:', 'reddit-for-woo' ) }{ ' ' }
+					{ __( 'Ads Account:', 'reddit-for-woocommerce' ) }{ ' ' }
 					{ adsAccountName } ({ adsAccountId })
 				</p>
 			) }
 
 			{ pixelId && (
 				<p>
-					{ __( 'Pixel ID:', 'reddit-for-woo' ) } { pixelId }
+					{ __( 'Pixel ID:', 'reddit-for-woocommerce' ) } { pixelId }
 				</p>
 			) }
 		</div>

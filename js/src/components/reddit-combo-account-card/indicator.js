@@ -25,7 +25,11 @@ const Indicator = ( { showSpinner } ) => {
 	const { hasConnection: hasPixelIdConnection } = useRedditPixelId();
 
 	if ( showSpinner ) {
-		return <LoadingLabel text={ __( 'Connecting…', 'reddit-for-woo' ) } />;
+		return (
+			<LoadingLabel
+				text={ __( 'Connecting…', 'reddit-for-woocommerce' ) }
+			/>
+		);
 	}
 
 	if ( hasBusinessConnection && hasAdsConnection && hasPixelIdConnection ) {

@@ -45,7 +45,7 @@ const DisconnectAccountButton = ( { onDisconnected = noop } ) => {
 			loading={ isDisconnecting }
 			text={ __(
 				'Or, connect to a different Ads account',
-				'reddit-for-woo'
+				'reddit-for-woocommerce'
 			) }
 			eventName="rfw_ads_account_disconnect_button_click"
 			onClick={ handleSwitch }

@@ -43,7 +43,7 @@ const ConnectWPComAccountCard = () => {
 				'error',
 				__(
 					'Unable to connect your WordPress.com account. Please try again later.',
-					'reddit-for-woo'
+					'reddit-for-woocommerce'
 				)
 			);
 		}
@@ -54,7 +54,7 @@ const ConnectWPComAccountCard = () => {
 			appearance={ APPEARANCE.WPCOM }
 			description={ __(
 				'Required to connect with Reddit',
-				'reddit-for-woo'
+				'reddit-for-woocommerce'
 			) }
 			indicator={
 				<AppButton
@@ -64,7 +64,7 @@ const ConnectWPComAccountCard = () => {
 					eventProps={ { context: nextPageName } }
 					onClick={ handleConnectClick }
 				>
-					{ __( 'Connect', 'reddit-for-woo' ) }
+					{ __( 'Connect', 'reddit-for-woocommerce' ) }
 				</AppButton>
 			}
 		/>

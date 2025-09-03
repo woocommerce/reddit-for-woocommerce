@@ -23,7 +23,10 @@ import useSwitchRedditAccount from '~/hooks/useSwitchRedditAccount';
  * @param {string} [props.text="Or, connect to a different Reddit account"] Text to display on the button
  */
 const SwitchAccountButton = ( {
-	text = __( 'Or, connect to a different Reddit account', 'reddit-for-woo' ),
+	text = __(
+		'Or, connect to a different Reddit account',
+		'reddit-for-woocommerce'
+	),
 	...restProps
 } ) => {
 	const [ handleSwitch, { loading } ] = useSwitchRedditAccount();
