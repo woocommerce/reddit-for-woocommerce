@@ -3,6 +3,8 @@
  */
 import { __ } from '@wordpress/i18n';
 import { noop } from 'lodash';
+import { getQuery } from '@woocommerce/navigation';
+import { useEffect } from '@wordpress/element';
 
 /**
  * Internal dependencies
@@ -21,11 +23,14 @@ import StepContentActions from '~/components/stepper/step-content-actions';
 import useRedditAdsAccount from '~/hooks/useRedditAdsAccount';
 import useRedditBusinessAccount from '~/hooks/useRedditBusinessAccount';
 import useRedditPixelId from '~/hooks/useRedditPixelId';
+import { useAppDispatch } from '~/data';
 import './index.scss';
 
 const SetupAccounts = ( props ) => {
 	const { onContinue = noop } = props;
+	const { products_token: productsTokenParam } = getQuery();
 	const { jetpack } = useJetpackAccount();
+	const { updateSettings } = useAppDispatch();
 	const { hasConnection: hasBusinessConnection } = useRedditBusinessAccount();
 	const { hasConnection: hasAdsConnection } = useRedditAdsAccount();
 	const { hasConnection: hasPixelIdConnection } = useRedditPixelId();
@@ -44,14 +49,6 @@ const SetupAccounts = ( props ) => {
 	const isLoadingJetpack = ! jetpack;
 	const isJetpackActive = jetpack?.active === 'yes';
 
-	if ( isLoadingJetpack || ! hasResolvedRedditAccount ) {
-		return <AppSpinner />;
-	}
-
-	const handleOnClick = () => {
-		onContinue();
-	};
-
 	const isContinueButtonDisabled =
 		! isJetpackActive ||
 		! isRedditConnected ||
@@ -59,6 +56,24 @@ const SetupAccounts = ( props ) => {
 		! hasAdsConnection ||
 		! hasPixelIdConnection;
 	const isSubmitting = false;
+
+	useEffect( () => {
+		if ( ! ( productsTokenParam && ! isContinueButtonDisabled ) ) {
+			return;
+		}
+
+		( async () => {
+			await updateSettings( { productsToken: productsTokenParam } );
+		} )();
+	}, [ productsTokenParam, isContinueButtonDisabled ] );
+
+	if ( isLoadingJetpack || ! hasResolvedRedditAccount ) {
+		return <AppSpinner />;
+	}
+
+	const handleOnClick = () => {
+		onContinue();
+	};
 
 	return (
 		<StepContent>
