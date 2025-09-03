@@ -1,7 +1,7 @@
 <?php
 declare( strict_types=1 );
 
-namespace Automattic\WooCommerce\GoogleListingsAndAds\Tests;
+namespace RedditForWooCommerce\Tests;
 
 use DG\BypassFinals;
 use WC_Install;

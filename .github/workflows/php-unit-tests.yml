@@ -56,7 +56,7 @@ jobs:
 
       - name: Install WordPress test suite (with WooCommerce)
         run: |
-          bash bin/install-wp-tests.sh $DB_NAME $DB_USER $DB_PASS $DB_HOST $WP_VERSION
+          bash tests/phpunit/bin/install-wp-tests.sh $DB_NAME $DB_USER $DB_PASS $DB_HOST $WP_VERSION
 
       - name: Run PHPUnit tests
         run: ./vendor/bin/phpunit
