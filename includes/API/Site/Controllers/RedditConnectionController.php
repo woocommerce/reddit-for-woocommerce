@@ -140,16 +140,6 @@ class RedditConnectionController extends RESTBaseController {
 				'permission_callback' => array( $this, 'permissions_check' ),
 			)
 		);
-
-		register_rest_route(
-			Config::REST_NAMESPACE . '/reddit',
-			'catalog',
-			array(
-				'methods'             => 'POST',
-				'callback'            => array( $this, 'create_catalog' ),
-				'permission_callback' => array( $this, 'permissions_check' ),
-			)
-		);
 	}
 
 	/**
@@ -559,77 +549,6 @@ class RedditConnectionController extends RESTBaseController {
 		);
 
 		return rest_ensure_response( $formatted );
-	}
-
-	/**
-	 * Creates a product catalog for the current business.
-	 *
-	 * This method creates a product catalog for the current business and
-	 * triggers the feed creation if the export is completed and the export file URL is set.
-	 * Triggers the export if the export is not in progress and the export file URL is not set.
-	 *
-	 * @since 0.1.0
-	 *
-	 * @return WP_REST_Response
-	 */
-	public function create_catalog() {
-		// Bail early if the catalog already exists.
-		$catalog_id = Options::get( OptionDefaults::CATALOG_ID );
-		if ( $catalog_id ) {
-			return new WP_REST_Response(
-				array(
-					'status'  => 'error',
-					'message' => __( 'Catalog already exists.', 'reddit-for-woocommerce' ),
-				),
-				400
-			);
-		}
-
-		// Create the catalog.
-		$response = $this->ad_partner_api->catalog->create();
-
-		if ( is_wp_error( $response ) ) {
-			$logger = wc_get_logger();
-			$logger->alert(
-				'Catalog creation failed with error code' . $response->get_error_code(),
-			);
-			return new WP_REST_Response(
-				array(
-					'status'  => 'error',
-					'message' => $response->get_error_message(),
-					'data'    => $response->get_error_data(),
-				),
-				500
-			);
-		}
-
-		$data         = $response->get_data();
-		$catalog_data = $data['data'] ?? array();
-
-		if ( ! empty( $catalog_data ) ) {
-			Options::set( OptionDefaults::CATALOG_ID, $catalog_data['id'] );
-
-			$is_job_in_progress = ServiceContainer::get( ServiceKey::PRODUCT_EXPORT_SERVICE )->job->is_job_in_progress( ProductExportService::ACTION_HOOK );
-			$file_url           = Options::get( OptionDefaults::EXPORT_FILE_URL );
-
-			if ( ! $is_job_in_progress && ! empty( $file_url ) ) {
-				// Trigger feed creation if the export is completed.
-				ServiceContainer::get( ServiceKey::PRODUCT_EXPORT_SERVICE )->create_feed();
-			} elseif ( ! $is_job_in_progress && empty( $file_url ) ) {
-				// Trigger export if the export is not in progress and the export file URL is not set.
-				ServiceContainer::get( ServiceKey::PRODUCT_EXPORT_SERVICE )->start_export();
-			}
-		}
-
-		return rest_ensure_response(
-			array(
-				'status'  => 'success',
-				'data'    => array(
-					'id' => $catalog_data['id'],
-				),
-				'message' => __( 'Catalog created successfully.', 'reddit-for-woocommerce' ),
-			)
-		);
 	}
 
 	/**
