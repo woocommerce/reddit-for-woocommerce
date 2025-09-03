@@ -122,7 +122,8 @@ class ProductExportService {
 
 		Helper::register_ajax_action(
 			'create_catalog',
-			array( $this, 'create_catalog_manually' )
+			array( $this, 'create_catalog_manually' ),
+			true
 		);
 	}
 
@@ -422,15 +423,16 @@ class ProductExportService {
 	 * Triggers the export if the export is not in progress and the export file URL is not set.
 	 *
 	 * @since 0.1.0
-	 *
-	 * @return WP_REST_Response
 	 */
-	public function create_catalog_manually() {
+	public function create_catalog_manually(): void {
 		// Bail early if the catalog already exists.
 		$catalog_id = Options::get( OptionDefaults::CATALOG_ID );
+
 		if ( $catalog_id ) {
 			wp_send_json_error(
-				__( 'Catalog already exists.', 'reddit-for-woocommerce' )
+				array(
+					'message' => __( 'Catalog already exists.', 'reddit-for-woocommerce' ),
+				)
 			);
 		}
 
@@ -446,7 +448,6 @@ class ProductExportService {
 			wp_send_json_error(
 				array(
 					'message' => $response->get_error_message(),
-					'data'    => $response->get_error_data(),
 				)
 			);
 		}
@@ -472,9 +473,7 @@ class ProductExportService {
 		wp_send_json_success(
 			array(
 				'status'  => 'success',
-				'data'    => array(
-					'id' => $catalog_data['id'],
-				),
+				'id'      => $catalog_data['id'],
 				'message' => __( 'Catalog created successfully.', 'reddit-for-woocommerce' ),
 			)
 		);

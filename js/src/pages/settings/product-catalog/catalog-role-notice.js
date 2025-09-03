@@ -27,7 +27,7 @@ const CatalogRoleNotice = () => {
 		hasFinishedResolution: hasFinishedResolutionRedditAccountConfig,
 	} = useRedditAccountConfig();
 
-	const [ createCatalog, { loading, createdCatalogId } ] = useCreateCatalog();
+	const { createCatalog, loading, createdCatalogId } = useCreateCatalog();
 
 	if (
 		! hasFinishedResolution ||

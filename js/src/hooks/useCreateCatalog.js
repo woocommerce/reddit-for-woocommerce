@@ -7,8 +7,6 @@ import { sprintf, __ } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
-import { API_NAMESPACE } from '~/data/constants';
-import useApiFetchCallback from './useApiFetchCallback';
 import useDispatchCoreNotices from '~/hooks/useDispatchCoreNotices';
 
 /**
@@ -28,42 +26,55 @@ import useDispatchCoreNotices from '~/hooks/useDispatchCoreNotices';
  */
 const useCreateCatalog = () => {
 	const [ createdCatalogId, setCreatedCatalogId ] = useState( '' );
+	const [ loading, setLoading ] = useState( false );
 	const { createNotice } = useDispatchCoreNotices();
 
-	const [
-		fetchCreateCatalog,
-		{ loading: loadingCreateCatalog, data: dataCreateCatalog },
-	] = useApiFetchCallback( {
-		path: `${ API_NAMESPACE }/reddit/catalog`,
-		method: 'POST',
-	} );
-
 	const createCatalog = useCallback( async () => {
-		try {
-			const { data } = await fetchCreateCatalog();
-			setCreatedCatalogId( data?.id || '' );
-			createNotice(
-				'success',
-				__( 'Product catalog created successfully.', 'reddit-for-woo' )
-			);
-		} catch ( e ) {
+		setLoading( true );
+		const response = await fetch( ajaxurl, {
+			method: 'POST',
+			body: new URLSearchParams( {
+				action: `${ redditAdsAdminData.prefix }create_catalog`,
+			} ),
+		} );
+
+		if ( response.ok ) {
+			const res = await response.json();
+
+			setLoading( false );
+
+			if ( res.success ) {
+				setCreatedCatalogId( res.data.id || '' );
+				createNotice(
+					'success',
+					__(
+						'Product catalog created successfully.',
+						'reddit-for-woo'
+					)
+				);
+			} else {
+				createNotice(
+					'error',
+					sprintf(
+						/* translators: %s is the error message */
+						__(
+							'Failed to create product catalog: %s',
+							'reddit-for-woo'
+						),
+						res.data.message
+					)
+				);
+			}
+		} else {
 			createNotice(
 				'error',
-				sprintf(
-					/* translators: %s is the error message */
-					__(
-						'Failed to create product catalog: %s',
-						'reddit-for-woo'
-					),
-					e.message
-				)
+				__( 'There was an error with the request.', 'reddit-for-woo' )
 			);
+			setLoading( false );
 		}
-	}, [ createNotice, fetchCreateCatalog ] );
+	}, [ createNotice, setCreatedCatalogId, setLoading ] );
 
-	const loading = loadingCreateCatalog || dataCreateCatalog;
-
-	return [ createCatalog, { loading, createdCatalogId } ];
+	return { createCatalog, loading, createdCatalogId };
 };
 
 export default useCreateCatalog;

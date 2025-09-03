@@ -82,6 +82,7 @@ class Assets {
 				'exportFileUrl'      => file_exists( $csv_path ) ? Options::get( OptionDefaults::EXPORT_FILE_URL ) : '',
 				'lastTimestamp'      => Helper::get_formatted_timestamp( Options::get( OptionDefaults::LAST_EXPORT_TIMESTAMP ) ),
 				'slug'               => 'rfw',
+				'prefix'             => Helper::with_prefix( '' ),
 			)
 		);
 	}
