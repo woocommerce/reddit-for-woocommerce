@@ -251,4 +251,24 @@ export default class ElementLocators {
 			'Enable Conversions API tracking'
 		);
 	}
+
+	/**
+	 * Get the Conversion Access Token input.
+	 *
+	 * @return {import('@playwright/test').Locator} The input locator.
+	 */
+	getCapiTokenInput() {
+		return this.getCard( 'Conversions API' ).locator( '#rfw-settings-track-conversions-capi-token' );
+	}
+
+	/**
+	 * Get the Create Business Account button.
+	 *
+	 * @return {import('@playwright/test').Locator} The Create Business Account button.
+	 */
+	getCreateBusinessButton() {
+		return this.page.getByRole( 'button', {
+			name: 'Create Business Account',
+		} );
+	}
 }

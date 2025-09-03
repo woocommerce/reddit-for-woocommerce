@@ -76,6 +76,24 @@ test.describe( 'Merchant Onboarding', () => {
 		expect( page.url() ).toMatch( `${ baseURL }/reddit_auth_url` );
 	} );
 
+	test( 'Reddit display button to create business', async ( { baseURL } ) => {
+		await setupPage.mockJetpackConnected();
+		await setupPage.mockRedditConnection( { status: 'connected' } );
+		await setupPage.mockRedditAccount( {} );
+		await setupPage.mockRedditBusiness([]);
+		await setupPage.mockRedditAdAccounts([]);
+		await setupPage.mockRedditPixels([]);
+		await setupPage.goto();
+		await expect( locator.getCreateBusinessButton() ).toBeVisible();
+		await expect( locator.getCreateBusinessButton() ).toContainText( 'Create Business Account' );
+
+		const newPagePromise = page.waitForEvent( 'popup' );
+		await locator.getCreateBusinessButton().click();
+		const newPage = await newPagePromise;
+		await newPage.waitForLoadState();
+		await expect(newPage.title()).resolves.toContain('Reddit Ads');
+	} );
+
 	test( 'Reddit connected card state', async () => {
 		await setupPage.mockJetpackConnected();
 		await setupPage.mockRedditConnection( { status: 'connected' } );
@@ -83,6 +101,9 @@ test.describe( 'Merchant Onboarding', () => {
 			status: 'connected',
 			step: 'accounts',
 		} );
+		await setupPage.mockRedditBusiness();
+		await setupPage.mockRedditAdAccounts();
+		await setupPage.mockRedditPixels();
 		await setupPage.mockRedditAccount();
 		await setupPage.goto();
 
@@ -96,6 +117,9 @@ test.describe( 'Merchant Onboarding', () => {
 			status: 'connected',
 			step: 'accounts',
 		} );
+		await setupPage.mockRedditBusiness();
+		await setupPage.mockRedditAdAccounts();
+		await setupPage.mockRedditPixels();
 		await setupPage.mockRedditAccount();
 		setupPage.goto();
 
