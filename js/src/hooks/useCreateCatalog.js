@@ -68,7 +68,10 @@ const useCreateCatalog = () => {
 		} else {
 			createNotice(
 				'error',
-				__( 'There was an error with the request.', 'reddit-for-woocommerce' )
+				__(
+					'There was an error with the request.',
+					'reddit-for-woocommerce'
+				)
 			);
 			setLoading( false );
 		}
