@@ -16,39 +16,45 @@ import { ALL_ACCOUNTS, REDDIT_ACCOUNT } from './constants';
 
 const textDict = {
 	[ ALL_ACCOUNTS ]: {
-		title: __( 'Disconnect all accounts', 'reddit-for-woo' ),
-		confirmButton: __( 'Disconnect all accounts', 'reddit-for-woo' ),
+		title: __( 'Disconnect all accounts', 'reddit-for-woocommerce' ),
+		confirmButton: __(
+			'Disconnect all accounts',
+			'reddit-for-woocommerce'
+		),
 		confirmation: __(
 			'Yes, I want to disconnect all my accounts.',
-			'reddit-for-woo'
+			'reddit-for-woocommerce'
 		),
 		contents: [
 			__(
 				'I understand that I am disconnecting any WordPress.com account and Reddit account connected to this extension.',
-				'reddit-for-woo'
+				'reddit-for-woocommerce'
 			),
-			__( 'Lorem ipsum', 'reddit-for-woo' ),
+			__( 'Lorem ipsum', 'reddit-for-woocommerce' ),
 			__(
 				'Dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
-				'reddit-for-woo'
+				'reddit-for-woocommerce'
 			),
 		],
 	},
 	[ REDDIT_ACCOUNT ]: {
-		title: __( 'Disconnect Reddit account', 'reddit-for-woo' ),
-		confirmButton: __( 'Disconnect Reddit Account', 'reddit-for-woo' ),
+		title: __( 'Disconnect Reddit account', 'reddit-for-woocommerce' ),
+		confirmButton: __(
+			'Disconnect Reddit Account',
+			'reddit-for-woocommerce'
+		),
 		confirmation: __(
 			'Yes, I want to disconnect my Reddit account.',
-			'reddit-for-woo'
+			'reddit-for-woocommerce'
 		),
 		contents: [
 			__(
 				'I understand that I am disconnecting my Reddit account from this WooCommerce extension.',
-				'reddit-for-woo'
+				'reddit-for-woocommerce'
 			),
 			__(
 				'Some configurations for Reddit created through WooCommerce may be lost. This cannot be undone.',
-				'reddit-for-woo'
+				'reddit-for-woocommerce'
 			),
 		],
 	},
@@ -112,7 +118,7 @@ export default function ConfirmModal( {
 					disabled={ isDisconnecting }
 					onClick={ handleRequestClose }
 				>
-					{ __( 'Never mind', 'reddit-for-woo' ) }
+					{ __( 'Never mind', 'reddit-for-woocommerce' ) }
 				</AppButton>,
 				<AppButton
 					key="2"

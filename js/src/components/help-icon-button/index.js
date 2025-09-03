@@ -40,7 +40,7 @@ const HelpIconButton = ( { eventContext } ) => {
 			} }
 		>
 			<GridiconHelpOutline />
-			{ __( 'Help', 'reddit-for-woo' ) }
+			{ __( 'Help', 'reddit-for-woocommerce' ) }
 		</AppButton>
 	);
 };

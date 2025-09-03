@@ -59,7 +59,7 @@ export default function LinkedAccounts() {
 						>
 							{ __(
 								'Disconnect Reddit account',
-								'reddit-for-woo'
+								'reddit-for-woocommerce'
 							) }
 						</AppButton>
 					</Section.Card.Footer>

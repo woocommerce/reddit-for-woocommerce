@@ -42,7 +42,7 @@ export function getJetpackAccount() {
 				error,
 				__(
 					'There was an error loading Jetpack account info.',
-					'reddit-for-woo'
+					'reddit-for-woocommerce'
 				)
 			);
 		}
@@ -75,7 +75,7 @@ export function getRedditAccountConfig() {
 				error,
 				__(
 					'There was an error loading Reddit account config info.',
-					'reddit-for-woo'
+					'reddit-for-woocommerce'
 				)
 			);
 		}
@@ -104,7 +104,7 @@ export function getTrackConversions() {
 				error,
 				__(
 					'There was an error getting the conversions tracking status.',
-					'reddit-for-woo'
+					'reddit-for-woocommerce'
 				)
 			);
 		}
@@ -136,7 +136,10 @@ export function getSettings() {
 		} catch ( error ) {
 			handleApiError(
 				error,
-				__( 'There was an error fetching settings.', 'reddit-for-woo' )
+				__(
+					'There was an error fetching settings.',
+					'reddit-for-woocommerce'
+				)
 			);
 		}
 	};
@@ -171,7 +174,7 @@ export function getExistingAdsAccounts() {
 				error,
 				__(
 					'There was an error loading existing ads accounts.',
-					'reddit-for-woo'
+					'reddit-for-woocommerce'
 				)
 			);
 		}
@@ -199,7 +202,7 @@ export function getExistingBusinessAccounts() {
 				error,
 				__(
 					'There was an error loading existing business accounts.',
-					'reddit-for-woo'
+					'reddit-for-woocommerce'
 				)
 			);
 		}
@@ -227,7 +230,7 @@ export function getExistingPixels() {
 				error,
 				__(
 					'There was an error loading existing pixel IDs.',
-					'reddit-for-woo'
+					'reddit-for-woocommerce'
 				)
 			);
 		}

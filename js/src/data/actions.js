@@ -166,7 +166,7 @@ export async function updateTrackConversionsStatus( status ) {
 			error,
 			__(
 				'There was an error updating the conversions tracking status.',
-				'reddit-for-woo'
+				'reddit-for-woocommerce'
 			)
 		);
 		throw error;
@@ -200,7 +200,10 @@ export async function updateSettings( updatedSettings ) {
 	} catch ( error ) {
 		handleApiError(
 			error,
-			__( 'There was an error updating the settings.', 'reddit-for-woo' )
+			__(
+				'There was an error updating the settings.',
+				'reddit-for-woocommerce'
+			)
 		);
 		throw error;
 	}
@@ -224,7 +227,7 @@ export async function fetchRedditAccount() {
 			error,
 			__(
 				'There was an error loading Reddit account info.',
-				'reddit-for-woo'
+				'reddit-for-woocommerce'
 			)
 		);
 	}
@@ -246,7 +249,10 @@ export async function fetchSetup() {
 	} catch ( error ) {
 		handleApiError(
 			error,
-			__( 'There was an error loading Reddit setup.', 'reddit-for-woo' )
+			__(
+				'There was an error loading Reddit setup.',
+				'reddit-for-woocommerce'
+			)
 		);
 	}
 }
@@ -273,7 +279,10 @@ export async function disconnectRedditAccount(
 	} catch ( error ) {
 		handleApiError(
 			error,
-			__( 'Unable to disconnect your Reddit account.', 'reddit-for-woo' )
+			__(
+				'Unable to disconnect your Reddit account.',
+				'reddit-for-woocommerce'
+			)
 		);
 		throw error;
 	}
@@ -312,7 +321,7 @@ export async function upsertBusinessAccount(
 			error,
 			__(
 				'There was an error connecting your business account.',
-				'reddit-for-woo'
+				'reddit-for-woocommerce'
 			)
 		);
 		throw error;
@@ -375,7 +384,7 @@ export async function resetRedditAccountConfig(
 			error,
 			__(
 				'There was an error disconnecting your account.',
-				'reddit-for-woo'
+				'reddit-for-woocommerce'
 			)
 		);
 		throw error;
@@ -412,7 +421,7 @@ export async function upsertAdsAccount( adsAccountId, adsAccountName ) {
 			error,
 			__(
 				'There was an error connecting your Ad account.',
-				'reddit-for-woo'
+				'reddit-for-woocommerce'
 			)
 		);
 		throw error;
@@ -447,7 +456,7 @@ export async function upsertPixelId( pixelId ) {
 			error,
 			__(
 				'There was an error connecting your Pixel ID.',
-				'reddit-for-woo'
+				'reddit-for-woocommerce'
 			)
 		);
 		throw error;

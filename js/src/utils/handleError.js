@@ -41,14 +41,16 @@ export function resolveErrorMessage( error, leadingMessage, fallbackMessage ) {
 	}
 
 	if ( messages.length === 0 ) {
-		messages.push( __( 'Unknown error occurred.', 'reddit-for-woo' ) );
+		messages.push(
+			__( 'Unknown error occurred.', 'reddit-for-woocommerce' )
+		);
 	}
 
 	return messages.join(
 		_x(
 			' ',
 			`The spacing between sentences. It's a space in English. Please use an empty string if no spacing is needed in that language.`,
-			'reddit-for-woo'
+			'reddit-for-woocommerce'
 		)
 	);
 }

@@ -15,7 +15,7 @@ const SetupTopBar = () => {
 
 	return (
 		<TopBar
-			title={ __( 'Get started with Reddit', 'reddit-for-woo' ) }
+			title={ __( 'Get started with Reddit', 'reddit-for-woocommerce' ) }
 			helpButton={ <HelpIconButton eventContext="setup-reddit" /> }
 			backHref={ adminUrl }
 		/>

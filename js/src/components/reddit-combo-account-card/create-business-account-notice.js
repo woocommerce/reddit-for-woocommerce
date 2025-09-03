@@ -42,12 +42,15 @@ const CreateBusinessAccountNotice = () => {
 			<p>
 				{ __(
 					"We couldn't find a Reddit Business Account connected to your user.",
-					'reddit-for-woo'
+					'reddit-for-woocommerce'
 				) }
 			</p>
 			<AppButton
 				isPrimary
-				text={ __( 'Create Business Account', 'reddit-for-woo' ) }
+				text={ __(
+					'Create Business Account',
+					'reddit-for-woocommerce'
+				) }
 				onClick={ handleOnClick }
 			/>
 		</AppNotice>

@@ -45,7 +45,7 @@ const DisconnectPixelIdButton = ( { onDisconnected = noop } ) => {
 			loading={ isDisconnecting }
 			text={ __(
 				'Or, connect to a different Pixel ID',
-				'reddit-for-woo'
+				'reddit-for-woocommerce'
 			) }
 			eventName="rfw_pixel_id_disconnect_button_click"
 			onClick={ handleSwitch }

@@ -20,16 +20,16 @@ const UpsertingAccount = ( { upsertingAction } ) => {
 
 	let title = __(
 		'Creating a new Reddit Business account',
-		'reddit-for-woo'
+		'reddit-for-woocommerce'
 	);
-	let indicatorLabel = __( 'Creating…', 'reddit-for-woo' );
+	let indicatorLabel = __( 'Creating…', 'reddit-for-woocommerce' );
 
 	if ( isConnecting ) {
 		title = __(
 			'Connecting your Reddit Business account',
-			'reddit-for-woo'
+			'reddit-for-woocommerce'
 		);
-		indicatorLabel = __( 'Connecting…', 'reddit-for-woo' );
+		indicatorLabel = __( 'Connecting…', 'reddit-for-woocommerce' );
 	}
 
 	return (
@@ -38,7 +38,7 @@ const UpsertingAccount = ( { upsertingAction } ) => {
 			title={ title }
 			helper={ __(
 				'This may take a few moments, please wait…',
-				'reddit-for-woo'
+				'reddit-for-woocommerce'
 			) }
 			indicator={ <LoadingLabel text={ indicatorLabel } /> }
 		/>
