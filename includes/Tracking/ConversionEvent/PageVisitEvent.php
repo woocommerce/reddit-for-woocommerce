@@ -38,11 +38,15 @@ final class PageVisitEvent extends EventPayloadBase implements ConversionEventIn
 	 * @return array<string,mixed> Conversion event payload.
 	 */
 	public function build_payload( array $args = array() ): array {
-		$base    = parent::build_payload();
-		$default = array(
-			'event_type' => array(
+		$meta_data = array(
+			'conversion_id' => $args['conversion_id'] ?? '',
+		);
+		$base      = parent::build_payload();
+		$default   = array(
+			'event_type'     => array(
 				'tracking_type' => self::ID,
 			),
+			'event_metadata' => $meta_data,
 		);
 
 		return array_merge( $base, $default, $args['user_data'] );

@@ -252,6 +252,24 @@ class RedditConnectionController extends RESTBaseController {
 	 * @return WP_REST_Response
 	 */
 	public function delete_connection() {
+		$catalog_id = Options::get( OptionDefaults::CATALOG_ID );
+
+		// Delete the catalog if it exists.
+		if ( $catalog_id ) {
+			$delete_catalog_response = $this->ad_partner_api->catalog->delete( $catalog_id );
+
+			if ( is_wp_error( $delete_catalog_response ) ) {
+				return new WP_REST_Response(
+					array(
+						'status'  => 'error',
+						'message' => $delete_catalog_response->get_error_message(),
+						'data'    => $delete_catalog_response->get_error_data(),
+					),
+					500
+				);
+			}
+		}
+
 		$response = $this->stop_connection();
 
 		if ( is_wp_error( $response ) ) {
@@ -284,7 +302,9 @@ class RedditConnectionController extends RESTBaseController {
 		Options::delete( OptionDefaults::EXPORT_FILE_PATH );
 		Options::delete( OptionDefaults::EXPORT_FILE_URL );
 		Options::delete( OptionDefaults::EXPORT_PRODUCT_IDS );
+		Options::delete( OptionDefaults::CATALOG_ID );
 		Options::delete( OptionDefaults::FEED_STATUS );
+		Options::delete( OptionDefaults::WCS_PRODUCTS_TOKEN );
 		Transients::delete( TransientDefaults::PIXEL_SCRIPT );
 
 		/**
@@ -339,10 +359,6 @@ class RedditConnectionController extends RESTBaseController {
 			Options::set( OptionDefaults::PIXEL_ID, sanitize_text_field( $params['pixel_id'] ) );
 		}
 
-		if ( isset( $params['products_token'] ) ) {
-			Options::set( OptionDefaults::WCS_PRODUCTS_TOKEN, sanitize_text_field( $params['products_token'] ) );
-		}
-
 		if ( isset( $params['capi_token'] ) ) {
 			Options::set( OptionDefaults::CONVERSION_ACCESS_TOKEN, sanitize_text_field( $params['capi_token'] ) );
 		}
@@ -352,11 +368,25 @@ class RedditConnectionController extends RESTBaseController {
 		$ad_account_id        = Options::get( OptionDefaults::AD_ACCOUNT_ID );
 		$pixel_id             = Options::get( OptionDefaults::PIXEL_ID );
 
-		// Mark the onboarding process as connected. If the Jetpack is connected and the business id, ad account id, and pixel id are set.
+		// Mark the onboarding process as connected, if Jetpack is connected, and the business id, ad account id, and pixel id are set.
 		if ( $is_jetpack_connected && ! empty( $business_id ) && ! empty( $ad_account_id ) && ! empty( $pixel_id ) ) {
 			Options::set( OptionDefaults::ONBOARDING_STATUS, 'connected' );
 
-			// @todo Create a product catalog and save the catalog id.
+			$response = $this->ad_partner_api->catalog->create();
+
+			if ( is_wp_error( $response ) ) {
+				$logger = wc_get_logger();
+				$logger->alert(
+					'Catalog generation failed with error code' . $response->get_error_code(),
+				);
+			} else {
+				$data         = $response->get_data();
+				$catalog_data = $data['data'] ?? array();
+
+				if ( ! empty( $catalog_data ) ) {
+					Options::set( OptionDefaults::CATALOG_ID, $catalog_data['id'] );
+				}
+			}
 
 			/**
 			 * Triggers when the Reddit onboarding process is completed.

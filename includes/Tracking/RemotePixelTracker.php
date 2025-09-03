@@ -14,10 +14,9 @@ namespace RedditForWooCommerce\Tracking;
 use RedditForWooCommerce\Connection\WcsClient;
 use RedditForWooCommerce\Utils\Storage\Options;
 use RedditForWooCommerce\Utils\Storage\OptionDefaults;
+use RedditForWooCommerce\Utils\Helper;
 use RedditForWooCommerce\Tracking\Consent;
 use RedditForWooCommerce\Config;
-use RedditForWooCommerce\Utils\Helper;
-use WC_Product;
 
 /**
  * Fetches and injects Reddit pixel tracking code into WooCommerce frontend pages.

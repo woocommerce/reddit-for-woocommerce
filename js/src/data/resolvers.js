@@ -125,10 +125,12 @@ export function getSettings() {
 
 			dispatch(
 				receiveSettings( {
+					capiToken: response.capi_token,
 					trackConversions: Boolean( response.capi_enabled ),
 					triggerExport: Boolean( response.trigger_export ),
 					lastExportTimeStamp: response.last_export_timestamp,
 					exportFileUrl: response.export_file_url,
+					productsToken: response.products_token,
 				} )
 			);
 		} catch ( error ) {
