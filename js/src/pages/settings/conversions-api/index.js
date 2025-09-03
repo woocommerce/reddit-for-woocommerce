@@ -53,7 +53,7 @@ const ConversionsAPI = () => {
 				'success',
 				__(
 					'Conversions API Tracking status updated successfully.',
-					'reddit-for-woo'
+					'reddit-for-woocommerce'
 				)
 			);
 		} catch ( error ) {
@@ -73,7 +73,7 @@ const ConversionsAPI = () => {
 					'success',
 					__(
 						'Conversions API Access Token updated successfully.',
-						'reddit-for-woo'
+						'reddit-for-woocommerce'
 					)
 				);
 			} catch ( error ) {
@@ -109,10 +109,10 @@ const ConversionsAPI = () => {
 	return (
 		<AccountCard
 			className="rfw-settings-track-conversions"
-			title={ __( 'Conversions API', 'reddit-for-woo' ) }
+			title={ __( 'Conversions API', 'reddit-for-woocommerce' ) }
 			description={ __(
 				'Send server-side conversion events to improve attribution.',
-				'reddit-for-woo'
+				'reddit-for-woocommerce'
 			) }
 			actions={
 				<>
@@ -121,14 +121,17 @@ const ConversionsAPI = () => {
 						<TextControl
 							label={ __(
 								'Conversion Access Token',
-								'reddit-for-woo'
+								'reddit-for-woocommerce'
 							) }
 							value={ localCapiToken }
 							readOnly={ isSaving }
 							onChange={ ( val ) => setLocalCapiToken( val ) }
 							help={
 								<>
-									{ __( 'Need help?', 'reddit-for-woo' ) }{ ' ' }
+									{ __(
+										'Need help?',
+										'reddit-for-woocommerce'
+									) }{ ' ' }
 									<a
 										href="https://business.reddithelp.com/s/article/conversion-access-token"
 										target="_blank"
@@ -136,7 +139,7 @@ const ConversionsAPI = () => {
 									>
 										{ __(
 											'Follow this guide',
-											'reddit-for-woo'
+											'reddit-for-woocommerce'
 										) }
 									</a>
 								</>
@@ -147,7 +150,7 @@ const ConversionsAPI = () => {
 						<CheckboxControl
 							label={ __(
 								'Enable Conversions API tracking',
-								'reddit-for-woo'
+								'reddit-for-woocommerce'
 							) }
 							checked={ isCapiEnabled }
 							disabled={ isSaving }

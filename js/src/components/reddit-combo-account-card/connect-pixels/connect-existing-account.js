@@ -53,7 +53,7 @@ const ConnectExistingAccount = ( { onCreateClick } ) => {
 				null,
 				__(
 					'Unable to connect your Reddit Pixel ID. Please try again later.',
-					'reddit-for-woo'
+					'reddit-for-woocommerce'
 				)
 			);
 		} finally {
@@ -78,7 +78,9 @@ const ConnectExistingAccount = ( { onCreateClick } ) => {
 
 		if ( isLoading ) {
 			return (
-				<LoadingLabel text={ __( 'Connecting…', 'reddit-for-woo' ) } />
+				<LoadingLabel
+					text={ __( 'Connecting…', 'reddit-for-woocommerce' ) }
+				/>
 			);
 		}
 
@@ -97,7 +99,7 @@ const ConnectExistingAccount = ( { onCreateClick } ) => {
 				// } ) }
 				onClick={ handleConnectClick }
 			>
-				{ __( 'Connect', 'reddit-for-woo' ) }
+				{ __( 'Connect', 'reddit-for-woocommerce' ) }
 			</AppButton>
 		);
 	};
@@ -105,7 +107,10 @@ const ConnectExistingAccount = ( { onCreateClick } ) => {
 	return (
 		<AccountCard
 			className="rfw-reddit-combo-account-card rfw-reddit-combo-service-account-card--pixel-id"
-			title={ __( 'Connect to existing Pixel ID', 'reddit-for-woo' ) }
+			title={ __(
+				'Connect to existing Pixel ID',
+				'reddit-for-woocommerce'
+			) }
 			alignIndicator="toDetail"
 			indicator={ getIndicator() }
 			detail={

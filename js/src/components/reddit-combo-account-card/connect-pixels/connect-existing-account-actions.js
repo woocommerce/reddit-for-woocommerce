@@ -44,7 +44,7 @@ const ConnectExistingAccountActions = ( {
 			disabled={ disabledButton }
 			{ ...restProps }
 		>
-			{ __( 'Or, create a new Pixel ID', 'reddit-for-woo' ) }
+			{ __( 'Or, create a new Pixel ID', 'reddit-for-woocommerce' ) }
 		</AppButton>
 	);
 };

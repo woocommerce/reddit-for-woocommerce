@@ -27,7 +27,7 @@ export const APPEARANCE = {
 const redditLogo = (
 	<img
 		src={ redditLogoURL }
-		alt={ __( 'Reddit Logo', 'reddit-for-woo' ) }
+		alt={ __( 'Reddit Logo', 'reddit-for-woocommerce' ) }
 		width="40"
 		height="40"
 	/>
@@ -36,7 +36,7 @@ const redditLogo = (
 const wpLogo = (
 	<img
 		src={ wpLogoURL }
-		alt={ __( 'WordPress.com Logo', 'reddit-for-woo' ) }
+		alt={ __( 'WordPress.com Logo', 'reddit-for-woocommerce' ) }
 		width="40"
 		height="40"
 	/>
@@ -50,7 +50,7 @@ const appearanceDict = {
 	},
 	[ APPEARANCE.REDDIT ]: {
 		icon: redditLogo,
-		title: __( 'Reddit', 'reddit-for-woo' ),
+		title: __( 'Reddit', 'reddit-for-woocommerce' ),
 	},
 };
 

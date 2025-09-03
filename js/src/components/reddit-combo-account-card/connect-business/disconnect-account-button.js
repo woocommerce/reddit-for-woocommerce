@@ -44,7 +44,7 @@ const DisconnectAccountButton = ( { onDisconnected = noop } ) => {
 			loading={ isDisconnecting }
 			text={ __(
 				'Or, connect to a different Business account',
-				'reddit-for-woo'
+				'reddit-for-woocommerce'
 			) }
 			eventName="rfw_business_account_disconnect_button_click"
 			onClick={ handleSwitch }

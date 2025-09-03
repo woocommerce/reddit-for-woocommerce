@@ -44,7 +44,10 @@ const ConnectExistingAccountActions = ( {
 			disabled={ disabledButton }
 			{ ...restProps }
 		>
-			{ __( 'Or, create a new Business account', 'reddit-for-woo' ) }
+			{ __(
+				'Or, create a new Business account',
+				'reddit-for-woocommerce'
+			) }
 		</AppButton>
 	);
 };

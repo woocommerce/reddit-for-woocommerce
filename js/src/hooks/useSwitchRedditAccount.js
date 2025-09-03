@@ -37,7 +37,7 @@ const useSwitchRedditAccount = () => {
 			'info',
 			__(
 				'Connecting to a different Reddit account, please wait…',
-				'reddit-for-woo'
+				'reddit-for-woocommerce'
 			)
 		);
 
@@ -54,7 +54,7 @@ const useSwitchRedditAccount = () => {
 				'error',
 				__(
 					'Unable to connect to a different Reddit account. Please try again later.',
-					'reddit-for-woo'
+					'reddit-for-woocommerce'
 				)
 			);
 		} finally {

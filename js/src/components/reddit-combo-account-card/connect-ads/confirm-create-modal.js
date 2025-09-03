@@ -24,13 +24,16 @@ const ConfirmCreateModal = ( { onContinue, onRequestClose } ) => {
 	return (
 		<AppModal
 			className="rfw-create-ads-account-warning-modal"
-			title={ __( 'Create Ads Account', 'reddit-for-woo' ) }
+			title={ __( 'Create Ads Account', 'reddit-for-woocommerce' ) }
 			buttons={ [
 				<AppButton key="confirm" isSecondary onClick={ onContinue }>
-					{ __( 'Yes, I want a new account', 'reddit-for-woo' ) }
+					{ __(
+						'Yes, I want a new account',
+						'reddit-for-woocommerce'
+					) }
 				</AppButton>,
 				<AppButton key="cancel" isPrimary onClick={ onRequestClose }>
-					{ __( 'Cancel', 'reddit-for-woo' ) }
+					{ __( 'Cancel', 'reddit-for-woocommerce' ) }
 				</AppButton>,
 			] }
 			onRequestClose={ onRequestClose }
@@ -40,14 +43,14 @@ const ConfirmCreateModal = ( { onContinue, onRequestClose } ) => {
 				<span>
 					{ __(
 						'Are you sure you want to create a new Ads account?',
-						'reddit-for-woo'
+						'reddit-for-woocommerce'
 					) }
 				</span>
 			</p>
 			<p>
 				{ __(
 					'You already have another Ads account associated with this Reddit account.',
-					'reddit-for-woo'
+					'reddit-for-woocommerce'
 				) }
 			</p>
 		</AppModal>

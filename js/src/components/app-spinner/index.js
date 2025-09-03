@@ -17,7 +17,7 @@ const AppSpinner = () => {
 		<div
 			className="rfw-app-spinner"
 			role="status"
-			aria-label={ __( 'Loading…', 'reddit-for-woo' ) }
+			aria-label={ __( 'Loading…', 'reddit-for-woocommerce' ) }
 		>
 			<Spinner />
 		</div>

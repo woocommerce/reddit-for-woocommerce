@@ -37,25 +37,30 @@ const Settings = () => {
 		<div className="rfw-settings">
 			{ isOnboardingSuccessModalOpen && <OnboardingSuccessModal /> }
 
-			<Section title={ __( 'Product Catalog', 'reddit-for-woo' ) }>
+			<Section
+				title={ __( 'Product Catalog', 'reddit-for-woocommerce' ) }
+			>
 				<ProductCatalog />
 			</Section>
 
 			<Section
-				title={ __( 'Track Conversions', 'reddit-for-woo' ) }
+				title={ __( 'Track Conversions', 'reddit-for-woocommerce' ) }
 				description={ __(
 					'Manage how conversions are tracked on your site.',
-					'reddit-for-woo'
+					'reddit-for-woocommerce'
 				) }
 			>
 				<ConversionsAPI />
 			</Section>
 
 			<Section
-				title={ __( 'Manage Reddit Connection', 'reddit-for-woo' ) }
+				title={ __(
+					'Manage Reddit Connection',
+					'reddit-for-woocommerce'
+				) }
 				description={ __(
 					'See your currently connected account or disconnect.',
-					'reddit-for-woo'
+					'reddit-for-woocommerce'
 				) }
 			>
 				<LinkedAccounts />

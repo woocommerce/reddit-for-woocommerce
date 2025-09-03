@@ -42,7 +42,7 @@ const ConnectRedditComboAccountCard = ( { disabled } ) => {
 				'error',
 				__(
 					'Unable to connect your Reddit account. Please try again later.',
-					'reddit-for-woo'
+					'reddit-for-woocommerce'
 				)
 			);
 		}
@@ -54,7 +54,7 @@ const ConnectRedditComboAccountCard = ( { disabled } ) => {
 			disabled={ disabled }
 			description={ __(
 				'Connect your Reddit Business Account to sync your catalog and launch campaigns.',
-				'reddit-for-woo'
+				'reddit-for-woocommerce'
 			) }
 			indicator={
 				<AppButton
@@ -65,7 +65,7 @@ const ConnectRedditComboAccountCard = ( { disabled } ) => {
 					eventProps={ { context: nextPageName } }
 					onClick={ handleConnectClick }
 				>
-					{ __( 'Connect', 'reddit-for-woo' ) }
+					{ __( 'Connect', 'reddit-for-woocommerce' ) }
 				</AppButton>
 			}
 		/>

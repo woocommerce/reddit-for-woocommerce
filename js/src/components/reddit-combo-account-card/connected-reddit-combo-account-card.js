@@ -168,7 +168,7 @@ const ConnectedRedditComboAccountCard = () => {
 				<div className="rfw-reddit-combo-account-card__description-actions">
 					{ switchAccountButton }
 					<AppButton isTertiary onClick={ handleCancelClick }>
-						{ __( 'Cancel', 'reddit-for-woo' ) }
+						{ __( 'Cancel', 'reddit-for-woocommerce' ) }
 					</AppButton>
 				</div>
 			);
@@ -185,7 +185,7 @@ const ConnectedRedditComboAccountCard = () => {
 				) : (
 					<AppButton
 						isTertiary
-						text={ __( 'Edit', 'reddit-for-woo' ) }
+						text={ __( 'Edit', 'reddit-for-woocommerce' ) }
 						onClick={ handleEditClick }
 					/>
 				) }

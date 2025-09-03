@@ -104,7 +104,7 @@ const shouldReturnResponseBody = ( options ) => {
  * 		>
  * 			{ __(
  * 				'Switch to my new URL',
- * 				'reddit-for-woo'
+ * 				'reddit-for-woocommerce'
  * 			) }
  * 		</AppButton>
  * )

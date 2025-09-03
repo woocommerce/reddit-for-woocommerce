@@ -23,17 +23,20 @@ const getAccountConnectionTexts = ( connectingWhich ) => {
 
 	switch ( connectingWhich ) {
 		case CONNECTING_ADS_ACCOUNT:
-			text = __( 'Connecting ads account…', 'reddit-for-woo' );
+			text = __( 'Connecting ads account…', 'reddit-for-woocommerce' );
 			subText = '';
 			break;
 
 		case CONNECTING_BUSINESS_ACCOUNT:
-			text = __( 'Connecting business account…', 'reddit-for-woo' );
+			text = __(
+				'Connecting business account…',
+				'reddit-for-woocommerce'
+			);
 			subText = '';
 			break;
 
 		case CONNECTING_PIXEL_ID:
-			text = __( 'Connecting pixel ID…', 'reddit-for-woo' );
+			text = __( 'Connecting pixel ID…', 'reddit-for-woocommerce' );
 			subText = '';
 			break;
 	}
