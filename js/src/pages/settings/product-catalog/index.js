@@ -96,20 +96,20 @@ const ProductCatalog = () => {
 		if ( exportInProgress ) {
 			return __(
 				'We’re generating your CSV file… This may take a few seconds.',
-				'reddit-for-woo'
+				'reddit-for-woocommerce'
 			);
 		}
 
 		if ( ! lastExported ) {
 			return __(
 				'Your product catalog is not synced to Reddit yet. Generate a CSV to manually upload.',
-				'reddit-for-woo'
+				'reddit-for-woocommerce'
 			);
 		}
 
 		return sprintf(
 			// translators: %s: The date and time when the product catalog was last exported.
-			__( 'Last exported on %s.', 'reddit-for-woo' ),
+			__( 'Last exported on %s.', 'reddit-for-woocommerce' ),
 			lastExported
 		);
 	};
@@ -123,7 +123,7 @@ const ProductCatalog = () => {
 						onClick={ handleOnGenerateCsvClick }
 						loading={ exportInProgress }
 					>
-						{ __( 'Regenerate CSV', 'reddit-for-woo' ) }
+						{ __( 'Regenerate CSV', 'reddit-for-woocommerce' ) }
 					</AppButton>
 				</Flex>
 			);
@@ -135,7 +135,7 @@ const ProductCatalog = () => {
 				onClick={ handleOnGenerateCsvClick }
 				loading={ exportInProgress }
 			>
-				{ __( 'Generate CSV', 'reddit-for-woo' ) }
+				{ __( 'Generate CSV', 'reddit-for-woocommerce' ) }
 			</AppButton>
 		);
 	};
@@ -175,7 +175,10 @@ const ProductCatalog = () => {
 		<>
 			<AccountCard
 				className="rfw-product-catalog"
-				title={ __( 'Export Product Catalog', 'reddit-for-woo' ) }
+				title={ __(
+					'Export Product Catalog',
+					'reddit-for-woocommerce'
+				) }
 				description={ getDescription() }
 				indicator={ getIndicator() }
 				actions={ <CatalogRoleNotice /> }
@@ -185,7 +188,7 @@ const ProductCatalog = () => {
 						<p>
 							{ __(
 								'The CSV file may have been deleted and could not be found. Click "Generate CSV" to regenerate a new one.',
-								'reddit-for-woo'
+								'reddit-for-woocommerce'
 							) }
 						</p>
 					</div>

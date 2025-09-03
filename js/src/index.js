@@ -32,7 +32,7 @@ export const pagePaths = new Set();
 
 const woocommerceTranslation =
 	getSetting( 'admin' )?.woocommerceTranslation ||
-	__( 'WooCommerce', 'reddit-for-woo' );
+	__( 'WooCommerce', 'reddit-for-woocommerce' );
 
 // Refer to https://github.com/woocommerce/woocommerce/blob/9.7.1/plugins/woocommerce/client/admin/client/layout/controller.js#L82
 const PAGES_FILTER = 'woocommerce_admin_pages_list';
@@ -45,8 +45,8 @@ const registerPluginAdminPages = () => {
 	addFilter( PAGES_FILTER, namespace, ( pages ) => {
 		const initialBreadcrumbs = [
 			[ '', woocommerceTranslation ],
-			[ '/marketing', __( 'Marketing', 'reddit-for-woo' ) ],
-			__( 'Reddit for WooCommerce', 'reddit-for-woo' ),
+			[ '/marketing', __( 'Marketing', 'reddit-for-woocommerce' ) ],
+			__( 'Reddit for WooCommerce', 'reddit-for-woocommerce' ),
 		];
 
 		const pluginAdminPages = [
@@ -59,7 +59,7 @@ const registerPluginAdminPages = () => {
 			{
 				breadcrumbs: [
 					...initialBreadcrumbs,
-					__( 'Setup Reddit', 'reddit-for-woo' ),
+					__( 'Setup Reddit', 'reddit-for-woocommerce' ),
 				],
 				container: Onboarding,
 				path: '/reddit/setup',
@@ -67,7 +67,7 @@ const registerPluginAdminPages = () => {
 			{
 				breadcrumbs: [
 					...initialBreadcrumbs,
-					__( 'Settings', 'reddit-for-woo' ),
+					__( 'Settings', 'reddit-for-woocommerce' ),
 				],
 				container: Settings,
 				path: '/reddit/settings',

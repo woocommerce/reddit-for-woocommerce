@@ -52,7 +52,7 @@ const useProductCatalogExport = (
 					'error',
 					__(
 						'No products found. Please create products to generate the CSV.',
-						'reddit-for-woo'
+						'reddit-for-woocommerce'
 					)
 				);
 				return;
@@ -60,7 +60,7 @@ const useProductCatalogExport = (
 
 			createNotice(
 				'error',
-				__( 'An error occurred', 'reddit-for-woo' )
+				__( 'An error occurred', 'reddit-for-woocommerce' )
 			);
 			onGenerateCsvError();
 		} catch ( error ) {
@@ -68,7 +68,7 @@ const useProductCatalogExport = (
 				'error',
 				sprintf(
 					// translators: %s: The error message returned from the CSV generation process.
-					__( 'CSV generation failed: %s', 'reddit-for-woo' ),
+					__( 'CSV generation failed: %s', 'reddit-for-woocommerce' ),
 					error.message
 				)
 			);

@@ -40,7 +40,7 @@ const OnboardingSuccessModal = () => {
 					variant="secondary"
 					onClick={ handleCloseModal }
 				>
-					{ __( 'Close', 'reddit-for-woo' ) }
+					{ __( 'Close', 'reddit-for-woocommerce' ) }
 				</AppButton>,
 			] }
 		>
@@ -49,7 +49,10 @@ const OnboardingSuccessModal = () => {
 					<FlexItem>
 						<img
 							src={ wooLogoURL }
-							alt={ __( 'WooCommerce Logo', 'reddit-for-woo' ) }
+							alt={ __(
+								'WooCommerce Logo',
+								'reddit-for-woocommerce'
+							) }
 							width="187.5"
 						/>
 					</FlexItem>
@@ -57,7 +60,10 @@ const OnboardingSuccessModal = () => {
 					<FlexItem>
 						<img
 							src={ redditLogoURL }
-							alt={ __( 'Reddit Logo', 'reddit-for-woo' ) }
+							alt={ __(
+								'Reddit Logo',
+								'reddit-for-woocommerce'
+							) }
 							width="123"
 						/>
 					</FlexItem>
@@ -68,13 +74,13 @@ const OnboardingSuccessModal = () => {
 				<h2 className="rfw-onboarding-success-modal__title">
 					{ __(
 						'You’ve successfully set up Reddit for WooCommerce! 🎉',
-						'reddit-for-woo'
+						'reddit-for-woocommerce'
 					) }
 				</h2>
 				<div className="rfw-onboarding-success-modal__description">
 					{ __(
 						'Your store is now connected to Reddit. You can start running ads, track performance, and reach Reddit users with your WooCommerce products.',
-						'reddit-for-woo'
+						'reddit-for-woocommerce'
 					) }
 				</div>
 			</div>
