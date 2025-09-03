@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	bootstrap="tests/bootstrap.php"
+	bootstrap="tests/phpunit/bootstrap.php"
 	colors="true"
 	backupGlobals="false"
 	verbose="true"
@@ -19,8 +19,8 @@
 	</coverage>
 	<testsuites>
 		<testsuite name="Reddit for WooCommerce Test Suite">
-			<directory suffix="Test.php">./tests/Unit</directory>
-			<directory suffix="Test.php">./tests/Integration</directory>
+			<directory suffix="Test.php">./tests/phpunit/Unit</directory>
+
 		</testsuite>
 	</testsuites>
 	<logging/>
