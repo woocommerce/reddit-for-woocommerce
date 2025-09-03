@@ -258,7 +258,9 @@ export default class ElementLocators {
 	 * @return {import('@playwright/test').Locator} The input locator.
 	 */
 	getCapiTokenInput() {
-		return this.getCard( 'Conversions API' ).locator( '#rfw-settings-track-conversions-capi-token' );
+		return this.getCard( 'Conversions API' ).locator(
+			'#rfw-settings-track-conversions-capi-token'
+		);
 	}
 
 	/**

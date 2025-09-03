@@ -8,7 +8,12 @@ const { test, expect } = require( '@playwright/test' );
  */
 import SettingPage from '../utils/pages/settings.js';
 import ElementLocators from '../utils/element-locators.js';
-import { adAccounts, businesses, connectedConfigPayload, pixels } from '../utils/mockPayloads.js';
+import {
+	adAccounts,
+	businesses,
+	connectedConfigPayload,
+	pixels,
+} from '../utils/mockPayloads.js';
 
 /**
  * @type {import('../utils/pages/settings.js').default} settingPage
@@ -48,9 +53,9 @@ test.describe( 'Reddit Settings', () => {
 	test( 'Can see onboarding success modal', async () => {
 		await settingPage.mockJetpackConnected();
 		await settingPage.mockRedditConnection( { status: 'connected' } );
-		await settingPage.mockRedditBusiness([businesses[0]]);
-		await settingPage.mockRedditAdAccounts([adAccounts[0]]);
-		await settingPage.mockRedditPixels([pixels[0]]);
+		await settingPage.mockRedditBusiness( [ businesses[ 0 ] ] );
+		await settingPage.mockRedditAdAccounts( [ adAccounts[ 0 ] ] );
+		await settingPage.mockRedditPixels( [ pixels[ 0 ] ] );
 		await page.goto(
 			'/wp-admin/admin.php?page=wc-admin&path=%2Freddit%2Fsetup',
 			{ waitUntil: 'domcontentloaded' }
@@ -126,19 +131,21 @@ test.describe( 'Reddit Settings', () => {
 	test( 'Save Conversion Access Token', async () => {
 		await settingPage.mockJetpackConnected();
 		await settingPage.mockRedditConnection( { status: 'connected' } );
-		await settingPage.mockRedditBusiness([businesses[0]]);
-		await settingPage.mockRedditAdAccounts([adAccounts[0]]);
-		await settingPage.mockRedditPixels([pixels[0]]);
+		await settingPage.mockRedditBusiness( [ businesses[ 0 ] ] );
+		await settingPage.mockRedditAdAccounts( [ adAccounts[ 0 ] ] );
+		await settingPage.mockRedditPixels( [ pixels[ 0 ] ] );
 		await settingPage.mockRedditAccount( connectedConfigPayload );
 		settingPage.goto();
 
 		// Save the token
-		const capiToken = `capi-token-${Date.now()}`;
+		const capiToken = `capi-token-${ Date.now() }`;
 		await locator.getCapiTokenInput().fill( capiToken );
 		await expect( locator.getCapiTokenInput() ).toHaveValue( capiToken );
 		await expect(
 			page
-				.getByText( 'Conversions API Access Token updated successfully.' )
+				.getByText(
+					'Conversions API Access Token updated successfully.'
+				)
 				.first()
 		).toBeVisible();
 
@@ -151,7 +158,9 @@ test.describe( 'Reddit Settings', () => {
 		await expect( locator.getCapiTokenInput() ).toHaveValue( '' );
 		await expect(
 			page
-				.locator( '.components-snackbar-list .components-snackbar-list__notice-container .components-snackbar' )
+				.getByText(
+					'Conversions API Access Token updated successfully.'
+				)
 				.first()
 		).toBeVisible();
 		await page.reload();
@@ -161,13 +170,18 @@ test.describe( 'Reddit Settings', () => {
 	test( 'Remove Conversion Access Token should disable conversions tracking', async () => {
 		await settingPage.mockRedditAccount( connectedConfigPayload );
 		settingPage.goto();
-		const capiCheckbox = locator.getCapiCheckbox().locator('..').locator('input');
+		const capiCheckbox = locator
+			.getCapiCheckbox()
+			.locator( '..' )
+			.locator( 'input' );
 		await capiCheckbox.check();
-		const capiToken = `capi-token-${Date.now()}`;
+		const capiToken = `capi-token-${ Date.now() }`;
 		await locator.getCapiTokenInput().fill( capiToken );
 		await expect(
 			page
-				.getByText( 'Conversions API Access Token updated successfully.' )
+				.getByText(
+					'Conversions API Access Token updated successfully.'
+				)
 				.first()
 		).toBeVisible();
 		await expect( capiCheckbox ).toBeChecked();
@@ -179,7 +193,9 @@ test.describe( 'Reddit Settings', () => {
 		await expect( locator.getCapiTokenInput() ).toHaveValue( '' );
 		await expect(
 			page
-				.getByText( 'Conversions API Access Token updated successfully.' )
+				.getByText(
+					'Conversions API Access Token updated successfully.'
+				)
 				.first()
 		).toBeVisible();
 		await expect( capiCheckbox ).not.toBeChecked();
