@@ -47,28 +47,30 @@ const CatalogRoleNotice = () => {
 			isDismissible={ false }
 			className="rfw-reddit-catalog-role-notice"
 		>
-			{ __(
-				"Your account doesn't have the Catalog Manager role, which is required for catalog creation. Please assign it by going to",
-				'reddit-for-woo'
-			) }{ ' ' }
-			<strong>
+			<p>
 				{ __(
-					'Your Account › Edit › Member Details & Business Role › Advanced Role',
+					"Your account doesn't have the Catalog Manager role, which is required for catalog creation. Please assign it by going to",
+					'reddit-for-woo'
+				) }{ ' ' }
+				<strong>
+					{ __(
+						'Your Account › Edit › Member Details & Business Role › Advanced Role',
+						'reddit-for-woo'
+					) }
+				</strong>{ ' ' }
+				<Link
+					href={ rolesLink }
+					target="_blank"
+					rel="noopener noreferrer"
+					type="external"
+				>
+					{ __( 'here.', 'reddit-for-woo' ) }
+				</Link>{ ' ' }
+				{ __(
+					'Once the role is assigned, please click Create Catalog.',
 					'reddit-for-woo'
 				) }
-			</strong>{ ' ' }
-			<Link
-				href={ rolesLink }
-				target="_blank"
-				rel="noopener noreferrer"
-				type="external"
-			>
-				{ __( 'here.', 'reddit-for-woo' ) }
-			</Link>{ ' ' }
-			{ __(
-				'Once the role is assigned, please click Create Catalog.',
-				'reddit-for-woo'
-			) }
+			</p>
 			<AppButton
 				className="rfw-reddit-catalog-role-notice__create-catalog-button"
 				variant="secondary"
