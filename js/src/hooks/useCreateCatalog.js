@@ -49,7 +49,7 @@ const useCreateCatalog = () => {
 					'success',
 					__(
 						'Product catalog created successfully.',
-						'reddit-for-woo'
+						'reddit-for-woocommerce'
 					)
 				);
 			} else {
@@ -59,7 +59,7 @@ const useCreateCatalog = () => {
 						/* translators: %s is the error message */
 						__(
 							'Failed to create product catalog: %s',
-							'reddit-for-woo'
+							'reddit-for-woocommerce'
 						),
 						res.data.message
 					)
@@ -68,7 +68,7 @@ const useCreateCatalog = () => {
 		} else {
 			createNotice(
 				'error',
-				__( 'There was an error with the request.', 'reddit-for-woo' )
+				__( 'There was an error with the request.', 'reddit-for-woocommerce' )
 			);
 			setLoading( false );
 		}

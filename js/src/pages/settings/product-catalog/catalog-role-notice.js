@@ -50,12 +50,12 @@ const CatalogRoleNotice = () => {
 			<p>
 				{ __(
 					"Your account doesn't have the Catalog Manager role, which is required for catalog creation. Please assign it by going to",
-					'reddit-for-woo'
+					'reddit-for-woocommerce'
 				) }{ ' ' }
 				<strong>
 					{ __(
 						'Your Account › Edit › Member Details & Business Role › Advanced Role',
-						'reddit-for-woo'
+						'reddit-for-woocommerce'
 					) }
 				</strong>{ ' ' }
 				<Link
@@ -64,17 +64,17 @@ const CatalogRoleNotice = () => {
 					rel="noopener noreferrer"
 					type="external"
 				>
-					{ __( 'here.', 'reddit-for-woo' ) }
+					{ __( 'here.', 'reddit-for-woocommerce' ) }
 				</Link>{ ' ' }
 				{ __(
 					'Once the role is assigned, please click Create Catalog.',
-					'reddit-for-woo'
+					'reddit-for-woocommerce'
 				) }
 			</p>
 			<AppButton
 				className="rfw-reddit-catalog-role-notice__create-catalog-button"
 				variant="secondary"
-				text={ __( 'Create Catalog', 'reddit-for-woo' ) }
+				text={ __( 'Create Catalog', 'reddit-for-woocommerce' ) }
 				isBusy={ loading }
 				isDisabled={ loading }
 				onClick={ createCatalog }
