@@ -15,6 +15,7 @@ import useSettings from '~/hooks/useSettings';
 import useExportPoller from './useExportPoller';
 import useProductCatalogExport from './useProductCatalogExport';
 import './index.scss';
+import CatalogRoleNotice from './catalog-role-notice';
 
 /**
  * ProductCatalog component for managing and exporting the product catalog as a CSV file.
@@ -177,6 +178,7 @@ const ProductCatalog = () => {
 				title={ __( 'Export Product Catalog', 'reddit-for-woo' ) }
 				description={ getDescription() }
 				indicator={ getIndicator() }
+				actions={ <CatalogRoleNotice /> }
 			>
 				{ lastExported && ! fileUrl && (
 					<div className="rfw-product-catalog__help">

@@ -597,6 +597,7 @@ class RedditConnectionController extends RESTBaseController {
 				array(
 					'status'  => 'error',
 					'message' => $response->get_error_message(),
+					'data'    => $response->get_error_data(),
 				),
 				500
 			);
