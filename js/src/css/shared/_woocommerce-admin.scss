@@ -85,3 +85,9 @@
 .wp-admin .woocommerce-customer-effort-score__intro {
 	margin-bottom: 1em;
 }
+
+.woocommerce-layout:has(.rfw-admin-page) {
+	.woocommerce-layout__header {
+		min-height: 60px;
+	}
+}
