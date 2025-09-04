@@ -40,6 +40,8 @@ module.exports = {
 		getComputedStyle: 'readonly',
 		wp_has_consent: 'readonly',
 		jQuery: 'readonly',
+		ajaxurl: 'readonly',
+		redditAdsAdminData: 'readonly',
 	},
 	rules: {
 		'@wordpress/i18n-text-domain': [

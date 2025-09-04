@@ -33,6 +33,7 @@ const useSettings = () => {
 			shouldTriggerExport: settings.triggerExport,
 			lastExportTimeStamp: settings.lastExportTimeStamp,
 			exportFileUrl: settings.exportFileUrl,
+			catalogId: settings.catalogId,
 			hasFinishedResolution: selector.hasFinishedResolution(
 				selectorName,
 				[]
