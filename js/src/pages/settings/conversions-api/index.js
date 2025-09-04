@@ -123,6 +123,7 @@ const ConversionsAPI = () => {
 								'Conversion Access Token',
 								'reddit-for-woocommerce'
 							) }
+							id="rfw-settings-track-conversions-capi-token"
 							value={ localCapiToken }
 							readOnly={ isSaving }
 							onChange={ ( val ) => setLocalCapiToken( val ) }
