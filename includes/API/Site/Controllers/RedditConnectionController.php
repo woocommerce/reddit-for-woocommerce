@@ -15,7 +15,6 @@
 
 namespace RedditForWooCommerce\API\Site\Controllers;
 
-use RedditForWooCommerce\Admin\Export\Service\ProductExportService;
 use WP_REST_Request;
 use WP_REST_Response;
 use WP_Error;
@@ -27,8 +26,6 @@ use RedditForWooCommerce\Utils\Storage\Transients;
 use RedditForWooCommerce\Utils\Storage\TransientDefaults;
 use RedditForWooCommerce\Utils\Helper;
 use RedditForWooCommerce\API\AdPartner\AdPartnerApi;
-use RedditForWooCommerce\ServiceContainer;
-use RedditForWooCommerce\ServiceKey;
 
 /**
  * Controller for setting up and managing the Reddit account connection.
