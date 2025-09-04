@@ -131,6 +131,7 @@ export function getSettings() {
 					lastExportTimeStamp: response.last_export_timestamp,
 					exportFileUrl: response.export_file_url,
 					productsToken: response.products_token,
+					catalogId: response.catalog_id,
 				} )
 			);
 		} catch ( error ) {

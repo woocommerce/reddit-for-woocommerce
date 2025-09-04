@@ -1,0 +1,14 @@
+.rfw-admin-page {
+	.rfw-reddit-catalog-role-notice {
+		margin: wpVariables.$grid-unit-20 0 0 0;
+		width: 100%;
+
+		&.components-notice {
+			margin-bottom: 0;
+		}
+
+		p {
+			margin-top: 0;
+		}
+	}
+}

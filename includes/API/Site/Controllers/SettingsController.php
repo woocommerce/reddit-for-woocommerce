@@ -121,6 +121,7 @@ class SettingsController extends RESTBaseController {
 				'last_export_timestamp' => Helper::get_formatted_timestamp( $timestamp ),
 				'export_file_url'       => file_exists( $csv_path ) ? Options::get( OptionDefaults::EXPORT_FILE_URL ) : '',
 				'products_token'        => Options::get( OptionDefaults::WCS_PRODUCTS_TOKEN ),
+				'catalog_id'            => Options::get( OptionDefaults::CATALOG_ID ),
 			)
 		);
 	}

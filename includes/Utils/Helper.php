@@ -60,14 +60,18 @@ class Helper {
 	 *
 	 * @since 0.1.0
 	 *
-	 * @param string   $action    Action name (will be prefixed automatically).
-	 * @param callable $callback  Callback function to handle the AJAX request.
+	 * @param string   $action     Action name (will be prefixed automatically).
+	 * @param callable $callback   Callback function to handle the AJAX request.
+	 * @param boolean  $admin_only If the action should be registered for Admin-context only.
 	 */
-	public static function register_ajax_action( string $action, callable $callback ): void {
+	public static function register_ajax_action( string $action, callable $callback, bool $admin_only = false ): void {
 		$prefixed_action = self::with_prefix( $action );
 
 		add_action( 'wp_ajax_' . $prefixed_action, $callback );
-		add_action( 'wp_ajax_nopriv_' . $prefixed_action, $callback );
+
+		if ( ! $admin_only ) {
+			add_action( 'wp_ajax_nopriv_' . $prefixed_action, $callback );
+		}
 	}
 
 	/**
