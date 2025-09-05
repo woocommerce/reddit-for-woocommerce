@@ -237,11 +237,29 @@ class RedditConnectionController extends RESTBaseController {
 			);
 		}
 
-		$data = $response->get_data();
+		$data  = $response->get_data();
+		$email = Transients::get( TransientDefaults::REDDIT_ACCOUNT_EMAIL );
+
+		if ( empty( $email ) ) {
+			$member = $this->ad_partner_api->members->me();
+
+			if ( is_wp_error( $member ) ) {
+				return new WP_REST_Response(
+					array(
+						'status' => 'disconnected',
+					)
+				);
+			}
+
+			$member_data = $member->get_data();
+			$email       = $member_data['data']['email'] ?? '';
+			Transients::set( TransientDefaults::REDDIT_ACCOUNT_EMAIL, $email );
+		}
 
 		return rest_ensure_response(
 			array(
 				'status' => $data['status'],
+				'email'  => $email,
 			)
 		);
 	}
@@ -305,6 +323,7 @@ class RedditConnectionController extends RESTBaseController {
 		Options::delete( OptionDefaults::CATALOG_ID );
 		Options::delete( OptionDefaults::FEED_STATUS );
 		Options::delete( OptionDefaults::WCS_PRODUCTS_TOKEN );
+		Transients::delete( TransientDefaults::REDDIT_ACCOUNT_EMAIL );
 		Transients::delete( TransientDefaults::PIXEL_SCRIPT );
 
 		/**
