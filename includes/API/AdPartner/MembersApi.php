@@ -37,8 +37,6 @@ class MembersApi extends BaseAdPartnerApi {
 	 *                                    or error if the request fails.
 	 */
 	public function me() {
-		return $this->wcs->proxy_get(
-			sprintf( '/ads/me' )
-		);
+		return $this->wcs->proxy_get( '/ads/me' );
 	}
 }
