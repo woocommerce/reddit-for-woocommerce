@@ -7,6 +7,7 @@ import { __ } from '@wordpress/i18n';
  * Internal dependencies
  */
 import useRedditAccountConfig from '~/hooks/useRedditAccountConfig';
+import useRedditAccount from '~/hooks/useRedditAccount';
 import './account-details.scss';
 
 const AccountDetails = () => {
@@ -16,9 +17,12 @@ const AccountDetails = () => {
 		ad_account_name: adsAccountName,
 		pixel_id: pixelId,
 	} = useRedditAccountConfig();
+	const { email } = useRedditAccount();
 
 	return (
 		<div className="rfw-reddit-account-details">
+			{ email && <p>{ email }</p> }
+
 			{ businessName && (
 				<p>
 					{ __( 'Business:', 'reddit-for-woocommerce' ) }{ ' ' }

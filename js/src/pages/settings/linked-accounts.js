@@ -7,7 +7,7 @@ import { useState } from '@wordpress/element';
 /**
  * Internal dependencies
  */
-import useRedditAccountStatus from '~/hooks/useRedditAccountStatus';
+import useRedditAccount from '~/hooks/useRedditAccount';
 import ConnectedRedditAccountCard from '~/components/reddit-combo-account-card/connected-reddit-account-card';
 import AppButton from '~/components/app-button';
 import Section from '~/components/section';
@@ -26,7 +26,7 @@ import DisconnectModal, { REDDIT_ACCOUNT } from './disconnect-modal';
  */
 export default function LinkedAccounts() {
 	const { hasFinishedResolution: hasResolvedRedditAccount } =
-		useRedditAccountStatus();
+		useRedditAccount();
 	const [ openedModal, setOpenedModal ] = useState( null );
 	const openDisconnectRedditAccountModal = () =>
 		setOpenedModal( REDDIT_ACCOUNT );
