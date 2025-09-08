@@ -8,7 +8,6 @@ import { useState, useEffect } from '@wordpress/element';
  * Internal dependencies
  */
 import { useAppDispatch } from '~/data';
-import { CONNECTING_ADS_ACCOUNT } from '~/constants';
 import AccountCard, { APPEARANCE } from '~/components/account-card';
 import AccountDetails from './account-details';
 import AppButton from '~/components/app-button';
@@ -37,11 +36,11 @@ const ConnectedRedditComboAccountCard = () => {
 	const { hasConnection: hasAdsConnection } = useRedditAdsAccount();
 	const { existingAccounts: existingBusinessAccounts } =
 		useExistingBusinessAccounts();
-	const { existingAccounts: existingAdsAccounts } = useExistingAdsAccounts();
+	const {
+		existingAccounts: existingAdsAccounts,
+		hasFinishedResolution: hasResolvedExistingAdsAccounts,
+	} = useExistingAdsAccounts();
 	const { text, subText } = getAccountConnectionTexts( connectingWhich );
-	const { text: connectingAdText } = getAccountConnectionTexts(
-		CONNECTING_ADS_ACCOUNT
-	);
 
 	const handleCancelClick = () => {
 		setEditMode( false );
@@ -108,7 +107,11 @@ const ConnectedRedditComboAccountCard = () => {
 	const switchAccountButton = <SwitchAccountButton isTertiary />;
 
 	const getCardActions = () => {
-		if ( connectingWhich || isConnectingAdsAccount ) {
+		if (
+			connectingWhich ||
+			isConnectingAdsAccount ||
+			( ! hasResolvedExistingAdsAccounts && ! hasAdsConnection )
+		) {
 			return null;
 		}
 
@@ -141,11 +144,11 @@ const ConnectedRedditComboAccountCard = () => {
 		);
 	};
 
-	const showSpinner = Boolean( connectingWhich ) || isConnectingAdsAccount;
-	let description = text || <AccountDetails />;
-	if ( isConnectingAdsAccount ) {
-		description = connectingAdText;
-	}
+	const showSpinner =
+		Boolean( connectingWhich ) ||
+		isConnectingAdsAccount ||
+		( ! hasResolvedExistingAdsAccounts && ! hasAdsConnection );
+	const description = text || <AccountDetails />;
 
 	return (
 		<div className="rfw-reddit-combo-account-card-wrapper">
