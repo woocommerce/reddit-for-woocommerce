@@ -82,8 +82,8 @@ const useAutoConnectAdsBusinessAccounts = () => {
 						businessAccount.business_id,
 						businessAccount.business_name
 					);
-					invalidateResolution( 'getExistingPixels', [] );
 					invalidateResolution( 'getExistingAdsAccounts', [] );
+					invalidateResolution( 'getExistingPixels', [] );
 				}
 
 				if (

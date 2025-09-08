@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import { noop } from 'lodash';
 import { useState } from '@wordpress/element';
 
 /**
@@ -19,7 +20,7 @@ import UpsertingAccount from './upserting-account';
  * @param {string|null} props.upsertingAction The action the user is performing. Possible values are 'create', 'update', or null.
  * @return {JSX.Element} {@link AccountCard} filled with content.
  */
-const ConnectBusiness = ( { onRequestCreate, upsertingAction } ) => {
+const ConnectBusiness = ( { onRequestCreate = noop, upsertingAction } ) => {
 	const [ showCreateNewModal, setShowCreateNewModal ] = useState( false );
 
 	if ( upsertingAction ) {

@@ -1,13 +1,7 @@
 /**
- * External dependencies
- */
-import { useState } from '@wordpress/element';
-
-/**
  * Internal dependencies
  */
 import AccountCard from '~/components/account-card';
-import ConfirmCreateModal from './confirm-create-modal';
 import ConnectExistingAccount from './connect-existing-account';
 import UpsertingPixel from './upserting-pixel';
 
@@ -15,42 +9,15 @@ import UpsertingPixel from './upserting-pixel';
  * ConnectPixels component renders an account card to connect to an existing Reddit Pixel ID.
  *
  * @param {Object} props Component props.
- * @param {Function} props.onRequestCreate A callback to fire when creating a new account.
  * @param {string|null} props.upsertingAction The action the user is performing. Possible values are 'create', 'update', or null.
  * @return {JSX.Element} {@link AccountCard} filled with content.
  */
-const ConnectPixels = ( { onRequestCreate, upsertingAction } ) => {
-	const [ showCreateNewModal, setShowCreateNewModal ] = useState( false );
-
+const ConnectPixels = ( { upsertingAction } ) => {
 	if ( upsertingAction ) {
 		return <UpsertingPixel upsertingAction={ upsertingAction } />;
 	}
 
-	const handleCreateClick = () => {
-		setShowCreateNewModal( true );
-	};
-
-	const handleRequestClose = () => {
-		setShowCreateNewModal( false );
-	};
-
-	const handleContinue = () => {
-		onRequestCreate();
-		handleRequestClose();
-	};
-
-	return (
-		<>
-			<ConnectExistingAccount onCreateClick={ handleCreateClick } />
-
-			{ showCreateNewModal && (
-				<ConfirmCreateModal
-					onContinue={ handleContinue }
-					onRequestClose={ handleRequestClose }
-				/>
-			) }
-		</>
-	);
+	return <ConnectExistingAccount />;
 };
 
 export default ConnectPixels;
