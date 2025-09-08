@@ -10,9 +10,9 @@ import apiFetch from '@wordpress/api-fetch';
 import { API_NAMESPACE } from './constants';
 import { handleApiError } from '~/utils/handleError';
 import {
+	fetchExistingAdsAccounts,
 	fetchSetup,
 	fetchRedditAccount,
-	receiveExistingAdsAccounts,
 	receiveExistingBusinessAccounts,
 	receiveJetpackAccount,
 	receiveRedditAccountConfig,
@@ -163,23 +163,7 @@ export function getSetup() {
  * @return {Function} Thunk function that performs the API call and dispatches actions.
  */
 export function getExistingAdsAccounts() {
-	return async function ( { dispatch } ) {
-		try {
-			const response = await apiFetch( {
-				path: `${ API_NAMESPACE }/reddit/ad_accounts`,
-			} );
-
-			dispatch( receiveExistingAdsAccounts( response ) );
-		} catch ( error ) {
-			handleApiError(
-				error,
-				__(
-					'There was an error loading existing ads accounts.',
-					'reddit-for-woocommerce'
-				)
-			);
-		}
-	};
+	return fetchExistingAdsAccounts;
 }
 
 /**

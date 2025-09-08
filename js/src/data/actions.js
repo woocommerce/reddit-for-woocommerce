@@ -107,14 +107,12 @@ export function receiveRedditAccountConfig( redditAccountConfig ) {
  * Creates an action to receive existing ads accounts.
  *
  * @param {Array<RedditAdsAccount>} accounts - The list or object of existing ads accounts.
- * @param {string} businessId - The Reddit business ID associated with the ads accounts.
  * @return {Object} Redux action with type RECEIVE_EXISTING_ADS_ACCOUNTS and accounts payload.
  */
-export function receiveExistingAdsAccounts( accounts, businessId ) {
+export function receiveExistingAdsAccounts( accounts ) {
 	return {
 		type: TYPES.RECEIVE_EXISTING_ADS_ACCOUNTS,
 		accounts,
-		businessId,
 	};
 }
 
@@ -255,6 +253,31 @@ export async function fetchSetup() {
 			error,
 			__(
 				'There was an error loading Reddit setup.',
+				'reddit-for-woocommerce'
+			)
+		);
+	}
+}
+
+/**
+ * Fetches existing Reddit ads accounts via API and dispatches them to the store.
+ * Handles API errors gracefully.
+ *
+ * @function fetchExistingAdsAccounts
+ * @return {Promise<void>} Resolves when the accounts are fetched and dispatched.
+ */
+export async function fetchExistingAdsAccounts() {
+	try {
+		const response = await apiFetch( {
+			path: `${ API_NAMESPACE }/reddit/ad_accounts`,
+		} );
+
+		dispatch( STORE_KEY ).receiveExistingAdsAccounts( response );
+	} catch ( error ) {
+		handleApiError(
+			error,
+			__(
+				'There was an error loading existing ads accounts.',
 				'reddit-for-woocommerce'
 			)
 		);
