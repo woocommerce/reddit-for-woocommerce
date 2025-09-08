@@ -85,6 +85,20 @@ const ConversionsAPI = () => {
 		[ updateConversionAccessToken, createNotice ]
 	);
 
+	/**
+	 * Validates and sets the CAPI token state.
+	 *
+	 * @param {string} token Input CAPI token
+	 */
+	function setToken( token ) {
+		if ( token !== '' && token.trim() === '' ) {
+			// Return early if the string is only '\s'
+			return;
+		}
+
+		setLocalCapiToken( token );
+	}
+
 	useEffect( () => {
 		if ( hasFinishedResolution ) {
 			setLocalCapiToken( capiToken );
@@ -126,7 +140,7 @@ const ConversionsAPI = () => {
 							id="rfw-settings-track-conversions-capi-token"
 							value={ localCapiToken }
 							readOnly={ isSaving }
-							onChange={ ( val ) => setLocalCapiToken( val ) }
+							onChange={ setToken }
 							help={
 								<>
 									{ __(

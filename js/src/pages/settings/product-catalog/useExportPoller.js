@@ -9,7 +9,7 @@ import { useEffect, useRef } from '@wordpress/element';
 import { rfwData } from '~/constants';
 import { EXPORT_CSV_STATUS_ACTION } from './constants';
 
-const { exportNonce } = rfwData;
+const { adminNonce } = rfwData;
 
 /**
  * Custom hook for polling the export status of the product catalog.
@@ -29,7 +29,7 @@ const useExportPoller = ( isPolling, onTick ) => {
 			try {
 				const response = await window.jQuery.post( window.ajaxurl, {
 					action: EXPORT_CSV_STATUS_ACTION,
-					security: exportNonce,
+					security: adminNonce,
 				} );
 
 				if ( response ) {
