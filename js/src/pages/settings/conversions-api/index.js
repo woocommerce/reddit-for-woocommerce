@@ -3,12 +3,18 @@
  */
 import { __ } from '@wordpress/i18n';
 import { CheckboxControl, TextControl } from '@wordpress/components';
-import { useState, useCallback, useEffect } from '@wordpress/element';
+import {
+	useState,
+	useCallback,
+	useEffect,
+	createInterpolateElement,
+} from '@wordpress/element';
 
 /**
  * Internal dependencies
  */
 import { useAppDispatch } from '~/data';
+import AppDocumentationLink from '~/components/app-documentation-link';
 import useSettings from '~/hooks/useSettings';
 import useDispatchCoreNotices from '~/hooks/useDispatchCoreNotices';
 import useDebouncedInput from '~/hooks/useDebouncedInput';
@@ -131,32 +137,27 @@ const ConversionsAPI = () => {
 			actions={
 				<>
 					<div>
-						<br />
 						<TextControl
 							label={ __(
 								'Conversion Access Token',
 								'reddit-for-woocommerce'
 							) }
-							id="rfw-settings-track-conversions-capi-token"
 							value={ localCapiToken }
 							readOnly={ isSaving }
 							onChange={ setToken }
 							help={
 								<>
-									{ __(
-										'Need help?',
-										'reddit-for-woocommerce'
-									) }{ ' ' }
-									<a
-										href="https://business.reddithelp.com/s/article/conversion-access-token"
-										target="_blank"
-										rel="noopener noreferrer"
-									>
-										{ __(
-											'Follow this guide',
+									{ createInterpolateElement(
+										__(
+											'Need help? <link>Follow this guide</link>',
 											'reddit-for-woocommerce'
-										) }
-									</a>
+										),
+										{
+											link: (
+												<AppDocumentationLink href="https://business.reddithelp.com/s/article/conversion-access-token" />
+											),
+										}
+									) }
 								</>
 							}
 						/>
