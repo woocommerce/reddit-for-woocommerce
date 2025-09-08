@@ -36,10 +36,13 @@ const store = createReduxStore( STORE_KEY, {
 		reddit: null,
 		trackConversions: null,
 		settings: {
+			capiToken: '',
+			catalogId: '',
+			exportFileUrl: '',
+			lastExportTimeStamp: '',
+			productsToken: '',
 			trackConversions: false,
 			triggerExport: false,
-			lastExportTimeStamp: '',
-			exportFileUrl: '',
 		},
 	},
 } );

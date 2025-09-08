@@ -193,9 +193,13 @@ export async function updateSettings( updatedSettings ) {
 		} );
 
 		return receiveSettings( {
-			trackConversions: Boolean( response.capi_enabled ),
 			capiToken: response.capi_token,
+			catalogId: response.catalog_id,
+			exportFileUrl: response.export_file_url,
+			lastExportTimeStamp: response.last_export_timestamp,
 			productsToken: response.products_token,
+			trackConversions: Boolean( response.capi_enabled ),
+			triggerExport: Boolean( response.trigger_export ),
 		} );
 	} catch ( error ) {
 		handleApiError(
