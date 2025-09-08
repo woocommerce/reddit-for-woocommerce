@@ -2,13 +2,12 @@
  * External dependencies
  */
 import { __ } from '@wordpress/i18n';
-import { useCallback } from '@wordpress/element';
 
 /**
  * Internal dependencies
  */
 import AppNotice from '~/components/app-notice';
-import AppButton from '~/components/app-button';
+import CreateBusinessAccountButton from '~/components/create-business-account-button';
 import useExistingBusinessAccounts from '~/hooks/useExistingBusinessAccounts';
 import './create-business-account-notice.scss';
 
@@ -21,13 +20,6 @@ import './create-business-account-notice.scss';
 const CreateBusinessAccountNotice = () => {
 	const { existingAccounts, hasFinishedResolution } =
 		useExistingBusinessAccounts();
-	const handleOnClick = useCallback( () => {
-		window.open(
-			'https://accounts.reddit.com/adsregister',
-			'_blank',
-			'noopener,noreferrer'
-		);
-	}, [] );
 
 	if ( ! hasFinishedResolution || existingAccounts?.length > 0 ) {
 		return null;
@@ -45,14 +37,7 @@ const CreateBusinessAccountNotice = () => {
 					'reddit-for-woocommerce'
 				) }
 			</p>
-			<AppButton
-				isPrimary
-				text={ __(
-					'Create Business Account',
-					'reddit-for-woocommerce'
-				) }
-				onClick={ handleOnClick }
-			/>
+			<CreateBusinessAccountButton isPrimary />
 		</AppNotice>
 	);
 };

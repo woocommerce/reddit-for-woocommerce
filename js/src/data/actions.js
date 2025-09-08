@@ -401,6 +401,7 @@ export async function resetRedditAccountConfig(
  * Sends a POST request to the Reddit config API endpoint with the provided
  * ads account ID, then dispatches the received configuration.
  * Handles API errors and throws them after displaying an error message.
+ * The pixel ID is set to be the same as the ads account ID.
  *
  * @async
  * @param {string} adsAccountId - The ID of the Reddit ads account.
@@ -416,6 +417,9 @@ export async function upsertAdsAccount( adsAccountId, adsAccountName ) {
 			data: {
 				ad_account_id: adsAccountId,
 				ad_account_name: adsAccountName,
+
+				// pixel ID is same as the adsAccountID
+				pixel_id: adsAccountId,
 			},
 		} );
 
