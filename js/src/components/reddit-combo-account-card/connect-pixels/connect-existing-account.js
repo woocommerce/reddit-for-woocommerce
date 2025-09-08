@@ -21,10 +21,8 @@ import PixelIdSelectControl from '~/components/pixel-id-select-control';
 /**
  * Renders an account card to connect to an existing Reddit Pixel ID.
  *
- * @param {Object} props Component props.
- * @param {Function} props.onCreateClick Callback when clicking on the button to connect a new account
  */
-const ConnectExistingAccount = ( { onCreateClick } ) => {
+const ConnectExistingAccount = () => {
 	const [ value, setValue ] = useState();
 	const [ isLoading, setLoading ] = useState( false );
 	const { upsertPixelId } = useAppDispatch();
@@ -127,9 +125,6 @@ const ConnectExistingAccount = ( { onCreateClick } ) => {
 			}
 			actions={
 				<ConnectExistingAccountActions
-					disabled={ isLoading }
-					isConnected={ hasConnection }
-					onCreateNewClick={ onCreateClick }
 					onDisconnected={ handleDisconnected }
 				/>
 			}
