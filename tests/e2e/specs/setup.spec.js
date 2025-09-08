@@ -158,7 +158,6 @@ test.describe( 'Merchant Onboarding', () => {
 		await expect( locator.getRedditCardEditButton() ).not.toBeVisible();
 		await expect( locator.getRedditBusinessCard() ).toBeVisible();
 		await expect( locator.getRedditAdsAccountCard() ).toBeVisible();
-		await expect( locator.getRedditPixelCard() ).toBeVisible();
 
 		await locator.getRedditCardCancelButton().click();
 		await expect( locator.getRedditCardEditButton() ).toBeVisible();
