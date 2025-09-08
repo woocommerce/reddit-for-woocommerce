@@ -8,20 +8,16 @@ import { useState, useEffect } from '@wordpress/element';
  * Internal dependencies
  */
 import { useAppDispatch } from '~/data';
-import { CONNECTING_ADS_ACCOUNT, CONNECTING_PIXEL_ID } from '~/constants';
 import AccountCard, { APPEARANCE } from '~/components/account-card';
 import AccountDetails from './account-details';
 import AppButton from '~/components/app-button';
 import useExistingBusinessAccounts from '~/hooks/useExistingBusinessAccounts';
 import useExistingAdsAccounts from '~/hooks/useExistingAdsAccounts';
-import useExistingPixels from '~/hooks/useExistingPixels';
 import useRedditAdsAccount from '~/hooks/useRedditAdsAccount';
 import useRedditBusinessAccount from '~/hooks/useRedditBusinessAccount';
-import useRedditPixelId from '~/hooks/useRedditPixelId';
 import useAutoConnectAdsBusinessAccounts from '~/hooks/useAutoConnectAdsBusinessAccounts';
 import ConnectAds from './connect-ads';
 import ConnectBusiness from './connect-business';
-import ConnectPixels from './connect-pixels';
 import SwitchAccountButton from './switch-account-button';
 import getAccountConnectionTexts from './getAccountConnectionTexts';
 import Indicator from './indicator';
@@ -33,23 +29,18 @@ const ConnectedRedditComboAccountCard = () => {
 	const [ editMode, setEditMode ] = useState( false );
 	const [ isConnectingAdsAccount, setIsConnectingAdsAccount ] =
 		useState( false );
-	const [ isConnectingPixelId, setIsConnectingPixelId ] = useState( false );
-	const { upsertAdsAccount, upsertPixelId, fetchSetup } = useAppDispatch();
+	const { upsertAdsAccount, fetchSetup } = useAppDispatch();
 	const { hasDetermined, connectingWhich } =
 		useAutoConnectAdsBusinessAccounts();
 	const { hasConnection: hasBusinessConnection } = useRedditBusinessAccount();
 	const { hasConnection: hasAdsConnection } = useRedditAdsAccount();
-	const { hasConnection: hasPixelIdConnection } = useRedditPixelId();
 	const { existingAccounts: existingBusinessAccounts } =
 		useExistingBusinessAccounts();
-	const { existingAccounts: existingAdsAccounts } = useExistingAdsAccounts();
-	const { existingPixels } = useExistingPixels();
+	const {
+		existingAccounts: existingAdsAccounts,
+		hasFinishedResolution: hasResolvedExistingAdsAccounts,
+	} = useExistingAdsAccounts();
 	const { text, subText } = getAccountConnectionTexts( connectingWhich );
-	const { text: connectingAdText } = getAccountConnectionTexts(
-		CONNECTING_ADS_ACCOUNT
-	);
-	const { text: connectingPixelIdText } =
-		getAccountConnectionTexts( CONNECTING_PIXEL_ID );
 
 	const handleCancelClick = () => {
 		setEditMode( false );
@@ -64,7 +55,6 @@ const ConnectedRedditComboAccountCard = () => {
 	const showConnectBusiness =
 		canShowConnectBusiness &&
 		! isConnectingAdsAccount &&
-		! isConnectingPixelId &&
 		! connectingWhich &&
 		( editMode || ! hasBusinessConnection );
 
@@ -74,17 +64,7 @@ const ConnectedRedditComboAccountCard = () => {
 		canShowConnectAds &&
 		! connectingWhich &&
 		! isConnectingAdsAccount &&
-		! isConnectingPixelId &&
 		( editMode || ! hasAdsConnection );
-
-	const canShowConnectPixelId =
-		hasPixelIdConnection || existingPixels?.length > 0;
-	const showConnectPixelId =
-		canShowConnectPixelId &&
-		! connectingWhich &&
-		! isConnectingAdsAccount &&
-		! isConnectingPixelId &&
-		( editMode || ! hasPixelIdConnection );
 
 	useEffect( () => {
 		const upsertAccount = async () => {
@@ -120,38 +100,6 @@ const ConnectedRedditComboAccountCard = () => {
 		fetchSetup,
 	] );
 
-	useEffect( () => {
-		// Auto connect a single Pixel ID once an Ads and Business account are first connected.
-		const upsertPixel = async () => {
-			if (
-				hasDetermined &&
-				! hasPixelIdConnection &&
-				existingPixels?.length === 1 &&
-				hasBusinessConnection &&
-				hasAdsConnection &&
-				connectingWhich === null &&
-				! isConnectingPixelId
-			) {
-				setIsConnectingPixelId( true );
-				await upsertPixelId( existingPixels[ 0 ].pixel_id );
-				fetchSetup();
-				setIsConnectingPixelId( false );
-			}
-		};
-
-		upsertPixel();
-	}, [
-		hasDetermined,
-		hasAdsConnection,
-		hasBusinessConnection,
-		hasPixelIdConnection,
-		existingPixels,
-		upsertPixelId,
-		connectingWhich,
-		isConnectingPixelId,
-		fetchSetup,
-	] );
-
 	if ( ! hasDetermined ) {
 		return <SpinnerCard />;
 	}
@@ -159,7 +107,11 @@ const ConnectedRedditComboAccountCard = () => {
 	const switchAccountButton = <SwitchAccountButton isTertiary />;
 
 	const getCardActions = () => {
-		if ( connectingWhich || isConnectingAdsAccount ) {
+		if (
+			connectingWhich ||
+			isConnectingAdsAccount ||
+			( ! hasResolvedExistingAdsAccounts && ! hasAdsConnection )
+		) {
 			return null;
 		}
 
@@ -179,8 +131,7 @@ const ConnectedRedditComboAccountCard = () => {
 		return (
 			<div className="rfw-reddit-combo-account-card__description-actions">
 				{ ( showConnectAds || ! canShowConnectAds ) &&
-				( showConnectBusiness || ! canShowConnectBusiness ) &&
-				( showConnectPixelId || ! canShowConnectPixelId ) ? (
+				( showConnectBusiness || ! canShowConnectBusiness ) ? (
 					switchAccountButton
 				) : (
 					<AppButton
@@ -196,13 +147,8 @@ const ConnectedRedditComboAccountCard = () => {
 	const showSpinner =
 		Boolean( connectingWhich ) ||
 		isConnectingAdsAccount ||
-		isConnectingPixelId;
-	let description = text || <AccountDetails />;
-	if ( isConnectingAdsAccount ) {
-		description = connectingAdText;
-	} else if ( isConnectingPixelId ) {
-		description = connectingPixelIdText;
-	}
+		( ! hasResolvedExistingAdsAccounts && ! hasAdsConnection );
+	const description = text || <AccountDetails />;
 
 	return (
 		<div className="rfw-reddit-combo-account-card-wrapper">
@@ -224,7 +170,6 @@ const ConnectedRedditComboAccountCard = () => {
 
 			{ showConnectBusiness && <ConnectBusiness /> }
 			{ showConnectAds && <ConnectAds /> }
-			{ showConnectPixelId && <ConnectPixels /> }
 		</div>
 	);
 };

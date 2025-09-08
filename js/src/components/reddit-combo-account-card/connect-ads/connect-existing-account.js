@@ -22,10 +22,8 @@ import useExistingAdsAccounts from '~/hooks/useExistingAdsAccounts';
 /**
  * Renders an account card to connect to an existing Reddit Ads account.
  *
- * @param {Object} props Component props.
- * @param {Function} props.onCreateClick Callback when clicking on the button to connect a new account
  */
-const ConnectExistingAccount = ( { onCreateClick } ) => {
+const ConnectExistingAccount = () => {
 	const [ value, setValue ] = useState();
 	const [ isLoading, setLoading ] = useState( false );
 	const { upsertAdsAccount } = useAppDispatch();
@@ -134,9 +132,6 @@ const ConnectExistingAccount = ( { onCreateClick } ) => {
 			}
 			actions={
 				<ConnectExistingAccountActions
-					disabled={ isLoading }
-					isConnected={ hasConnection }
-					onCreateNewClick={ onCreateClick }
 					onDisconnected={ handleDisconnected }
 				/>
 			}

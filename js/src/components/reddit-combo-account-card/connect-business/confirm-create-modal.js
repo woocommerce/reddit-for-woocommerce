@@ -9,6 +9,7 @@ import { __ } from '@wordpress/i18n';
 import AppModal from '~/components/app-modal';
 import AppButton from '~/components/app-button';
 import WarningIcon from '~/components/warning-icon';
+import CreateBusinessAccountButton from '~/components/create-business-account-button';
 import './confirm-create-modal.scss';
 
 /**
@@ -26,12 +27,15 @@ const ConfirmCreateModal = ( { onContinue, onRequestClose } ) => {
 			className="rfw-create-business-account-warning-modal"
 			title={ __( 'Create Business Account', 'reddit-for-woocommerce' ) }
 			buttons={ [
-				<AppButton key="confirm" isSecondary onClick={ onContinue }>
-					{ __(
+				<CreateBusinessAccountButton
+					key="confirm"
+					isSecondary
+					text={ __(
 						'Yes, I want a new account',
 						'reddit-for-woocommerce'
 					) }
-				</AppButton>,
+					onClick={ onContinue }
+				/>,
 				<AppButton key="cancel" isPrimary onClick={ onRequestClose }>
 					{ __( 'Cancel', 'reddit-for-woocommerce' ) }
 				</AppButton>,
