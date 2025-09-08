@@ -33,6 +33,13 @@ final class TransientDefaults {
 	public const PIXEL_SCRIPT = 'ads_pixel_script';
 
 	/**
+	 * Transient key for storing the email of the connected Reddit account.
+	 *
+	 * @since 0.1.0
+	 */
+	public const REDDIT_ACCOUNT_EMAIL = 'reddit_account_email';
+
+	/**
 	 * Returns defaults for all known Ad Partner transients.
 	 *
 	 * Used by {@see TransientStorage} when saving values.
@@ -43,7 +50,8 @@ final class TransientDefaults {
 	 */
 	public static function get_all(): array {
 		return array(
-			self::PIXEL_SCRIPT => '',
+			self::PIXEL_SCRIPT         => '',
+			self::REDDIT_ACCOUNT_EMAIL => '',
 		);
 	}
 
@@ -56,7 +64,8 @@ final class TransientDefaults {
 	 */
 	private static function get_ttls(): array {
 		return array(
-			self::PIXEL_SCRIPT => MONTH_IN_SECONDS,
+			self::PIXEL_SCRIPT         => MONTH_IN_SECONDS,
+			self::REDDIT_ACCOUNT_EMAIL => DAY_IN_SECONDS,
 		);
 	}
 

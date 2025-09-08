@@ -1,12 +1,12 @@
 /**
  * Internal dependencies
  */
-import useRedditAccountStatus from '~/hooks/useRedditAccountStatus';
+import useRedditAccount from '~/hooks/useRedditAccount';
 import ConnectRedditComboAccountCard from './connect-reddit-combo-account-card';
 import ConnectedRedditComboAccountCard from './connected-reddit-combo-account-card';
 
 const RedditComboAccountCard = ( { disabled = false } ) => {
-	const { isConnected } = useRedditAccountStatus();
+	const { isConnected } = useRedditAccount();
 
 	if ( isConnected ) {
 		return <ConnectedRedditComboAccountCard />;

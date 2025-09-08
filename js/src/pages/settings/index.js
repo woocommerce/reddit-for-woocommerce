@@ -13,7 +13,7 @@ import LinkedAccounts from './linked-accounts';
 import Section from '~/components/section';
 import ProductCatalog from './product-catalog';
 import ConversionsAPI from './conversions-api';
-import useRedditAccountStatus from '~/hooks/useRedditAccountStatus';
+import useRedditAccount from '~/hooks/useRedditAccount';
 import OnboardingSuccessModal from '~/components/onboarding-success-modal';
 import { getOnboardingUrl } from '~/utils/urls';
 import './index.scss';
@@ -21,7 +21,7 @@ import './index.scss';
 const Settings = () => {
 	// Make the component highlight SFW entry in the WC legacy menu.
 	useMenuEffect();
-	const { isConnected, hasFinishedResolution } = useRedditAccountStatus();
+	const { isConnected, hasFinishedResolution } = useRedditAccount();
 
 	// Show onboarding success guide modal by visiting the path with a specific query `onboarding=success`.
 	// For example: `/wp-admin/admin.php?page=wc-admin&path=%2Freddit%2Fsettings&onboarding=success`.
