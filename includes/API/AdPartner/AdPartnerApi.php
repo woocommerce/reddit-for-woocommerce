@@ -78,6 +78,14 @@ class AdPartnerApi {
 	public PixelsApi $pixels;
 
 	/**
+	 * Handles Members operations.
+	 *
+	 * @since 0.1.0
+	 * @var MembersApi
+	 */
+	public MembersApi $members;
+
+	/**
 	 * Private constructor to enforce singleton pattern.
 	 *
 	 * Initializes all API submodules with the shared {@see WcsClient} instance,
@@ -93,6 +101,7 @@ class AdPartnerApi {
 		$this->business    = new BusinessApi( $wcs );
 		$this->ad_accounts = new AdAccountsApi( $wcs );
 		$this->pixels      = new PixelsApi( $wcs );
+		$this->members     = new MembersApi( $wcs );
 	}
 
 	/**
