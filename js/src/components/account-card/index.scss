@@ -54,6 +54,7 @@
 
 	&__actions {
 		grid-area: 3/2/auto/span 2;
+		margin-top: wpVariables.$grid-unit-15;
 	}
 
 	&__title {
@@ -115,12 +116,6 @@
 			> div {
 				margin: wpVariables.$grid-unit-10;
 			}
-		}
-	}
-
-	&:has(.rfw-reddit-account-details:not(:empty)) {
-		.rfw-account-card__actions {
-			margin-top: wpVariables.$grid-unit-15;
 		}
 	}
 }
