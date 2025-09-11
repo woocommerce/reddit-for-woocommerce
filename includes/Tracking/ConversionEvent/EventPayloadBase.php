@@ -58,7 +58,13 @@ class EventPayloadBase {
 	 */
 	public function build_payload(): array {
 		return array(
-			'event_at' => Helper::get_event_time(),
+			'partner' => 'WOOCOMMERCE',
+			'events'  => array(
+				array(
+					'event_at'      => Helper::get_event_time(),
+					'action_source' => 'WEBSITE',
+				),
+			),
 		);
 	}
 }

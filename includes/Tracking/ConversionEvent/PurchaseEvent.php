@@ -11,8 +11,8 @@
 
 namespace RedditForWooCommerce\Tracking\ConversionEvent;
 
+use RedditForWooCommerce\Utils\Helper;
 use WC_Order;
-use RedditForWooCommerce\Tracking\EventIdRegistry;
 
 /**
  * Constructs a Conversion request payload for the Purchase event type.
@@ -31,7 +31,7 @@ final class PurchaseEvent extends EventPayloadBase implements ConversionEventInt
 	 *
 	 * @since 0.1.0
 	 */
-	public const ID = 'Purchase';
+	public const ID = 'PURCHASE';
 
 	/**
 	 * WooCommerce order object.
@@ -91,19 +91,34 @@ final class PurchaseEvent extends EventPayloadBase implements ConversionEventInt
 		$meta_data = array(
 			'conversion_id' => $args['conversion_id'] ?? '',
 			'item_count'    => (int) $this->order->get_item_count(),
-			'value_decimal' => floatval( $this->order->get_total() ),
+			'value'         => floatval( $this->order->get_total() ),
 			'currency'      => get_woocommerce_currency(),
 			'products'      => $products,
 		);
 
-		$base    = parent::build_payload();
-		$default = array(
-			'event_type'     => array(
+		$events = array(
+			'event_at'      => Helper::get_event_time(),
+			'action_source' => 'WEBSITE',
+			'type'          => array(
 				'tracking_type' => self::ID,
 			),
-			'event_metadata' => $meta_data,
+			'metadata'      => $meta_data,
+			'user'          => $args['user_data']['user'],
 		);
 
-		return array_merge( $base, $default, $args['user_data'] );
+		if ( isset( $args['user_data']['click_id'] ) ) {
+			$events['click_id'] = $args['user_data']['click_id'];
+		}
+
+		$payload = array(
+			'data' => array(
+				'partner' => 'WOOCOMMERCE',
+				'events'  => array(
+					$events,
+				),
+			),
+		);
+
+		return $payload;
 	}
 }

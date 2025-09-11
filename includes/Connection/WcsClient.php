@@ -224,8 +224,8 @@ final class WcsClient {
 		}
 
 		return new WP_Error(
-			'wcs_error',
-			__( 'WCS request failed', 'reddit-for-woocommerce' ),
+			Helper::with_prefix( 'request_failed' ),
+			__( 'Request failed', 'reddit-for-woocommerce' ),
 			$response
 		);
 	}

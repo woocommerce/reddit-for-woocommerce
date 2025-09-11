@@ -115,7 +115,7 @@ class RemoteConversionTracker implements ConversionTrackerInterface {
 			Helper::with_prefix( 'send_conversion_event' ),
 			array(
 				'event_payload' => $payload,
-				'args'          => $args,
+				'args'          => array( 'event' => PurchaseEvent::ID ),
 			),
 			Config::PLUGIN_SLUG
 		);
@@ -152,7 +152,7 @@ class RemoteConversionTracker implements ConversionTrackerInterface {
 			Helper::with_prefix( 'send_conversion_event' ),
 			array(
 				'event_payload' => $payload,
-				'args'          => array(),
+				'args'          => array( 'event' => AddToCartEvent::ID ),
 			),
 			Config::PLUGIN_SLUG
 		);
@@ -192,7 +192,7 @@ class RemoteConversionTracker implements ConversionTrackerInterface {
 			)
 		);
 
-		$this->send( $payload );
+		$this->send( $payload, array( 'event' => ViewContentEvent::ID ) );
 	}
 
 	/**
@@ -227,7 +227,7 @@ class RemoteConversionTracker implements ConversionTrackerInterface {
 			)
 		);
 
-		$this->send( $payload );
+		$this->send( $payload, array( 'event' => PageVisitEvent::ID ) );
 	}
 
 	/**
@@ -252,13 +252,12 @@ class RemoteConversionTracker implements ConversionTrackerInterface {
 			return;
 		}
 
-		$path    = sprintf( '/conversions/events/%s', rawurldecode( $pixel_id ) );
-		$payload = array( 'events' => array( $event_payload ) );
+		$path = sprintf( '/ads/pixels/%s/conversion_events', rawurldecode( $pixel_id ) );
 
 		/* @var WP_REST_Response|WP_Error $response The response from the WCS proxy. */
 		$response = $this->client->proxy_post(
 			$path,
-			$payload,
+			$event_payload,
 			false,
 			array(
 				'reddit-authorization' => sprintf( 'Bearer %s', $token ),
@@ -266,24 +265,27 @@ class RemoteConversionTracker implements ConversionTrackerInterface {
 		);
 
 		if ( Helper::is_logging_enabled() ) {
-			$event = $event_payload['event_type']['tracking_type'] ?? '';
+			$event = $args['event'] ?? 'unknown_event';
 
 			if ( is_wp_error( $response ) ) {
+				$body       = json_decode( wp_remote_retrieve_body( $response->get_error_data() ), true );
 				$error_data = $response->get_error_data();
 				$status     = $error_data['response']['code'];
-				$message    = $error_data['response']['message'];
+				$message    = $response->get_error_message();
+				$body       = Helper::deep_replace_double_quotes( $body );
 
 				$info = array(
-					'context' => 'tracking',
-					'payload' => $payload,
-					'args'    => $args,
-					'error'   => $message,
+					'context'    => 'tracking',
+					'payload'    => $event_payload,
+					'args'       => $args,
+					'error'      => $message,
+					'error_data' => $body,
 				);
 			} else {
 				$status = $response->get_status();
 				$info   = array(
 					'context' => 'tracking',
-					'payload' => $payload,
+					'payload' => $event_payload,
 					'args'    => $args,
 				);
 			}

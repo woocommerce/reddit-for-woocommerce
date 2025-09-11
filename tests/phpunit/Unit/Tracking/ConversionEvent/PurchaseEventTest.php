@@ -81,16 +81,16 @@ class PurchaseEventTest extends WP_UnitTestCase {
 		// Assertions.
 		$this->assertIsArray( $payload );
 
-		$this->assertSame( 'Purchase', $payload['event_type']['tracking_type'] );
-		$this->assertSame( $order->get_order_key(), $payload['event_metadata']['conversion_id'] );
-		$this->assertSame( 3, $payload['event_metadata']['item_count'] );
-		$this->assertSame( floatval( $order->get_total() ), $payload['event_metadata']['value_decimal'] );
-		$this->assertSame( 'USD', $payload['event_metadata']['currency'] );
+		$this->assertSame( 'Purchase', $payload['type']['tracking_type'] );
+		$this->assertSame( $order->get_order_key(), $payload['metadata']['conversion_id'] );
+		$this->assertSame( 3, $payload['metadata']['item_count'] );
+		$this->assertSame( floatval( $order->get_total() ), $payload['metadata']['value'] );
+		$this->assertSame( 'USD', $payload['metadata']['currency'] );
 		$this->assertArrayHasKey( 'event_at', $payload );
 		$this->assertEquals( array(
 			array( 'id' => $product_one->get_id(), 'name' => $product_one->get_name() ),
 			array( 'id' => $product_two->get_id(), 'name' => $product_two->get_name() ),
-		), $payload['event_metadata']['products'] );
+		), $payload['metadata']['products'] );
 	}
 
 	/**

@@ -63,12 +63,12 @@ final class AddToCartEventTest extends WP_UnitTestCase {
 
 		$this->assertIsArray( $payload );
 
-		$this->assertSame( 'AddToCart', $payload['event_type']['tracking_type'] );
-		$this->assertSame( 'abc_123', $payload['event_metadata']['conversion_id'] );
-		$this->assertSame( $this->quantity, $payload['event_metadata']['item_count'] );
-		$this->assertSame( $this->quantity * floatval( $product->get_regular_price( 20 ) ), $payload['event_metadata']['value_decimal'] );
-		$this->assertSame( 'USD', $payload['event_metadata']['currency'] );
+		$this->assertSame( 'AddToCart', $payload['type']['tracking_type'] );
+		$this->assertSame( 'abc_123', $payload['metadata']['conversion_id'] );
+		$this->assertSame( $this->quantity, $payload['metadata']['item_count'] );
+		$this->assertSame( $this->quantity * floatval( $product->get_regular_price( 20 ) ), $payload['metadata']['value'] );
+		$this->assertSame( 'USD', $payload['metadata']['currency'] );
 		$this->assertArrayHasKey( 'event_at', $payload );
-		$this->assertEquals( array( array( 'id' => $product->get_id(), 'name' => $product->get_name() ) ), $payload['event_metadata']['products'] );
+		$this->assertEquals( array( array( 'id' => $product->get_id(), 'name' => $product->get_name() ) ), $payload['metadata']['products'] );
 	}
 }

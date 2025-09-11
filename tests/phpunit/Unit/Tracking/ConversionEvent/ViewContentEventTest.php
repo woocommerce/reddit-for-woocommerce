@@ -28,10 +28,10 @@ class ViewContentEventTest extends TestCase {
 			)
 		);
 
-		$this->assertSame( 'ViewContent', $payload['event_type']['tracking_type'] );
-		$this->assertSame( 'abc_123', $payload['event_metadata']['conversion_id'] );
+		$this->assertSame( 'ViewContent', $payload['type']['tracking_type'] );
+		$this->assertSame( 'abc_123', $payload['metadata']['conversion_id'] );
 		$this->assertArrayHasKey( 'event_at', $payload );
-		$this->assertEquals( array( array( 'id' => $product->get_id(), 'name' => $product->get_name() ) ), $payload['event_metadata']['products'] );
+		$this->assertEquals( array( array( 'id' => $product->get_id(), 'name' => $product->get_name() ) ), $payload['metadata']['products'] );
 	}
 
 	/**

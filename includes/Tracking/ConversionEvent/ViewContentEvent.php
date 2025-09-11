@@ -8,6 +8,8 @@
 
 namespace RedditForWooCommerce\Tracking\ConversionEvent;
 
+use RedditForWooCommerce\Utils\Helper;
+
 /**
  * Constructs a Conversion request payload for the ViewContent event type.
  *
@@ -25,7 +27,7 @@ final class ViewContentEvent extends EventPayloadBase implements ConversionEvent
 	 *
 	 * @since 0.1.0
 	 */
-	public const ID = 'ViewContent';
+	public const ID = 'VIEW_CONTENT';
 
 	/**
 	 * Product ID being viewed.
@@ -72,14 +74,29 @@ final class ViewContentEvent extends EventPayloadBase implements ConversionEvent
 			),
 		);
 
-		$base    = parent::build_payload();
-		$default = array(
-			'event_type'     => array(
+		$events = array(
+			'event_at'      => Helper::get_event_time(),
+			'action_source' => 'WEBSITE',
+			'type'          => array(
 				'tracking_type' => self::ID,
 			),
-			'event_metadata' => $meta_data,
+			'metadata'      => $meta_data,
+			'user'          => $args['user_data']['user'],
 		);
 
-		return array_merge( $base, $default, $args['user_data'] );
+		if ( isset( $args['user_data']['click_id'] ) ) {
+			$events['click_id'] = $args['user_data']['click_id'];
+		}
+
+		$payload = array(
+			'data' => array(
+				'partner' => 'WOOCOMMERCE',
+				'events'  => array(
+					$events,
+				),
+			),
+		);
+
+		return $payload;
 	}
 }

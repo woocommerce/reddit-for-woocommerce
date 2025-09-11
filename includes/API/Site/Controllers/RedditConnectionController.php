@@ -312,7 +312,6 @@ class RedditConnectionController extends RESTBaseController {
 		Options::delete( OptionDefaults::BUSINESS_NAME );
 		Options::delete( OptionDefaults::AD_ACCOUNT_ID );
 		Options::delete( OptionDefaults::AD_ACCOUNT_NAME );
-		Options::delete( OptionDefaults::CONVERSION_ACCESS_TOKEN );
 		Options::delete( OptionDefaults::PIXEL_ID );
 		Options::delete( OptionDefaults::IS_JETPACK_CONNECTED );
 		Options::delete( OptionDefaults::ONBOARDING_STATUS );
