@@ -93,8 +93,11 @@ final class AddToCartEvent extends EventPayloadBase implements ConversionEventIn
 				'tracking_type' => self::ID,
 			),
 			'metadata'      => $meta_data,
-			'user'          => $args['user_data']['user'],
 		);
+
+		if ( isset( $args['user_data']['user'] ) ) {
+			$events['user'] = $args['user_data']['user'];
+		}
 
 		if ( isset( $args['user_data']['click_id'] ) ) {
 			$events['click_id'] = $args['user_data']['click_id'];
