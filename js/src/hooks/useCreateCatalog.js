@@ -8,6 +8,9 @@ import { sprintf, __ } from '@wordpress/i18n';
  * Internal dependencies
  */
 import useDispatchCoreNotices from '~/hooks/useDispatchCoreNotices';
+import { rfwData } from '~/constants';
+
+const { adminNonce } = rfwData;
 
 /**
  * @typedef {Object} CreateCatalog
@@ -35,6 +38,7 @@ const useCreateCatalog = () => {
 			method: 'POST',
 			body: new URLSearchParams( {
 				action: `${ redditAdsAdminData.prefix }create_catalog`,
+				security: adminNonce,
 			} ),
 		} );
 

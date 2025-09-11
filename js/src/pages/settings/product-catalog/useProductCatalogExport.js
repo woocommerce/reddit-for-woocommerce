@@ -16,7 +16,7 @@ import useDispatchCoreNotices from '~/hooks/useDispatchCoreNotices';
  * @property {Function} generateCsv Function to initiate the CSV export process.
  */
 
-const { exportNonce } = rfwData;
+const { adminNonce } = rfwData;
 
 /**
  * Custom React hook to handle the export of a product catalog as a CSV file.
@@ -36,7 +36,7 @@ const useProductCatalogExport = (
 		try {
 			const res = await window.jQuery.post( window.ajaxurl, {
 				action: EXPORT_CSV_ACTION,
-				security: exportNonce,
+				security: adminNonce,
 			} );
 
 			if ( res.success ) {

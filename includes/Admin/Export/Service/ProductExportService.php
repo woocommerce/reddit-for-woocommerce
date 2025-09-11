@@ -333,7 +333,7 @@ class ProductExportService {
 	 * @since 0.1.0
 	 */
 	public function trigger_export_callback(): void {
-		check_ajax_referer( 'export-nonce', 'security' );
+		check_ajax_referer( 'admin_nonce', 'security' );
 
 		if ( ! Helper::has_products() ) {
 			wp_send_json_error( array( 'code' => Helper::with_prefix( 'no_products_found' ) ) );
@@ -359,7 +359,7 @@ class ProductExportService {
 	 * @return void
 	 */
 	public function check_export_status() {
-		check_ajax_referer( 'export-nonce', 'security' );
+		check_ajax_referer( 'admin_nonce', 'security' );
 
 		$is_job_in_progress = $this->job->is_job_in_progress( self::ACTION_HOOK );
 		$file_url           = Options::get( OptionDefaults::EXPORT_FILE_URL );
@@ -425,6 +425,8 @@ class ProductExportService {
 	 * @since 0.1.0
 	 */
 	public function create_catalog_manually(): void {
+		check_ajax_referer( 'admin_nonce', 'security' );
+
 		// Bail early if the catalog already exists.
 		$catalog_id = Options::get( OptionDefaults::CATALOG_ID );
 
