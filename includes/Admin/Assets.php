@@ -18,7 +18,7 @@ use RedditForWooCommerce\Utils\Storage\Options;
 use RedditForWooCommerce\Utils\Storage\OptionDefaults;
 use RedditForWooCommerce\ServiceKey;
 use RedditForWooCommerce\ServiceContainer;
-use RedditForWooCommerce\Admin\Export\Service\ProductExportService;
+use RedditForWooCommerce\CsvExporter\ProductExportService;
 use RedditForWooCommerce\Utils\Helper;
 
 /**
