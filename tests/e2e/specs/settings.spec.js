@@ -173,15 +173,35 @@ test.describe( 'Reddit Settings', () => {
 		await settingPage.mockRedditAccount( connectedConfigPayload );
 		settingPage.goto();
 		await locator.getCapiTokenInput().fill( 'capi-123' + Date.now() );
-		await expect( await page.getByText( 'Conversions API Access Token updated successfully.' ).first() ).toBeVisible();
+		await expect(
+			await page
+				.getByText(
+					'Conversions API Access Token updated successfully.'
+				)
+				.first()
+		).toBeVisible();
 		await locator.getCapiCheckbox().click();
-		await expect( await page.getByText( 'Set the Conversion Access Token to enable tracking' ) ).not.toBeVisible();
-		await expect( await page.getByText( 'Conversions API Tracking status updated successfully.' ).first() ).toBeVisible();
+		await expect(
+			page.getByText(
+				'Set the Conversion Access Token to enable tracking'
+			)
+		).not.toBeVisible();
+		await expect(
+			await page
+				.getByText(
+					'Conversions API Tracking status updated successfully.'
+				)
+				.first()
+		).toBeVisible();
 
 		await locator.getCapiTokenInput().fill( '' );
 		await expect( await locator.getCapiCheckbox() ).toBeDisabled();
 		await expect( await locator.getCapiCheckbox() ).not.toBeChecked();
-		await expect( await page.getByText( 'Set the Conversion Access Token to enable tracking' ) ).toBeVisible();
+		await expect(
+			page.getByText(
+				'Set the Conversion Access Token to enable tracking'
+			)
+		).toBeVisible();
 	} );
 
 	test( 'Reddit card details', async () => {
