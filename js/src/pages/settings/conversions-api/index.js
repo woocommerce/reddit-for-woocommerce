@@ -32,8 +32,7 @@ import './index.scss';
  * @return {JSX.Element} The rendered ConversionsAPI settings card.
  */
 const ConversionsAPI = () => {
-	const { isCapiEnabled, capiToken, hasFinishedResolution, adAccountId } =
-		useSettings();
+	const { isCapiEnabled, capiToken, hasFinishedResolution } = useSettings();
 	const [ isSaving, setIsSaving ] = useState( false );
 	const [ localCapiToken, setLocalCapiToken, debouncedLocalCapiToken ] =
 		useDebouncedInput( '' );
@@ -150,20 +149,12 @@ const ConversionsAPI = () => {
 								<>
 									{ createInterpolateElement(
 										__(
-											'Need help? <link>Follow this link</link>',
+											'Need help? <link>Follow this guide</link>',
 											'reddit-for-woocommerce'
 										),
 										{
 											link: (
-												<AppDocumentationLink
-													href={
-														adAccountId
-															? `https://ads.reddit.com/account/${ adAccountId?.substring(
-																	3
-															  ) }/events-manager/conversion-tokens`
-															: 'https://business.reddithelp.com/s/article/conversion-access-token'
-													}
-												/>
+												<AppDocumentationLink href="https://ads.reddit.com/events-manager/conversion-tokens" />
 											),
 										}
 									) }
