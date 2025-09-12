@@ -156,9 +156,13 @@ const ConversionsAPI = () => {
 										{
 											link: (
 												<AppDocumentationLink
-													href={ `https://ads.reddit.com/account/${ adAccountId?.substring(
-														3
-													) }/events-manager/conversion-tokens` }
+													href={
+														adAccountId
+															? `https://ads.reddit.com/account/${ adAccountId?.substring(
+																	3
+															  ) }/events-manager/conversion-tokens`
+															: 'https://business.reddithelp.com/s/article/conversion-access-token'
+													}
 												/>
 											),
 										}
