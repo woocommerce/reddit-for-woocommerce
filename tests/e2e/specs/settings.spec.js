@@ -107,6 +107,8 @@ test.describe( 'Reddit Settings', () => {
 	test( 'Toggle conversion tracking', async () => {
 		settingPage.goto();
 
+		await expect( locator.getCapiCheckbox() ).toBeDisabled();
+		await locator.getCapiTokenInput().fill( 'capi-123' );
 		await locator.getCapiCheckbox().click();
 		await expect( locator.getCapiCheckbox() ).toBeEnabled();
 		await expect(
@@ -167,38 +169,19 @@ test.describe( 'Reddit Settings', () => {
 		await expect( locator.getCapiTokenInput() ).toHaveValue( '' );
 	} );
 
-	test( 'Remove Conversion Access Token should disable conversions tracking', async () => {
+	test( 'Removing Conversion Access Token should disable conversions tracking', async () => {
 		await settingPage.mockRedditAccount( connectedConfigPayload );
 		settingPage.goto();
-		const capiCheckbox = locator
-			.getCapiCheckbox()
-			.locator( '..' )
-			.locator( 'input' );
-		await capiCheckbox.check();
-		const capiToken = `capi-token-${ Date.now() }`;
-		await locator.getCapiTokenInput().fill( capiToken );
-		await expect(
-			page
-				.getByText(
-					'Conversions API Access Token updated successfully.'
-				)
-				.first()
-		).toBeVisible();
-		await expect( capiCheckbox ).toBeChecked();
+		await locator.getCapiTokenInput().fill( 'capi-123' + Date.now() );
+		await expect( await page.getByText( 'Conversions API Access Token updated successfully.' ).first() ).toBeVisible();
+		await locator.getCapiCheckbox().click();
+		await expect( await page.getByText( 'Set the Conversion Access Token to enable tracking' ) ).not.toBeVisible();
+		await expect( await page.getByText( 'Conversions API Tracking status updated successfully.' ).first() ).toBeVisible();
 
-		await page.reload();
-		await page.waitForTimeout( 1500 );
-		await expect( capiCheckbox ).toBeChecked();
 		await locator.getCapiTokenInput().fill( '' );
-		await expect( locator.getCapiTokenInput() ).toHaveValue( '' );
-		await expect(
-			page
-				.getByText(
-					'Conversions API Access Token updated successfully.'
-				)
-				.first()
-		).toBeVisible();
-		await expect( capiCheckbox ).not.toBeChecked();
+		await expect( await locator.getCapiCheckbox() ).toBeDisabled();
+		await expect( await locator.getCapiCheckbox() ).not.toBeChecked();
+		await expect( await page.getByText( 'Set the Conversion Access Token to enable tracking' ) ).toBeVisible();
 	} );
 
 	test( 'Reddit card details', async () => {
