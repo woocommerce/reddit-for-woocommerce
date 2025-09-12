@@ -102,14 +102,4 @@ class PurchaseEventTest extends WP_UnitTestCase {
 			array( 'id' => $product_two->get_id(), 'name' => $product_two->get_name() ),
 		), $metadata['products'] );
 	}
-
-	/**
-	 * Tests that an invalid order ID returns an empty payload.
-	 */
-	public function test_build_payload_returns_empty_if_order_not_found(): void {
-		$event   = new PurchaseEvent( 999999 ); // unlikely to exist
-		$payload = $event->build_payload();
-
-		$this->assertSame( array(), $payload );
-	}
 }

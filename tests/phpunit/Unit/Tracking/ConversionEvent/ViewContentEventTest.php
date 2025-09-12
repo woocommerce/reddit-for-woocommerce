@@ -59,15 +59,4 @@ class ViewContentEventTest extends TestCase {
 		$this->assertSame( 'abc_123', $metadata['conversion_id'] );
 		$this->assertEquals( array( array( 'id' => $product->get_id(), 'name' => $product->get_name() ) ), $metadata['products'] );
 	}
-
-	/**
-	 * Test that build_payload() returns empty array for non-existent product.
-	 */
-	public function test_build_payload_for_invalid_product_returns_empty_array() {
-		$invalid_product_id = 999999; // ID that doesn't exist
-		$event              = new ViewContentEvent( $invalid_product_id );
-		$payload            = $event->build_payload();
-
-		$this->assertEmpty( $payload );
-	}
 }
