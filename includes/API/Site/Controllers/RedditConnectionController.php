@@ -244,16 +244,15 @@ class RedditConnectionController extends RESTBaseController {
 			$member = $this->ad_partner_api->members->me();
 
 			if ( is_wp_error( $member ) ) {
-				return new WP_REST_Response(
-					array(
-						'status' => 'disconnected',
-					)
+				$logger = wc_get_logger();
+				$logger->alert(
+					'Reddit member not found: ' . $response->get_error_code(),
 				);
+			} else {
+				$member_data = $member->get_data();
+				$email       = $member_data['data']['email'] ?? '';
+				Transients::set( TransientDefaults::REDDIT_ACCOUNT_EMAIL, $email );
 			}
-
-			$member_data = $member->get_data();
-			$email       = $member_data['data']['email'] ?? '';
-			Transients::set( TransientDefaults::REDDIT_ACCOUNT_EMAIL, $email );
 		}
 
 		return rest_ensure_response(
@@ -395,7 +394,7 @@ class RedditConnectionController extends RESTBaseController {
 			if ( is_wp_error( $response ) ) {
 				$logger = wc_get_logger();
 				$logger->alert(
-					'Catalog generation failed with error code' . $response->get_error_code(),
+					'Catalog generation failed with error code: ' . $response->get_error_code(),
 				);
 			} else {
 				$data         = $response->get_data();
