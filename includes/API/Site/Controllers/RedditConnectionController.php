@@ -246,7 +246,7 @@ class RedditConnectionController extends RESTBaseController {
 			if ( is_wp_error( $member ) ) {
 				$logger = wc_get_logger();
 				$logger->alert(
-					'Reddit member not found: ' . $response->get_error_code(),
+					'Reddit member not found.',
 				);
 			} else {
 				$member_data = $member->get_data();
