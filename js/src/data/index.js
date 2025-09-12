@@ -38,6 +38,7 @@ const store = createReduxStore( STORE_KEY, {
 		settings: {
 			capiToken: '',
 			catalogId: '',
+			adAccountId: '',
 			exportFileUrl: '',
 			lastExportTimeStamp: '',
 			productsToken: '',

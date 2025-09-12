@@ -193,6 +193,7 @@ export async function updateSettings( updatedSettings ) {
 		return receiveSettings( {
 			capiToken: response.capi_token,
 			catalogId: response.catalog_id,
+			adAccountId: response.ad_account_id,
 			exportFileUrl: response.export_file_url,
 			lastExportTimeStamp: response.last_export_timestamp,
 			productsToken: response.products_token,
