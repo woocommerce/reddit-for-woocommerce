@@ -417,7 +417,7 @@ class ProductExportService {
 			if ( is_wp_error( $response ) ) {
 				$logger = wc_get_logger();
 				$logger->alert(
-					'Feed generation failed with error code' . $response->get_error_code(),
+					'Feed generation failed with error code: ' . $response->get_error_code(),
 				);
 			} else {
 				Options::set( OptionDefaults::FEED_STATUS, 'created' );
