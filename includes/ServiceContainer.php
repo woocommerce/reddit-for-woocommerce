@@ -18,7 +18,6 @@ use RedditForWooCommerce\CsvExporter;
 use RedditForWooCommerce\Admin\ProductMeta;
 use RedditForWooCommerce\Tracking\ConversionEventLogger;
 use RedditForWooCommerce\API\AdPartner\AdPartnerApi;
-use RedditForWooCommerce\Utils\ProductData\ProductCategoryProvider;
 use function wc_get_logger;
 
 /**
@@ -100,7 +99,7 @@ final class ServiceContainer {
 						new Export\EntityProvider\ProductEntityProvider(),
 						new Export\RowBuilder\ProductRowBuilder(
 							array(
-								new ProductCategoryProvider(),
+								new CsvExporter\ProductCategoryProvider(),
 							)
 						),
 						new Export\Writer\CsvExportWriter(),

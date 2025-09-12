@@ -16,11 +16,11 @@
  * @since 0.1.0
  */
 
-namespace RedditForWooCommerce\Utils\ProductData;
+namespace RedditForWooCommerce\CsvExporter;
 
 use WC_Product;
-use WP_Term;
 use RedditForWooCommerce\Admin\Export\Contract\RowBuilderAdditionalData;
+use RedditForWooCommerce\Utils\ProductData\GoogleProductTaxonomy;
 
 /**
  * Derives the google_product_category field from WooCommerce product categories.
@@ -52,44 +52,10 @@ class ProductCategoryProvider implements RowBuilderAdditionalData {
 	 * @return array<string,string> Associative array with GPC field or empty if unavailable.
 	 */
 	public function get_additional_data( $product ): array {
-		$terms = get_the_terms( $product->get_id(), 'product_cat' );
-
-		if ( empty( $terms ) || is_wp_error( $terms ) ) {
-			return array();
-		}
-
-		// Select the deepest assigned category.
-		usort(
-			$terms,
-			function ( $a, $b ) {
-				return count( get_ancestors( $b->term_id, 'product_cat' ) )
-					- count( get_ancestors( $a->term_id, 'product_cat' ) );
-			}
-		);
-
-		$primary = array_shift( $terms );
-
-		// Build breadcrumb-style hierarchy.
-		$ancestors = array_reverse( get_ancestors( $primary->term_id, 'product_cat' ) );
-
-		// Prime caches for all ancestor terms in a single call.
-		_prime_term_caches( $ancestors, 'product_cat' );
-
-		$categories = array();
-
-		foreach ( $ancestors as $ancestor_id ) {
-			$ancestor = get_term( $ancestor_id, 'product_cat' );
-
-			if ( ! is_wp_error( $ancestor ) && $ancestor instanceof WP_Term ) {
-				$categories[] = $ancestor->name;
-			}
-		}
-
-		$categories[] = $primary->name;
-		$gpc          = implode( ' > ', $categories );
+		$data = ( new GoogleProductTaxonomy() )->get_google_product_category( $product );
 
 		return array(
-			'google_product_category' => substr( $gpc, 0, 250 ),
+			'google_product_category' => $data,
 		);
 	}
 }
