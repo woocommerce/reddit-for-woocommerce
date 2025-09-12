@@ -8,7 +8,8 @@
 
 namespace RedditForWooCommerce\Tracking\ConversionEvent;
 
-use RedditForWooCommerce\Utils\Helper;
+use RedditForWooCommerce\Tracking\ConversionEvent\AbstractEventPayloadBase;
+use RedditForWooCommerce\Tracking\ConversionEvent\Contract\ConversionFinalPayloadInterface;
 
 /**
  * Constructs a Conversion request payload for the PageVisit event type.
@@ -18,7 +19,7 @@ use RedditForWooCommerce\Utils\Helper;
  *
  * @since 0.1.0
  */
-final class PageVisitEvent extends EventPayloadBase implements ConversionEventInterface {
+final class PageVisitEvent extends AbstractEventPayloadBase implements ConversionFinalPayloadInterface {
 
 	/**
 	 * Unique identifier for this event type.
@@ -29,6 +30,16 @@ final class PageVisitEvent extends EventPayloadBase implements ConversionEventIn
 	 */
 	public const ID = 'PAGE_VISIT';
 
+	/**
+	 * Retrieves the unique tracking type identifier for this event.
+	 *
+	 * @since 0.1.0
+	 *
+	 * @return string Tracking type identifier (`PAGE_VISIT`).
+	 */
+	public function get_tracking_type(): string {
+		return self::ID;
+	}
 
 	/**
 	 * Builds the raw Conversion payload for the Ad Partner.
@@ -39,34 +50,32 @@ final class PageVisitEvent extends EventPayloadBase implements ConversionEventIn
 	 *
 	 * @return array<string,mixed> Conversion event payload.
 	 */
-	public function build_payload( array $args = array() ): array {
+	public function build_payload( array $args ): array {
 		$meta_data = array(
 			'conversion_id' => $args['conversion_id'] ?? '',
 		);
 
 		$events = array(
-			'event_at'      => Helper::get_event_time(),
-			'action_source' => 'WEBSITE',
+			'event_at'      => self::get_event_at(),
+			'action_source' => self::get_action_source(),
 			'type'          => array(
-				'tracking_type' => self::ID,
+				'tracking_type' => $this->get_tracking_type(),
 			),
 			'metadata'      => $meta_data,
 		);
-
-		if ( isset( $args['user_data']['user'] ) ) {
-			$events['user'] = $args['user_data']['user'];
-		}
 
 		if ( isset( $args['user_data']['click_id'] ) ) {
 			$events['click_id'] = $args['user_data']['click_id'];
 		}
 
+		if ( isset( $args['user_data']['user'] ) ) {
+			$events['user'] = $args['user_data']['user'];
+		}
+
 		$payload = array(
 			'data' => array(
-				'partner' => 'WOOCOMMERCE',
-				'events'  => array(
-					$events,
-				),
+				'partner' => self::get_partner(),
+				'events'  => array( $events ),
 			),
 		);
 
