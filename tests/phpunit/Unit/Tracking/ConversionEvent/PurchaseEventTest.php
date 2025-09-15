@@ -78,28 +78,28 @@ class PurchaseEventTest extends WP_UnitTestCase {
 			'user_data'     => UserIdentifier::get_user_data(),
 		) );
 
-		// Assertions.
 		$this->assertIsArray( $payload );
 
-		$this->assertSame( 'Purchase', $payload['event_type']['tracking_type'] );
-		$this->assertSame( $order->get_order_key(), $payload['event_metadata']['conversion_id'] );
-		$this->assertSame( 3, $payload['event_metadata']['item_count'] );
-		$this->assertSame( floatval( $order->get_total() ), $payload['event_metadata']['value_decimal'] );
-		$this->assertSame( 'USD', $payload['event_metadata']['currency'] );
-		$this->assertArrayHasKey( 'event_at', $payload );
+		$this->assertArrayHasKey( 'data', $payload );
+		$this->assertArrayHasKey( 'partner', $payload['data'] );
+		$this->assertArrayHasKey( 'events', $payload['data'] );
+
+		$events = $payload['data']['events'][0];
+
+		$this->assertArrayHasKey( 'event_at', $events );
+		$this->assertSame( 'WEBSITE', $events['action_source'] );
+		$this->assertSame( 'PURCHASE', $events['type']['tracking_type'] );
+
+		$metadata = $payload['data']['events'][0]['metadata'];
+
+		$this->assertSame( $order->get_order_key(), $metadata['conversion_id'] );
+		$this->assertSame( 3, $metadata['item_count'] );
+		$this->assertSame( floatval( $order->get_total() ), $metadata['value'] );
+		$this->assertSame( 'USD', $metadata['currency'] );
+		$this->assertArrayHasKey( 'event_at', $events );
 		$this->assertEquals( array(
 			array( 'id' => $product_one->get_id(), 'name' => $product_one->get_name() ),
 			array( 'id' => $product_two->get_id(), 'name' => $product_two->get_name() ),
-		), $payload['event_metadata']['products'] );
-	}
-
-	/**
-	 * Tests that an invalid order ID returns an empty payload.
-	 */
-	public function test_build_payload_returns_empty_if_order_not_found(): void {
-		$event   = new PurchaseEvent( 999999 ); // unlikely to exist
-		$payload = $event->build_payload();
-
-		$this->assertSame( array(), $payload );
+		), $metadata['products'] );
 	}
 }

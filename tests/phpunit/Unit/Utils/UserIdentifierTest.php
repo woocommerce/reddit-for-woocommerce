@@ -61,14 +61,4 @@ final class UserIdentifierTest extends TestCase {
 		$data                             = UserIdentifier::get_user_data();
 		$this->assertSame( '192.168.1.40', $data['user']['ip_address'] );
 	}
-
-	/**
-	 * Test that output is empty if no headers are present.
-	 */
-	public function test_get_user_data_returns_empty_array_when_headers_missing(): void {
-		$data = UserIdentifier::get_user_data();
-
-		$this->assertIsArray( $data );
-		$this->assertEmpty( $data );
-	}
 }

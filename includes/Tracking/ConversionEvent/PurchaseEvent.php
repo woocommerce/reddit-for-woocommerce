@@ -11,8 +11,10 @@
 
 namespace RedditForWooCommerce\Tracking\ConversionEvent;
 
+use RedditForWooCommerce\Tracking\ConversionEvent\AbstractEventPayloadBase;
+use RedditForWooCommerce\Tracking\ConversionEvent\Contract\ConversionFinalPayloadInterface;
+use RedditForWooCommerce\Tracking\ConversionEvent\Contract\ConversionProductsPayloadInterface;
 use WC_Order;
-use RedditForWooCommerce\Tracking\EventIdRegistry;
 
 /**
  * Constructs a Conversion request payload for the Purchase event type.
@@ -22,7 +24,7 @@ use RedditForWooCommerce\Tracking\EventIdRegistry;
  *
  * @since 0.1.0
  */
-final class PurchaseEvent extends EventPayloadBase implements ConversionEventInterface {
+final class PurchaseEvent extends AbstractEventPayloadBase implements ConversionProductsPayloadInterface, ConversionFinalPayloadInterface {
 
 	/**
 	 * Unique identifier for this event type.
@@ -31,7 +33,7 @@ final class PurchaseEvent extends EventPayloadBase implements ConversionEventInt
 	 *
 	 * @since 0.1.0
 	 */
-	public const ID = 'Purchase';
+	public const ID = 'PURCHASE';
 
 	/**
 	 * WooCommerce order object.
@@ -53,22 +55,99 @@ final class PurchaseEvent extends EventPayloadBase implements ConversionEventInt
 	}
 
 	/**
-	 * Builds the raw Conversion payload for the Ad Partner.
-	 *
-	 * Includes order totals, currency, line items, and metadata.
+	 * Retrieves the unique tracking type identifier for this event.
 	 *
 	 * @since 0.1.0
 	 *
-	 * @param array $args Overrideable payload args.
-	 *
-	 * @return array<string,mixed> Conversion event payload.
+	 * @return string Tracking type identifier (`PURCHASE`).
 	 */
-	public function build_payload( array $args = array() ): array {
-		if ( ! $this->order ) {
-			return array();
+	public function get_tracking_type(): string {
+		return self::ID;
+	}
+
+	/**
+	 * Retrieves the currency used for the order.
+	 *
+	 * Falls back to the store’s default WooCommerce currency if the
+	 * order object is not available. Otherwise, retrieves the currency
+	 * directly from the WooCommerce order instance.
+	 *
+	 * @since 0.1.0
+	 *
+	 * @return string ISO 4217 currency code.
+	 */
+	public function get_currency(): string {
+		if ( ! $this->order instanceof WC_Order ) {
+			return get_woocommerce_currency();
 		}
 
+		return $this->order->get_currency();
+	}
+
+	/**
+	 * Retrieves the total monetary value of the order.
+	 *
+	 * Returns `0.0` if the order is not available. Otherwise,
+	 * returns the WooCommerce order total as a float.
+	 *
+	 * @since 0.1.0
+	 *
+	 * @return float Order total or `0.0` if unavailable.
+	 */
+	public function get_value(): float {
+		if ( ! $this->order instanceof WC_Order ) {
+			return 0.0;
+		}
+
+		return (float) $this->order->get_total();
+	}
+
+	/**
+	 * Retrieves the total item count from the order.
+	 *
+	 * Returns `0` if the order object is not available.
+	 * Otherwise, returns the number of line items in the order.
+	 *
+	 * @since 0.1.0
+	 *
+	 * @return int Total item count.
+	 */
+	public function get_item_count(): int {
+		if ( ! $this->order instanceof WC_Order ) {
+			return 0;
+		}
+
+		return (int) $this->order->get_item_count();
+	}
+
+	/**
+	 * Retrieves metadata for the products included in the order.
+	 *
+	 * Iterates through order line items and extracts basic product
+	 * details (ID and name) for each valid product. Returns an
+	 * empty array if the order object is unavailable or no valid
+	 * products are found.
+	 *
+	 * Example:
+	 * ```php
+	 * array(
+	 *     array(
+	 *         'id'   => '123',
+	 *         'name' => 'Sample Product',
+	 *     ),
+	 * )
+	 * ```
+	 *
+	 * @since 0.1.0
+	 *
+	 * @return array<int,array<string,string>> List of product metadata.
+	 */
+	public function get_products(): array {
 		$products = array();
+
+		if ( ! $this->order instanceof WC_Order ) {
+			return $products;
+		}
 
 		/**
 		 * Product from the Order Line Item.
@@ -88,22 +167,51 @@ final class PurchaseEvent extends EventPayloadBase implements ConversionEventInt
 			);
 		}
 
+		return $products;
+	}
+
+	/**
+	 * Builds the raw Conversion payload for the Ad Partner.
+	 *
+	 * @since 0.1.0
+	 *
+	 * @param array $args Overrideable payload args.
+	 *
+	 * @return array<string,mixed> Conversion event payload.
+	 */
+	public function build_payload( array $args ): array {
 		$meta_data = array(
 			'conversion_id' => $args['conversion_id'] ?? '',
-			'item_count'    => (int) $this->order->get_item_count(),
-			'value_decimal' => floatval( $this->order->get_total() ),
-			'currency'      => get_woocommerce_currency(),
-			'products'      => $products,
+			'currency'      => $this->get_currency(),
+			'value'         => $this->get_value(),
+			'item_count'    => $this->get_item_count(),
+			'products'      => $this->get_products(),
 		);
 
-		$base    = parent::build_payload();
-		$default = array(
-			'event_type'     => array(
-				'tracking_type' => self::ID,
+		$events = array(
+			'event_at'      => self::get_event_at(),
+			'action_source' => self::get_action_source(),
+			'type'          => array(
+				'tracking_type' => $this->get_tracking_type(),
 			),
-			'event_metadata' => $meta_data,
+			'metadata'      => $meta_data,
 		);
 
-		return array_merge( $base, $default, $args['user_data'] );
+		if ( isset( $args['user_data']['click_id'] ) ) {
+			$events['click_id'] = $args['user_data']['click_id'];
+		}
+
+		if ( isset( $args['user_data']['user'] ) ) {
+			$events['user'] = $args['user_data']['user'];
+		}
+
+		$payload = array(
+			'data' => array(
+				'partner' => self::get_partner(),
+				'events'  => array( $events ),
+			),
+		);
+
+		return $payload;
 	}
 }
