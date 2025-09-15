@@ -107,8 +107,6 @@ test.describe( 'Reddit Settings', () => {
 	test( 'Toggle conversion tracking', async () => {
 		settingPage.goto();
 
-		await expect( locator.getCapiCheckbox() ).toBeDisabled();
-		await locator.getCapiTokenInput().fill( 'capi-123' );
 		await locator.getCapiCheckbox().click();
 		await expect( locator.getCapiCheckbox() ).toBeEnabled();
 		await expect(
@@ -120,87 +118,12 @@ test.describe( 'Reddit Settings', () => {
 		).toBeVisible();
 
 		await locator.getCapiCheckbox().click();
-		await expect( locator.getCapiCheckbox() ).toBeDisabled();
 		await expect(
 			page
 				.getByText(
 					'Conversions API Tracking status updated successfully.'
 				)
 				.first()
-		).toBeVisible();
-	} );
-
-	test( 'Save Conversion Access Token', async () => {
-		await settingPage.mockJetpackConnected();
-		await settingPage.mockRedditConnection( { status: 'connected' } );
-		await settingPage.mockRedditBusiness( [ businesses[ 0 ] ] );
-		await settingPage.mockRedditAdAccounts( [ adAccounts[ 0 ] ] );
-		await settingPage.mockRedditPixels( [ pixels[ 0 ] ] );
-		await settingPage.mockRedditAccount( connectedConfigPayload );
-		settingPage.goto();
-
-		// Save the token
-		const capiToken = `capi-token-${ Date.now() }`;
-		await locator.getCapiTokenInput().fill( capiToken );
-		await expect( locator.getCapiTokenInput() ).toHaveValue( capiToken );
-		await expect(
-			page
-				.getByText(
-					'Conversions API Access Token updated successfully.'
-				)
-				.first()
-		).toBeVisible();
-
-		await page.reload();
-		await page.waitForTimeout( 1000 );
-		await expect( locator.getCapiTokenInput() ).toHaveValue( capiToken );
-
-		// Clear the token
-		await locator.getCapiTokenInput().fill( '' );
-		await expect( locator.getCapiTokenInput() ).toHaveValue( '' );
-		await expect(
-			page
-				.getByText(
-					'Conversions API Access Token updated successfully.'
-				)
-				.first()
-		).toBeVisible();
-		await page.reload();
-		await expect( locator.getCapiTokenInput() ).toHaveValue( '' );
-	} );
-
-	test( 'Removing Conversion Access Token should disable conversions tracking', async () => {
-		await settingPage.mockRedditAccount( connectedConfigPayload );
-		settingPage.goto();
-		await locator.getCapiTokenInput().fill( 'capi-123' + Date.now() );
-		await expect(
-			await page
-				.getByText(
-					'Conversions API Access Token updated successfully.'
-				)
-				.first()
-		).toBeVisible();
-		await locator.getCapiCheckbox().click();
-		await expect(
-			page.getByText(
-				'Set the Conversion Access Token to enable tracking'
-			)
-		).not.toBeVisible();
-		await expect(
-			await page
-				.getByText(
-					'Conversions API Tracking status updated successfully.'
-				)
-				.first()
-		).toBeVisible();
-
-		await locator.getCapiTokenInput().fill( '' );
-		await expect( await locator.getCapiCheckbox() ).toBeDisabled();
-		await expect( await locator.getCapiCheckbox() ).not.toBeChecked();
-		await expect(
-			page.getByText(
-				'Set the Conversion Access Token to enable tracking'
-			)
 		).toBeVisible();
 	} );
 

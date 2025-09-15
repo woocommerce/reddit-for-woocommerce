@@ -28,7 +28,6 @@ const useSettings = () => {
 
 		return {
 			productsToken: settings.productsToken,
-			capiToken: settings.capiToken,
 			isCapiEnabled: settings.trackConversions,
 			shouldTriggerExport: settings.triggerExport,
 			lastExportTimeStamp: settings.lastExportTimeStamp,

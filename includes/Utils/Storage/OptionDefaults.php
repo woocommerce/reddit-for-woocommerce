@@ -103,13 +103,6 @@ final class OptionDefaults {
 	public const CONVERSIONS_ENABLED = 'conversion_enabled';
 
 	/**
-	 * Option key for the Ad Partner's Conversion Token.
-	 *
-	 * @since 0.1.0
-	 */
-	public const CONVERSION_ACCESS_TOKEN = 'conversion_access_token';
-
-	/**
 	 * Option key for the Ad Partner's Catalog ID.
 	 *
 	 * @since 0.1.0
@@ -187,25 +180,24 @@ final class OptionDefaults {
 	 */
 	public static function get_all(): array {
 		return array(
-			self::ONBOARDING_STATUS       => 'incomplete',
-			self::ONBOARDING_STEP         => 'accounts',
-			self::IS_JETPACK_CONNECTED    => 'no',
-			self::AD_ACCOUNT_ID           => '',
-			self::AD_ACCOUNT_NAME         => '',
-			self::BUSINESS_ID             => '',
-			self::BUSINESS_NAME           => '',
-			self::PIXEL_ENABLED           => 'yes',
-			self::PIXEL_ID                => '',
-			self::CONVERSIONS_ENABLED     => 'no',
-			self::CONVERSION_ACCESS_TOKEN => '',
-			self::CATALOG_ID              => '',
-			self::PRODUCT_FEED_ID         => '',
-			self::FEED_STATUS             => 'empty',
-			self::EXPORT_FILE_PATH        => '',
-			self::EXPORT_FILE_URL         => '',
-			self::EXPORT_PRODUCT_IDS      => array(),
-			self::LAST_EXPORT_TIMESTAMP   => 0,
-			self::WCS_PRODUCTS_TOKEN      => '',
+			self::ONBOARDING_STATUS     => 'incomplete',
+			self::ONBOARDING_STEP       => 'accounts',
+			self::IS_JETPACK_CONNECTED  => 'no',
+			self::AD_ACCOUNT_ID         => '',
+			self::AD_ACCOUNT_NAME       => '',
+			self::BUSINESS_ID           => '',
+			self::BUSINESS_NAME         => '',
+			self::PIXEL_ENABLED         => 'yes',
+			self::PIXEL_ID              => '',
+			self::CONVERSIONS_ENABLED   => 'no',
+			self::CATALOG_ID            => '',
+			self::PRODUCT_FEED_ID       => '',
+			self::FEED_STATUS           => 'empty',
+			self::EXPORT_FILE_PATH      => '',
+			self::EXPORT_FILE_URL       => '',
+			self::EXPORT_PRODUCT_IDS    => array(),
+			self::LAST_EXPORT_TIMESTAMP => 0,
+			self::WCS_PRODUCTS_TOKEN    => '',
 		);
 	}
 }
