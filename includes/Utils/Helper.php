@@ -150,23 +150,6 @@ class Helper {
 	}
 
 	/**
-	 * Get the current timestamp as an ISO 8601 formatted string.
-	 *
-	 * - Uses DateTime with microsecond precision where available.
-	 * - Always returns a valid ISO 8601 string (e.g. "2025-08-21T12:34:56+00:00").
-	 *
-	 * This avoids integer overflow issues entirely by returning a string
-	 * representation instead of a raw integer.
-	 *
-	 * @since 0.2.0
-	 *
-	 * @return string ISO 8601 datetime.
-	 */
-	public static function get_event_time() {
-		return gmdate( 'c' );
-	}
-
-	/**
 	 * Retrieve a valid IANA timezone string for the site.
 	 *
 	 * Behavior:
@@ -194,5 +177,75 @@ class Helper {
 		}
 
 		return $timezone_string;
+	}
+
+	/**
+	 * Get the current epoch timestamp.
+	 *
+	 * - On 64-bit PHP: returns milliseconds (int).
+	 * - On 32-bit PHP: returns seconds (int), since ms won't fit in 32-bit integer.
+	 *
+	 * This design ensures:
+	 * - On 64-bit platforms (most modern servers), you get millisecond-level
+	 *   precision.
+	 * - On 32-bit platforms, current epoch time in milliseconds would exceed the
+	 *   maximum 32-bit signed integer value (~2.1 billion). Since epoch in ms is
+	 *   already in the trillions (≈1.7e12), it would overflow. To prevent this,
+	 *   we fall back to returning the epoch in seconds, which safely fits within
+	 *   a 32-bit int.
+	 *
+	 * This guarantees the function always returns a safe integer appropriate for
+	 * the platform, even if it means sacrificing ms precision on 32-bit PHP.
+	 *
+	 * @since 0.1.0
+	 *
+	 * @return int Epoch timestamp (ms on 64-bit, sec on 32-bit).
+	 */
+	public static function get_event_time() {
+		if ( PHP_INT_SIZE >= 8 ) {
+			// 64-bit PHP: safe to use milliseconds since epoch.
+			return (int) ( microtime( true ) * 1000 );
+		}
+
+		// 32-bit PHP: fallback to seconds to avoid integer overflow.
+		return time();
+	}
+
+	/**
+	 * Recursively replaces double quotes with single quotes in strings within an array or object.
+	 *
+	 * Sometimes Reddit API responses contain JSON strings that contain encoded double quotes,
+	 * that breaks WooCommerce logger, resulting to uglified output instead of pretty print.
+	 * This function helps sanitize such data before logging.
+	 *
+	 * @since 0.1.0
+	 *
+	 * @param array $data Response array that is recursively processed.
+	 * @return array Sanitized array with double quotes replaced by single quotes.
+	 */
+	public static function deep_replace_double_quotes( $data ) {
+		if ( is_array( $data ) ) {
+			foreach ( $data as $key => $value ) {
+				$data[ $key ] = self::deep_replace_double_quotes( $value );
+			}
+
+			return $data;
+		}
+
+		if ( is_object( $data ) ) {
+			foreach ( $data as $key => $value ) {
+				$data->$key = self::deep_replace_double_quotes( $value );
+			}
+
+			return $data;
+		}
+
+		if ( is_string( $data ) ) {
+			// Replace all double quotes with single quotes.
+			return str_replace( '"', "'", $data );
+		}
+
+		// Return scalars (int, float, bool, null) as-is.
+		return $data;
 	}
 }

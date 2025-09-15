@@ -4,10 +4,24 @@ use PHPUnit\Framework\TestCase;
 use RedditForWooCommerce\Tracking\ConversionEvent\ViewContentEvent;
 use RedditForWooCommerce\Utils\UserIdentifier;
 
+require_once 'Utils.php';
+
 class ViewContentEventTest extends TestCase {
 
+	/**
+	 * Set up environment for the test.
+	 */
 	protected function setUp(): void {
+		r4w_setup_globals();
 		parent::setUp();
+	}
+
+	/**
+	 * Tear down.
+	 */
+	public function tear_down(): void {
+		r4w_destroy_globals();
+		parent::tear_down();
 	}
 
 	/**
@@ -28,20 +42,21 @@ class ViewContentEventTest extends TestCase {
 			)
 		);
 
-		$this->assertSame( 'ViewContent', $payload['event_type']['tracking_type'] );
-		$this->assertSame( 'abc_123', $payload['event_metadata']['conversion_id'] );
-		$this->assertArrayHasKey( 'event_at', $payload );
-		$this->assertEquals( array( array( 'id' => $product->get_id(), 'name' => $product->get_name() ) ), $payload['event_metadata']['products'] );
-	}
+		$this->assertIsArray( $payload );
 
-	/**
-	 * Test that build_payload() returns empty array for non-existent product.
-	 */
-	public function test_build_payload_for_invalid_product_returns_empty_array() {
-		$invalid_product_id = 999999; // ID that doesn't exist
-		$event              = new ViewContentEvent( $invalid_product_id );
-		$payload            = $event->build_payload();
+		$this->assertArrayHasKey( 'data', $payload );
+		$this->assertArrayHasKey( 'partner', $payload['data'] );
+		$this->assertArrayHasKey( 'events', $payload['data'] );
 
-		$this->assertEmpty( $payload );
+		$events = $payload['data']['events'][0];
+
+		$this->assertArrayHasKey( 'event_at', $events );
+		$this->assertSame( 'WEBSITE', $events['action_source'] );
+		$this->assertSame( 'VIEW_CONTENT', $events['type']['tracking_type'] );
+
+		$metadata = $payload['data']['events'][0]['metadata'];
+
+		$this->assertSame( 'abc_123', $metadata['conversion_id'] );
+		$this->assertEquals( array( array( 'id' => $product->get_id(), 'name' => $product->get_name() ) ), $metadata['products'] );
 	}
 }

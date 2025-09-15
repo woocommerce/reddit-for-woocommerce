@@ -24,8 +24,6 @@ use RedditForWooCommerce\Admin\Export\Contract\CacheBuilderInterface;
 use RedditForWooCommerce\Utils\Helper;
 use RedditForWooCommerce\Utils\Storage\Options;
 use RedditForWooCommerce\Utils\Storage\OptionDefaults;
-use RedditForWooCommerce\API\AdPartner\AdPartnerApi;
-use WC_Logger_Interface;
 
 /**
  * Executes a single export batch for any entity type.
@@ -79,13 +77,6 @@ class BatchExportJob {
 	public ExportWriterInterface $writer;
 
 	/**
-	 * Provides access to the Ad Partner APIs.
-	 *
-	 * @var AdPartnerApi
-	 */
-	public AdPartnerApi $ad_partner_api;
-
-	/**
 	 * Constructor.
 	 *
 	 * @since 0.1.0
@@ -94,20 +85,17 @@ class BatchExportJob {
 	 * @param ExportableEntityProviderInterface $provider       Supplies exportable entity IDs and objects.
 	 * @param ExportRowBuilderInterface         $row_builder    Builds CSV-compatible row data from entities.
 	 * @param ExportWriterInterface             $writer         Writes data to file and manages file output.
-	 * @param AdPartnerApi                      $ad_partner_api Exposes Ad Partner APIs.
 	 */
 	public function __construct(
 		CacheBuilderInterface $cache_builder,
 		ExportableEntityProviderInterface $provider,
 		ExportRowBuilderInterface $row_builder,
-		ExportWriterInterface $writer,
-		AdPartnerApi $ad_partner_api
+		ExportWriterInterface $writer
 	) {
-		$this->cache_builder  = $cache_builder;
-		$this->provider       = $provider;
-		$this->row_builder    = $row_builder;
-		$this->writer         = $writer;
-		$this->ad_partner_api = $ad_partner_api;
+		$this->cache_builder = $cache_builder;
+		$this->provider      = $provider;
+		$this->row_builder   = $row_builder;
+		$this->writer        = $writer;
 	}
 
 	/**

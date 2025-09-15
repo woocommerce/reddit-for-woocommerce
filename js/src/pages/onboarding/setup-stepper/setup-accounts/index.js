@@ -58,14 +58,14 @@ const SetupAccounts = ( props ) => {
 	const isSubmitting = false;
 
 	useEffect( () => {
-		if ( ! ( productsTokenParam && ! isContinueButtonDisabled ) ) {
+		if ( ! productsTokenParam ) {
 			return;
 		}
 
 		( async () => {
 			await updateSettings( { productsToken: productsTokenParam } );
 		} )();
-	}, [ productsTokenParam, isContinueButtonDisabled ] );
+	}, [ productsTokenParam ] );
 
 	if ( isLoadingJetpack || ! hasResolvedRedditAccount ) {
 		return <AppSpinner />;

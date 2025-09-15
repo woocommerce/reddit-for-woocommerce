@@ -17,11 +17,11 @@ use RedditForWooCommerce\Admin\Export\EntityProvider\ProductEntityProvider;
 use RedditForWooCommerce\Admin\Export\RowBuilder\ProductRowBuilder;
 use RedditForWooCommerce\Admin\Export\Writer\CsvExportWriter;
 use RedditForWooCommerce\Admin\Export\Service\ProductIdCacheBuilder;
-use RedditForWooCommerce\Admin\Export\Service\ProductExportService;
 use RedditForWooCommerce\Admin\Export\Contract\ExportableEntityProviderInterface;
 use RedditForWooCommerce\Admin\Export\Contract\ExportRowBuilderInterface;
 use RedditForWooCommerce\Admin\Export\Contract\ExportWriterInterface;
 use RedditForWooCommerce\Admin\Export\BatchExportJob;
+use RedditForWooCommerce\CsvExporter\ProductExportService;
 use RedditForWooCommerce\Utils\Storage\Options;
 use RedditForWooCommerce\Utils\Storage\OptionDefaults;
 use RedditForWooCommerce\Connection\WcsClient;
@@ -57,9 +57,9 @@ class ProductExportServiceTest extends WP_UnitTestCase {
 		$this->row_builder     = $this->createMock( ExportRowBuilderInterface::class );
 		$this->writer          = $this->createMock( ExportWriterInterface::class );
 		$this->api             = $this->createMock( AdPartnerApi::class );
-		$this->job             = new BatchExportJob( $this->cache_builder, $this->entity_provider, $this->row_builder, $this->writer, $this->api );
+		$this->job             = new BatchExportJob( $this->cache_builder, $this->entity_provider, $this->row_builder, $this->writer );
 
-		$this->service = new ProductExportService( $this->job );
+		$this->service = new ProductExportService( $this->job, $this->api );
 	}
 
 	public function tear_down(): void {
@@ -137,9 +137,9 @@ class ProductExportServiceTest extends WP_UnitTestCase {
 		$entity_provider = new ProductEntityProvider();
 		$row_builder     = new ProductRowBuilder();
 		$writer          = new CsvExportWriter();
-		$job             = new BatchExportJob( $this->cache_builder, $entity_provider, $row_builder, $writer, $this->api );
+		$job             = new BatchExportJob( $this->cache_builder, $entity_provider, $row_builder, $writer );
 
-		$service = new ProductExportService( $job );
+		$service = new ProductExportService( $job, $this->api );
 
 		$service->handle_batch( 0 );
 
