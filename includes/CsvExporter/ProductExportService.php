@@ -8,17 +8,18 @@
  * - Delegates product scanning to a cache builder.
  * - Triggers paginated batch exports using {@see BatchExportJob}.
  *
- * @package RedditForWooCommerce\Admin\Export\Service
+ * @package RedditForWooCommerce\CsvExporter
  * @since 0.1.0
  */
 
-namespace RedditForWooCommerce\Admin\Export\Service;
+namespace RedditForWooCommerce\CsvExporter;
 
 use RedditForWooCommerce\Config;
 use RedditForWooCommerce\Utils\Helper;
 use RedditForWooCommerce\Admin\Export\BatchExportJob;
 use RedditForWooCommerce\Utils\Storage\Options;
 use RedditForWooCommerce\Utils\Storage\OptionDefaults;
+use RedditForWooCommerce\API\AdPartner\AdPartnerApi;
 
 /**
  * Handles batch-based product export via Action Scheduler.
@@ -53,14 +54,23 @@ class ProductExportService {
 	public BatchExportJob $job;
 
 	/**
+	 * Provides access to the Ad Partner APIs.
+	 *
+	 * @var AdPartnerApi
+	 */
+	public AdPartnerApi $ad_partner_api;
+
+	/**
 	 * Constructor.
 	 *
 	 * @since 0.1.0
 	 *
 	 * @param BatchExportJob $job Export job instance that handles caching, entity export, and file generation.
+	 * @param AdPartnerApi   $ad_partner_api Exposes Ad Partner APIs.
 	 */
-	public function __construct( BatchExportJob $job ) {
-		$this->job = $job;
+	public function __construct( BatchExportJob $job, AdPartnerApi $ad_partner_api ) {
+		$this->job            = $job;
+		$this->ad_partner_api = $ad_partner_api;
 	}
 
 	/**
@@ -402,12 +412,12 @@ class ProductExportService {
 		 * Only create the feed if it hasn't been created yet.
 		 */
 		if ( 'empty' === Options::get( OptionDefaults::FEED_STATUS ) ) {
-			$response = $this->job->ad_partner_api->feed->create();
+			$response = $this->ad_partner_api->feed->create();
 
 			if ( is_wp_error( $response ) ) {
 				$logger = wc_get_logger();
 				$logger->alert(
-					'Feed generation failed with error code' . $response->get_error_code(),
+					'Feed generation failed with error code: ' . $response->get_error_code(),
 				);
 			} else {
 				Options::set( OptionDefaults::FEED_STATUS, 'created' );
@@ -439,7 +449,7 @@ class ProductExportService {
 		}
 
 		// Create the catalog.
-		$response = $this->job->ad_partner_api->catalog->create();
+		$response = $this->ad_partner_api->catalog->create();
 
 		if ( is_wp_error( $response ) ) {
 			$logger = wc_get_logger();
