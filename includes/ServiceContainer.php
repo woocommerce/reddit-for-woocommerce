@@ -14,10 +14,10 @@ use RedditForWooCommerce\Connection\WcsClient;
 use RedditForWooCommerce\Connection;
 use RedditForWooCommerce\Admin;
 use RedditForWooCommerce\Admin\Export;
+use RedditForWooCommerce\CsvExporter;
 use RedditForWooCommerce\Admin\ProductMeta;
 use RedditForWooCommerce\Tracking\ConversionEventLogger;
 use RedditForWooCommerce\API\AdPartner\AdPartnerApi;
-use RedditForWooCommerce\Utils\ProductData\ProductCategoryProvider;
 use function wc_get_logger;
 
 /**
@@ -93,19 +93,19 @@ final class ServiceContainer {
 					)
 				);
 			case ServiceKey::PRODUCT_EXPORT_SERVICE:
-				return new Export\Service\ProductExportService(
+				return new CsvExporter\ProductExportService(
 					new Export\BatchExportJob(
 						new Export\Service\ProductIdCacheBuilder(),
 						new Export\EntityProvider\ProductEntityProvider(),
 						new Export\RowBuilder\ProductRowBuilder(
 							array(
-								new ProductCategoryProvider(),
+								new CsvExporter\ProductCategoryProvider(),
 							)
 						),
 						new Export\Writer\CsvExportWriter(),
-						AdPartnerApi::get_instance(
-							self::get( ServiceKey::WCS_CLIENT )
-						),
+					),
+					AdPartnerApi::get_instance(
+						self::get( ServiceKey::WCS_CLIENT )
 					)
 				);
 			case ServiceKey::ADMIN_SETUP:
