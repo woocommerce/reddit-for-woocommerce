@@ -125,7 +125,6 @@ export function getSettings() {
 
 			dispatch(
 				receiveSettings( {
-					capiToken: response.capi_token,
 					catalogId: response.catalog_id,
 					exportFileUrl: response.export_file_url,
 					lastExportTimeStamp: response.last_export_timestamp,

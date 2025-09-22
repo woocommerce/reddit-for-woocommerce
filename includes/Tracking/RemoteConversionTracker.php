@@ -245,10 +245,9 @@ class RemoteConversionTracker implements ConversionTrackerInterface {
 	 * @return void
 	 */
 	public function send( array $event_payload, array $args = array() ): void {
-		$token    = Options::get( OptionDefaults::CONVERSION_ACCESS_TOKEN );
 		$pixel_id = Options::get( OptionDefaults::PIXEL_ID );
 
-		if ( ! $token || ! $pixel_id ) {
+		if ( ! $pixel_id ) {
 			return;
 		}
 
@@ -258,10 +257,7 @@ class RemoteConversionTracker implements ConversionTrackerInterface {
 		$response = $this->client->proxy_post(
 			$path,
 			$event_payload,
-			false,
-			array(
-				'reddit-authorization' => sprintf( 'Bearer %s', $token ),
-			)
+			false
 		);
 
 		if ( Helper::is_logging_enabled() ) {
