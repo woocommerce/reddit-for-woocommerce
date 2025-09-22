@@ -14,6 +14,7 @@ import { getSettingsUrl } from '~/utils/urls';
 import { STEP_NAME_KEY_MAP } from './constants';
 import { recordStepperChangeEvent } from '~/utils/tracks';
 import SetupAccounts from './setup-accounts';
+import SetupPaidAds from './setup-paid-ads';
 import './saved-setup-stepper.scss';
 
 /**
@@ -24,13 +25,17 @@ const SavedSetupStepper = ( { savedStep } ) => {
 	const [ step, setStep ] = useState( savedStep );
 
 	const handleSetupAccountsContinue = () => {
+		setStep( '2' );
+	};
+
+	const handleSetupPaidAdsOnContinue = () => {
 		const settingsUrl = getSettingsUrl();
 		getHistory().push(
 			addQueryArgs( settingsUrl, {
 				onboarding: 'success',
 			} )
 		);
-	};
+	}
 
 	const handleStepClick = ( stepKey ) => {
 		// Only allow going back to the previous steps.
@@ -58,6 +63,14 @@ const SavedSetupStepper = ( { savedStep } ) => {
 					),
 					onClick: handleStepClick,
 				},
+				{
+					key: STEP_NAME_KEY_MAP.paid_ads,
+					label: __( 'Create your campaign', 'google-listings-and-ads' ),
+					content: (
+						<SetupPaidAds onContinue={ handleSetupPaidAdsOnContinue } />
+					),
+					onClick: handleStepClick,
+				}
 			] }
 		/>
 	);
