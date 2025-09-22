@@ -103,6 +103,7 @@ const SetupAccounts = ( props ) => {
 						disabled={ isContinueButtonDisabled }
 						loading={ isSubmitting }
 						text={ __( 'Continue', 'reddit-for-woocommerce' ) }
+						eventName="rfw_onboarding_completed"
 						onClick={ handleOnClick }
 					/>
 				</StepContentActions>

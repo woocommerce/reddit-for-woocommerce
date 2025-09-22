@@ -36,6 +36,7 @@ const textDict = {
 				'reddit-for-woocommerce'
 			),
 		],
+		eventName: 'rfw_disconnect_all_accounts_confirm_button_click',
 	},
 	[ REDDIT_ACCOUNT ]: {
 		title: __( 'Disconnect Reddit account', 'reddit-for-woocommerce' ),
@@ -57,6 +58,7 @@ const textDict = {
 				'reddit-for-woocommerce'
 			),
 		],
+		eventName: 'rfw_disconnect_reddit_account_confirm_button_click',
 	},
 };
 
@@ -70,7 +72,7 @@ export default function ConfirmModal( {
 	const [ isDisconnecting, setDisconnecting ] = useState( false );
 	const dispatcher = useAppDispatch();
 
-	const { title, confirmButton, confirmation, contents } =
+	const { title, confirmButton, confirmation, contents, eventName } =
 		textDict[ disconnectTarget ];
 
 	const handleRequestClose = () => {
@@ -127,6 +129,7 @@ export default function ConfirmModal( {
 					loading={ isDisconnecting }
 					disabled={ ! isAgreed }
 					onClick={ handleConfirmClick }
+					eventName={ eventName }
 				>
 					{ confirmButton }
 				</AppButton>,

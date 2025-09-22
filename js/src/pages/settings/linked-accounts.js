@@ -56,6 +56,7 @@ export default function LinkedAccounts() {
 							isDestructive
 							isLink
 							onClick={ openDisconnectRedditAccountModal }
+							eventName="rfw_disconnect_reddit_account_button_click"
 						>
 							{ __(
 								'Disconnect Reddit account',

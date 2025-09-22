@@ -21,6 +21,7 @@ import useDebouncedInput from '~/hooks/useDebouncedInput';
 import AccountCard from '~/components/account-card';
 import SpinnerCard from '~/components/spinner-card';
 import './index.scss';
+import { recordRfwEvent } from '~/utils/tracks';
 
 /**
  * ConversionsAPI component for managing the tracking setting.
@@ -40,14 +41,20 @@ const ConversionsAPI = () => {
 	const { updateSettings } = useAppDispatch();
 
 	const toggleTrackConversions = useCallback( async () => {
+		recordRfwEvent( 'rfw_conversion_tracking_toggle', {
+			status: ! isCapiEnabled ? 'on' : 'off',
+		} );
 		await updateSettings( { trackConversions: ! isCapiEnabled } );
 	}, [ updateSettings, isCapiEnabled ] );
 
 	const updateConversionAccessToken = useCallback(
 		async ( val ) => {
+			recordRfwEvent( 'rfw_conversion_access_token_update', {
+				status: isCapiEnabled && val ? 'on' : 'off',
+			} );
 			await updateSettings( { capiToken: val } );
 		},
-		[ updateSettings ]
+		[ updateSettings, isCapiEnabled ]
 	);
 
 	const handleCapiStatusOnChange = async () => {
