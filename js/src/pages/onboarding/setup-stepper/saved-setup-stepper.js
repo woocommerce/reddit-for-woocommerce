@@ -35,7 +35,7 @@ const SavedSetupStepper = ( { savedStep } ) => {
 				onboarding: 'success',
 			} )
 		);
-	}
+	};
 
 	const handleStepClick = ( stepKey ) => {
 		// Only allow going back to the previous steps.
@@ -65,12 +65,17 @@ const SavedSetupStepper = ( { savedStep } ) => {
 				},
 				{
 					key: STEP_NAME_KEY_MAP.paid_ads,
-					label: __( 'Create your campaign', 'google-listings-and-ads' ),
+					label: __(
+						'Create your campaign',
+						'reddit-for-woocommerce'
+					),
 					content: (
-						<SetupPaidAds onContinue={ handleSetupPaidAdsOnContinue } />
+						<SetupPaidAds
+							onContinue={ handleSetupPaidAdsOnContinue }
+						/>
 					),
 					onClick: handleStepClick,
-				}
+				},
 			] }
 		/>
 	);

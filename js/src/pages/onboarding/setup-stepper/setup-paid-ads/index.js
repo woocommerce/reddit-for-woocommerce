@@ -8,12 +8,16 @@ import { __ } from '@wordpress/i18n';
  */
 import AdsCampaign from '~/components/paid-ads/ads-campaign';
 
-const SetupPaidAds = () => {
+const SetupPaidAds = ( { onContinue } ) => {
 	return (
 		<AdsCampaign
-			headerTitle={ __( 'Create a Reddit campaign to promote your products', 'reddit-for-woocommerce' ) }
+			headerTitle={ __(
+				'Create a Reddit campaign to promote your products',
+				'reddit-for-woocommerce'
+			) }
+			onContinue={ onContinue }
 		/>
 	);
-}
+};
 
 export default SetupPaidAds;

@@ -8,14 +8,12 @@ import { __ } from '@wordpress/i18n';
  */
 import StepContent from '~/components/stepper/step-content';
 import StepContentHeader from '~/components/stepper/step-content-header';
+import StepContentFooter from '~/components/stepper/step-content-footer';
+import StepContentActions from '~/components/stepper/step-content-actions';
+import AppButton from '~/components/app-button';
 import PaidAdsFeaturesSection from './paid-ads-feature-section';
 
-export default function AdsCampaign( {
-	headerTitle,
-	context,
-	skipButton,
-	continueButton,
-} ) {
+export default function AdsCampaign( { headerTitle, onSkip, onContinue } ) {
 	return (
 		<StepContent>
 			<StepContentHeader
@@ -26,6 +24,24 @@ export default function AdsCampaign( {
 				) }
 			/>
 			<PaidAdsFeaturesSection />
+
+			<StepContentFooter>
+				<StepContentActions>
+					<AppButton
+						isLink
+						text={ __(
+							'Skip ads creation',
+							'reddit-for-woocommerce'
+						) }
+						onClick={ onSkip }
+					/>
+					<AppButton
+						isPrimary
+						text={ __( 'Continue', 'reddit-for-woocommerce' ) }
+						onClick={ onContinue }
+					/>
+				</StepContentActions>
+			</StepContentFooter>
 		</StepContent>
 	);
 }
