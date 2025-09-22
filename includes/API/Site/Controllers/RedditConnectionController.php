@@ -388,10 +388,17 @@ class RedditConnectionController extends RESTBaseController {
 			$response = $this->ad_partner_api->catalog->create();
 
 			if ( is_wp_error( $response ) ) {
-				$logger = wc_get_logger();
+				$error_data = $response->get_error_data();
+				$error_body = isset( $error_data['body'] ) ? json_decode( $error_data['body'], true ) : array();
+				$logger     = wc_get_logger();
 				$logger->alert(
 					'Catalog generation failed with error code: ' . $response->get_error_code(),
+					$error_body
 				);
+
+				if ( isset( $error_body['error']['code'] ) ) {
+					Options::set( OptionDefaults::CATALOG_STATUS, absint( $error_body['error']['code'] ) );
+				}
 			} else {
 				$data         = $response->get_data();
 				$catalog_data = $data['data'] ?? array();
