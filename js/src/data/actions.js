@@ -185,13 +185,11 @@ export async function updateSettings( updatedSettings ) {
 			data: {
 				// Convert settings keys to match REST keys
 				capi_enabled: updatedSettings.trackConversions,
-				capi_token: updatedSettings.capiToken,
 				products_token: updatedSettings.productsToken,
 			},
 		} );
 
 		return receiveSettings( {
-			capiToken: response.capi_token,
 			catalogId: response.catalog_id,
 			exportFileUrl: response.export_file_url,
 			lastExportTimeStamp: response.last_export_timestamp,

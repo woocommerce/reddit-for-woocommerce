@@ -47,7 +47,6 @@
  * @property {string} ad_account_id The Reddit ad account ID.
  * @property {string} ad_account_name The name of the Reddit ad account.
  * @property {string} pixel_id The Reddit pixel ID.
- * @property {string} capi_token The Reddit CAPI token.
  */
 
 /**

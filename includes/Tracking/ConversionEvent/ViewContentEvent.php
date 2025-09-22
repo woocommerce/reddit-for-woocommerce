@@ -153,9 +153,6 @@ final class ViewContentEvent extends AbstractEventPayloadBase implements Convers
 	public function build_payload( array $args ): array {
 		$meta_data = array(
 			'conversion_id' => $args['conversion_id'] ?? '',
-			'currency'      => $this->get_currency(),
-			'value'         => $this->get_value(),
-			'item_count'    => $this->get_item_count(),
 			'products'      => $this->get_products(),
 		);
 
