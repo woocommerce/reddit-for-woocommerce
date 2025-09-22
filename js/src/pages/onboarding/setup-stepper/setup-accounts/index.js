@@ -26,6 +26,18 @@ import useRedditPixelId from '~/hooks/useRedditPixelId';
 import { useAppDispatch } from '~/data';
 import './index.scss';
 
+
+/**
+ * Clicking on the "Continue" button to complete the onboarding process.
+ *
+ * @event rfw_onboarding_completed
+ */
+
+/**
+ * Renders the onboarding setup accounts step.
+ *
+ * @fires rfw_onboarding_completed When the user clicks on the "Continue" button to complete the onboarding process.
+ */
 const SetupAccounts = ( props ) => {
 	const { onContinue = noop } = props;
 	const { products_token: productsTokenParam } = getQuery();

@@ -24,11 +24,28 @@ import './index.scss';
 import { recordRfwEvent } from '~/utils/tracks';
 
 /**
+ * Toggle the Conversions API tracking.
+ *
+ * @event rfw_conversion_tracking_toggle
+ * @property {string} status (`on`\|`off`) - indicates the status of the Conversions API tracking.
+ */
+
+/**
+ * Update the Conversions API Access Token.
+ *
+ * @event rfw_conversion_access_token_update
+ * @property {string} status (`on`\|`off`) - indicates the status of the Conversions API Access Token.
+ */
+
+/**
  * ConversionsAPI component for managing the tracking setting.
  *
  * Renders a card UI allowing users to enable or disable server-side conversion event tracking.
  * Handles asynchronous state updates and displays success notifications upon status change.
  * Shows a loading spinner while the current tracking status is being resolved.
+ *
+ * @fires rfw_conversion_tracking_toggle When the user toggles the Conversions API tracking.
+ * @fires rfw_conversion_access_token_update When the user updates the Conversions API Access Token.
  *
  * @return {JSX.Element} The rendered ConversionsAPI settings card.
  */

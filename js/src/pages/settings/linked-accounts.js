@@ -15,14 +15,13 @@ import SpinnerCard from '~/components/spinner-card';
 import DisconnectModal, { REDDIT_ACCOUNT } from './disconnect-modal';
 
 /**
- * Accounts are disconnected from the Setting page
+ * Clicking on the button to disconnect the Reddit account.
  *
- * @event rfw_disconnected_accounts
- * @property {string} context (`all-accounts`|`reddit-account`) - indicate which accounts have been disconnected.
+ * @event rfw_disconnect_reddit_account_button_click
  */
 
 /**
- * @fires rfw_disconnected_accounts
+ * @fires rfw_disconnect_reddit_account_button_click When the user clicks on the button to disconnect the Reddit account.
  */
 export default function LinkedAccounts() {
 	const { hasFinishedResolution: hasResolvedRedditAccount } =

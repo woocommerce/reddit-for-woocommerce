@@ -62,6 +62,23 @@ const textDict = {
 	},
 };
 
+/**
+ * Confirm the action to disconnect the Reddit account.
+ *
+ * @event rfw_disconnect_reddit_account_confirm_button_click
+ */
+
+/**
+ * Renders a modal to confirm the action to disconnect the Reddit account.
+ *
+ * @fires rfw_disconnect_reddit_account_confirm_button_click When the user confirms the action to disconnect the Reddit account.
+ *
+ * @param {Object} props React props
+ * @param {string} props.disconnectTarget The target to disconnect.
+ * @param {Function} props.onRequestClose Callback to close the modal.
+ * @param {Function} props.onDisconnected Callback to be called when the disconnected action is completed.
+ * @param {Function} props.disconnectAction Callback for disconnecting the account.
+ */
 export default function ConfirmModal( {
 	disconnectTarget,
 	onRequestClose,
