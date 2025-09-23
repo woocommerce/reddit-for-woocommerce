@@ -12,6 +12,7 @@ import StepContentFooter from '~/components/stepper/step-content-footer';
 import StepContentActions from '~/components/stepper/step-content-actions';
 import AppButton from '~/components/app-button';
 import PaidAdsFeaturesSection from './paid-ads-feature-section';
+import BillingCard from '../billing-card';
 
 export default function AdsCampaign( { headerTitle, onSkip, onContinue } ) {
 	return (
@@ -24,7 +25,7 @@ export default function AdsCampaign( { headerTitle, onSkip, onContinue } ) {
 				) }
 			/>
 			<PaidAdsFeaturesSection />
-
+			<BillingCard />
 			<StepContentFooter>
 				<StepContentActions>
 					<AppButton
