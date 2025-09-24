@@ -2,22 +2,15 @@
  * External dependencies
  */
 import { __ } from '@wordpress/i18n';
-import { CheckboxControl, TextControl } from '@wordpress/components';
-import {
-	useState,
-	useCallback,
-	useEffect,
-	createInterpolateElement,
-} from '@wordpress/element';
+import { CheckboxControl } from '@wordpress/components';
+import { useState, useCallback } from '@wordpress/element';
 
 /**
  * Internal dependencies
  */
 import { useAppDispatch } from '~/data';
-import AppDocumentationLink from '~/components/app-documentation-link';
 import useSettings from '~/hooks/useSettings';
 import useDispatchCoreNotices from '~/hooks/useDispatchCoreNotices';
-import useDebouncedInput from '~/hooks/useDebouncedInput';
 import AccountCard from '~/components/account-card';
 import SpinnerCard from '~/components/spinner-card';
 import './index.scss';
@@ -31,13 +24,6 @@ import { recordRfwEvent } from '~/utils/tracks';
  */
 
 /**
- * Update the Conversions API Access Token.
- *
- * @event rfw_conversion_access_token_update
- * @property {string} status (`on`\|`off`) - indicates the status of the Conversions API Access Token.
- */
-
-/**
  * ConversionsAPI component for managing the tracking setting.
  *
  * Renders a card UI allowing users to enable or disable server-side conversion event tracking.
@@ -45,15 +31,12 @@ import { recordRfwEvent } from '~/utils/tracks';
  * Shows a loading spinner while the current tracking status is being resolved.
  *
  * @fires rfw_conversion_tracking_toggle When the user toggles the Conversions API tracking.
- * @fires rfw_conversion_access_token_update When the user updates the Conversions API Access Token.
  *
  * @return {JSX.Element} The rendered ConversionsAPI settings card.
  */
 const ConversionsAPI = () => {
-	const { isCapiEnabled, capiToken, hasFinishedResolution } = useSettings();
+	const { isCapiEnabled, hasFinishedResolution } = useSettings();
 	const [ isSaving, setIsSaving ] = useState( false );
-	const [ localCapiToken, setLocalCapiToken, debouncedLocalCapiToken ] =
-		useDebouncedInput( '' );
 	const { createNotice } = useDispatchCoreNotices();
 	const { updateSettings } = useAppDispatch();
 
@@ -63,16 +46,6 @@ const ConversionsAPI = () => {
 		} );
 		await updateSettings( { trackConversions: ! isCapiEnabled } );
 	}, [ updateSettings, isCapiEnabled ] );
-
-	const updateConversionAccessToken = useCallback(
-		async ( val ) => {
-			recordRfwEvent( 'rfw_conversion_access_token_update', {
-				status: isCapiEnabled && val ? 'on' : 'off',
-			} );
-			await updateSettings( { capiToken: val } );
-		},
-		[ updateSettings, isCapiEnabled ]
-	);
 
 	const handleCapiStatusOnChange = async () => {
 		try {
@@ -93,59 +66,6 @@ const ConversionsAPI = () => {
 		}
 	};
 
-	const handleCapiTokenOnChange = useCallback(
-		async ( val = '' ) => {
-			try {
-				setIsSaving( true );
-				await updateConversionAccessToken( val );
-
-				createNotice(
-					'success',
-					__(
-						'Conversions API Access Token updated successfully.',
-						'reddit-for-woocommerce'
-					)
-				);
-			} catch ( error ) {
-				// Silently fail because the error is handled within `updateSettings` action.
-			} finally {
-				setIsSaving( false );
-			}
-		},
-		[ updateConversionAccessToken, createNotice ]
-	);
-
-	/**
-	 * Validates and sets the CAPI token state.
-	 *
-	 * @param {string} token Input CAPI token
-	 */
-	function setToken( token ) {
-		if ( token !== '' && token.trim() === '' ) {
-			// Return early if the string is only '\s'
-			return;
-		}
-
-		setLocalCapiToken( token );
-	}
-
-	useEffect( () => {
-		if ( hasFinishedResolution ) {
-			setLocalCapiToken( capiToken );
-		}
-	}, [ hasFinishedResolution, setLocalCapiToken, capiToken ] );
-
-	useEffect( () => {
-		if ( undefined === capiToken ) {
-			return;
-		}
-
-		if ( capiToken !== debouncedLocalCapiToken ) {
-			handleCapiTokenOnChange( debouncedLocalCapiToken );
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ debouncedLocalCapiToken, handleCapiTokenOnChange ] );
-
 	if ( ! hasFinishedResolution ) {
 		return <SpinnerCard />;
 	}
@@ -159,45 +79,17 @@ const ConversionsAPI = () => {
 				'reddit-for-woocommerce'
 			) }
 			actions={
-				<>
-					<div>
-						<TextControl
-							label={ __(
-								'Conversion Access Token',
-								'reddit-for-woocommerce'
-							) }
-							value={ localCapiToken }
-							readOnly={ isSaving }
-							onChange={ setToken }
-							help={
-								<>
-									{ createInterpolateElement(
-										__(
-											'Need help? <link>Follow this guide</link>',
-											'reddit-for-woocommerce'
-										),
-										{
-											link: (
-												<AppDocumentationLink href="https://business.reddithelp.com/s/article/conversion-access-token" />
-											),
-										}
-									) }
-								</>
-							}
-						/>
-					</div>
-					<div className="rfw-settings-track-conversions__actions">
-						<CheckboxControl
-							label={ __(
-								'Enable Conversions API tracking',
-								'reddit-for-woocommerce'
-							) }
-							checked={ isCapiEnabled }
-							disabled={ isSaving }
-							onChange={ handleCapiStatusOnChange }
-						/>
-					</div>
-				</>
+				<div className="rfw-settings-track-conversions__actions">
+					<CheckboxControl
+						label={ __(
+							'Enable Conversions API tracking',
+							'reddit-for-woocommerce'
+						) }
+						checked={ isCapiEnabled }
+						disabled={ isSaving }
+						onChange={ handleCapiStatusOnChange }
+					/>
+				</div>
 			}
 		/>
 	);

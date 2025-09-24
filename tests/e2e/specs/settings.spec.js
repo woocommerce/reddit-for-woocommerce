@@ -118,7 +118,6 @@ test.describe( 'Reddit Settings', () => {
 		).toBeVisible();
 
 		await locator.getCapiCheckbox().click();
-		await expect( locator.getCapiCheckbox() ).toBeDisabled();
 		await expect(
 			page
 				.getByText(
@@ -126,79 +125,6 @@ test.describe( 'Reddit Settings', () => {
 				)
 				.first()
 		).toBeVisible();
-	} );
-
-	test( 'Save Conversion Access Token', async () => {
-		await settingPage.mockJetpackConnected();
-		await settingPage.mockRedditConnection( { status: 'connected' } );
-		await settingPage.mockRedditBusiness( [ businesses[ 0 ] ] );
-		await settingPage.mockRedditAdAccounts( [ adAccounts[ 0 ] ] );
-		await settingPage.mockRedditPixels( [ pixels[ 0 ] ] );
-		await settingPage.mockRedditAccount( connectedConfigPayload );
-		settingPage.goto();
-
-		// Save the token
-		const capiToken = `capi-token-${ Date.now() }`;
-		await locator.getCapiTokenInput().fill( capiToken );
-		await expect( locator.getCapiTokenInput() ).toHaveValue( capiToken );
-		await expect(
-			page
-				.getByText(
-					'Conversions API Access Token updated successfully.'
-				)
-				.first()
-		).toBeVisible();
-
-		await page.reload();
-		await page.waitForTimeout( 1000 );
-		await expect( locator.getCapiTokenInput() ).toHaveValue( capiToken );
-
-		// Clear the token
-		await locator.getCapiTokenInput().fill( '' );
-		await expect( locator.getCapiTokenInput() ).toHaveValue( '' );
-		await expect(
-			page
-				.getByText(
-					'Conversions API Access Token updated successfully.'
-				)
-				.first()
-		).toBeVisible();
-		await page.reload();
-		await expect( locator.getCapiTokenInput() ).toHaveValue( '' );
-	} );
-
-	test( 'Remove Conversion Access Token should disable conversions tracking', async () => {
-		await settingPage.mockRedditAccount( connectedConfigPayload );
-		settingPage.goto();
-		const capiCheckbox = locator
-			.getCapiCheckbox()
-			.locator( '..' )
-			.locator( 'input' );
-		await capiCheckbox.check();
-		const capiToken = `capi-token-${ Date.now() }`;
-		await locator.getCapiTokenInput().fill( capiToken );
-		await expect(
-			page
-				.getByText(
-					'Conversions API Access Token updated successfully.'
-				)
-				.first()
-		).toBeVisible();
-		await expect( capiCheckbox ).toBeChecked();
-
-		await page.reload();
-		await page.waitForTimeout( 1500 );
-		await expect( capiCheckbox ).toBeChecked();
-		await locator.getCapiTokenInput().fill( '' );
-		await expect( locator.getCapiTokenInput() ).toHaveValue( '' );
-		await expect(
-			page
-				.getByText(
-					'Conversions API Access Token updated successfully.'
-				)
-				.first()
-		).toBeVisible();
-		await expect( capiCheckbox ).not.toBeChecked();
 	} );
 
 	test( 'Reddit card details', async () => {

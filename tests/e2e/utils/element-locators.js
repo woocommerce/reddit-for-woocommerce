@@ -253,15 +253,6 @@ export default class ElementLocators {
 	}
 
 	/**
-	 * Get the Conversion Access Token input.
-	 *
-	 * @return {import('@playwright/test').Locator} The input locator.
-	 */
-	getCapiTokenInput() {
-		return this.getCard( 'Conversions API' ).getByRole( 'textbox' );
-	}
-
-	/**
 	 * Get the Create Business Account button.
 	 *
 	 * @return {import('@playwright/test').Locator} The Create Business Account button.

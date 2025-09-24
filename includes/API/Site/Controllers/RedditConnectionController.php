@@ -376,10 +376,6 @@ class RedditConnectionController extends RESTBaseController {
 			Options::set( OptionDefaults::PIXEL_ID, sanitize_text_field( $params['pixel_id'] ) );
 		}
 
-		if ( isset( $params['capi_token'] ) ) {
-			Options::set( OptionDefaults::CONVERSION_ACCESS_TOKEN, sanitize_text_field( $params['capi_token'] ) );
-		}
-
 		$is_jetpack_connected = 'yes' === Options::get( OptionDefaults::IS_JETPACK_CONNECTED );
 		$business_id          = Options::get( OptionDefaults::BUSINESS_ID );
 		$ad_account_id        = Options::get( OptionDefaults::AD_ACCOUNT_ID );
@@ -431,7 +427,6 @@ class RedditConnectionController extends RESTBaseController {
 				'ad_account_id'   => Options::get( OptionDefaults::AD_ACCOUNT_ID ),
 				'ad_account_name' => Options::get( OptionDefaults::AD_ACCOUNT_NAME ),
 				'pixel_id'        => Options::get( OptionDefaults::PIXEL_ID ),
-				'capi_token'      => Options::get( OptionDefaults::CONVERSION_ACCESS_TOKEN ),
 			)
 		);
 	}
@@ -596,10 +591,6 @@ class RedditConnectionController extends RESTBaseController {
 				),
 				'pixel_id'      => array(
 					'description' => 'Selected Pixel id.',
-					'type'        => 'string',
-				),
-				'capi_token'    => array(
-					'description' => 'Conversion Access token.',
 					'type'        => 'string',
 				),
 			),
