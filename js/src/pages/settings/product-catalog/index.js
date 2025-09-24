@@ -138,6 +138,7 @@ const ProductCatalog = () => {
 						onClick={ handleOnGenerateCsvClick }
 						loading={ exportInProgress }
 						eventName="rfw_regenerate_csv_button_click"
+						eventProps={ { context: 'settings' } }
 					>
 						{ __( 'Regenerate CSV', 'reddit-for-woocommerce' ) }
 					</AppButton>
@@ -151,6 +152,7 @@ const ProductCatalog = () => {
 				onClick={ handleOnGenerateCsvClick }
 				loading={ exportInProgress }
 				eventName="rfw_generate_csv_button_click"
+				eventProps={ { context: 'settings' } }
 			>
 				{ __( 'Generate CSV', 'reddit-for-woocommerce' ) }
 			</AppButton>

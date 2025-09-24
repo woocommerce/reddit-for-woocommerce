@@ -58,20 +58,20 @@ const textDict = {
 				'reddit-for-woocommerce'
 			),
 		],
-		eventName: 'rfw_disconnect_reddit_account_confirm_button_click',
+		eventName: 'rfw_disconnect_reddit_account_confirm_modal_button_click',
 	},
 };
 
 /**
  * Confirm the action to disconnect the Reddit account.
  *
- * @event rfw_disconnect_reddit_account_confirm_button_click
+ * @event rfw_disconnect_reddit_account_confirm_modal_button_click
  */
 
 /**
  * Renders a modal to confirm the action to disconnect the Reddit account.
  *
- * @fires rfw_disconnect_reddit_account_confirm_button_click When the user confirms the action to disconnect the Reddit account.
+ * @fires rfw_disconnect_reddit_account_confirm_modal_button_click When the user confirms the action to disconnect the Reddit account.
  *
  * @param {Object} props React props
  * @param {string} props.disconnectTarget The target to disconnect.

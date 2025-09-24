@@ -64,7 +64,7 @@ Clicking on the button to disconnect the Reddit account.
 #### Emitters
 - [`exports`](js/src/pages/settings/linked-accounts.js#L26) When the user clicks on the button to disconnect the Reddit account.
 
-### [`rfw_disconnect_reddit_account_confirm_button_click`](js/src/pages/settings/disconnect-modal/confirm-modal.js#L65)
+### [`rfw_disconnect_reddit_account_confirm_modal_button_click`](js/src/pages/settings/disconnect-modal/confirm-modal.js#L65)
 Confirm the action to disconnect the Reddit account.
 #### Emitters
 - [`exports`](js/src/pages/settings/disconnect-modal/confirm-modal.js#L82) When the user confirms the action to disconnect the Reddit account.
@@ -94,10 +94,10 @@ Clicking on the button to generate the product catalog CSV file.
 #### Emitters
 - [`HelpIconButton`](js/src/components/help-icon-button/index.js#L31)
 
-### [`rfw_onboarding_completed`](js/src/pages/onboarding/setup-stepper/setup-accounts/index.js#L30)
+### [`rfw_onboarding_completed`](js/src/pages/onboarding/setup-stepper/setup-accounts/index.js#L29)
 Clicking on the "Continue" button to complete the onboarding process.
 #### Emitters
-- [`SetupAccounts`](js/src/pages/onboarding/setup-stepper/setup-accounts/index.js#L41) When the user clicks on the "Continue" button to complete the onboarding process.
+- [`SetupAccounts`](js/src/pages/onboarding/setup-stepper/setup-accounts/index.js#L40) When the user clicks on the "Continue" button to complete the onboarding process.
 
 ### [`rfw_pixel_id_disconnect_button_click`](js/src/components/reddit-combo-account-card/connect-pixels/disconnect-account-button.js#L15)
 Clicking on the button to disconnect the Pixel ID.

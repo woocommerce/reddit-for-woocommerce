@@ -23,18 +23,16 @@ export const recordStepContinueEvent = noop;
  * @return {Object} Event properties with base event properties.
  */
 export function addBaseEventProperties( eventProperties ) {
-	const { trackingSlug, pluginVersion } = rfwData;
-	const redditAccountConfig = select( STORE_KEY ).getRedditAccountConfig();
-	const adsAccountId = redditAccountConfig?.ad_account_id;
+	const { trackingSlug } = rfwData;
+	const { version, adAccountId } = select( STORE_KEY ).getGeneral();
 
 	const mixedProperties = {
 		...eventProperties,
-		[ `${ trackingSlug }_version` ]: pluginVersion,
+		[ `${ trackingSlug }_version` ]: version,
 	};
 
-	if ( adsAccountId || rfwData.adsAccountId ) {
-		mixedProperties[ `${ trackingSlug }_ads_id` ] =
-			adsAccountId || rfwData.adsAccountId;
+	if ( adAccountId ) {
+		mixedProperties[ `${ trackingSlug }_ads_id` ] = adAccountId;
 	}
 
 	return mixedProperties;

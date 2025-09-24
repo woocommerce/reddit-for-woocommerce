@@ -41,10 +41,10 @@ const ConversionsAPI = () => {
 	const { updateSettings } = useAppDispatch();
 
 	const toggleTrackConversions = useCallback( async () => {
+		await updateSettings( { trackConversions: ! isCapiEnabled } );
 		recordRfwEvent( 'rfw_conversion_tracking_toggle', {
 			status: ! isCapiEnabled ? 'on' : 'off',
 		} );
-		await updateSettings( { trackConversions: ! isCapiEnabled } );
 	}, [ updateSettings, isCapiEnabled ] );
 
 	const handleCapiStatusOnChange = async () => {
