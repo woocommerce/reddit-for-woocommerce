@@ -26,7 +26,6 @@ import useRedditPixelId from '~/hooks/useRedditPixelId';
 import { useAppDispatch } from '~/data';
 import './index.scss';
 
-
 /**
  * Clicking on the "Continue" button to complete the onboarding process.
  *

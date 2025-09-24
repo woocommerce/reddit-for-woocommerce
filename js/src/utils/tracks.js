@@ -33,12 +33,12 @@ export function addBaseEventProperties( eventProperties ) {
 	};
 
 	if ( adsAccountId || rfwData.adsAccountId ) {
-		mixedProperties[ `${ trackingSlug }_ads_id` ] = adsAccountId || rfwData.adsAccountId;
+		mixedProperties[ `${ trackingSlug }_ads_id` ] =
+			adsAccountId || rfwData.adsAccountId;
 	}
 
 	return mixedProperties;
 }
-
 
 /**
  * Record a tracking event with base properties.
