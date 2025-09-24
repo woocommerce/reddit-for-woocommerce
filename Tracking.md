@@ -50,23 +50,14 @@ Clicking on the button to disconnect the Business  account.
 #### Emitters
 - [`DisconnectAccountButton`](js/src/components/reddit-combo-account-card/connect-business/disconnect-account-button.js#L30) When the user clicks on the button to disconnect the Business account.
 
-### [`rfw_conversion_access_token_update`](js/src/pages/settings/conversions-api/index.js#L33)
-Update the Conversions API Access Token.
-#### Properties
-| name | type | description |
-| ---- | ---- | ----------- |
-`status` | `string` | (`on`\\|`off`) - indicates the status of the Conversions API Access Token.
-#### Emitters
-- [`ConversionsAPI`](js/src/pages/settings/conversions-api/index.js#L52) When the user updates the Conversions API Access Token.
-
-### [`rfw_conversion_tracking_toggle`](js/src/pages/settings/conversions-api/index.js#L26)
+### [`rfw_conversion_tracking_toggle`](js/src/pages/settings/conversions-api/index.js#L19)
 Toggle the Conversions API tracking.
 #### Properties
 | name | type | description |
 | ---- | ---- | ----------- |
 `status` | `string` | (`on`\\|`off`) - indicates the status of the Conversions API tracking.
 #### Emitters
-- [`ConversionsAPI`](js/src/pages/settings/conversions-api/index.js#L52) When the user toggles the Conversions API tracking.
+- [`ConversionsAPI`](js/src/pages/settings/conversions-api/index.js#L37) When the user toggles the Conversions API tracking.
 
 ### [`rfw_disconnect_reddit_account_button_click`](js/src/pages/settings/linked-accounts.js#L17)
 Clicking on the button to disconnect the Reddit account.
