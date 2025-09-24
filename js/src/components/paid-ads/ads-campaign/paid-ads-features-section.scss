@@ -1,0 +1,45 @@
+.rfw-paid-ads-features-section {
+	.woocommerce-pill {
+		color: wpColors.$gray-700;
+	}
+
+	.rfw-section-card-title {
+		margin-bottom: wpVariables.$grid-unit-15;
+		line-height: variables.$rfw-line-height-medium-large;
+		font-weight: normal;
+		font-size: variables.$rfw-font-small-medium;
+		color: wpColors.$gray-900;
+	}
+
+	@media (max-width: wpBreakpoints.$break-small) {
+		&__content {
+			flex-direction: column;
+			gap: wpVariables.$grid-unit-20;
+		}
+	}
+
+	&__subtitle {
+		line-height: variables.$rfw-line-height-medium;
+		font-size: variables.$rfw-font-small;
+		color: wpColors.$gray-800;
+	}
+
+	&__feature-list {
+		display: flex;
+		flex-direction: column;
+		gap: wpVariables.$grid-unit-20;
+		margin: wpVariables.$grid-unit-30 0 wpVariables.$grid-unit-20;
+		line-height: variables.$rfw-line-height-smaller;
+		color: wpColors.$gray-800;
+
+		.gridicon {
+			fill: #5ec862;
+		}
+	}
+
+	&__cite {
+		font-style: normal;
+		font-size: variables.$rfw-font-smaller;
+		color: wpColors.$gray-600;
+	}
+}
