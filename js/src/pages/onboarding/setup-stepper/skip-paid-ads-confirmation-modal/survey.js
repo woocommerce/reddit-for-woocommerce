@@ -22,7 +22,10 @@ const Survey = () => {
 	return (
 		<div className="rfw-skip-paid-ads-survey-modal__survey">
 			<h3 className="rfw-skip-paid-ads-survey-modal__survey-title">
-				{ __( 'Why do you want to skip ads?', 'reddit-for-woocommerce' ) }
+				{ __(
+					'Why do you want to skip ads?',
+					'reddit-for-woocommerce'
+				) }
 			</h3>
 
 			<ul>

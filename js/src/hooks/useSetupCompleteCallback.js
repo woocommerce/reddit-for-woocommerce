@@ -18,7 +18,7 @@ export default function useSetupCompleteCallback() {
 
 	const completeAdsSetup = useCallback( () => {
 		const options = {
-			path: '/wc/mfw/ads/setup/complete',
+			path: '/wc/rfw/ads/setup/complete',
 			method: 'POST',
 		};
 		return apiFetch( options ).catch( () => {

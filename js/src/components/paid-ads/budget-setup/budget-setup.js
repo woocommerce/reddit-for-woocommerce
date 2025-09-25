@@ -155,7 +155,10 @@ export default function BudgetSetup( { hideRecommendations = false } ) {
 				<BudgetRadioControl
 					{ ...getInputProps( 'level' ) }
 					value="custom"
-					label={ __( 'Set custom budget', 'reddit-for-woocommerce' ) }
+					label={ __(
+						'Set custom budget',
+						'reddit-for-woocommerce'
+					) }
 				/>
 				{ values.level === 'custom' && (
 					<>

@@ -11,7 +11,10 @@ import FaqsPanel from '~/components/faqs-panel';
 const faqItems = [
 	{
 		trackId: 'how-much-do-reddit-ads-cost',
-		question: __( 'How much do Reddit Ads cost?', 'reddit-for-woocommerce' ),
+		question: __(
+			'How much do Reddit Ads cost?',
+			'reddit-for-woocommerce'
+		),
 		answer: __( 'TBD', 'reddit-for-woocommerce' ),
 	},
 	{
@@ -24,7 +27,10 @@ const faqItems = [
 	},
 	{
 		trackId: 'how-can-i-optimize-my-budget',
-		question: __( 'How can I optimize my budget?', 'reddit-for-woocommerce' ),
+		question: __(
+			'How can I optimize my budget?',
+			'reddit-for-woocommerce'
+		),
 		answer: __( 'TBD', 'reddit-for-woocommerce' ),
 	},
 	{

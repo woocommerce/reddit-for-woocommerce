@@ -9,7 +9,7 @@ import { createHooks } from '@wordpress/hooks';
  * Internal dependencies
  */
 import { STORE_KEY } from '~/data';
-import { mfwData } from '~/constants';
+import { rfwData } from '~/constants';
 
 export const recordRfwEvent = noop;
 export const recordStepperChangeEvent = noop;
@@ -38,7 +38,7 @@ filterPropertiesMap.set( FILTER_BUDGET_RECOMMENDATIONS, [
  * @return {Object} Event properties with base event properties.
  */
 export function addBaseEventProperties( eventProperties ) {
-	const { slug } = mfwData;
+	const { slug } = rfwData;
 	const { version } = select( STORE_KEY ).getGeneral();
 
 	const mixedProperties = {

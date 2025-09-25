@@ -2,17 +2,16 @@
  * External dependencies
  */
 import { __ } from '@wordpress/i18n';
-import { Flex, FlexItem, FlexBlock } from '@wordpress/components';
+import { Flex, FlexBlock } from '@wordpress/components';
 import { megaphone, tag, Icon } from '@wordpress/icons';
-import mobileViewUrl from '~/images/logo/mobile-view.svg';
 
 /**
  * Internal dependencies
  */
 import Section from '~/components/section';
-import CampaignPreview from '~/components/paid-ads/campaign-preview';
 import FreeAdCredit from '~/components/free-ad-credit';
 import VerticalGapLayout from '~/components/vertical-gap-layout';
+import mobileViewUrl from '~/images/logo/mobile-view.svg';
 import './paid-ads-features-section.scss';
 
 function FeatureList() {
@@ -95,7 +94,7 @@ export default function PaidAdsFeaturesSection() {
 			<Section.Card>
 				<Section.Card.Body>
 					<div className="rfw-paid-ads-features-section__header">
-						<Section.Card.Title className='rfw-paid-ads-section-title'>
+						<Section.Card.Title className="rfw-paid-ads-section-title">
 							{ __(
 								'Use Dynamic Ads to Promote Products',
 								'reddit-for-woocommerce'

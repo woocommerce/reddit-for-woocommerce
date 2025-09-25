@@ -12,7 +12,6 @@ import GridiconChevronRight from 'gridicons/dist/chevron-right';
  */
 import Section from '~/components/section';
 import AppButton from '~/components/app-button';
-import CampaignPreview from './campaign-preview';
 import './campaign-preview-card.scss';
 
 /**
@@ -59,10 +58,6 @@ export default function CampaignPreviewCard() {
 								iconSize={ 16 }
 								onClick={ handleClick }
 								data-step="-1"
-							/>
-							<CampaignPreview
-								ref={ previewRef }
-								autoplay={ false }
 							/>
 							<AppButton
 								className="rfw-campaign-preview-card__moving-button"
