@@ -75,7 +75,7 @@ function FeatureList() {
 }
 
 /**
- * @fires rfw_documentation_link_click with `{ context: 'setup-paid-ads', link_id: 'paid-ads-with-performance-max-campaigns-learn-more', href: 'https://support.google.com/google-ads/answer/10724817' }`
+ * @fires rfw_documentation_link_click with `{ context: 'setup-paid-ads', link_id: 'paid-ads-learn-more', href: 'https://support.google.com/google-ads/answer/10724817' }`
  */
 
 /**

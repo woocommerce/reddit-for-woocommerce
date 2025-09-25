@@ -31,7 +31,7 @@ const FreeAdCredit = () => {
 								<AppDocumentationLink
 									context="setup-ads"
 									linkId="free-ad-credit-terms"
-									href="https://ads.reddit.com/billing" // @TODO: review the link
+									href="https://ads.reddit.com/billing"
 								/>
 							),
 						}
