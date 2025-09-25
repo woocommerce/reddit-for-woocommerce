@@ -63,24 +63,24 @@ const SkipPaidAdsConfirmationModal = ( {
 		>
 			<p>
 				{ __(
-					'Enabling Performance Max is highly recommended to drive more sales and reach new audiences across Reddit channels like Search, YouTube and Discover.',
+					'Enable Dynamic Ads to drive more sales and reach new shoppers across Reddit.',
 					'reddit-for-woocommerce'
 				) }
 			</p>
 			<p>
 				{ __(
-					'Performance Max uses the best of Reddit’s AI to show the most impactful ads for your products at the right time and place. Reddit will use your product data to create ads for this campaign.',
+					'With Pixel and Conversion Tracking, Reddit can use your product data to automatically generate ads and show them to the right people at the right time — helping you grow your business more efficiently.',
 					'reddit-for-woocommerce'
 				) }
 			</p>
 			<p>
 				<AppDocumentationLink
-					href="https://support.google.com/google-ads/answer/10724817"
+					href="https://www.business.reddit.com/learn"
 					context="skip-paid-ads-modal"
 					linkId="paid-ads-learn-more"
 				>
 					{ __(
-						'Learn more about Performance Max TBD.',
+						'Learn more about Reddit Ads.',
 						'reddit-for-woocommerce'
 					) }
 				</AppDocumentationLink>
