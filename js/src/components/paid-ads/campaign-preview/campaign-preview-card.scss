@@ -1,0 +1,13 @@
+.rfw-campaign-preview-card {
+	.rfw-section-card-title {
+		margin-bottom: wpVariables.$grid-unit-10;
+	}
+
+	&__moving-button.components-button.has-icon {
+		height: auto;
+		min-width: 0;
+		padding: wpVariables.$grid-unit-05;
+		border-radius: 50%;
+		background-color: wpColors.$gray-100;
+	}
+}

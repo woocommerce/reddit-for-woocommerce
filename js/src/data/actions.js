@@ -11,6 +11,7 @@ import apiFetch from '@wordpress/api-fetch';
 import { API_NAMESPACE, STORE_KEY } from './constants';
 import { handleApiError } from '~/utils/handleError';
 import { ACCOUNT_TYPE } from '~/constants';
+import { isWCIos, isWCAndroid } from '~/utils/isMobileApp';
 import TYPES from './action-types';
 
 /**
@@ -488,6 +489,43 @@ export async function upsertPixelId( pixelId ) {
 				'reddit-for-woocommerce'
 			)
 		);
+		throw error;
+	}
+}
+
+/**
+ * Create a new ads campaign.
+ *
+ * @param {number} amount Daily average cost of the paid ads campaign.
+ *
+ * @throws { { message: string } } Will throw an error if the campaign creation fails.
+ */
+export function* createAdsCampaign( amount ) {
+	let label = 'wc-web';
+
+	if ( isWCIos() ) {
+		label = 'wc-ios';
+	} else if ( isWCAndroid() ) {
+		label = 'wc-android';
+	}
+
+	try {
+		const createdCampaign = yield apiFetch( {
+			path: `${ API_NAMESPACE }/ads/campaigns`,
+			method: 'POST',
+			data: {
+				amount,
+				label,
+			},
+		} );
+
+		return {
+			type: TYPES.CREATE_ADS_CAMPAIGN,
+			createdCampaign,
+		};
+	} catch ( error ) {
+		handleApiError( error );
+
 		throw error;
 	}
 }

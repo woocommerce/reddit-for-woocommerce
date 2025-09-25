@@ -1,0 +1,80 @@
+/**
+ * External dependencies
+ */
+import { __ } from '@wordpress/i18n';
+import { useRef } from '@wordpress/element';
+import { Flex, FlexItem, FlexBlock } from '@wordpress/components';
+import GridiconChevronLeft from 'gridicons/dist/chevron-left';
+import GridiconChevronRight from 'gridicons/dist/chevron-right';
+
+/**
+ * Internal dependencies
+ */
+import Section from '~/components/section';
+import AppButton from '~/components/app-button';
+import CampaignPreview from './campaign-preview';
+import './campaign-preview-card.scss';
+
+/**
+ * @typedef { import("./campaign-preview.js").CampaignPreviewHandler } CampaignPreviewHandler
+ */
+
+/**
+ * Renders a Card that includes a CampaignPreview with previous and next buttons.
+ */
+export default function CampaignPreviewCard() {
+	/**
+	 * @type {import('react').MutableRefObject<CampaignPreviewHandler>}
+	 */
+	const previewRef = useRef();
+
+	const handleClick = ( e ) => {
+		const step = Number( e.currentTarget.dataset.step );
+		previewRef.current.moveBy( step );
+	};
+
+	return (
+		<Section.Card className="rfw-campaign-preview-card">
+			<Section.Card.Body>
+				<Flex align="start" gap={ 9 } direction={ [ 'column', 'row' ] }>
+					<FlexBlock>
+						<Section.Card.Title>
+							{ __(
+								'Preview product ad',
+								'reddit-for-woocommerce'
+							) }
+						</Section.Card.Title>
+						<div>
+							{ __(
+								`Each of your product variants will have its own ad. Previews shown here are examples and don't include all possible formats.`,
+								'reddit-for-woocommerce'
+							) }
+						</div>
+					</FlexBlock>
+					<FlexItem>
+						<Flex align="center" gap={ 5 }>
+							<AppButton
+								className="rfw-campaign-preview-card__moving-button"
+								icon={ <GridiconChevronLeft /> }
+								iconSize={ 16 }
+								onClick={ handleClick }
+								data-step="-1"
+							/>
+							<CampaignPreview
+								ref={ previewRef }
+								autoplay={ false }
+							/>
+							<AppButton
+								className="rfw-campaign-preview-card__moving-button"
+								icon={ <GridiconChevronRight /> }
+								iconSize={ 16 }
+								onClick={ handleClick }
+								data-step="1"
+							/>
+						</Flex>
+					</FlexItem>
+				</Flex>
+			</Section.Card.Body>
+		</Section.Card>
+	);
+}

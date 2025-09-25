@@ -15,7 +15,6 @@ import { STEP_NAME_KEY_MAP } from './constants';
 import { recordStepperChangeEvent } from '~/utils/tracks';
 import SetupAccounts from './setup-accounts';
 import SetupPaidAds from './setup-paid-ads';
-import './saved-setup-stepper.scss';
 
 /**
  * @param {Object} props React props
