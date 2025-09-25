@@ -5,8 +5,8 @@ import { __ } from '@wordpress/i18n';
 
 export const OPTIONS = [
 	{
-		label: __( 'I already have ads on Meta', 'reddit-for-woocommerce' ),
-		value: 'i_already_have_ads_on_meta',
+		label: __( 'I already have ads on Reddit', 'reddit-for-woocommerce' ),
+		value: 'i_already_have_ads_on_reddit',
 		hasTextInput: false,
 	},
 	{
@@ -19,15 +19,15 @@ export const OPTIONS = [
 	},
 	{
 		label: __(
-			'I’ve tried Meta ads before without success',
+			'I’ve tried Reddit ads before without success',
 			'reddit-for-woocommerce'
 		),
 		value: 'ive_tried_reddit_ads_before_without_success',
 		hasTextInput: false,
 	},
 	{
-		label: __( 'I don’t want ads on Meta', 'reddit-for-woocommerce' ),
-		value: 'i_dont_want_ads_on_meta',
+		label: __( 'I don’t want ads on Reddit', 'reddit-for-woocommerce' ),
+		value: 'i_dont_want_ads_on_reddit',
 		hasTextInput: true,
 	},
 	{

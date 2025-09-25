@@ -63,13 +63,13 @@ const SkipPaidAdsConfirmationModal = ( {
 		>
 			<p>
 				{ __(
-					'Enabling Performance Max is highly recommended to drive more sales and reach new audiences across Meta channels like Search, YouTube and Discover.',
+					'Enabling Performance Max is highly recommended to drive more sales and reach new audiences across Reddit channels like Search, YouTube and Discover.',
 					'reddit-for-woocommerce'
 				) }
 			</p>
 			<p>
 				{ __(
-					'Performance Max uses the best of Meta’s AI to show the most impactful ads for your products at the right time and place. Meta will use your product data to create ads for this campaign.',
+					'Performance Max uses the best of Reddit’s AI to show the most impactful ads for your products at the right time and place. Reddit will use your product data to create ads for this campaign.',
 					'reddit-for-woocommerce'
 				) }
 			</p>

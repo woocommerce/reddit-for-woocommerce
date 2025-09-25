@@ -23,11 +23,11 @@ import './survey-modal.scss';
  *
  * @event rfw_skip_campaign_creation_survey
  * @property {string} context Name of the context where the survey was triggered (e.g. 'skip-paid-ads-survey-modal').
- * @property {boolean} i_already_have_ads_on_meta Indicates if the user already has ads on Meta.
+ * @property {boolean} i_already_have_ads_on_reddit Indicates if the user already has ads on Reddit.
  * @property {boolean} i_dont_have_the_budget_to_create_ads_now Indicates if the user doesn't have the budget to create ads now.
- * @property {boolean} ive_tried_reddit_ads_before_without_success Indicates if the user has tried Meta ads before without success.
- * @property {boolean} i_dont_want_ads_on_meta Indicates if the user doesn't want ads on Meta.
- * @property {string} i_dont_want_ads_on_reddit_text Text input for the reason why the user doesn't want ads on Meta.
+ * @property {boolean} ive_tried_reddit_ads_before_without_success Indicates if the user has tried Reddit ads before without success.
+ * @property {boolean} i_dont_want_ads_on_reddit Indicates if the user doesn't want ads on Reddit.
+ * @property {string} i_dont_want_ads_on_reddit_text Text input for the reason why the user doesn't want ads on Reddit.
  * @property {boolean} ill_create_ads_later Indicates if the user will create ads later.
  * @property {string} ill_create_ads_later_text Text input for the reason why the user will create ads later.
  * @property {boolean} other Indicates if the user has another reason.
@@ -116,7 +116,7 @@ const SurveyModal = ( { onRequestClose, onSkipCreatePaidAds } ) => {
 								<div className="rfw-skip-paid-ads-survey-modal__benefits">
 									<h3 className="rfw-skip-paid-ads-survey-modal__benefits-title">
 										{ __(
-											'Reach Meta users with engaging ads',
+											'Reach Reddit users with engaging ads',
 											'reddit-for-woocommerce'
 										) }
 									</h3>
@@ -144,7 +144,7 @@ const SurveyModal = ( { onRequestClose, onSkipCreatePaidAds } ) => {
 													</h4>
 													<p>
 														{ __(
-															'Run targeted ads on Meta and reach users within relevant communities and conversations.',
+															'Run targeted ads on Reddit and reach users within relevant communities and conversations.',
 															'reddit-for-woocommerce'
 														) }
 													</p>
@@ -172,7 +172,7 @@ const SurveyModal = ( { onRequestClose, onSkipCreatePaidAds } ) => {
 													</h4>
 													<p>
 														{ __(
-															'With the Meta Pixel and Conversions API, track conversions and improve performance with real-time data.',
+															'With the Reddit Pixel and Conversions API, track conversions and improve performance with real-time data.',
 															'reddit-for-woocommerce'
 														) }
 													</p>
@@ -183,7 +183,7 @@ const SurveyModal = ( { onRequestClose, onSkipCreatePaidAds } ) => {
 															linkId="paid-ads-with-performance-max-campaigns-learn-more"
 														>
 															{ __(
-																'Learn more about advertising on Meta TBD',
+																'Learn more about advertising on Reddit TBD',
 																'reddit-for-woocommerce'
 															) }{ ' ' }
 															<Icon
