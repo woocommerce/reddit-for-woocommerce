@@ -28,7 +28,6 @@ import clientSession from './clientSession';
  * @event rfw_onboarding_complete_with_paid_ads_button_click
  * @property {string} level The selected level of the budget recommendation, e.g. 'low', 'recommended', 'high', 'custom'.
  * @property {number} budget The budget for the campaign
- * @property {string} audiences The targeted audiences for the campaign
  * @property {string} source The data source of the budget recommendations, e.g. 'reddit-ads-api', 'fallback-database'.
  * @property {number} recommended_budget The recommended daily budget displayed to merchants regardless of the final amount they choose.
  */
@@ -59,7 +58,7 @@ export default function SetupPaidAds() {
 			return;
 		}
 
-		// Force reload WC admin page to initiate the relevant dependencies of the Dashboard page.
+		// Force reload WC admin page to initiate the relevant dependencies of the settings page.
 		const query = { guide: GUIDE_NAMES.SUBMISSION_SUCCESS };
 		window.location.href = adminUrl + getSettingsUrl( query );
 	};

@@ -27,15 +27,6 @@ const SavedSetupStepper = ( { savedStep } ) => {
 		setStep( '2' );
 	};
 
-	const handleSetupPaidAdsOnContinue = () => {
-		const settingsUrl = getSettingsUrl();
-		getHistory().push(
-			addQueryArgs( settingsUrl, {
-				onboarding: 'success',
-			} )
-		);
-	};
-
 	const handleStepClick = ( stepKey ) => {
 		// Only allow going back to the previous steps.
 		if ( Number( stepKey ) < Number( step ) ) {
@@ -68,11 +59,7 @@ const SavedSetupStepper = ( { savedStep } ) => {
 						'Create your campaign',
 						'reddit-for-woocommerce'
 					),
-					content: (
-						<SetupPaidAds
-							onContinue={ handleSetupPaidAdsOnContinue }
-						/>
-					),
+					content: <SetupPaidAds />,
 					onClick: handleStepClick,
 				},
 			] }
