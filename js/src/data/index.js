@@ -37,6 +37,7 @@ const store = createReduxStore( STORE_KEY, {
 		trackConversions: null,
 		settings: {
 			catalogId: '',
+			catalogStatus: '',
 			exportFileUrl: '',
 			lastExportTimeStamp: '',
 			productsToken: '',
