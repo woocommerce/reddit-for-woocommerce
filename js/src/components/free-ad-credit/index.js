@@ -12,7 +12,7 @@ import AppDocumentationLink from '~/components/app-documentation-link';
 import './index.scss';
 
 /**
- * @fires rfw_documentation_link_click with `{ context: 'setup-ads', link_id: 'free-ad-credit-terms', href: 'https://www.google.com/ads/coupons/terms/' }`
+ * @fires rfw_documentation_link_click with `{ context: 'setup-ads', link_id: 'free-ad-credit-terms', href: 'https://ads.reddit.com/billing' }`
  */
 const FreeAdCredit = () => {
 	return (

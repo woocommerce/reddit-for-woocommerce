@@ -75,10 +75,6 @@ function FeatureList() {
 }
 
 /**
- * @fires rfw_documentation_link_click with `{ context: 'setup-paid-ads', link_id: 'paid-ads-learn-more', href: 'https://support.google.com/google-ads/answer/10724817' }`
- */
-
-/**
  * Renders a section layout to elaborate on the features of paid ads and show the buttons
  * for the next actions: skip or continue the paid ads setup.
  */

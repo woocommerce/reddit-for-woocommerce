@@ -31,9 +31,7 @@ filterPropertiesMap.set( FILTER_BUDGET_RECOMMENDATIONS, [
 
 /**
  * Returns an event properties with base properties.
- * - gla_version: Plugin version
- * - gla_mc_id: Google Merchant Center account ID if connected
- * - gla_ads_id: Google Ads account ID if connected
+ * - rfw_version: Plugin version
  *
  * @param {Object} [eventProperties] The event properties to be included base properties.
  * @return {Object} Event properties with base event properties.

@@ -41,7 +41,7 @@ import './survey-modal.scss';
  * @param {Object} props React props.
  * @param {Function} props.onRequestClose Function to be called when the modal should be closed.
  * @param {Function} props.onSkipCreatePaidAds Function to be called when the user confirms skipping the paid ads setup.
- * @fires rfw_documentation_link_click with `{ context: 'skip-paid-ads-survey-modal', link_id: 'paid-ads-learn-more', href: 'https://support.google.com/google-ads/answer/10724817' }`
+ * @fires rfw_documentation_link_click with `{ context: 'skip-paid-ads-survey-modal', link_id: 'paid-ads-learn-more', href: 'https://www.business.reddit.com/learn' }`
  * @fires rfw_skip_campaign_creation_survey with the survey responses and context 'skip-paid-ads-survey-modal'.
  */
 const SurveyModal = ( { onRequestClose, onSkipCreatePaidAds } ) => {
