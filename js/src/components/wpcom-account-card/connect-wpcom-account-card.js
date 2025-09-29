@@ -18,7 +18,7 @@ import useApiFetchCallback from '~/hooks/useApiFetchCallback';
  * Clicking on the button to connect WordPress.com account.
  *
  * @event rfw_wordpress_account_connect_button_click
- * @property {string} context (`setup-mc`|`reconnect`) - indicates from which page the button was clicked.
+ * @property {string} context (`setup-reddit`|`reconnect`) - indicates from which page the button was clicked.
  */
 
 /**
