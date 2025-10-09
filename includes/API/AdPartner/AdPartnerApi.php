@@ -86,6 +86,22 @@ class AdPartnerApi {
 	public MembersApi $members;
 
 	/**
+	 * Handles Campaigns operations.
+	 *
+	 * @since 0.1.0
+	 * @var CampaignApi
+	 */
+	public CampaignApi $campaigns;
+
+	/**
+	 * Handles Ad Groups operations.
+	 *
+	 * @since 0.1.0
+	 * @var AdGroupApi
+	 */
+	public AdGroupApi $ad_groups;
+
+	/**
 	 * Private constructor to enforce singleton pattern.
 	 *
 	 * Initializes all API submodules with the shared {@see WcsClient} instance,
@@ -102,6 +118,8 @@ class AdPartnerApi {
 		$this->ad_accounts = new AdAccountsApi( $wcs );
 		$this->pixels      = new PixelsApi( $wcs );
 		$this->members     = new MembersApi( $wcs );
+		$this->campaigns   = new CampaignApi( $wcs );
+		$this->ad_groups   = new AdGroupApi( $wcs );
 	}
 
 	/**
