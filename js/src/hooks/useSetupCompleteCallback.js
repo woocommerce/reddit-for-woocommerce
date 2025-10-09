@@ -16,32 +16,14 @@ export default function useSetupCompleteCallback() {
 	const { createNotice } = useDispatchCoreNotices();
 	const [ loading, setLoading ] = useState( false );
 
-	const completeAdsSetup = useCallback( () => {
-		const options = {
-			path: '/wc/rfw/ads/setup/complete',
-			method: 'POST',
-		};
-		return apiFetch( options ).catch( () => {
-			createNotice(
-				'error',
-				__(
-					'Unable to complete your ads setup. Please try again later.',
-					'reddit-for-woocommerce'
-				)
-			);
-			return Promise.reject();
-		} );
-	}, [ createNotice ] );
-
 	const handleFinishSetup = useCallback(
 		( amount, onCompleted ) => {
 			setLoading( true );
 			return createAdsCampaign( amount )
-				.then( completeAdsSetup )
 				.then( onCompleted )
 				.catch( () => setLoading( false ) );
 		},
-		[ createAdsCampaign, completeAdsSetup ]
+		[ createAdsCampaign ]
 	);
 
 	return [ handleFinishSetup, loading ];
