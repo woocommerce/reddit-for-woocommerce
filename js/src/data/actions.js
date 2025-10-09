@@ -511,7 +511,7 @@ export function* createAdsCampaign( amount ) {
 
 	try {
 		const createdCampaign = yield apiFetch( {
-			path: `${ API_NAMESPACE }/ads/campaigns`,
+			path: `${ API_NAMESPACE }/reddit/campaigns`,
 			method: 'POST',
 			data: {
 				amount,
