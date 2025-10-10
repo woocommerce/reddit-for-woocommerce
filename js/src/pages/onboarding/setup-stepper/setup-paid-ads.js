@@ -14,6 +14,7 @@ import AdsCampaign from '~/components/paid-ads/ads-campaign';
 import CampaignAssetsForm from '~/components/paid-ads/campaign-assets-form';
 import AppButton from '~/components/app-button';
 import useEventPropertiesFilter from '~/hooks/useEventPropertiesFilter';
+import useSettings from '~/hooks/useSettings';
 import { getSettingsUrl } from '~/utils/urls';
 import { handleApiError } from '~/utils/handleError';
 import { FILTER_BUDGET_RECOMMENDATIONS, recordRfwEvent } from '~/utils/tracks';
@@ -44,6 +45,8 @@ export default function SetupPaidAds() {
 	const getEventProps = useEventPropertiesFilter(
 		FILTER_BUDGET_RECOMMENDATIONS
 	);
+	const { catalogId, hasFinishedResolution } = useSettings();
+	const isCatalogCreated = catalogId && hasFinishedResolution;
 
 	const finishOnboardingSetup = async ( onBeforeFinish = noop ) => {
 		try {
@@ -83,7 +86,7 @@ export default function SetupPaidAds() {
 
 	const createContinueButton = ( formContext ) => {
 		const { isValidForm } = formContext;
-		const disabled = completing === ACTION_SKIP || ! isValidForm;
+		const disabled = completing === ACTION_SKIP || ! isValidForm || ! isCatalogCreated;
 
 		const handleClick = () => {
 			formContext.handleSubmit();

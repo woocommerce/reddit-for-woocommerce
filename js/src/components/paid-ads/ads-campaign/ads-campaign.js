@@ -15,6 +15,7 @@ import BudgetSection from '../budget-section';
 import Faqs from './faqs';
 import PaidAdsFeaturesSection from './paid-ads-features-section';
 import BillingCard from '../billing-card';
+import CatalogCard from '../catalog-card';
 
 /**
  * @typedef {import('~/components/adaptive-form/adaptive-form-context').AdaptiveFormContext} AdaptiveFormContext
@@ -51,6 +52,7 @@ export default function AdsCampaign( {
 			<PaidAdsFeaturesSection />
 
 			<BudgetSection />
+			<CatalogCard />
 			<BillingCard />
 
 			<StepContentFooter>
