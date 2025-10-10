@@ -64,7 +64,7 @@ class CampaignApi extends BaseAdPartnerApi {
 			'data' => array(
 				'name'              => Helper::get_store_name( 'campaign' ),
 				'configured_status' => 'ACTIVE',
-				'objective'         => 'CONVERSIONS',
+				'objective'         => 'CATALOG_SALES',
 			),
 		);
 
