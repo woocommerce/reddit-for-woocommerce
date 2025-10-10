@@ -44,16 +44,6 @@ class AdGroupApi extends BaseAdPartnerApi {
 	 * @return \WP_REST_Response|WP_Error REST response from WCS or error if inputs are missing.
 	 */
 	public function create( $campaign_data ) {
-		$campaign_id  = $campaign_data['campaign_id'];
-		$daily_budget = $campaign_data['daily_budget'];
-
-		if ( ! $campaign_id ) {
-			return new WP_Error(
-				'campaign_id_not_set',
-				__( 'Campaign ID not found.', 'reddit-for-woocommerce' ),
-			);
-		}
-
 		$ad_account_id = Options::get( OptionDefaults::AD_ACCOUNT_ID );
 
 		if ( ! $ad_account_id ) {
@@ -63,19 +53,42 @@ class AdGroupApi extends BaseAdPartnerApi {
 			);
 		}
 
+		$campaign_id    = $campaign_data['campaign_id'] ?? '';
+		$product_set_id = $campaign_data['product_set_id'] ?? '';
+		$daily_budget   = $campaign_data['daily_budget'] ?? '';
+
+		if ( ! $campaign_id ) {
+			return new WP_Error(
+				'campaign_id_not_set',
+				__( 'Campaign ID not found.', 'reddit-for-woocommerce' ),
+			);
+		}
+
+		/*
+		 * Prepare payload for the Ad Group creation.
+		 *
+		 * @see https://ads-api.reddit.com/docs/v3/operations/Create%20Ad%20Group
+		 */
 		$payload = array(
 			'data' => array(
-				'bid_type'                     => 'CPC',
-				'campaign_id'                  => $campaign_id,
-				'configured_status'            => 'ACTIVE',
-				'goal_type'                    => 'DAILY_SPEND',
-				'goal_value'                   => intval( $daily_budget * 1000000 ),
-				'name'                         => Helper::get_store_name( 'ad_group' ),
+				'bid_type'           => 'CPC',
+				'bid_value'          => 1000000,
+				'campaign_id'        => $campaign_id,
+				'configured_status'  => 'ACTIVE',
+				'goal_type'          => 'DAILY_SPEND',
+				'goal_value'         => intval( $daily_budget * 1000000 ),
+				'name'               => Helper::get_store_name( 'ad_group' ),
 				// @todo This need to be finalized.
-				'optimization_goal'            => 'PURCHASES',
-				'view_through_conversion_type' => 'SEVEN_DAY_CLICKS',
-				'bid_strategy'                 => 'BIDLESS',
-				'start_time'                   => wp_date( 'c' ),
+				'optimization_goal'  => 'CLICKS',
+				// 'view_through_conversion_type' => 'SEVEN_DAY_CLICKS', // TODO: This is dependent on optimization goal.
+				'shopping_type'      => 'DYNAMIC',
+				'shopping_targeting' => array(
+					'targeting_type'       => 'PROSPECTING',
+					'lookback_window_days' => 30,
+				),
+				'product_set_id'     => $product_set_id,
+				'bid_strategy'       => 'MAXIMIZE_VOLUME',
+				'start_time'         => wp_date( 'c' ),
 			),
 		);
 

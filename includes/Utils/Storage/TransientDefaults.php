@@ -40,6 +40,20 @@ final class TransientDefaults {
 	public const REDDIT_ACCOUNT_EMAIL = 'reddit_account_email';
 
 	/**
+	 * Transient key for storing the ID of the created campaign.
+	 *
+	 * @since 0.1.0
+	 */
+	public const CAMPAIGN_ID = 'campaign_id';
+
+	/**
+	 * Transient key for storing the ID of the created product set.
+	 *
+	 * @since 0.1.0
+	 */
+	public const PRODUCT_SET_ID = 'product_set_id';
+
+	/**
 	 * Returns defaults for all known Ad Partner transients.
 	 *
 	 * Used by {@see TransientStorage} when saving values.
@@ -52,6 +66,8 @@ final class TransientDefaults {
 		return array(
 			self::PIXEL_SCRIPT         => '',
 			self::REDDIT_ACCOUNT_EMAIL => '',
+			self::CAMPAIGN_ID          => '',
+			self::PRODUCT_SET_ID       => '',
 		);
 	}
 
@@ -66,6 +82,8 @@ final class TransientDefaults {
 		return array(
 			self::PIXEL_SCRIPT         => MONTH_IN_SECONDS,
 			self::REDDIT_ACCOUNT_EMAIL => DAY_IN_SECONDS,
+			self::CAMPAIGN_ID          => HOUR_IN_SECONDS,
+			self::PRODUCT_SET_ID       => HOUR_IN_SECONDS,
 		);
 	}
 
