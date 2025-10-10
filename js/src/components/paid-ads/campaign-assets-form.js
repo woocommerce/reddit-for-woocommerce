@@ -72,9 +72,9 @@ export default function CampaignAssetsForm( {
 	const budgetRecommendation = {
 		dailyBudgetBaseline: 13,
 		recommended: {
-			dailyBudget: 63.30,
+			dailyBudget: 63.3,
 			metrics: {
-				cost: 443.10,
+				cost: 443.1,
 				conversions: 13.1,
 				conversionsValue: 523.75,
 			},
@@ -101,10 +101,10 @@ export default function CampaignAssetsForm( {
 			country: 'US',
 			currency: 'USD',
 		},
-		recommendedDailyBudget: 63.30,
+		recommendedDailyBudget: 63.3,
 		eventProps: {
 			source: 'reddit-ads-api',
-			recommended_budget: 63.30,
+			recommended_budget: 63.3,
 			metrics_availability: 'all',
 		},
 	};

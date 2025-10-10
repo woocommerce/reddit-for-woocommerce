@@ -86,7 +86,8 @@ export default function SetupPaidAds() {
 
 	const createContinueButton = ( formContext ) => {
 		const { isValidForm } = formContext;
-		const disabled = completing === ACTION_SKIP || ! isValidForm || ! isCatalogCreated;
+		const disabled =
+			completing === ACTION_SKIP || ! isValidForm || ! isCatalogCreated;
 
 		const handleClick = () => {
 			formContext.handleSubmit();

@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { __ } from '@wordpress/i18n';
+import { Link } from '@woocommerce/components';
 
 /**
  * Internal dependencies
@@ -12,7 +13,6 @@ import './catalog-card.scss';
 import useSettings from '~/hooks/useSettings';
 import useCreateCatalog from '~/hooks/useCreateCatalog';
 import useRedditAccountConfig from '~/hooks/useRedditAccountConfig';
-import { Link } from '@woocommerce/components';
 
 /**
  * @return {JSX.Element} Card filled with content.
