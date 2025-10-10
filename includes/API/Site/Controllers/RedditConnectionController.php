@@ -321,9 +321,11 @@ class RedditConnectionController extends RESTBaseController {
 		Options::delete( OptionDefaults::CATALOG_ID );
 		Options::delete( OptionDefaults::FEED_STATUS );
 		Options::delete( OptionDefaults::WCS_PRODUCTS_TOKEN );
-		Options::delete( OptionDefaults::CAMPAIGN_ID );
+		Options::delete( OptionDefaults::PROFILE_ID );
 		Transients::delete( TransientDefaults::REDDIT_ACCOUNT_EMAIL );
 		Transients::delete( TransientDefaults::PIXEL_SCRIPT );
+		Transients::delete( TransientDefaults::CAMPAIGN_ID );
+		Transients::delete( TransientDefaults::PRODUCT_SET_ID );
 
 		/**
 		 * Triggers when Reddit is disconnected.
@@ -386,6 +388,22 @@ class RedditConnectionController extends RESTBaseController {
 		if ( $is_jetpack_connected && ! empty( $business_id ) && ! empty( $ad_account_id ) && ! empty( $pixel_id ) ) {
 			Options::set( OptionDefaults::ONBOARDING_STATUS, 'connected' );
 
+			// Set the profile ID.
+			$member = $this->ad_partner_api->members->me();
+
+			if ( is_wp_error( $member ) ) {
+				$logger = wc_get_logger();
+				$logger->alert(
+					'Reddit member not found.',
+				);
+			} else {
+				$member_data = $member->get_data();
+				if ( ! empty( $member_data['data'] ) ) {
+					Options::set( OptionDefaults::PROFILE_ID, $member_data['data']['id'] );
+				}
+			}
+
+			// Create a new catalog for the business.
 			$response = $this->ad_partner_api->catalog->create();
 
 			if ( is_wp_error( $response ) ) {

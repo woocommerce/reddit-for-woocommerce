@@ -169,11 +169,11 @@ final class OptionDefaults {
 	public const WCS_PRODUCTS_TOKEN = 'wcs_products_token';
 
 	/**
-	 * Option key to store the Ad Partner's Campaign ID.
+	 * Option key to store the Ad Partner's Profile ID.
 	 *
 	 * @since 0.1.0
 	 */
-	public const CAMPAIGN_ID = 'campaign_id';
+	public const PROFILE_ID = 'profile_id';
 
 	/**
 	 * Returns default values for all known Ad Partner options.
@@ -205,7 +205,7 @@ final class OptionDefaults {
 			self::EXPORT_PRODUCT_IDS    => array(),
 			self::LAST_EXPORT_TIMESTAMP => 0,
 			self::WCS_PRODUCTS_TOKEN    => '',
-			self::CAMPAIGN_ID           => '',
+			self::PROFILE_ID            => '',
 		);
 	}
 }
