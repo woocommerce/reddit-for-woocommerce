@@ -40,7 +40,7 @@ import useRedditAdsAccount from './useRedditAdsAccount';
  */
 export default function useAdsCurrency() {
 	const storeCurrencySetting = useStoreCurrency();
-	const { redditAdsAccount } = useRedditAdsAccount();
+	const redditAdsAccount = useRedditAdsAccount();
 
 	// Apply store's formatting config with the Ad's currency and symbol.
 	// The `currency` and `symbol` could be `null`,
