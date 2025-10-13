@@ -61,9 +61,11 @@ export default function SetupPaidAds() {
 			return;
 		}
 
-		window.location.href = adminUrl + addQueryArgs( getSettingsUrl(), {
-			onboarding: 'success',
-		} );
+		window.location.href =
+			adminUrl +
+			addQueryArgs( getSettingsUrl(), {
+				onboarding: 'success',
+			} );
 	};
 
 	const handleSkipCreatePaidAds = async () => {

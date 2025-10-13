@@ -63,7 +63,11 @@ test.describe( 'Reddit Settings', () => {
 
 		await locator.getContinueToSetupButton().click();
 		await locator.getSkipAdsCreationButton().click();
-		await page.getByRole( 'button', { name: 'Complete setup without setting up ads' } ).click();
+		await page
+			.getByRole( 'button', {
+				name: 'Complete setup without setting up ads',
+			} )
+			.click();
 
 		await page.waitForURL(
 			'**/wp-admin/admin.php?page=wc-admin&path=%2Freddit%2Fsettings&onboarding=success'
