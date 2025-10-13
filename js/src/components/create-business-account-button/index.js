@@ -9,6 +9,7 @@ import { useCallback } from '@wordpress/element';
  * Internal dependencies
  */
 import AppButton from '~/components/app-button';
+import { rfwData } from '~/constants';
 
 /**
  * Renders a button that opens the Reddit Business Account registration page in a new tab.
@@ -24,12 +25,8 @@ const CreateBusinessAccountButton = ( {
 	...rest
 } ) => {
 	const handleOnClick = useCallback( () => {
-		window.open(
-			'https://accounts.reddit.com/adsregister',
-			'_blank',
-			'noopener,noreferrer'
-		);
 		onClick();
+		window.location.href = `https://ads.reddit.com/register/?utm_source=partnership&utm_name=woo_commerce&dest-ext=${ rfwData.returnUrl }`;
 	}, [ onClick ] );
 
 	return <AppButton text={ text } onClick={ handleOnClick } { ...rest } />;
