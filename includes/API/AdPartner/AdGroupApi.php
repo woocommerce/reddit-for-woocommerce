@@ -72,11 +72,11 @@ class AdGroupApi extends BaseAdPartnerApi {
 		$payload = array(
 			'data' => array(
 				'bid_type'                     => 'CPC',
-				'bid_value'                    => 1000000,
+				'bid_value'                    => 1000000, // Amount in microcurrency.
 				'campaign_id'                  => $campaign_id,
 				'configured_status'            => 'ACTIVE',
 				'goal_type'                    => 'DAILY_SPEND',
-				'goal_value'                   => intval( $daily_budget * 1000000 ),
+				'goal_value'                   => intval( $daily_budget * 1000000 ), // Amount in microcurrency.
 				'name'                         => Helper::get_store_name( 'ad_group' ),
 				'optimization_goal'            => 'PURCHASE',
 				'view_through_conversion_type' => 'SEVEN_DAY_CLICKS',

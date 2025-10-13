@@ -59,6 +59,11 @@ class CampaignApi extends BaseAdPartnerApi {
 			);
 		}
 
+		/*
+		 * Prepare payload for the Campaign creation.
+		 *
+		 * @see https://ads-api.reddit.com/docs/v3/operations/Create%20Campaign
+		 */
 		$payload = array(
 			'data' => array(
 				'name'              => Helper::get_store_name( 'campaign' ),

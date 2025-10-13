@@ -53,6 +53,11 @@ class AdApi extends BaseAdPartnerApi {
 			);
 		}
 
+		/*
+		 * Prepare payload for the Ad creation.
+		 *
+		 * @see https://ads-api.reddit.com/docs/v3/operations/Create%20Ad
+		 */
 		$payload = array(
 			'data' => array(
 				'type'                    => 'UNSPECIFIED',
