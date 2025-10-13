@@ -10,8 +10,6 @@ namespace RedditForWooCommerce\API\Site\Controllers;
 use WP_REST_Response;
 use RedditForWooCommerce\Config;
 use RedditForWooCommerce\Connection\WcsClient;
-use RedditForWooCommerce\Utils\Storage\Options;
-use RedditForWooCommerce\Utils\Storage\OptionDefaults;
 use RedditForWooCommerce\API\AdPartner\AdPartnerApi;
 use RedditForWooCommerce\Utils\Storage\TransientDefaults;
 use RedditForWooCommerce\Utils\Storage\Transients;
@@ -79,7 +77,7 @@ class CampaignController extends RESTBaseController {
 	 *
 	 * @since 0.1.0
 	 *
-	 * @param WP_REST_Request $request REST request object.
+	 * @param \WP_REST_Request $request REST request object.
 	 *
 	 * @return WP_REST_Response
 	 */

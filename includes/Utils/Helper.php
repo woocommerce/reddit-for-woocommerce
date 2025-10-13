@@ -150,6 +150,19 @@ class Helper {
 	}
 
 	/**
+	 * Generate a sample headline for the ad.
+	 *
+	 * @since 0.1.0
+	 *
+	 * @return string A sample headline for the ad.
+	 */
+	public static function get_ad_headline() {
+		$site_name = get_bloginfo( 'name' );
+		/* translators: %s: Site name */
+		return sprintf( __( 'Shop at %s', 'reddit-for-woocommerce' ), $site_name );
+	}
+
+	/**
 	 * Retrieve a valid IANA timezone string for the site.
 	 *
 	 * Behavior:

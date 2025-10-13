@@ -63,7 +63,7 @@ class AdApi extends BaseAdPartnerApi {
 				'profile_id'              => Options::get( OptionDefaults::PROFILE_ID ),
 				'shopping_creative'       => array(
 					'dpa_carousel_mode' => 'AUTO',
-					'headline'          => 'Sample Headline', // @todo This need to be finalized.
+					'headline'          => Helper::get_ad_headline(),
 					'call_to_action'    => 'Shop Now',
 					'allow_comments'    => false,
 					'second_line_cta'   => 'PRICE',
