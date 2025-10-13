@@ -89,11 +89,9 @@ test.describe( 'Merchant Onboarding', () => {
 			'Create Business Account'
 		);
 
-		const newPagePromise = page.waitForEvent( 'popup' );
 		await locator.getCreateBusinessButton().click();
-		const newPage = await newPagePromise;
-		await newPage.waitForLoadState();
-		await expect( newPage.title() ).resolves.toContain( 'Reddit Ads' );
+		await page.waitForLoadState();
+		await expect( page.title() ).resolves.toContain( 'Reddit Ads' );
 	} );
 
 	test( 'Reddit connected card state', async () => {
