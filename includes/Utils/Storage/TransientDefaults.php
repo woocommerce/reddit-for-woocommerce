@@ -66,8 +66,6 @@ final class TransientDefaults {
 		return array(
 			self::PIXEL_SCRIPT         => '',
 			self::REDDIT_ACCOUNT_EMAIL => '',
-			self::CAMPAIGN_ID          => '',
-			self::PRODUCT_SET_ID       => '',
 		);
 	}
 
@@ -82,8 +80,6 @@ final class TransientDefaults {
 		return array(
 			self::PIXEL_SCRIPT         => MONTH_IN_SECONDS,
 			self::REDDIT_ACCOUNT_EMAIL => DAY_IN_SECONDS,
-			self::CAMPAIGN_ID          => HOUR_IN_SECONDS,
-			self::PRODUCT_SET_ID       => HOUR_IN_SECONDS,
 		);
 	}
 

@@ -11,6 +11,8 @@ use WP_REST_Response;
 use RedditForWooCommerce\Config;
 use RedditForWooCommerce\Connection\WcsClient;
 use RedditForWooCommerce\API\AdPartner\AdPartnerApi;
+use RedditForWooCommerce\Utils\Storage\OptionDefaults;
+use RedditForWooCommerce\Utils\Storage\Options;
 use RedditForWooCommerce\Utils\Storage\TransientDefaults;
 use RedditForWooCommerce\Utils\Storage\Transients;
 
@@ -90,8 +92,9 @@ class CampaignController extends RESTBaseController {
 	 * @return WP_REST_Response
 	 */
 	public function create_campaign_callback( $request ) {
-		$params = $request->get_json_params();
-		$amount = floatval( wp_unslash( $params['amount'] ) );
+		$params        = $request->get_json_params();
+		$amount        = floatval( wp_unslash( $params['amount'] ) );
+		$ad_account_id = Options::get( OptionDefaults::AD_ACCOUNT_ID );
 
 		// Create a new campaign. If the campaign creation fails, return an error.
 		$campaign = $this->create_campaign();
@@ -142,8 +145,8 @@ class CampaignController extends RESTBaseController {
 		}
 
 		// Delete the transients.
-		Transients::delete( TransientDefaults::CAMPAIGN_ID );
-		Transients::delete( TransientDefaults::PRODUCT_SET_ID );
+		Transients::delete( sprintf( '%s_%s', TransientDefaults::CAMPAIGN_ID, $ad_account_id ) );
+		Transients::delete( sprintf( '%s_%s', TransientDefaults::PRODUCT_SET_ID, $ad_account_id ) );
 
 		return rest_ensure_response(
 			array(
@@ -160,7 +163,9 @@ class CampaignController extends RESTBaseController {
 	 */
 	private function create_campaign() {
 		// Get the campaign ID from the transients.
-		$campaign_id = Transients::get( TransientDefaults::CAMPAIGN_ID );
+		$ad_account_id = Options::get( OptionDefaults::AD_ACCOUNT_ID );
+		$transient_key = sprintf( '%s_%s', TransientDefaults::PRODUCT_SET_ID, $ad_account_id );
+		$campaign_id   = Transients::get( $transient_key );
 
 		// If the campaign ID is not set, create a new campaign.
 		if ( ! $campaign_id ) {
@@ -179,7 +184,7 @@ class CampaignController extends RESTBaseController {
 				);
 			}
 
-			Transients::set( TransientDefaults::CAMPAIGN_ID, $campaign_id );
+			Transients::set( $transient_key, $campaign_id );
 		}
 
 		return $campaign_id;
@@ -192,7 +197,9 @@ class CampaignController extends RESTBaseController {
 	 */
 	private function create_product_set() {
 		// Get the product set ID from the transients.
-		$product_set_id = Transients::get( TransientDefaults::PRODUCT_SET_ID );
+		$ad_account_id  = Options::get( OptionDefaults::AD_ACCOUNT_ID );
+		$transient_key  = sprintf( '%s_%s', TransientDefaults::PRODUCT_SET_ID, $ad_account_id );
+		$product_set_id = Transients::get( $transient_key );
 
 		// If the product set ID is not set, create a new product set.
 		if ( ! $product_set_id ) {
@@ -212,7 +219,7 @@ class CampaignController extends RESTBaseController {
 				);
 			}
 
-			Transients::set( TransientDefaults::PRODUCT_SET_ID, $product_set_id );
+			Transients::set( $transient_key, $product_set_id );
 		}
 
 		return $product_set_id;

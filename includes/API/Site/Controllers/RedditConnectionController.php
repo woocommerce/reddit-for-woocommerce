@@ -269,7 +269,8 @@ class RedditConnectionController extends RESTBaseController {
 	 * @return WP_REST_Response
 	 */
 	public function delete_connection() {
-		$catalog_id = Options::get( OptionDefaults::CATALOG_ID );
+		$catalog_id    = Options::get( OptionDefaults::CATALOG_ID );
+		$ad_account_id = Options::get( OptionDefaults::AD_ACCOUNT_ID );
 
 		// Delete the catalog if it exists.
 		if ( $catalog_id ) {
@@ -325,8 +326,8 @@ class RedditConnectionController extends RESTBaseController {
 		Options::delete( OptionDefaults::DUMMY_PURCHASE_TRACKED );
 		Transients::delete( TransientDefaults::REDDIT_ACCOUNT_EMAIL );
 		Transients::delete( TransientDefaults::PIXEL_SCRIPT );
-		Transients::delete( TransientDefaults::CAMPAIGN_ID );
-		Transients::delete( TransientDefaults::PRODUCT_SET_ID );
+		Transients::delete( sprintf( '%s_%s', TransientDefaults::CAMPAIGN_ID, $ad_account_id ) );
+		Transients::delete( sprintf( '%s_%s', TransientDefaults::PRODUCT_SET_ID, $ad_account_id ) );
 
 		/**
 		 * Triggers when Reddit is disconnected.
