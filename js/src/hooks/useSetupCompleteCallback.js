@@ -20,8 +20,10 @@ export default function useSetupCompleteCallback() {
 		( amount, onCompleted ) => {
 			setLoading( true );
 			return createAdsCampaign( amount )
+				.then( (data) => {
+					return data.createdCampaign
+				})
 				.then( onCompleted )
-				.catch( () => setLoading( false ) );
 		},
 		[ createAdsCampaign ]
 	);
