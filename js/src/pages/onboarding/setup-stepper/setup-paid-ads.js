@@ -4,6 +4,7 @@
 import { __ } from '@wordpress/i18n';
 import { useState } from '@wordpress/element';
 import { noop } from 'lodash';
+import { addQueryArgs } from '@wordpress/url';
 
 /**
  * Internal dependencies
@@ -18,7 +19,6 @@ import useSettings from '~/hooks/useSettings';
 import { getSettingsUrl } from '~/utils/urls';
 import { handleApiError } from '~/utils/handleError';
 import { FILTER_BUDGET_RECOMMENDATIONS, recordRfwEvent } from '~/utils/tracks';
-import { GUIDE_NAMES } from '~/constants';
 import { ACTION_COMPLETE, ACTION_SKIP } from './constants';
 import SkipButton from './skip-button';
 import clientSession from './clientSession';
@@ -61,9 +61,9 @@ export default function SetupPaidAds() {
 			return;
 		}
 
-		// Force reload WC admin page to initiate the relevant dependencies of the settings page.
-		const query = { guide: GUIDE_NAMES.SUBMISSION_SUCCESS };
-		window.location.href = adminUrl + getSettingsUrl( query );
+		window.location.href = adminUrl + addQueryArgs( getSettingsUrl(), {
+			onboarding: 'success',
+		} );
 	};
 
 	const handleSkipCreatePaidAds = async () => {
