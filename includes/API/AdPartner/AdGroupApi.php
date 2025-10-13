@@ -71,24 +71,23 @@ class AdGroupApi extends BaseAdPartnerApi {
 		 */
 		$payload = array(
 			'data' => array(
-				'bid_type'           => 'CPC',
-				'bid_value'          => 1000000,
-				'campaign_id'        => $campaign_id,
-				'configured_status'  => 'ACTIVE',
-				'goal_type'          => 'DAILY_SPEND',
-				'goal_value'         => intval( $daily_budget * 1000000 ),
-				'name'               => Helper::get_store_name( 'ad_group' ),
-				// @todo This need to be finalized.
-				'optimization_goal'  => 'CLICKS',
-				// 'view_through_conversion_type' => 'SEVEN_DAY_CLICKS', // TODO: This is dependent on optimization goal.
-				'shopping_type'      => 'DYNAMIC',
-				'shopping_targeting' => array(
+				'bid_type'                     => 'CPC',
+				'bid_value'                    => 1000000,
+				'campaign_id'                  => $campaign_id,
+				'configured_status'            => 'ACTIVE',
+				'goal_type'                    => 'DAILY_SPEND',
+				'goal_value'                   => intval( $daily_budget * 1000000 ),
+				'name'                         => Helper::get_store_name( 'ad_group' ),
+				'optimization_goal'            => 'PURCHASE',
+				'view_through_conversion_type' => 'SEVEN_DAY_CLICKS',
+				'shopping_type'                => 'DYNAMIC',
+				'shopping_targeting'           => array(
 					'targeting_type'       => 'PROSPECTING',
 					'lookback_window_days' => 30,
 				),
-				'product_set_id'     => $product_set_id,
-				'bid_strategy'       => 'MAXIMIZE_VOLUME',
-				'start_time'         => wp_date( 'c' ),
+				'product_set_id'               => $product_set_id,
+				'bid_strategy'                 => 'MAXIMIZE_VOLUME',
+				'start_time'                   => wp_date( 'c' ),
 			),
 		);
 
