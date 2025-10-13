@@ -65,6 +65,14 @@ class CampaignController extends RESTBaseController {
 					'methods'             => 'POST',
 					'callback'            => array( $this, 'create_campaign_callback' ),
 					'permission_callback' => array( $this, 'permissions_check' ),
+					'args'                => array(
+						'amount' => array(
+							'type'              => 'number',
+							'description'       => __( 'Daily budget amount in the ad account currency.', 'reddit-for-woocommerce' ),
+							'required'          => true,
+							'validate_callback' => array( $this, 'validate_amount_callback' ),
+						),
+					),
 				),
 			)
 		);
@@ -83,27 +91,7 @@ class CampaignController extends RESTBaseController {
 	 */
 	public function create_campaign_callback( $request ) {
 		$params = $request->get_json_params();
-
-		if ( ! isset( $params['amount'] ) ) {
-			return new WP_REST_Response(
-				array(
-					'status'  => 'error',
-					'message' => __( 'Amount is required.', 'reddit-for-woocommerce' ),
-				),
-				400
-			);
-		}
-
 		$amount = floatval( wp_unslash( $params['amount'] ) );
-		if ( $amount <= 0 ) {
-			return new WP_REST_Response(
-				array(
-					'status'  => 'error',
-					'message' => __( 'Amount must be greater than 0.', 'reddit-for-woocommerce' ),
-				),
-				400
-			);
-		}
 
 		// Create a new campaign. If the campaign creation fails, return an error.
 		$campaign = $this->create_campaign();
@@ -295,5 +283,30 @@ class CampaignController extends RESTBaseController {
 		}
 
 		return $ad_id;
+	}
+
+	/**
+	 * Validate the amount argument.
+	 *
+	 * @param mixed            $amount   The amount to validate.
+	 * @param \WP_REST_Request $request  The request object.
+	 * @param string           $param    The parameter name.
+	 *
+	 * @return bool|\WP_Error True if the amount is valid, WP_Error if something went wrong.
+	 */
+	public function validate_amount_callback( $amount, $request, $param ) {
+		$validation_result = rest_validate_request_arg( $amount, $request, $param );
+		if ( true !== $validation_result ) {
+			return $validation_result;
+		}
+
+		$amount = floatval( wp_unslash( $amount ) );
+		if ( $amount <= 0 ) {
+			return new \WP_Error(
+				'invalid_amount',
+				__( 'Amount must be greater than 0.', 'reddit-for-woocommerce' )
+			);
+		}
+		return true;
 	}
 }
