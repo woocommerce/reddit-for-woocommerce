@@ -43,7 +43,6 @@ class CampaignApi extends BaseAdPartnerApi {
 	 * on failure, depending on whether the required prerequisites are met.
 	 *
 	 * Requirements:
-	 * - Business ID must be saved in plugin options.
 	 * - Ads Account ID must be saved in plugin options.
 	 *
 	 * @since 0.1.0
