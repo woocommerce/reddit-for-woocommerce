@@ -176,6 +176,13 @@ final class OptionDefaults {
 	public const PROFILE_ID = 'profile_id';
 
 	/**
+	 * Option key to store the dummy purchase tracked status.
+	 *
+	 * @since 0.1.0
+	 */
+	public const DUMMY_PURCHASE_TRACKED = 'dummy_purchase_tracked';
+
+	/**
 	 * Returns default values for all known Ad Partner options.
 	 *
 	 * Used by {@see Options} to provide fallbacks when option values
@@ -187,25 +194,26 @@ final class OptionDefaults {
 	 */
 	public static function get_all(): array {
 		return array(
-			self::ONBOARDING_STATUS     => 'incomplete',
-			self::ONBOARDING_STEP       => 'accounts',
-			self::IS_JETPACK_CONNECTED  => 'no',
-			self::AD_ACCOUNT_ID         => '',
-			self::AD_ACCOUNT_NAME       => '',
-			self::BUSINESS_ID           => '',
-			self::BUSINESS_NAME         => '',
-			self::PIXEL_ENABLED         => 'yes',
-			self::PIXEL_ID              => '',
-			self::CONVERSIONS_ENABLED   => 'no',
-			self::CATALOG_ID            => '',
-			self::PRODUCT_FEED_ID       => '',
-			self::FEED_STATUS           => 'empty',
-			self::EXPORT_FILE_PATH      => '',
-			self::EXPORT_FILE_URL       => '',
-			self::EXPORT_PRODUCT_IDS    => array(),
-			self::LAST_EXPORT_TIMESTAMP => 0,
-			self::WCS_PRODUCTS_TOKEN    => '',
-			self::PROFILE_ID            => '',
+			self::ONBOARDING_STATUS      => 'incomplete',
+			self::ONBOARDING_STEP        => 'accounts',
+			self::IS_JETPACK_CONNECTED   => 'no',
+			self::AD_ACCOUNT_ID          => '',
+			self::AD_ACCOUNT_NAME        => '',
+			self::BUSINESS_ID            => '',
+			self::BUSINESS_NAME          => '',
+			self::PIXEL_ENABLED          => 'yes',
+			self::PIXEL_ID               => '',
+			self::CONVERSIONS_ENABLED    => 'no',
+			self::CATALOG_ID             => '',
+			self::PRODUCT_FEED_ID        => '',
+			self::FEED_STATUS            => 'empty',
+			self::EXPORT_FILE_PATH       => '',
+			self::EXPORT_FILE_URL        => '',
+			self::EXPORT_PRODUCT_IDS     => array(),
+			self::LAST_EXPORT_TIMESTAMP  => 0,
+			self::WCS_PRODUCTS_TOKEN     => '',
+			self::PROFILE_ID             => '',
+			self::DUMMY_PURCHASE_TRACKED => 'no',
 		);
 	}
 }

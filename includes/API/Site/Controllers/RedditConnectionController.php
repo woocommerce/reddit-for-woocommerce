@@ -322,6 +322,7 @@ class RedditConnectionController extends RESTBaseController {
 		Options::delete( OptionDefaults::FEED_STATUS );
 		Options::delete( OptionDefaults::WCS_PRODUCTS_TOKEN );
 		Options::delete( OptionDefaults::PROFILE_ID );
+		Options::delete( OptionDefaults::DUMMY_PURCHASE_TRACKED );
 		Transients::delete( TransientDefaults::REDDIT_ACCOUNT_EMAIL );
 		Transients::delete( TransientDefaults::PIXEL_SCRIPT );
 		Transients::delete( TransientDefaults::CAMPAIGN_ID );
@@ -386,6 +387,13 @@ class RedditConnectionController extends RESTBaseController {
 
 		// Mark the onboarding process as connected, if Jetpack is connected, and the business id, ad account id, and pixel id are set.
 		if ( $is_jetpack_connected && ! empty( $business_id ) && ! empty( $ad_account_id ) && ! empty( $pixel_id ) ) {
+			/**
+			 * Triggers before the Reddit onboarding process marked as completed.
+			 *
+			 * @since 0.1.0
+			 */
+			do_action( Helper::with_prefix( 'before_onboarding_complete' ) );
+
 			Options::set( OptionDefaults::ONBOARDING_STATUS, 'connected' );
 
 			// Set the profile ID.
