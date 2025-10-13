@@ -83,9 +83,6 @@ export default function PaidAdsFeaturesSection() {
 		<Section
 			className="rfw-paid-ads-features-section"
 			title={ __( 'Ad campaign', 'reddit-for-woocommerce' ) }
-			description={
-				<p>{ __( 'Lorem ipsum', 'reddit-for-woocommerce' ) }</p>
-			}
 		>
 			<Section.Card>
 				<Section.Card.Body>
