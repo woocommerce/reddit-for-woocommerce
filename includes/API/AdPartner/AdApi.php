@@ -45,11 +45,19 @@ class AdApi extends BaseAdPartnerApi {
 	 */
 	public function create( $ad_group_id ) {
 		$ad_account_id = Options::get( OptionDefaults::AD_ACCOUNT_ID );
+		$profile_id    = Options::get( OptionDefaults::PROFILE_ID );
 
 		if ( ! $ad_account_id ) {
 			return new WP_Error(
 				'ad_account_id_not_set',
 				__( 'Ad Account ID not found.', 'reddit-for-woocommerce' ),
+			);
+		}
+
+		if ( ! $profile_id ) {
+			return new WP_Error(
+				'profile_id_not_set',
+				__( 'Profile ID not found.', 'reddit-for-woocommerce' ),
 			);
 		}
 
@@ -65,7 +73,7 @@ class AdApi extends BaseAdPartnerApi {
 				'configured_status'       => 'ACTIVE',
 				'name'                    => Helper::get_store_name( 'ad' ),
 				'ad_group_id'             => $ad_group_id,
-				'profile_id'              => Options::get( OptionDefaults::PROFILE_ID ),
+				'profile_id'              => $profile_id,
 				'shopping_creative'       => array(
 					'dpa_carousel_mode' => 'AUTO',
 					'headline'          => Helper::get_ad_headline(),
