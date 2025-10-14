@@ -1,0 +1,141 @@
+.container {
+	display: grid;
+	grid-template-columns: [radio] auto [option] 156fr [metrics-start] repeat(3, 140fr);
+	align-items: center;
+	padding-bottom: wpVariables.$grid-unit-20;
+	border-bottom: 1px solid wpColors.$gray-200;
+	line-height: 16px;
+	color: wpColors.$gray-700;
+
+	:global(.gridicon) {
+		fill: currentcolor;
+	}
+}
+
+.header {
+	.metricsItem {
+		max-width: 100px;
+	}
+
+	:global(.gridicon) {
+		margin-left: wpVariables.$grid-unit-05;
+		vertical-align: middle;
+		cursor: help;
+	}
+}
+
+.row,
+.metricsGroup,
+.radioGroup {
+	display: contents;
+}
+
+.row {
+	font-size: variables.$rfw-font-smaller;
+
+	label {
+		font-size: 15px;
+		font-weight: 500;
+		color: wpColors.$black;
+	}
+
+	&:not(.customRow) .metricsItem {
+		grid-row-end: span 2;
+	}
+
+	&::before {
+		content: "";
+		grid-column: 1 / -1;
+		height: 1px;
+		margin: wpVariables.$grid-unit-20 0;
+		background-color: wpColors.$gray-200;
+	}
+}
+
+.hideRecommendations {
+	.radio {
+		display: none;
+	}
+}
+
+.rowSelected .metricsItem {
+	font-weight: 600;
+	color: wpColors.$black;
+}
+
+.customRow {
+	.customInput,
+	.metricsItem {
+		padding-top: wpVariables.$grid-unit-20;
+	}
+}
+
+.option {
+	align-content: center;
+	min-height: 20px;
+}
+
+.metricsGroup {
+	.metricsItem:first-child {
+		grid-column-start: metrics-start;
+	}
+}
+
+.customOption {
+	grid-column: option / -1;
+}
+
+.customInput {
+	grid-column-start: option;
+	padding-right: wpVariables.$grid-unit-40;
+}
+
+.customHelp,
+.customNotice {
+	grid-column: option / -1;
+}
+
+.customHelp {
+	padding-top: wpVariables.$grid-unit-10;
+	color: wpColors.$alert-red;
+}
+
+.customNotice {
+	padding-top: wpVariables.$grid-unit-30;
+	color: #755100;
+}
+
+.tooltip {
+	max-width: 250px;
+	padding: wpVariables.$grid-unit-10;
+	text-align: left;
+
+	a {
+		margin-left: wpVariables.$grid-unit-05;
+		color: currentcolor;
+	}
+}
+
+.dayUnit {
+	font-size: variables.$rfw-font-smaller;
+}
+
+.helper {
+	grid-column-start: option;
+	display: inline-flex;
+	padding-top: wpVariables.$grid-unit-05 * 1.5;
+	font-size: variables.$rfw-font-base;
+}
+
+.highlightRecommended {
+	margin-top: wpVariables.$grid-unit-05;
+	padding: wpVariables.$grid-unit-05 wpVariables.$grid-unit-10;
+	border-radius: 2px;
+	background-color: #eceefb;
+	font-size: variables.$rfw-font-smaller;
+	color: #1f2c70;
+}
+
+.budgetBadge {
+	margin-left: wpVariables.$grid-unit-10;
+}

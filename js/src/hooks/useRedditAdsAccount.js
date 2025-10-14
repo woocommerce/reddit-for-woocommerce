@@ -17,6 +17,8 @@ const useRedditAdsAccount = () => {
 	const {
 		ad_account_id: adAccountId,
 		ad_account_name: adAccountName,
+		currency,
+		symbol,
 		hasFinishedResolution,
 	} = useRedditAccountConfig();
 
@@ -24,6 +26,8 @@ const useRedditAdsAccount = () => {
 		adAccountId,
 		adAccountName,
 		hasConnection: !! adAccountId,
+		currency,
+		symbol,
 		hasFinishedResolution,
 	};
 };

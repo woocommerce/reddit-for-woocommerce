@@ -183,6 +183,13 @@ final class OptionDefaults {
 	public const DUMMY_PURCHASE_TRACKED = 'dummy_purchase_tracked';
 
 	/**
+	 * Option key to store the Ad Partner's currency.
+	 *
+	 * @since 0.1.0
+	 */
+	public const ADS_ACCOUNT_CURRENCY = 'ad_account_currency';
+
+	/**
 	 * Returns default values for all known Ad Partner options.
 	 *
 	 * Used by {@see Options} to provide fallbacks when option values
@@ -214,6 +221,7 @@ final class OptionDefaults {
 			self::WCS_PRODUCTS_TOKEN     => '',
 			self::PROFILE_ID             => '',
 			self::DUMMY_PURCHASE_TRACKED => 'no',
+			self::ADS_ACCOUNT_CURRENCY   => get_woocommerce_currency(),
 		);
 	}
 }

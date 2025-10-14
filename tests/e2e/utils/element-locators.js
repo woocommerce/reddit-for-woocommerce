@@ -164,6 +164,15 @@ export default class ElementLocators {
 	}
 
 	/**
+	 * Get the Skip ads creation button that navigates to the settings screen after click.
+	 *
+	 * @return {import('@playwright/test').Locator} The skip ads creation button locator.
+	 */
+	getSkipAdsCreationButton() {
+		return this.page.getByRole( 'button', { name: 'Skip ads creation' } );
+	}
+
+	/**
 	 * Get the modal shown after successful onboarding.
 	 *
 	 * @return {import('@playwright/test').Locator} The onboarding successful modal.

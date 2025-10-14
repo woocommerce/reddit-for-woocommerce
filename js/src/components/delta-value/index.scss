@@ -1,0 +1,9 @@
+.rfw-delta-value {
+	&.rfw-delta-value--positive {
+		color: colors.$rfw-color-green;
+	}
+
+	&.rfw-delta-value--negative {
+		color: colors.$rfw-color-red;
+	}
+}

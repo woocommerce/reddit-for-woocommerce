@@ -1,0 +1,20 @@
+.rfw-faqs-panel {
+	.components-panel__row {
+		flex-direction: column;
+		gap: 1.5em;
+
+		// overrides new styles in .components-panel__row which defined align-items: center;
+		align-items: flex-start;
+
+		p {
+			margin: 0;
+		}
+	}
+
+	.components-panel__body-title {
+		.components-panel__body-toggle.components-button {
+			padding-top: wpVariables.$grid-unit-05 * 5;
+			padding-bottom: wpVariables.$grid-unit-05 * 5;
+		}
+	}
+}

@@ -81,6 +81,7 @@ module.exports = {
 				definedTypes: [
 					...jsdocConfig.rules[ 'jsdoc/no-undefined-types' ][ 1 ]
 						.definedTypes,
+					'rfw_documentation_link_click',
 				],
 			},
 		],

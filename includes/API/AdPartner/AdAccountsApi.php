@@ -85,7 +85,7 @@ class AdAccountsApi extends BaseAdPartnerApi {
 		}
 
 		return $this->wcs->proxy_get(
-			'/v3/ad_accounts/' . $ad_account_id
+			'/ads/ad_accounts/' . $ad_account_id
 		);
 	}
 }

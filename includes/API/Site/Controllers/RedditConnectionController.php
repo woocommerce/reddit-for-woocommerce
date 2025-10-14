@@ -324,6 +324,7 @@ class RedditConnectionController extends RESTBaseController {
 		Options::delete( OptionDefaults::WCS_PRODUCTS_TOKEN );
 		Options::delete( OptionDefaults::PROFILE_ID );
 		Options::delete( OptionDefaults::DUMMY_PURCHASE_TRACKED );
+		Options::delete( OptionDefaults::ADS_ACCOUNT_CURRENCY );
 		Transients::delete( TransientDefaults::REDDIT_ACCOUNT_EMAIL );
 		Transients::delete( TransientDefaults::PIXEL_SCRIPT );
 		Transients::delete( sprintf( '%s_%s', TransientDefaults::CAMPAIGN_ID, $ad_account_id ) );
@@ -429,6 +430,14 @@ class RedditConnectionController extends RESTBaseController {
 				}
 			}
 
+			// Set the ad account currency.
+			$ad_account = $this->ad_partner_api->ad_accounts->get();
+			if ( ! is_wp_error( $ad_account ) ) {
+				$ad_account_data     = $ad_account->get_data();
+				$ad_account_currency = $ad_account_data['data']['currency'] ?? '';
+				Options::set( OptionDefaults::ADS_ACCOUNT_CURRENCY, $ad_account_currency );
+			}
+
 			/**
 			 * Triggers when the Reddit onboarding process is completed.
 			 *
@@ -448,6 +457,9 @@ class RedditConnectionController extends RESTBaseController {
 	 * @return WP_REST_Response
 	 */
 	public function get_connection_details() {
+		$currency = Options::get( OptionDefaults::ADS_ACCOUNT_CURRENCY );
+		$symbol   = html_entity_decode( get_woocommerce_currency_symbol( $currency ), ENT_QUOTES );
+
 		return rest_ensure_response(
 			array(
 				'business_id'     => Options::get( OptionDefaults::BUSINESS_ID ),
@@ -455,6 +467,8 @@ class RedditConnectionController extends RESTBaseController {
 				'ad_account_id'   => Options::get( OptionDefaults::AD_ACCOUNT_ID ),
 				'ad_account_name' => Options::get( OptionDefaults::AD_ACCOUNT_NAME ),
 				'pixel_id'        => Options::get( OptionDefaults::PIXEL_ID ),
+				'currency'        => $currency,
+				'symbol'          => $symbol,
 			)
 		);
 	}

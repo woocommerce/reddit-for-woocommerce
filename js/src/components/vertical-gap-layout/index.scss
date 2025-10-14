@@ -1,0 +1,21 @@
+.rfw-vertical-gap-layout {
+	display: flex;
+	flex-direction: column;
+	gap: calc(var(--main-gap) / 2);
+
+	&.rfw-vertical-gap-layout__medium {
+		gap: calc(var(--main-gap) / 3 * 2);
+	}
+
+	&.rfw-vertical-gap-layout__large {
+		gap: var(--main-gap);
+	}
+
+	&.rfw-vertical-gap-layout__overlap {
+		gap: 0;
+
+		> *:not(:first-child) {
+			margin-top: -1px;
+		}
+	}
+}

@@ -3,6 +3,7 @@
  */
 import { select } from '@wordpress/data';
 import { noop } from 'lodash';
+import { createHooks } from '@wordpress/hooks';
 
 /**
  * Internal dependencies
@@ -14,11 +15,23 @@ export const recordRfwEvent = noop;
 export const recordStepperChangeEvent = noop;
 export const recordStepContinueEvent = noop;
 
+export const hooks = createHooks();
+
+export const NAMESPACE = 'tracking';
+export const FILTER_ONBOARDING = 'FILTER_ONBOARDING';
+export const FILTER_BUDGET_RECOMMENDATIONS = 'FILTER_BUDGET_RECOMMENDATIONS';
+
+export const filterPropertiesMap = new Map();
+
+filterPropertiesMap.set( FILTER_ONBOARDING, [ 'context', 'step' ] );
+filterPropertiesMap.set( FILTER_BUDGET_RECOMMENDATIONS, [
+	'source',
+	'recommended_budget',
+] );
+
 /**
  * Returns an event properties with base properties.
- * - gla_version: Plugin version
- * - gla_mc_id: Google Merchant Center account ID if connected
- * - gla_ads_id: Google Ads account ID if connected
+ * - rfw_version: Plugin version
  *
  * @param {Object} [eventProperties] The event properties to be included base properties.
  * @return {Object} Event properties with base event properties.

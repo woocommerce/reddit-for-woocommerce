@@ -35,6 +35,7 @@ const store = createReduxStore( STORE_KEY, {
 		},
 		reddit: null,
 		trackConversions: null,
+		adsBudgetMetrics: [],
 		settings: {
 			catalogId: '',
 			exportFileUrl: '',

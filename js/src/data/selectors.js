@@ -179,3 +179,13 @@ export const getExistingBusinessAccounts = ( state ) => {
 export const getExistingPixels = ( state ) => {
 	return state.accounts.existingPixels;
 };
+
+/**
+ * Selector to retrieve the 'adsBudgetMetrics' property from the state.
+ *
+ * @param {Object} state - The Redux state object.
+ * @return {*} The 'adsBudgetMetrics' property from the state.
+ */
+export const getAdsBudgetMetrics = ( state ) => {
+	return state.adsBudgetMetrics;
+};
