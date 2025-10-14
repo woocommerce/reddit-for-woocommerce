@@ -7,6 +7,7 @@ import { sprintf, __ } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
+import { useAppDispatch } from '~/data';
 import useDispatchCoreNotices from '~/hooks/useDispatchCoreNotices';
 import { rfwData } from '~/constants';
 
@@ -28,6 +29,7 @@ const { adminNonce } = rfwData;
  * @see useApiFetchCallback
  */
 const useCreateCatalog = () => {
+	const { invalidateResolution } = useAppDispatch();
 	const [ createdCatalogId, setCreatedCatalogId ] = useState( '' );
 	const [ loading, setLoading ] = useState( false );
 	const { createNotice } = useDispatchCoreNotices();
@@ -49,6 +51,7 @@ const useCreateCatalog = () => {
 
 			if ( res.success ) {
 				setCreatedCatalogId( res.data.id || '' );
+				invalidateResolution( 'getSettings', [] );
 				createNotice(
 					'success',
 					__(

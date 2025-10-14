@@ -169,6 +169,13 @@ final class OptionDefaults {
 	public const WCS_PRODUCTS_TOKEN = 'wcs_products_token';
 
 	/**
+	 * Option key to store the Ad Partner's currency.
+	 *
+	 * @since 0.1.0
+	 */
+	public const ADS_ACCOUNT_CURRENCY = 'ad_account_currency';
+
+	/**
 	 * Returns default values for all known Ad Partner options.
 	 *
 	 * Used by {@see Options} to provide fallbacks when option values
@@ -198,6 +205,7 @@ final class OptionDefaults {
 			self::EXPORT_PRODUCT_IDS    => array(),
 			self::LAST_EXPORT_TIMESTAMP => 0,
 			self::WCS_PRODUCTS_TOKEN    => '',
+			self::ADS_ACCOUNT_CURRENCY  => get_woocommerce_currency(),
 		);
 	}
 }

@@ -26,9 +26,9 @@ const BillingCard = () => {
 
 	return (
 		<Section>
-			<Section.Card className="rfw-google-ads-billing-setup-card">
+			<Section.Card className="rfw-reddit-ads-billing-setup-card">
 				<Section.Card.Body>
-					<div className="rfw-google-ads-billing-setup-card__description">
+					<div className="rfw-reddit-ads-billing-setup-card__description">
 						{ __(
 							"To run ads on Reddit, you need to have billing information set up in your Reddit Ads account. If you haven't set up billing yet, please do so before continuing.",
 							'reddit-for-woocommerce'

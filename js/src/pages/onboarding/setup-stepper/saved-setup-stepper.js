@@ -4,18 +4,14 @@
 import { __ } from '@wordpress/i18n';
 import { useState } from '@wordpress/element';
 import { Stepper } from '@woocommerce/components';
-import { getHistory } from '@woocommerce/navigation';
-import { addQueryArgs } from '@wordpress/url';
 
 /**
  * Internal dependencies
  */
-import { getSettingsUrl } from '~/utils/urls';
 import { STEP_NAME_KEY_MAP } from './constants';
 import { recordStepperChangeEvent } from '~/utils/tracks';
 import SetupAccounts from './setup-accounts';
 import SetupPaidAds from './setup-paid-ads';
-import './saved-setup-stepper.scss';
 
 /**
  * @param {Object} props React props
@@ -26,15 +22,6 @@ const SavedSetupStepper = ( { savedStep } ) => {
 
 	const handleSetupAccountsContinue = () => {
 		setStep( '2' );
-	};
-
-	const handleSetupPaidAdsOnContinue = () => {
-		const settingsUrl = getSettingsUrl();
-		getHistory().push(
-			addQueryArgs( settingsUrl, {
-				onboarding: 'success',
-			} )
-		);
 	};
 
 	const handleStepClick = ( stepKey ) => {
@@ -69,11 +56,7 @@ const SavedSetupStepper = ( { savedStep } ) => {
 						'Create your campaign',
 						'reddit-for-woocommerce'
 					),
-					content: (
-						<SetupPaidAds
-							onContinue={ handleSetupPaidAdsOnContinue }
-						/>
-					),
+					content: <SetupPaidAds />,
 					onClick: handleStepClick,
 				},
 			] }
