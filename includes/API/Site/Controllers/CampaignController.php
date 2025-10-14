@@ -164,7 +164,7 @@ class CampaignController extends RESTBaseController {
 	private function create_campaign() {
 		// Get the campaign ID from the transients.
 		$ad_account_id = Options::get( OptionDefaults::AD_ACCOUNT_ID );
-		$transient_key = sprintf( '%s_%s', TransientDefaults::PRODUCT_SET_ID, $ad_account_id );
+		$transient_key = sprintf( '%s_%s', TransientDefaults::CAMPAIGN_ID, $ad_account_id );
 		$campaign_id   = Transients::get( $transient_key );
 
 		// If the campaign ID is not set, create a new campaign.
