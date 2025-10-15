@@ -261,4 +261,15 @@ class Helper {
 		// Return scalars (int, float, bool, null) as-is.
 		return $data;
 	}
+
+	/**
+	 * Convert a decimal amount to microcurrency.
+	 *
+	 * @param float $amount The amount in normal currency units.
+	 * @return int The amount in microcurrency (integer).
+	 */
+	public static function amount_to_microcurrency( float $amount ): int {
+		// Convert to float, multiply by 1,000,000, and round to nearest integer.
+		return (int) round( $amount * 1_000_000 );
+	}
 }

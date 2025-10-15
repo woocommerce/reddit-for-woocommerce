@@ -49,10 +49,12 @@ class ProductSetApi extends BaseAdPartnerApi {
 			);
 		}
 
-		return $this->wcs->proxy_get( sprintf(
-			'/ads/product_catalogs/%s/product_sets',
-			urlencode( $catalog_id )
-		) );
+		return $this->wcs->proxy_get(
+			sprintf(
+				'/ads/product_catalogs/%s/product_sets',
+				rawurlencode( $catalog_id )
+			)
+		);
 	}
 
 	/**

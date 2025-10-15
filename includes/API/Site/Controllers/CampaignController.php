@@ -209,10 +209,12 @@ class CampaignController extends RESTBaseController {
 
 		$data = $response->get_data();
 
-		$product_set = current( array_filter(
-			$data['data'],
-			fn( $ps ) => 'All Products' === $ps['name']
-		) );
+		$product_set = current(
+			array_filter(
+				$data['data'],
+				fn( $ps ) => 'All Products' === $ps['name']
+			)
+		);
 
 		return $product_set['id'] ?? new WP_Error(
 			'product_set_id_not_found',
@@ -325,9 +327,9 @@ class CampaignController extends RESTBaseController {
 	/**
 	 * Validate the amount argument.
 	 *
-	 * @param mixed            $amount   The amount to validate.
+	 * @param mixed           $amount   The amount to validate.
 	 * @param WP_REST_Request $request  The request object.
-	 * @param string           $param    The parameter name.
+	 * @param string          $param    The parameter name.
 	 *
 	 * @return bool|WP_Error True if the amount is valid, WP_Error if something went wrong.
 	 */
