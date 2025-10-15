@@ -30,6 +30,7 @@ const { adminNonce } = rfwData;
 const useCreateCatalog = () => {
 	const [ createdCatalogId, setCreatedCatalogId ] = useState( '' );
 	const [ loading, setLoading ] = useState( false );
+	const [ errorCode, setErrorCode ] = useState( 0 );
 	const { createNotice } = useDispatchCoreNotices();
 
 	const createCatalog = useCallback( async () => {
@@ -68,6 +69,8 @@ const useCreateCatalog = () => {
 						res.data.message
 					)
 				);
+
+				setErrorCode( res.data.code );
 			}
 		} else {
 			createNotice(
@@ -81,7 +84,7 @@ const useCreateCatalog = () => {
 		}
 	}, [ createNotice, setCreatedCatalogId, setLoading ] );
 
-	return { createCatalog, loading, createdCatalogId };
+	return { createCatalog, loading, createdCatalogId, errorCode };
 };
 
 export default useCreateCatalog;

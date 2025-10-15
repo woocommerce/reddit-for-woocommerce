@@ -20,7 +20,8 @@ const store = createReduxStore( STORE_KEY, {
 	reducer,
 	initialState: {
 		general: {
-			version: '0.1',
+			version: rfwData.pluginVersion,
+			adAccountId: rfwData.adsAccountId,
 		},
 		setup: {
 			status: rfwData.status,
@@ -37,6 +38,7 @@ const store = createReduxStore( STORE_KEY, {
 		trackConversions: null,
 		settings: {
 			catalogId: '',
+			catalogStatus: '',
 			exportFileUrl: '',
 			lastExportTimeStamp: '',
 			productsToken: '',
