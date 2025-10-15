@@ -15,6 +15,8 @@ use RedditForWooCommerce\Utils\Storage\OptionDefaults;
 use RedditForWooCommerce\Utils\Storage\Options;
 use RedditForWooCommerce\Utils\Storage\TransientDefaults;
 use RedditForWooCommerce\Utils\Storage\Transients;
+use WP_REST_Request;
+use WP_Error;
 
 /**
  * Controller for the `/campaigns` endpoint.
@@ -87,7 +89,7 @@ class CampaignController extends RESTBaseController {
 	 *
 	 * @since 0.1.0
 	 *
-	 * @param \WP_REST_Request $request REST request object.
+	 * @param WP_REST_Request $request REST request object.
 	 *
 	 * @return WP_REST_Response
 	 */
@@ -98,6 +100,7 @@ class CampaignController extends RESTBaseController {
 
 		// Create a new campaign. If the campaign creation fails, return an error.
 		$campaign = $this->create_campaign();
+
 		if ( is_wp_error( $campaign ) ) {
 			return new WP_REST_Response(
 				array(
@@ -109,19 +112,21 @@ class CampaignController extends RESTBaseController {
 		}
 
 		// Create a new product set for the catalog. If the product set creation fails, return an error.
-		$product_set = $this->create_product_set();
-		if ( is_wp_error( $product_set ) ) {
+		$product_set_id = $this->get_product_set_id();
+
+		if ( is_wp_error( $product_set_id ) ) {
 			return new WP_REST_Response(
 				array(
 					'status'  => 'error',
-					'message' => $product_set->get_error_message(),
+					'message' => $product_set_id->get_error_message(),
 				),
 				500
 			);
 		}
 
 		// Create a new ad group for the campaign to set the daily budget.
-		$ad_group = $this->create_ad_group( $campaign, $product_set, $amount );
+		$ad_group = $this->create_ad_group( $campaign, $product_set_id, $amount );
+
 		if ( is_wp_error( $ad_group ) ) {
 			return new WP_REST_Response(
 				array(
@@ -134,6 +139,7 @@ class CampaignController extends RESTBaseController {
 
 		// Create a new ad for the campaign.
 		$ad = $this->create_ad( $ad_group );
+
 		if ( is_wp_error( $ad ) ) {
 			return new WP_REST_Response(
 				array(
@@ -159,7 +165,7 @@ class CampaignController extends RESTBaseController {
 	/**
 	 * Create a campaign.
 	 *
-	 * @return string|\WP_Error Campaign ID or WP_Error if something went wrong.
+	 * @return string|WP_Error Campaign ID or WP_Error if something went wrong.
 	 */
 	private function create_campaign() {
 		// Get the campaign ID from the transients.
@@ -178,7 +184,7 @@ class CampaignController extends RESTBaseController {
 			$campaign_data = $campaign->get_data();
 			$campaign_id   = $campaign_data['data']['id'] ?? '';
 			if ( empty( $campaign_id ) ) {
-				return new \WP_Error(
+				return new WP_Error(
 					'something_went_wrong',
 					__( 'Something went wrong while creating the campaign.', 'reddit-for-woocommerce' ),
 				);
@@ -191,9 +197,33 @@ class CampaignController extends RESTBaseController {
 	}
 
 	/**
+	 * Returns the product set ID of the set that is created by Reddit when
+	 * a Catalog is created. This ID refers to the set pointing to All Products.
+	 */
+	private function get_product_set_id() {
+		$response = $this->ad_partner_api->product_sets->get_all_products_set_id();
+
+		if ( is_wp_error( $response ) ) {
+			return $response;
+		}
+
+		$data = $response->get_data();
+
+		$product_set = current( array_filter(
+			$data['data'],
+			fn( $ps ) => 'All Products' === $ps['name']
+		) );
+
+		return $product_set['id'] ?? new WP_Error(
+			'product_set_id_not_found',
+			__( 'Product set ID not found', 'reddit-for-woocommerce' )
+		);
+	}
+
+	/**
 	 * Create a product set.
 	 *
-	 * @return string|\WP_Error Product set ID or WP_Error if something went wrong.
+	 * @return string|WP_Error Product set ID or WP_Error if something went wrong.
 	 */
 	private function create_product_set() {
 		// Get the product set ID from the transients.
@@ -213,7 +243,7 @@ class CampaignController extends RESTBaseController {
 			$product_set_id   = $product_set_data['data']['id'] ?? '';
 
 			if ( empty( $product_set_id ) ) {
-				return new \WP_Error(
+				return new WP_Error(
 					'something_went_wrong',
 					__( 'Something went wrong while creating the product set.', 'reddit-for-woocommerce' ),
 				);
@@ -236,7 +266,7 @@ class CampaignController extends RESTBaseController {
 	 * @param string $product_set_id Product set ID.
 	 * @param string $daily_budget   Daily budget.
 	 *
-	 * @return string|\WP_Error Ad group ID or WP_Error if something went wrong.
+	 * @return string|WP_Error Ad group ID or WP_Error if something went wrong.
 	 */
 	private function create_ad_group( $campaign_id, $product_set_id, $daily_budget ) {
 		$ad_group = $this->ad_partner_api->ad_groups->create(
@@ -256,7 +286,7 @@ class CampaignController extends RESTBaseController {
 		$ad_group_id   = $ad_group_data['data']['id'] ?? '';
 
 		if ( empty( $ad_group_id ) ) {
-			return new \WP_Error(
+			return new WP_Error(
 				'something_went_wrong',
 				__( 'Something went wrong while creating the ad group.', 'reddit-for-woocommerce' ),
 			);
@@ -270,7 +300,7 @@ class CampaignController extends RESTBaseController {
 	 *
 	 * @param string $ad_group_id Ad group ID.
 	 *
-	 * @return string|\WP_Error Ad ID or WP_Error if something went wrong.
+	 * @return string|WP_Error Ad ID or WP_Error if something went wrong.
 	 */
 	private function create_ad( $ad_group_id ) {
 		// Create a new ad for the campaign.
@@ -283,7 +313,7 @@ class CampaignController extends RESTBaseController {
 		$ad_id   = $ad_data['data']['id'] ?? '';
 
 		if ( empty( $ad_id ) ) {
-			return new \WP_Error(
+			return new WP_Error(
 				'something_went_wrong',
 				__( 'Something went wrong while creating the ad.', 'reddit-for-woocommerce' ),
 			);
@@ -296,10 +326,10 @@ class CampaignController extends RESTBaseController {
 	 * Validate the amount argument.
 	 *
 	 * @param mixed            $amount   The amount to validate.
-	 * @param \WP_REST_Request $request  The request object.
+	 * @param WP_REST_Request $request  The request object.
 	 * @param string           $param    The parameter name.
 	 *
-	 * @return bool|\WP_Error True if the amount is valid, WP_Error if something went wrong.
+	 * @return bool|WP_Error True if the amount is valid, WP_Error if something went wrong.
 	 */
 	public function validate_amount_callback( $amount, $request, $param ) {
 		$validation_result = rest_validate_request_arg( $amount, $request, $param );
@@ -309,7 +339,7 @@ class CampaignController extends RESTBaseController {
 
 		$amount = floatval( wp_unslash( $amount ) );
 		if ( $amount <= 0 ) {
-			return new \WP_Error(
+			return new WP_Error(
 				'invalid_amount',
 				__( 'Amount must be greater than 0.', 'reddit-for-woocommerce' )
 			);

@@ -32,6 +32,28 @@ use WP_Error;
  * @since 0.1.0
  */
 class ProductSetApi extends BaseAdPartnerApi {
+	/**
+	 * Returns the list of all product sets.
+	 *
+	 * @since 0.1.0
+	 *
+	 * @return \WP_REST_Response|WP_Error REST response from WCS or error if inputs are missing.
+	 */
+	public function get_all_products_set_id() {
+		$catalog_id = Options::get( OptionDefaults::CATALOG_ID );
+
+		if ( ! $catalog_id ) {
+			return new WP_Error(
+				'catalog_id_not_set',
+				__( 'Catalog ID not found, Please create a catalog first.', 'reddit-for-woocommerce' ),
+			);
+		}
+
+		return $this->wcs->proxy_get( sprintf(
+			'/ads/product_catalogs/%s/product_sets',
+			urlencode( $catalog_id )
+		) );
+	}
 
 	/**
 	 * Creates a product set for the current merchant business.

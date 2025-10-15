@@ -20,6 +20,7 @@ use RedditForWooCommerce\Admin\Export\BatchExportJob;
 use RedditForWooCommerce\Utils\Storage\Options;
 use RedditForWooCommerce\Utils\Storage\OptionDefaults;
 use RedditForWooCommerce\API\AdPartner\AdPartnerApi;
+use WC_Product;
 
 /**
  * Handles batch-based product export via Action Scheduler.
@@ -86,6 +87,13 @@ class ProductExportService {
 	 */
 	public function register_hooks(): void {
 		$this->job->cache_builder->register();
+
+		add_filter(
+			Helper::with_prefix( 'filter_builder_row' ),
+			array( $this, 'allow_only_physical_products' ),
+			10,
+			2
+		);
 
 		add_action(
 			Helper::with_prefix( 'onboarding_complete' ),
@@ -489,5 +497,28 @@ class ProductExportService {
 				'message' => __( 'Catalog created successfully.', 'reddit-for-woocommerce' ),
 			)
 		);
+	}
+
+	/**
+	 * Virtual and downloaded products are excluded from CSV exports because
+	 * DPA (Dynamic Product Ads) only allows physical products.
+	 *
+	 * {@see https://business.reddithelp.com/s/article/dynamic-product-ads}
+	 *
+	 * @param array      $row     Row of a CSV describing product properties.
+	 * @param WC_Product $product A WooCommerce product.
+	 *
+	 * @return array
+	 */
+	public function allow_only_physical_products( $row, $product ) {
+		if ( ! $product instanceof WC_Product ) {
+			return null;
+		}
+
+		if ( $product->is_virtual() || $product->is_downloadable() ) {
+			return null;
+		}
+
+		return $row;
 	}
 }
