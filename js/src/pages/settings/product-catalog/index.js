@@ -18,6 +18,18 @@ import './index.scss';
 import CatalogRoleNotice from './catalog-role-notice';
 
 /**
+ * Clicking on the button to regenerate the product catalog CSV file.
+ *
+ * @event rfw_regenerate_csv_button_click
+ */
+
+/**
+ * Clicking on the button to generate the product catalog CSV file.
+ *
+ * @event rfw_generate_csv_button_click
+ */
+
+/**
  * ProductCatalog component for managing and exporting the product catalog as a CSV file.
  *
  * This component allows users to:
@@ -27,6 +39,9 @@ import CatalogRoleNotice from './catalog-role-notice';
  * - See contextual help and documentation links.
  *
  * State management includes tracking export progress, file URL, last export time, and heartbeat connection.
+ *
+ * @fires rfw_regenerate_csv_button_click When the user clicks on the button to regenerate the product catalog CSV file.
+ * @fires rfw_generate_csv_button_click When the user clicks on the button to generate the product catalog CSV file.
  *
  * @return {JSX.Element} The rendered ProductCatalog settings UI.
  */
@@ -122,6 +137,8 @@ const ProductCatalog = () => {
 						variant="secondary"
 						onClick={ handleOnGenerateCsvClick }
 						loading={ exportInProgress }
+						eventName="rfw_regenerate_csv_button_click"
+						eventProps={ { context: 'settings' } }
 					>
 						{ __( 'Regenerate CSV', 'reddit-for-woocommerce' ) }
 					</AppButton>
@@ -134,6 +151,8 @@ const ProductCatalog = () => {
 				variant="secondary"
 				onClick={ handleOnGenerateCsvClick }
 				loading={ exportInProgress }
+				eventName="rfw_generate_csv_button_click"
+				eventProps={ { context: 'settings' } }
 			>
 				{ __( 'Generate CSV', 'reddit-for-woocommerce' ) }
 			</AppButton>

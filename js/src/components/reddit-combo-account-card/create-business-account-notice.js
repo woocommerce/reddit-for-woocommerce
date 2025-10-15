@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { __ } from '@wordpress/i18n';
+import { createInterpolateElement } from '@wordpress/element';
 
 /**
  * Internal dependencies
@@ -32,9 +33,14 @@ const CreateBusinessAccountNotice = () => {
 			className="rfw-reddit-create-business-account-notice"
 		>
 			<p>
-				{ __(
-					"We couldn't find a Reddit Business Account connected to your user.",
-					'reddit-for-woocommerce'
+				{ createInterpolateElement(
+					__(
+						"We couldn't find a Reddit Business Account. Create one, then come back and click <strong>Connect to a different Reddit account</strong> to link it.",
+						'reddit-for-woocommerce'
+					),
+					{
+						strong: <strong />,
+					}
 				) }
 			</p>
 			<CreateBusinessAccountButton isPrimary />

@@ -110,6 +110,11 @@ final class OptionDefaults {
 	public const CATALOG_ID = 'catalog_id';
 
 	/**
+	 * Option key indicating whether the catalog has been created.
+	 */
+	public const CATALOG_STATUS = 'catalog_status';
+
+	/**
 	 * Option key for the Ad Partner's Product Feed ID.
 	 *
 	 * @since 0.1.0

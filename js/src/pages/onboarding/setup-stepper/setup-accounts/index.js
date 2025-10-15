@@ -26,6 +26,17 @@ import useRedditPixelId from '~/hooks/useRedditPixelId';
 import { useAppDispatch } from '~/data';
 import './index.scss';
 
+/**
+ * Clicking on the "Continue" button to complete the onboarding process.
+ *
+ * @event rfw_onboarding_completed
+ */
+
+/**
+ * Renders the onboarding setup accounts step.
+ *
+ * @fires rfw_onboarding_completed When the user clicks on the "Continue" button to complete the onboarding process.
+ */
 const SetupAccounts = ( props ) => {
 	const { onContinue = noop } = props;
 	const { products_token: productsTokenParam } = getQuery();
@@ -103,6 +114,7 @@ const SetupAccounts = ( props ) => {
 						disabled={ isContinueButtonDisabled }
 						loading={ isSubmitting }
 						text={ __( 'Continue', 'reddit-for-woocommerce' ) }
+						eventName="rfw_onboarding_completed"
 						onClick={ handleOnClick }
 					/>
 				</StepContentActions>
