@@ -86,7 +86,6 @@ class Assets {
 				'pluginVersion'      => REDDIT_FOR_WOOCOMMERCE_VERSION,
 				'adsAccountId'       => Options::get( OptionDefaults::AD_ACCOUNT_ID ),
 				'prefix'             => Helper::with_prefix( '' ),
-				'returnUrl'          => rawurlencode( admin_url( 'admin.php?page=wc-admin&path=/reddit/setup' ) ),
 			)
 		);
 	}
