@@ -269,7 +269,8 @@ class RedditConnectionController extends RESTBaseController {
 	 * @return WP_REST_Response
 	 */
 	public function delete_connection() {
-		$catalog_id = Options::get( OptionDefaults::CATALOG_ID );
+		$catalog_id    = Options::get( OptionDefaults::CATALOG_ID );
+		$ad_account_id = Options::get( OptionDefaults::AD_ACCOUNT_ID );
 
 		// Delete the catalog if it exists.
 		if ( $catalog_id ) {
@@ -321,9 +322,13 @@ class RedditConnectionController extends RESTBaseController {
 		Options::delete( OptionDefaults::CATALOG_ID );
 		Options::delete( OptionDefaults::FEED_STATUS );
 		Options::delete( OptionDefaults::WCS_PRODUCTS_TOKEN );
+		Options::delete( OptionDefaults::PROFILE_ID );
+		Options::delete( OptionDefaults::DUMMY_PURCHASE_TRACKED );
 		Options::delete( OptionDefaults::ADS_ACCOUNT_CURRENCY );
 		Transients::delete( TransientDefaults::REDDIT_ACCOUNT_EMAIL );
 		Transients::delete( TransientDefaults::PIXEL_SCRIPT );
+		Transients::delete( sprintf( '%s_%s', TransientDefaults::CAMPAIGN_ID, $ad_account_id ) );
+		Transients::delete( sprintf( '%s_%s', TransientDefaults::PRODUCT_SET_ID, $ad_account_id ) );
 
 		/**
 		 * Triggers when Reddit is disconnected.
@@ -384,15 +389,45 @@ class RedditConnectionController extends RESTBaseController {
 
 		// Mark the onboarding process as connected, if Jetpack is connected, and the business id, ad account id, and pixel id are set.
 		if ( $is_jetpack_connected && ! empty( $business_id ) && ! empty( $ad_account_id ) && ! empty( $pixel_id ) ) {
+			/**
+			 * Triggers before the Reddit onboarding process marked as completed.
+			 *
+			 * @since 0.1.0
+			 */
+			do_action( Helper::with_prefix( 'before_onboarding_complete' ) );
+
 			Options::set( OptionDefaults::ONBOARDING_STATUS, 'connected' );
 
+			// Set the profile ID.
+			$member = $this->ad_partner_api->members->me();
+
+			if ( is_wp_error( $member ) ) {
+				$logger = wc_get_logger();
+				$logger->alert(
+					'Reddit member not found.',
+				);
+			} else {
+				$member_data = $member->get_data();
+				if ( ! empty( $member_data['data'] ) ) {
+					Options::set( OptionDefaults::PROFILE_ID, $member_data['data']['id'] );
+				}
+			}
+
+			// Create a new catalog for the business.
 			$response = $this->ad_partner_api->catalog->create();
 
 			if ( is_wp_error( $response ) ) {
-				$logger = wc_get_logger();
+				$error_data = $response->get_error_data();
+				$error_body = isset( $error_data['body'] ) ? json_decode( $error_data['body'], true ) : array();
+				$logger     = wc_get_logger();
 				$logger->alert(
 					'Catalog generation failed with error code: ' . $response->get_error_code(),
+					$error_body
 				);
+
+				if ( isset( $error_body['error']['code'] ) ) {
+					Options::set( OptionDefaults::CATALOG_STATUS, absint( $error_body['error']['code'] ) );
+				}
 			} else {
 				$data         = $response->get_data();
 				$catalog_data = $data['data'] ?? array();

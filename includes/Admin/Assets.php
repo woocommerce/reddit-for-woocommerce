@@ -82,6 +82,9 @@ class Assets {
 				'exportFileUrl'      => file_exists( $csv_path ) ? Options::get( OptionDefaults::EXPORT_FILE_URL ) : '',
 				'lastTimestamp'      => Helper::get_formatted_timestamp( Options::get( OptionDefaults::LAST_EXPORT_TIMESTAMP ) ),
 				'slug'               => 'rfw',
+				'trackingSlug'       => 'redtwoo',
+				'pluginVersion'      => REDDIT_FOR_WOOCOMMERCE_VERSION,
+				'adsAccountId'       => Options::get( OptionDefaults::AD_ACCOUNT_ID ),
 				'prefix'             => Helper::with_prefix( '' ),
 			)
 		);

@@ -70,10 +70,13 @@ function BudgetMetrics( { formatAmount, metrics } ) {
  */
 export default function BudgetSetup( { hideRecommendations = false } ) {
 	const formContext = useAdaptiveFormContext();
-	const { adapter, getInputProps, values } = formContext;
+	const { adapter, getInputProps, setValue, values } = formContext;
 	const { budgetRecommendation } = adapter;
 	const { amount } = values;
 	const { adsCurrencyConfig, formatAmount } = useAdsCurrency();
+	const currencyPrecision = Number.isInteger( adsCurrencyConfig?.precision )
+		? adsCurrencyConfig.precision
+		: undefined;
 
 	const [ budget, setBudget ] = useState( amount );
 	const debouncedSetBudget = useDebounce( setBudget, 1000 );
@@ -82,6 +85,57 @@ export default function BudgetSetup( { hideRecommendations = false } ) {
 	useEffect( () => {
 		debouncedSetBudget( amount );
 	}, [ debouncedSetBudget, amount ] );
+
+	useEffect( () => {
+		const { level } = values;
+
+		if ( ! level || level === 'custom' ) {
+			return;
+		}
+
+		let nextAmount;
+
+		if ( level === 'current' ) {
+			nextAmount = values.currentAmount;
+		} else {
+			nextAmount = budgetRecommendation?.[ level ]?.dailyBudget;
+		}
+
+		const normalizedNextAmount = Number( nextAmount );
+
+		if ( ! Number.isFinite( normalizedNextAmount ) ) {
+			return;
+		}
+
+		const normalizedCurrentAmount = Number( values.amount );
+
+		let amountsMatch;
+
+		if ( Number.isFinite( normalizedCurrentAmount ) ) {
+			if ( currencyPrecision !== undefined ) {
+				amountsMatch =
+					round( normalizedCurrentAmount, currencyPrecision ) ===
+					round( normalizedNextAmount, currencyPrecision );
+			} else {
+				amountsMatch = normalizedCurrentAmount === normalizedNextAmount;
+			}
+		} else {
+			amountsMatch = false;
+		}
+
+		if ( amountsMatch ) {
+			return;
+		}
+
+		setValue( 'amount', normalizedNextAmount );
+	}, [
+		budgetRecommendation,
+		currencyPrecision,
+		setValue,
+		values.amount,
+		values.currentAmount,
+		values.level,
+	] );
 
 	const options = [ 'high', 'recommended', 'low' ].reduce( ( acc, level ) => {
 		const item = hideRecommendations

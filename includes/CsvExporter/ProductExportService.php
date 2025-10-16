@@ -20,6 +20,7 @@ use RedditForWooCommerce\Admin\Export\BatchExportJob;
 use RedditForWooCommerce\Utils\Storage\Options;
 use RedditForWooCommerce\Utils\Storage\OptionDefaults;
 use RedditForWooCommerce\API\AdPartner\AdPartnerApi;
+use WC_Product;
 
 /**
  * Handles batch-based product export via Action Scheduler.
@@ -86,6 +87,13 @@ class ProductExportService {
 	 */
 	public function register_hooks(): void {
 		$this->job->cache_builder->register();
+
+		add_filter(
+			Helper::with_prefix( 'filter_builder_row' ),
+			array( $this, 'allow_only_physical_products' ),
+			10,
+			2
+		);
 
 		add_action(
 			Helper::with_prefix( 'onboarding_complete' ),
@@ -452,13 +460,21 @@ class ProductExportService {
 		$response = $this->ad_partner_api->catalog->create();
 
 		if ( is_wp_error( $response ) ) {
-			$logger = wc_get_logger();
+			$error_data = $response->get_error_data();
+			$error_body = isset( $error_data['body'] ) ? json_decode( $error_data['body'], true ) : array();
+			$logger     = wc_get_logger();
 			$logger->alert(
 				'Catalog creation failed with error code' . $response->get_error_code(),
+				$error_body
 			);
+
+			if ( isset( $error_body['error']['code'] ) ) {
+				Options::set( OptionDefaults::CATALOG_STATUS, absint( $error_body['error']['code'] ) );
+			}
 
 			wp_send_json_error(
 				array(
+					'code'    => (string) $error_body['error']['code'] ?? '',
 					'message' => $response->get_error_message(),
 				)
 			);
@@ -489,5 +505,28 @@ class ProductExportService {
 				'message' => __( 'Catalog created successfully.', 'reddit-for-woocommerce' ),
 			)
 		);
+	}
+
+	/**
+	 * Virtual and downloaded products are excluded from CSV exports because
+	 * DPA (Dynamic Product Ads) only allows physical products.
+	 *
+	 * {@see https://business.reddithelp.com/s/article/dynamic-product-ads}
+	 *
+	 * @param array      $row     Row of a CSV describing product properties.
+	 * @param WC_Product $product A WooCommerce product.
+	 *
+	 * @return array
+	 */
+	public function allow_only_physical_products( $row, $product ) {
+		if ( ! $product instanceof WC_Product ) {
+			return null;
+		}
+
+		if ( $product->is_virtual() || $product->is_downloadable() ) {
+			return null;
+		}
+
+		return $row;
 	}
 }

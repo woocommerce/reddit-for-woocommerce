@@ -52,5 +52,6 @@ class SetupService {
 		( new Controllers\OnboardingController() )->register_routes();
 		( new Controllers\RedditConnectionController( $wcs_client, $ad_partner_api ) )->register_routes();
 		( new Controllers\SettingsController() )->register_routes();
+		( new Controllers\CampaignController( $wcs_client, $ad_partner_api ) )->register_routes();
 	}
 }

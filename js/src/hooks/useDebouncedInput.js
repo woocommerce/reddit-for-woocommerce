@@ -8,7 +8,7 @@ import { useDebounce } from '@wordpress/compose';
  * Helper hook for input fields that need to debounce the value before using it.
  *
  * @param {string} [defaultValue=''] The initial value for the input.
- * @return {[string, Function, string]}
+ * @return {Array.<string|Function>}
  *   A tuple containing:
  *   - The current input value.
  *   - A setter function to update the input value.

@@ -14,6 +14,14 @@ import useDispatchCoreNotices from '~/hooks/useDispatchCoreNotices';
 import AccountCard from '~/components/account-card';
 import SpinnerCard from '~/components/spinner-card';
 import './index.scss';
+import { recordRfwEvent } from '~/utils/tracks';
+
+/**
+ * Toggle the Conversions API tracking.
+ *
+ * @event rfw_conversion_tracking_toggle
+ * @property {string} status (`on`\|`off`) - indicates the status of the Conversions API tracking.
+ */
 
 /**
  * ConversionsAPI component for managing the tracking setting.
@@ -21,6 +29,8 @@ import './index.scss';
  * Renders a card UI allowing users to enable or disable server-side conversion event tracking.
  * Handles asynchronous state updates and displays success notifications upon status change.
  * Shows a loading spinner while the current tracking status is being resolved.
+ *
+ * @fires rfw_conversion_tracking_toggle When the user toggles the Conversions API tracking.
  *
  * @return {JSX.Element} The rendered ConversionsAPI settings card.
  */
@@ -32,6 +42,9 @@ const ConversionsAPI = () => {
 
 	const toggleTrackConversions = useCallback( async () => {
 		await updateSettings( { trackConversions: ! isCapiEnabled } );
+		recordRfwEvent( 'rfw_conversion_tracking_toggle', {
+			status: ! isCapiEnabled ? 'on' : 'off',
+		} );
 	}, [ updateSettings, isCapiEnabled ] );
 
 	const handleCapiStatusOnChange = async () => {

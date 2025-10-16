@@ -36,6 +36,7 @@ const textDict = {
 				'reddit-for-woocommerce'
 			),
 		],
+		eventName: 'rfw_disconnect_all_accounts_confirm_button_click',
 	},
 	[ REDDIT_ACCOUNT ]: {
 		title: __( 'Disconnect Reddit account', 'reddit-for-woocommerce' ),
@@ -57,9 +58,27 @@ const textDict = {
 				'reddit-for-woocommerce'
 			),
 		],
+		eventName: 'rfw_disconnect_reddit_account_confirm_modal_button_click',
 	},
 };
 
+/**
+ * Confirm the action to disconnect the Reddit account.
+ *
+ * @event rfw_disconnect_reddit_account_confirm_modal_button_click
+ */
+
+/**
+ * Renders a modal to confirm the action to disconnect the Reddit account.
+ *
+ * @fires rfw_disconnect_reddit_account_confirm_modal_button_click When the user confirms the action to disconnect the Reddit account.
+ *
+ * @param {Object} props React props
+ * @param {string} props.disconnectTarget The target to disconnect.
+ * @param {Function} props.onRequestClose Callback to close the modal.
+ * @param {Function} props.onDisconnected Callback to be called when the disconnected action is completed.
+ * @param {Function} props.disconnectAction Callback for disconnecting the account.
+ */
 export default function ConfirmModal( {
 	disconnectTarget,
 	onRequestClose,
@@ -70,7 +89,7 @@ export default function ConfirmModal( {
 	const [ isDisconnecting, setDisconnecting ] = useState( false );
 	const dispatcher = useAppDispatch();
 
-	const { title, confirmButton, confirmation, contents } =
+	const { title, confirmButton, confirmation, contents, eventName } =
 		textDict[ disconnectTarget ];
 
 	const handleRequestClose = () => {
@@ -127,6 +146,7 @@ export default function ConfirmModal( {
 					loading={ isDisconnecting }
 					disabled={ ! isAgreed }
 					onClick={ handleConfirmClick }
+					eventName={ eventName }
 				>
 					{ confirmButton }
 				</AppButton>,

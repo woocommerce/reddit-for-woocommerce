@@ -111,11 +111,18 @@ export default function CampaignAssetsForm( {
 
 	const validateCampaignWithMinimumAmount = ( values ) => {
 		return validateCampaign( values, {
+			dailyBudget: budgetRecommendation.dailyBudgetBaseline,
 			formatAmount,
 		} );
 	};
 
 	const handleChange = function ( ...args ) {
+		const values = args?.[ 1 ];
+
+		if ( values ) {
+			injectDailyBudget( values, budgetRecommendation );
+		}
+
 		if ( adaptiveFormProps.onChange ) {
 			return adaptiveFormProps.onChange.apply( this, args );
 		}
@@ -134,6 +141,7 @@ export default function CampaignAssetsForm( {
 					initialCampaign,
 					{
 						level: 'recommended',
+						amount: budgetRecommendation.recommendedDailyBudget,
 					},
 					budgetRecommendation
 				),
