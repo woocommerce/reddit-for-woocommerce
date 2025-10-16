@@ -201,7 +201,8 @@ class CampaignController extends RESTBaseController {
 	 * a Catalog is created. This ID refers to the set pointing to All Products.
 	 */
 	private function get_product_set_id() {
-		$response = $this->ad_partner_api->product_sets->get_all_products_set_id();
+		$product_set_id = null;
+		$response       = $this->ad_partner_api->product_sets->get_all_products_set_id();
 
 		if ( is_wp_error( $response ) ) {
 			return $response;
@@ -216,7 +217,13 @@ class CampaignController extends RESTBaseController {
 			)
 		);
 
-		return $product_set['id'] ?? new WP_Error(
+		if ( ! empty( $product_set['id'] ) ) {
+			return $product_set['id'];
+		}
+
+		$product_set_id = $this->create_product_set();
+
+		return $product_set_id ?? new WP_Error(
 			'product_set_id_not_found',
 			__( 'Product set ID not found', 'reddit-for-woocommerce' )
 		);
