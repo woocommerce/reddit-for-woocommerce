@@ -206,13 +206,17 @@ class RedditConnectionController extends RESTBaseController {
 
 		$oauth_url_encoded = rawurlencode( $data['oauth_url'] );
 
-		/*
-		 * We are using the ads.reddit.com URL to redirect the user to register a business account there
-		 * and the user will be redirected back to the URL we pass in the `dest-ext` parameter, which is the OAuth
-		 * URL to complete the connection.
+		/**
+		 * Builds the Reddit Ads connection URL for initiating a business account link.
 		 *
-		 * The user will be redirected to the OAuth URL after completing the business account registration.
-		 * or it will redirect directly if the user is already logged in.
+		 * The user is redirected to `https://ads.reddit.com/register/`, which handles both login
+		 * and registration. If the user is already logged into their Reddit account, they are
+		 * immediately redirected to the URL provided in the `dest-ext` parameter (the encoded
+		 * OAuth URL). Otherwise, they will complete registration or login before being redirected there.
+		 *
+		 * @param string $oauth_url_encoded The encoded OAuth URL used for redirection after login or registration.
+		 *
+		 * @return string The complete Reddit Ads connection URL.
 		 */
 		$connect_url = sprintf( 'https://ads.reddit.com/register/?utm_source=partnership&utm_name=woo_commerce&dest-ext=%s', $oauth_url_encoded );
 
