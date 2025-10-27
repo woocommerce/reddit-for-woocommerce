@@ -13,6 +13,7 @@ import LinkedAccounts from './linked-accounts';
 import Section from '~/components/section';
 import ProductCatalog from './product-catalog';
 import ConversionsAPI from './conversions-api';
+import RedditAds from './reddit-ads';
 import useRedditAccount from '~/hooks/useRedditAccount';
 import OnboardingSuccessModal from '~/components/onboarding-success-modal';
 import { getOnboardingUrl } from '~/utils/urls';
@@ -41,6 +42,12 @@ const Settings = () => {
 				title={ __( 'Product Catalog', 'reddit-for-woocommerce' ) }
 			>
 				<ProductCatalog />
+			</Section>
+
+			<Section
+				title={ __( 'Reddit Ads', 'reddit-for-woocommerce' ) }
+			>
+				<RedditAds />
 			</Section>
 
 			<Section
