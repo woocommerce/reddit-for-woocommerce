@@ -142,7 +142,9 @@ test.describe( 'Reddit Settings', () => {
 		await expect( redditAccountCard ).toContainText(
 			'Pixel ID: pixel-def123'
 		);
-		await expect( redditAccountCard.locator( '.rfw-connected-icon-label' ) ).toBeVisible();
+		await expect(
+			redditAccountCard.locator( '.rfw-connected-icon-label' )
+		).toBeVisible();
 	} );
 
 	test( 'Reddit account disconnection', async () => {
