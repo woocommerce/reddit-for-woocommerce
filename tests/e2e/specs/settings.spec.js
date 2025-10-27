@@ -131,16 +131,18 @@ test.describe( 'Reddit Settings', () => {
 		await settingPage.mockRedditAccount( connectedConfigPayload );
 		settingPage.goto();
 
-		await expect( locator.getRedditAccountCard() ).toContainText(
+		const redditAccountCard = locator.getRedditAccountCard().last();
+
+		await expect( redditAccountCard ).toContainText(
 			'Business: R4W Business'
 		);
-		await expect( locator.getRedditAccountCard() ).toContainText(
+		await expect( redditAccountCard ).toContainText(
 			'Ads Account: R4W Ad Account (ad-account-def123)'
 		);
-		await expect( locator.getRedditAccountCard() ).toContainText(
+		await expect( redditAccountCard ).toContainText(
 			'Pixel ID: pixel-def123'
 		);
-		await expect( locator.getRedditConnectedLabel() ).toBeVisible();
+		await expect( redditAccountCard.locator( '.rfw-connected-icon-label' ) ).toBeVisible();
 	} );
 
 	test( 'Reddit account disconnection', async () => {
@@ -150,7 +152,7 @@ test.describe( 'Reddit Settings', () => {
 
 		await locator.getRedditDisconnectButton().click();
 
-		await expect( locator.getRedditAccountCard() ).toContainText(
+		await expect( locator.getRedditAccountCard().last() ).toContainText(
 			'Business: R4W Business'
 		);
 
