@@ -46,7 +46,10 @@ const RedditAds = () => {
 				eventName="rfw_reddit_ads_manager_button_click"
 				eventProps={ { context: 'settings' } }
 			>
-				{ __( 'Go to my Reddit Ads Manager', 'reddit-for-woocommerce' ) }
+				{ __(
+					'Go to my Reddit Ads Manager',
+					'reddit-for-woocommerce'
+				) }
 			</AppButton>
 		);
 	};
@@ -55,10 +58,7 @@ const RedditAds = () => {
 		<>
 			<AccountCard
 				className="rfw-reddit-ads"
-				title={ __(
-					'Reddit Ads',
-					'reddit-for-woocommerce'
-				) }
+				title={ __( 'Reddit Ads', 'reddit-for-woocommerce' ) }
 				description={ getDescription() }
 				indicator={ getIndicator() }
 			></AccountCard>

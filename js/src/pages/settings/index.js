@@ -44,9 +44,7 @@ const Settings = () => {
 				<ProductCatalog />
 			</Section>
 
-			<Section
-				title={ __( 'Reddit Ads', 'reddit-for-woocommerce' ) }
-			>
+			<Section title={ __( 'Reddit Ads', 'reddit-for-woocommerce' ) }>
 				<RedditAds />
 			</Section>
 
