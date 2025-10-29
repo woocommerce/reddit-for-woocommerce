@@ -194,7 +194,7 @@ final class OptionDefaults {
 			self::BUSINESS_NAME         => '',
 			self::PIXEL_ENABLED         => 'yes',
 			self::PIXEL_ID              => '',
-			self::CONVERSIONS_ENABLED   => 'no',
+			self::CONVERSIONS_ENABLED   => 'yes',
 			self::CATALOG_ID            => '',
 			self::CATALOG_STATUS        => 'empty',
 			self::PRODUCT_FEED_ID       => '',
