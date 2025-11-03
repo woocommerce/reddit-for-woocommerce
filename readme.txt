@@ -18,12 +18,35 @@ Key features include product catalog export for Reddit's Dynamic Ads, Conversion
 
 Whether you're looking to increase brand awareness, drive sales, or re-engage existing customers, Reddit for WooCommerce provides the tools you need to create effective advertising campaigns that convert visitors into customers.
 
-== Instructions to build the plugin
+== Instructions ==
+Getting started with the Reddit for WooCommerce plugin is quick and easy! Just follow these simple steps:
+
+1. Install and activate the plugin.
+	- Once activated, go to **Marketing → Reddit** in your WordPress dashboard.
+2. Connect your WordPress.com account.
+	- On the setup screen, click **Connect** next to **WordPress.com** and sign in.
+3. Connect your Reddit Business account.
+	- Click **Connect** next to **Reddit** and follow the on-screen steps to sign in to your Reddit Business account.
+4. Complete the setup.
+	- Once both accounts are connected, click **Continue** to complete the setup process.
+5. Manage your settings.
+	- You’ll be taken to the settings page where you can turn **Conversions tracking** on or off anytime, or disconnect Reddit if needed.
+6. Verify everything is working.
+	- In your Reddit Event Manager, confirm that events are being tracked correctly.
+	- Check that your product catalog appears in your Reddit dashboard and that your products are syncing properly.
+
+== Instructions to build the plugin ==
 
 - Requires node v20 and NPM v10.
 - Requires PHP composer v2.
 - Run `npm ci && npm run build` in the plugin's root.
 - Use the generated `reddit-for-woocommerce.zip` file.
+
+== External services ==
+
+This plugin connects to a [Reddit](https://www.reddit.com) Business account to automatically sync the product catalog and track pixel and conversions events. For pixel tracking, the plugin loads the pixel script from https://www.redditstatic.com/ and sends product details, order totals, user IP address, and user agent information in the event payload if user has given consent.
+
+This service is provided by "Reddit, Inc.": [terms of use](https://redditinc.com/policies/user-agreement), [privacy policy](https://www.reddit.com/policies/privacy-policy).
 
 == FAQ ==
 
