@@ -4,12 +4,22 @@
 import { useEffect } from '@wordpress/element';
 
 /**
+ * Internal dependencies
+ */
+import useAdminMenuLink from './useAdminMenuLink';
+
+/**
  * Mocked result of parsing a page entry from {@link /js/src/index.js} by WC-admin's <Route>.
  *
  * @see https://github.com/woocommerce/woocommerce-admin/blob/release/2.7.1/client/layout/controller.js#L240-L244
  */
 const setupPage = {
 	match: { url: '/reddit/setup' },
+	wpOpenMenu: 'toplevel_page_woocommerce-marketing',
+};
+
+const settingPage = {
+	match: { url: '/reddit/setting' },
 	wpOpenMenu: 'toplevel_page_woocommerce-marketing',
 };
 
@@ -24,7 +34,25 @@ const setupPage = {
  * @see window.wpNavMenuClassChange
  */
 export default function useMenuEffect() {
+	const { currentLink } = useAdminMenuLink();
+
+	const setupLink = 'admin.php?page=wc-admin&path=%2Freddit%2Fsetup';
+	const settingsLink = 'admin.php?page=wc-admin&path=%2Freddit%2Fsettings';
+
 	return useEffect( () => {
-		window.wpNavMenuClassChange( setupPage, setupPage.match.url );
-	} );
+		if ( ! currentLink ) {
+			return;
+		}
+
+		const currentLinkHref = currentLink.getAttribute( 'href' );
+		let matchedUrl = '';
+
+		if ( setupLink === currentLinkHref ) {
+			matchedUrl = setupPage.match.url;
+		} else if ( settingsLink === currentLinkHref ) {
+			matchedUrl = settingPage.match.url;
+		}
+console.log(matchedUrl)
+		window.wpNavMenuClassChange( setupPage, matchedUrl );
+	}, [ currentLink ] );
 }
