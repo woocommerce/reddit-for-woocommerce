@@ -8,8 +8,8 @@ import { useEffect } from '@wordpress/element';
  *
  * @see https://github.com/woocommerce/woocommerce-admin/blob/release/2.7.1/client/layout/controller.js#L240-L244
  */
-const startPage = {
-	match: { url: '/reddit/start' },
+const setupPage = {
+	match: { url: '/reddit/setup' },
 	wpOpenMenu: 'toplevel_page_woocommerce-marketing',
 };
 
@@ -25,6 +25,6 @@ const startPage = {
  */
 export default function useMenuEffect() {
 	return useEffect( () => {
-		window.wpNavMenuClassChange( startPage, startPage.match.url );
+		window.wpNavMenuClassChange( setupPage, setupPage.match.url );
 	} );
 }

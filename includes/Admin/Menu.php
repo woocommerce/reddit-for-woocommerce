@@ -56,7 +56,7 @@ class Menu {
 				'id'       => 'reddit-for-woocommerce',
 				'title'    => __( 'Reddit', 'reddit-for-woocommerce' ),
 				'parent'   => 'woocommerce-marketing',
-				'path'     => '/reddit/start',
+				'path'     => '/reddit/setup',
 				'position' => 30,
 			)
 		);
