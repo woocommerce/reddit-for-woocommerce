@@ -75,6 +75,7 @@ class ConversionTrackingService implements ServiceStatusInterface {
 		Helper::register_ajax_action( 'PageVisit', array( $this, 'handle_async_page_view' ) );
 		add_action( Helper::with_prefix( 'send_conversion_event' ), array( $this->tracker, 'send' ), 10, 2 );
 		add_action( Helper::with_prefix( 'conversion_sent' ), array( $this, 'mark_as_tracked' ), 10, 2 );
+		add_action( Helper::with_prefix( 'before_onboarding_complete' ), array( $this->tracker, 'track_dummy_purchase' ) );
 	}
 
 	/**
