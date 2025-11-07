@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { useEffect } from '@wordpress/element'
+import { useEffect } from '@wordpress/element';
 
 /**
  * Internal dependencies
@@ -35,7 +35,10 @@ function useMenuLinkUpdate() {
 				? settingsUrl
 				: onboardingUrl;
 
-		if ( setupLink.getAttribute( 'href' ) === 'admin.php?page=wc-admin&path=%2Freddit%2Fsetup' ) {
+		if (
+			setupLink.getAttribute( 'href' ) ===
+			'admin.php?page=wc-admin&path=%2Freddit%2Fsetup'
+		) {
 			setupLink.setAttribute( 'href', redirectUrl );
 		}
 	}, [ setupLink ] );

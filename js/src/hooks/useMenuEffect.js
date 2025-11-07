@@ -52,7 +52,7 @@ export default function useMenuEffect() {
 		} else if ( settingsLink === currentLinkHref ) {
 			matchedUrl = settingPage.match.url;
 		}
-console.log(matchedUrl)
+
 		window.wpNavMenuClassChange( setupPage, matchedUrl );
 	}, [ currentLink ] );
 }
