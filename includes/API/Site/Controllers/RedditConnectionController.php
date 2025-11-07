@@ -218,7 +218,7 @@ class RedditConnectionController extends RESTBaseController {
 		 *
 		 * @return string The complete Reddit Ads connection URL.
 		 */
-		$connect_url = sprintf( 'https://ads.reddit.com/register/?utm_source=partnership&utm_name=woo_commerce&dest-ext=%s', $oauth_url_encoded );
+		$connect_url = sprintf( 'https://ads.reddit.com/register/?utm_source=partnership&utm_name=woo_commerce&utm_term=woo_commerce&dest-ext=%s', $oauth_url_encoded );
 
 		return rest_ensure_response(
 			array( 'url' => esc_url_raw( $connect_url ) )
