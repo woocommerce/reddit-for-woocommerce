@@ -59,10 +59,8 @@ class Assets {
 	public function enqueue_assets(): void {
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		$page = sanitize_text_field( wp_unslash( $_GET['page'] ?? '' ) );
-		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		$path = sanitize_text_field( wp_unslash( $_GET['path'] ?? '' ) );
 
-		if ( ! ( 'wc-admin' === $page && str_contains( $path, '/reddit' ) ) ) {
+		if ( ! ( 'wc-admin' === $page ) ) {
 			return;
 		}
 
