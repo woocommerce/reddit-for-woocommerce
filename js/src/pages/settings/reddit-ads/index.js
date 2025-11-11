@@ -33,7 +33,7 @@ const RedditAds = () => {
 	const getIndicator = () => {
 		const handleOnClick = () => {
 			window.open(
-				'https://ads.reddit.com/',
+				'https://ads.reddit.com/create?flow=advanced&objective=catalogSales&utm_source=partnership&utm_name=woo_commerce',
 				'_blank',
 				'noopener,noreferrer'
 			);

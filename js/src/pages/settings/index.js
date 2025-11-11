@@ -17,11 +17,13 @@ import RedditAds from './reddit-ads';
 import useRedditAccount from '~/hooks/useRedditAccount';
 import OnboardingSuccessModal from '~/components/onboarding-success-modal';
 import { getOnboardingUrl } from '~/utils/urls';
+import useMenuLinkUpdate from '~/hooks/useMenuLinkUpdate';
 import './index.scss';
 
 const Settings = () => {
 	// Make the component highlight SFW entry in the WC legacy menu.
 	useMenuEffect();
+	useMenuLinkUpdate();
 	const { isConnected, hasFinishedResolution } = useRedditAccount();
 
 	// Show onboarding success guide modal by visiting the path with a specific query `onboarding=success`.

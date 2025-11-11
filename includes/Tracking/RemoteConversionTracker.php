@@ -231,6 +231,61 @@ class RemoteConversionTracker implements ConversionTrackerInterface {
 	}
 
 	/**
+	 * Tracks a dummy purchase event during the onboarding process with latest order or sample data.
+	 *
+	 * This method is called just before the Reddit onboarding process is marked as completed.
+	 * As we want to send this as early as possible, during the onboarding process.
+	 *
+	 * This method is used to track a dummy purchase event with latest order or sample data during onboarding,
+	 * to enable the "PURCHASE" optimization goal for the ad campaign.
+	 *
+	 * Instantiates a {@see PurchaseEvent} object using the latest order ID,
+	 * generates a valid API payload, and sends it immediately to the Ad Partner
+	 *
+	 * @since 0.1.0
+	 *
+	 * @return void
+	 */
+	public function track_dummy_purchase(): void {
+		// Bail if the dummy purchase has already been tracked.
+		if ( 'yes' === Options::get( OptionDefaults::DUMMY_PURCHASE_TRACKED ) ) {
+			return;
+		}
+
+		// Get latest order.
+		$orders = wc_get_orders(
+			array(
+				'status'  => array( 'processing', 'completed', 'on-hold' ), // Paid statuses.
+				'limit'   => 1,
+				'orderby' => 'date',
+				'order'   => 'DESC',
+				'return'  => 'ids',
+			)
+		);
+
+		$latest_order_id = ! empty( $orders ) ? $orders[0] : 0;
+
+		$latest_order = wc_get_order( $latest_order_id );
+		$event        = new PurchaseEvent( $latest_order_id );
+		$payload      = $event->build_payload(
+			array(
+				'conversion_id' => $latest_order ? $latest_order->get_order_key() : wp_generate_uuid4(),
+				'user_data'     => UserIdentifier::get_user_data(),
+			)
+		);
+
+		// Trigger the send_conversion_event action to immediately send the payload to the Ad Partner.
+		do_action(
+			Helper::with_prefix( 'send_conversion_event' ),
+			$payload,
+			array( 'event' => PurchaseEvent::ID )
+		);
+
+		// Mark the dummy purchase as tracked.
+		Options::set( OptionDefaults::DUMMY_PURCHASE_TRACKED, 'yes' );
+	}
+
+	/**
 	 * Sends a previously built payload to the Ad Partner Conversions API via WCS.
 	 *
 	 * This method is intended to be triggered asynchronously by Action Scheduler

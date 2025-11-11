@@ -2,6 +2,7 @@
  * Internal dependencies
  */
 import useLayout from '~/hooks/useLayout';
+import useMenuLinkUpdate from '~/hooks/useMenuLinkUpdate';
 import SetupTopBar from './setup-top-bar';
 import SetupStepper from './setup-stepper';
 
@@ -12,6 +13,7 @@ import SetupStepper from './setup-stepper';
  */
 const Onboarding = () => {
 	useLayout( 'full-page' );
+	useMenuLinkUpdate();
 
 	return (
 		<>
