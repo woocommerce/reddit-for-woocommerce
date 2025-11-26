@@ -274,51 +274,34 @@ class CampaignController extends RESTBaseController {
 	private function create_ad_groups( $campaign_id, $product_set_id, $daily_budget ) {
 		$ad_group_ids = array();
 
-		// Create a prospecting ad group with 70% budget.
-		$prospecting_ad_group_data = array(
-			'campaign_id'    => $campaign_id,
-			'product_set_id' => $product_set_id,
-			'daily_budget'   => floatval( $daily_budget * 0.70 ),
-			'targeting_type' => 'PROSPECTING',
+		$targeting_types = array(
+			'PROSPECTING' => 0.70,
+			'RETARGETING' => 0.30,
 		);
 
-		$prospecting_ad_group = $this->ad_partner_api->ad_groups->create( $prospecting_ad_group_data );
-		if ( is_wp_error( $prospecting_ad_group ) ) {
-			return $prospecting_ad_group;
-		}
-
-		$prospecting_ad_group_data = $prospecting_ad_group->get_data();
-		$prospecting_ad_group_id   = $prospecting_ad_group_data['data']['id'] ?? '';
-		if ( empty( $prospecting_ad_group_id ) ) {
-			return new WP_Error(
-				'something_went_wrong',
-				__( 'Something went wrong while creating the prospecting ad group.', 'reddit-for-woocommerce' ),
+		foreach ( $targeting_types as $targeting_type => $budget_percentage ) {
+			$ad_group_data = array(
+				'campaign_id'    => $campaign_id,
+				'product_set_id' => $product_set_id,
+				'daily_budget'   => floatval( $daily_budget * $budget_percentage ),
+				'targeting_type' => $targeting_type,
 			);
-		}
-		$ad_group_ids[] = $prospecting_ad_group_id;
 
-		// Create a retargeting ad group with 30% budget.
-		$retargeting_ad_group_data = array(
-			'campaign_id'    => $campaign_id,
-			'product_set_id' => $product_set_id,
-			'daily_budget'   => floatval( $daily_budget * 0.30 ),
-			'targeting_type' => 'RETARGETING',
-		);
+			$ad_group = $this->ad_partner_api->ad_groups->create( $ad_group_data );
+			if ( is_wp_error( $ad_group ) ) {
+				return $ad_group;
+			}
 
-		$retargeting_ad_group = $this->ad_partner_api->ad_groups->create( $retargeting_ad_group_data );
-		if ( is_wp_error( $retargeting_ad_group ) ) {
-			return $retargeting_ad_group;
+			$ad_group_data = $ad_group->get_data();
+			$ad_group_id   = $ad_group_data['data']['id'] ?? '';
+			if ( empty( $ad_group_id ) ) {
+				return new WP_Error(
+					'something_went_wrong',
+					__( 'Something went wrong while creating the ad group.', 'reddit-for-woocommerce' ),
+				);
+			}
+			$ad_group_ids[ $targeting_type ] = $ad_group_id;
 		}
-
-		$retargeting_ad_group_data = $retargeting_ad_group->get_data();
-		$retargeting_ad_group_id   = $retargeting_ad_group_data['data']['id'] ?? '';
-		if ( empty( $retargeting_ad_group_id ) ) {
-			return new WP_Error(
-				'something_went_wrong',
-				__( 'Something went wrong while creating the retargeting ad group.', 'reddit-for-woocommerce' ),
-			);
-		}
-		$ad_group_ids[] = $retargeting_ad_group_id;
 
 		return $ad_group_ids;
 	}
