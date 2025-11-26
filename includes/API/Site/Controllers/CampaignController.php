@@ -278,7 +278,7 @@ class CampaignController extends RESTBaseController {
 		$prospecting_ad_group_data = array(
 			'campaign_id'    => $campaign_id,
 			'product_set_id' => $product_set_id,
-			'daily_budget'   => floatval( $daily_budget * 0.7 ),
+			'daily_budget'   => floatval( $daily_budget * 0.70 ),
 			'targeting_type' => 'PROSPECTING',
 		);
 
@@ -301,7 +301,7 @@ class CampaignController extends RESTBaseController {
 		$retargeting_ad_group_data = array(
 			'campaign_id'    => $campaign_id,
 			'product_set_id' => $product_set_id,
-			'daily_budget'   => floatval( $daily_budget * 0.3 ),
+			'daily_budget'   => floatval( $daily_budget * 0.30 ),
 			'targeting_type' => 'RETARGETING',
 		);
 
