@@ -59,12 +59,13 @@ class AdGroupApi extends BaseAdPartnerApi {
 		$targeting_type = $campaign_data['targeting_type'] ?? 'PROSPECTING';
 
 		$shopping_targeting = array(
-			'targeting_type'       => $targeting_type,
+			'targeting_type'       => 'PROSPECTING',
 			'lookback_window_days' => 30,
 		);
 
 		// If targeting type is retargeting, set the conversion event types and excluded conversion event types.
 		if ( 'RETARGETING' === $targeting_type ) {
+			$shopping_targeting['targeting_type']                  = 'RETARGETING';
 			$shopping_targeting['conversion_event_types']          = array(
 				'VIEW_CONTENT',
 				'ADD_TO_CART',
