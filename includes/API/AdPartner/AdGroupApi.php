@@ -56,6 +56,25 @@ class AdGroupApi extends BaseAdPartnerApi {
 		$campaign_id    = $campaign_data['campaign_id'] ?? '';
 		$product_set_id = $campaign_data['product_set_id'] ?? '';
 		$daily_budget   = $campaign_data['daily_budget'] ?? '';
+		$targeting_type = $campaign_data['targeting_type'] ?? '';
+
+		$shopping_targeting = array(
+			'targeting_type'       => 'PROSPECTING',
+			'lookback_window_days' => 30,
+		);
+		if ( 'RETARGETING' === $targeting_type ) {
+			$shopping_targeting = array(
+				'targeting_type'                  => 'RETARGETING',
+				'conversion_event_types'          => array(
+					'VIEW_CONTENT',
+					'ADD_TO_CART',
+				),
+				'excluded_conversion_event_types' => array(
+					'PURCHASE',
+				),
+				'lookback_window_days'            => 30,
+			);
+		}
 
 		if ( ! $campaign_id ) {
 			return new WP_Error(
@@ -71,29 +90,82 @@ class AdGroupApi extends BaseAdPartnerApi {
 		 */
 		$payload = array(
 			'data' => array(
-				'bid_type'                     => 'CPC',
-				'bid_value'                    => Helper::amount_to_microcurrency( 1 ),
+				'bid_type'                     => null,
 				'campaign_id'                  => $campaign_id,
 				'configured_status'            => 'ACTIVE',
 				'goal_type'                    => 'DAILY_SPEND',
 				'goal_value'                   => Helper::amount_to_microcurrency( (float) $daily_budget ),
 				'name'                         => Helper::get_store_name( 'ad_group' ),
 				'optimization_goal'            => 'PURCHASE',
-				'view_through_conversion_type' => 'SEVEN_DAY_CLICKS',
+				'view_through_conversion_type' => 'SEVEN_DAY_CLICKS_ONE_DAY_VIEW',
 				'shopping_type'                => 'DYNAMIC',
-				'shopping_targeting'           => array(
-					'targeting_type'       => 'PROSPECTING',
-					'lookback_window_days' => 30,
-				),
+				'shopping_targeting'           => $shopping_targeting,
 				'product_set_id'               => $product_set_id,
-				'bid_strategy'                 => 'MAXIMIZE_VOLUME',
+				'bid_strategy'                 => 'BIDLESS',
 				'start_time'                   => wp_date( 'c' ),
 			),
 		);
 
+		if ( ! $this->is_all_countries_allowed() ) {
+			$payload['data']['targeting'] = array(
+				'geolocations' => $this->get_allowed_countries(),
+			);
+		}
+
 		return $this->wcs->proxy_post(
 			sprintf( '/ads/ad_accounts/%s/ad_groups', rawurlencode( $ad_account_id ) ),
 			$payload
+		);
+	}
+
+	/**
+	 * Check if all countries are allowed.
+	 * If Shipping is disabled we check if all countries are allowed to sell to.
+	 * If Shipping is enabled we check if all countries are allowed to ship to.
+	 *
+	 * @return bool True if all countries are allowed, false otherwise.
+	 */
+	private function is_all_countries_allowed(): bool {
+		$shipping_countries = get_option( 'woocommerce_ship_to_countries' );
+		// If shipping is disabled or shipping countries are set to "Ship to all countries you sell to", return true if all countries are allowed.
+		if ( 'disabled' === $shipping_countries || '' === $shipping_countries ) {
+			return 'all' === get_option( 'woocommerce_allowed_countries' );
+		}
+
+		return 'all' === $shipping_countries;
+	}
+
+	/**
+	 * Get allowed countries.
+	 *
+	 * @return array Allowed countries.
+	 */
+	private function get_allowed_countries(): array {
+		// If shipping is disabled, return all countries allowed to sell to.
+		if ( 'disabled' === get_option( 'woocommerce_ship_to_countries' ) ) {
+			return array_keys( WC()->countries->get_allowed_countries() );
+		}
+		return array_keys( WC()->countries->get_shipping_countries() );
+	}
+
+	/**
+	 * Get an Ad Group REST callback.
+	 *
+	 * @since 0.1.0
+	 *
+	 * @return \WP_REST_Response|WP_Error REST response from WCS or error if inputs are missing.
+	 */
+	public function list() {
+		$ad_account_id = Options::get( OptionDefaults::AD_ACCOUNT_ID );
+
+		if ( ! $ad_account_id ) {
+			return new WP_Error(
+				'ad_account_id_not_set',
+				__( 'Ad Account ID not found.', 'reddit-for-woocommerce' ),
+			);
+		}
+		return $this->wcs->proxy_get(
+			sprintf( '/ads/ad_accounts/%s/ad_groups', rawurlencode( $ad_account_id ) )
 		);
 	}
 }
