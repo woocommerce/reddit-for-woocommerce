@@ -56,7 +56,7 @@ class AdGroupApi extends BaseAdPartnerApi {
 		$campaign_id    = $campaign_data['campaign_id'] ?? '';
 		$product_set_id = $campaign_data['product_set_id'] ?? '';
 		$daily_budget   = $campaign_data['daily_budget'] ?? '';
-		$targeting_type = $campaign_data['targeting_type'] ?? '';
+		$targeting_type = $campaign_data['targeting_type'] ?? 'PROSPECTING';
 
 		$shopping_targeting = array(
 			'targeting_type'       => $targeting_type,
