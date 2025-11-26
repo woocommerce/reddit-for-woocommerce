@@ -104,6 +104,10 @@ class AdGroupApi extends BaseAdPartnerApi {
 			),
 		);
 
+		/*
+		 * If store is not allowed to sell to all countries, set the targeting to the allowed countries.
+		 * If we don't set the targeting, the ad group will be created with the default targeting, which is global.
+		 */
 		if ( ! $this->is_all_countries_allowed() ) {
 			$payload['data']['targeting'] = array(
 				'geolocations' => $this->get_allowed_countries(),
