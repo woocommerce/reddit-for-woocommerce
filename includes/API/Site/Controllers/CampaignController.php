@@ -124,34 +124,33 @@ class CampaignController extends RESTBaseController {
 			);
 		}
 
-		// Create a new ad group for the campaign to set the daily budget.
-		$ad_group = $this->create_ad_group( $campaign, $product_set_id, $amount );
+		// Create ad groups for the campaign to set the daily budget and targeting type.
+		$ad_group_ids = $this->create_ad_groups( $campaign, $product_set_id, $amount );
 
-		if ( is_wp_error( $ad_group ) ) {
+		if ( is_wp_error( $ad_group_ids ) ) {
 			return new WP_REST_Response(
 				array(
 					'status'  => 'error',
-					'message' => $ad_group->get_error_message(),
+					'message' => $ad_group_ids->get_error_message(),
 				),
 				500
 			);
 		}
 
-		// Create a new ad for the campaign.
-		$ad = $this->create_ad( $ad_group );
+		// Create a new ads for the ad groups.
+		$ad_ids = $this->create_ads( $ad_group_ids );
 
-		if ( is_wp_error( $ad ) ) {
+		if ( is_wp_error( $ad_ids ) ) {
 			return new WP_REST_Response(
 				array(
 					'status'  => 'error',
-					'message' => $ad->get_error_message(),
+					'message' => $ad_ids->get_error_message(),
 				),
 				500
 			);
 		}
 
 		// Delete the transients.
-		Transients::delete( sprintf( '%s_%s', TransientDefaults::CAMPAIGN_ID, $ad_account_id ) );
 		Transients::delete( sprintf( '%s_%s', TransientDefaults::PRODUCT_SET_ID, $ad_account_id ) );
 
 		return rest_ensure_response(
@@ -168,29 +167,19 @@ class CampaignController extends RESTBaseController {
 	 * @return string|WP_Error Campaign ID or WP_Error if something went wrong.
 	 */
 	private function create_campaign() {
-		// Get the campaign ID from the transients.
-		$ad_account_id = Options::get( OptionDefaults::AD_ACCOUNT_ID );
-		$transient_key = sprintf( '%s_%s', TransientDefaults::CAMPAIGN_ID, $ad_account_id );
-		$campaign_id   = Transients::get( $transient_key );
+		$campaign = $this->ad_partner_api->campaigns->create();
 
-		// If the campaign ID is not set, create a new campaign.
-		if ( ! $campaign_id ) {
-			$campaign = $this->ad_partner_api->campaigns->create();
+		if ( is_wp_error( $campaign ) ) {
+			return $campaign;
+		}
 
-			if ( is_wp_error( $campaign ) ) {
-				return $campaign;
-			}
-
-			$campaign_data = $campaign->get_data();
-			$campaign_id   = $campaign_data['data']['id'] ?? '';
-			if ( empty( $campaign_id ) ) {
-				return new WP_Error(
-					'something_went_wrong',
-					__( 'Something went wrong while creating the campaign.', 'reddit-for-woocommerce' ),
-				);
-			}
-
-			Transients::set( $transient_key, $campaign_id );
+		$campaign_data = $campaign->get_data();
+		$campaign_id   = $campaign_data['data']['id'] ?? '';
+		if ( empty( $campaign_id ) ) {
+			return new WP_Error(
+				'something_went_wrong',
+				__( 'Something went wrong while creating the campaign.', 'reddit-for-woocommerce' ),
+			);
 		}
 
 		return $campaign_id;
@@ -265,9 +254,14 @@ class CampaignController extends RESTBaseController {
 	}
 
 	/**
-	 * Create an ad group.
+	 * Create ad groups.
 	 *
-	 * Creates an ad group for the campaign to set the daily budget.
+	 * Creates ad groups for the campaign to set the daily budget and targeting type.
+	 *
+	 * 2 Ad Groups are created with different targeting types and budgets (70% and 30% budget):
+	 * - Prospecting (70% budget)
+	 * - Retargeting (30% budget)
+	 *   - Retarget people with previous events: add to cart + view content
 	 *
 	 * @since 0.1.0
 	 *
@@ -275,60 +269,90 @@ class CampaignController extends RESTBaseController {
 	 * @param string $product_set_id Product set ID.
 	 * @param string $daily_budget   Daily budget.
 	 *
-	 * @return string|WP_Error Ad group ID or WP_Error if something went wrong.
+	 * @return array|WP_Error Ad group IDs or WP_Error if something went wrong.
 	 */
-	private function create_ad_group( $campaign_id, $product_set_id, $daily_budget ) {
-		$ad_group = $this->ad_partner_api->ad_groups->create(
-			array(
-				'campaign_id'    => $campaign_id,
-				'product_set_id' => $product_set_id,
-				'daily_budget'   => $daily_budget,
-			)
+	private function create_ad_groups( $campaign_id, $product_set_id, $daily_budget ) {
+		$ad_group_ids = array();
+
+		// Create a prospecting ad group with 70% budget.
+		$prospecting_ad_group_data = array(
+			'campaign_id'    => $campaign_id,
+			'product_set_id' => $product_set_id,
+			'daily_budget'   => floatval( $daily_budget * 0.7 ),
+			'targeting_type' => 'PROSPECTING',
 		);
 
-		// If the ad group creation fails, return an error.
-		if ( is_wp_error( $ad_group ) ) {
-			return $ad_group;
+		$prospecting_ad_group = $this->ad_partner_api->ad_groups->create( $prospecting_ad_group_data );
+		if ( is_wp_error( $prospecting_ad_group ) ) {
+			return $prospecting_ad_group;
 		}
 
-		$ad_group_data = $ad_group->get_data();
-		$ad_group_id   = $ad_group_data['data']['id'] ?? '';
-
-		if ( empty( $ad_group_id ) ) {
+		$prospecting_ad_group_data = $prospecting_ad_group->get_data();
+		$prospecting_ad_group_id   = $prospecting_ad_group_data['data']['id'] ?? '';
+		if ( empty( $prospecting_ad_group_id ) ) {
 			return new WP_Error(
 				'something_went_wrong',
-				__( 'Something went wrong while creating the ad group.', 'reddit-for-woocommerce' ),
+				__( 'Something went wrong while creating the prospecting ad group.', 'reddit-for-woocommerce' ),
 			);
 		}
+		$ad_group_ids[] = $prospecting_ad_group_id;
 
-		return $ad_group_id;
+		// Create a retargeting ad group with 30% budget.
+		$retargeting_ad_group_data = array(
+			'campaign_id'    => $campaign_id,
+			'product_set_id' => $product_set_id,
+			'daily_budget'   => floatval( $daily_budget * 0.3 ),
+			'targeting_type' => 'RETARGETING',
+		);
+
+		$retargeting_ad_group = $this->ad_partner_api->ad_groups->create( $retargeting_ad_group_data );
+		if ( is_wp_error( $retargeting_ad_group ) ) {
+			return $retargeting_ad_group;
+		}
+
+		$retargeting_ad_group_data = $retargeting_ad_group->get_data();
+		$retargeting_ad_group_id   = $retargeting_ad_group_data['data']['id'] ?? '';
+		if ( empty( $retargeting_ad_group_id ) ) {
+			return new WP_Error(
+				'something_went_wrong',
+				__( 'Something went wrong while creating the retargeting ad group.', 'reddit-for-woocommerce' ),
+			);
+		}
+		$ad_group_ids[] = $retargeting_ad_group_id;
+
+		return $ad_group_ids;
 	}
 
 	/**
-	 * Create an ad.
+	 * Create an ads for the ad groups.
 	 *
-	 * @param string $ad_group_id Ad group ID.
+	 * @param array $ad_group_ids Ad group IDs.
 	 *
-	 * @return string|WP_Error Ad ID or WP_Error if something went wrong.
+	 * @return array|WP_Error Ad IDs or WP_Error if something went wrong.
 	 */
-	private function create_ad( $ad_group_id ) {
-		// Create a new ad for the campaign.
-		$ad = $this->ad_partner_api->ads->create( $ad_group_id );
-		if ( is_wp_error( $ad ) ) {
-			return $ad;
+	private function create_ads( $ad_group_ids ) {
+		$ad_ids = array();
+
+		foreach ( $ad_group_ids as $ad_group_id ) {
+			// Create a new ad for the campaign.
+			$ad = $this->ad_partner_api->ads->create( $ad_group_id );
+			if ( is_wp_error( $ad ) ) {
+				return $ad;
+			}
+
+			$ad_data = $ad->get_data();
+			$ad_id   = $ad_data['data']['id'] ?? '';
+
+			if ( empty( $ad_id ) ) {
+				return new WP_Error(
+					'something_went_wrong',
+					__( 'Something went wrong while creating the ad.', 'reddit-for-woocommerce' ),
+				);
+			}
+			$ad_ids[] = $ad_id;
 		}
 
-		$ad_data = $ad->get_data();
-		$ad_id   = $ad_data['data']['id'] ?? '';
-
-		if ( empty( $ad_id ) ) {
-			return new WP_Error(
-				'something_went_wrong',
-				__( 'Something went wrong while creating the ad.', 'reddit-for-woocommerce' ),
-			);
-		}
-
-		return $ad_id;
+		return $ad_ids;
 	}
 
 	/**

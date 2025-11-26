@@ -40,13 +40,6 @@ final class TransientDefaults {
 	public const REDDIT_ACCOUNT_EMAIL = 'reddit_account_email';
 
 	/**
-	 * Transient key for storing the ID of the created campaign.
-	 *
-	 * @since 0.1.0
-	 */
-	public const CAMPAIGN_ID = 'campaign_id';
-
-	/**
 	 * Transient key for storing the ID of the created product set.
 	 *
 	 * @since 0.1.0

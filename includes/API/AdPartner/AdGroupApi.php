@@ -95,7 +95,7 @@ class AdGroupApi extends BaseAdPartnerApi {
 				'configured_status'            => 'ACTIVE',
 				'goal_type'                    => 'DAILY_SPEND',
 				'goal_value'                   => Helper::amount_to_microcurrency( (float) $daily_budget ),
-				'name'                         => Helper::get_store_name( 'ad_group' ),
+				'name'                         => Helper::get_store_name( 'ad_group_' . $targeting_type ),
 				'optimization_goal'            => 'PURCHASE',
 				'view_through_conversion_type' => 'SEVEN_DAY_CLICKS_ONE_DAY_VIEW',
 				'shopping_type'                => 'DYNAMIC',

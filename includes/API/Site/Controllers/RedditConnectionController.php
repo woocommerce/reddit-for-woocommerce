@@ -343,7 +343,6 @@ class RedditConnectionController extends RESTBaseController {
 		Options::delete( OptionDefaults::ADS_ACCOUNT_CURRENCY );
 		Transients::delete( TransientDefaults::REDDIT_ACCOUNT_EMAIL );
 		Transients::delete( TransientDefaults::PIXEL_SCRIPT );
-		Transients::delete( sprintf( '%s_%s', TransientDefaults::CAMPAIGN_ID, $ad_account_id ) );
 		Transients::delete( sprintf( '%s_%s', TransientDefaults::PRODUCT_SET_ID, $ad_account_id ) );
 
 		/**
