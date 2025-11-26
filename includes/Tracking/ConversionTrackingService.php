@@ -172,9 +172,8 @@ class ConversionTrackingService implements ServiceStatusInterface {
 	public function handle_async_add_to_cart(): void {
 		check_ajax_referer( 'capi_nonce', 'security' );
 
-		$raw_input  = filter_input( INPUT_POST, 'payload', FILTER_UNSAFE_RAW );
-		$raw_input  = wp_unslash( $raw_input );
-		$data       = json_decode( $raw_input, true );
+		$payload    = wp_unslash( $_POST['payload'] ?? '{}' ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+		$data       = json_decode( $payload, true );
 		$product_id = absint( $data['productId'] ?? 0 );
 		$quantity   = absint( $data['quantity'] ?? 0 );
 		$event_id   = sanitize_text_field( $data['conversionId'] ?? '' );
@@ -196,9 +195,8 @@ class ConversionTrackingService implements ServiceStatusInterface {
 	public function handle_async_view_content(): void {
 		check_ajax_referer( 'capi_nonce', 'security' );
 
-		$raw_input  = filter_input( INPUT_POST, 'payload', FILTER_UNSAFE_RAW );
-		$raw_input  = wp_unslash( $raw_input );
-		$data       = json_decode( $raw_input, true );
+		$payload    = wp_unslash( $_POST['payload'] ?? '{}' ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+		$data       = json_decode( $payload, true );
 		$products   = $data['products'] ?? array();
 		$product_id = absint( $products['id'] ?? 0 );
 		$event_id   = sanitize_text_field( $data['conversionId'] ?? '' );
@@ -224,10 +222,9 @@ class ConversionTrackingService implements ServiceStatusInterface {
 	public function handle_async_page_view(): void {
 		check_ajax_referer( 'capi_nonce', 'security' );
 
-		$raw_input = filter_input( INPUT_POST, 'payload', FILTER_UNSAFE_RAW );
-		$raw_input = wp_unslash( $raw_input );
-		$data      = json_decode( $raw_input, true );
-		$event_id  = sanitize_text_field( $data['conversionId'] ?? '' );
+		$payload  = wp_unslash( $_POST['payload'] ?? '{}' ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+		$data     = json_decode( $payload, true );
+		$event_id = sanitize_text_field( $data['conversionId'] ?? '' );
 
 		$this->tracker->track_page_view( $event_id );
 	}
