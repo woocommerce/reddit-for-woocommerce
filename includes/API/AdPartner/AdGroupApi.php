@@ -59,20 +59,18 @@ class AdGroupApi extends BaseAdPartnerApi {
 		$targeting_type = $campaign_data['targeting_type'] ?? '';
 
 		$shopping_targeting = array(
-			'targeting_type'       => 'PROSPECTING',
+			'targeting_type'       => $targeting_type,
 			'lookback_window_days' => 30,
 		);
+
+		// If targeting type is retargeting, set the conversion event types and excluded conversion event types.
 		if ( 'RETARGETING' === $targeting_type ) {
-			$shopping_targeting = array(
-				'targeting_type'                  => 'RETARGETING',
-				'conversion_event_types'          => array(
-					'VIEW_CONTENT',
-					'ADD_TO_CART',
-				),
-				'excluded_conversion_event_types' => array(
-					'PURCHASE',
-				),
-				'lookback_window_days'            => 30,
+			$shopping_targeting['conversion_event_types']          = array(
+				'VIEW_CONTENT',
+				'ADD_TO_CART',
+			);
+			$shopping_targeting['excluded_conversion_event_types'] = array(
+				'PURCHASE',
 			);
 		}
 
@@ -146,26 +144,5 @@ class AdGroupApi extends BaseAdPartnerApi {
 			return array_keys( WC()->countries->get_allowed_countries() );
 		}
 		return array_keys( WC()->countries->get_shipping_countries() );
-	}
-
-	/**
-	 * Get an Ad Group REST callback.
-	 *
-	 * @since 0.1.0
-	 *
-	 * @return \WP_REST_Response|WP_Error REST response from WCS or error if inputs are missing.
-	 */
-	public function list() {
-		$ad_account_id = Options::get( OptionDefaults::AD_ACCOUNT_ID );
-
-		if ( ! $ad_account_id ) {
-			return new WP_Error(
-				'ad_account_id_not_set',
-				__( 'Ad Account ID not found.', 'reddit-for-woocommerce' ),
-			);
-		}
-		return $this->wcs->proxy_get(
-			sprintf( '/ads/ad_accounts/%s/ad_groups', rawurlencode( $ad_account_id ) )
-		);
 	}
 }
