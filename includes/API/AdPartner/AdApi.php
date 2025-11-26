@@ -75,7 +75,7 @@ class AdApi extends BaseAdPartnerApi {
 				'ad_group_id'             => $ad_group_id,
 				'profile_id'              => $profile_id,
 				'shopping_creative'       => array(
-					'dpa_carousel_mode' => 'AUTO',
+					'dpa_carousel_mode' => 'CAROUSEL_ONLY',
 					'headline'          => Helper::get_ad_headline(),
 					'call_to_action'    => 'Shop Now',
 					'allow_comments'    => false,
