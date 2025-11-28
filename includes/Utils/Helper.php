@@ -159,7 +159,7 @@ class Helper {
 	public static function get_ad_headline() {
 		$site_name = get_bloginfo( 'name' );
 		/* translators: %s: Site name */
-		return sprintf( __( 'Shop at %s', 'reddit-for-woocommerce' ), $site_name );
+		return sprintf( __( 'Check out products from %s', 'reddit-for-woocommerce' ), $site_name );
 	}
 
 	/**
