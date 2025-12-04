@@ -41,11 +41,11 @@ class AdApi extends BaseAdPartnerApi {
 	 * @since 0.1.0
 	 *
 	 * @param string $ad_group_id The ad group ID.
+	 * @param string $profile_id  The profile ID.
 	 * @return \WP_REST_Response|WP_Error REST response from WCS or error if inputs are missing.
 	 */
-	public function create( $ad_group_id ) {
+	public function create( $ad_group_id, $profile_id ) {
 		$ad_account_id = Options::get( OptionDefaults::AD_ACCOUNT_ID );
-		$profile_id    = Options::get( OptionDefaults::PROFILE_ID );
 
 		if ( ! $ad_account_id ) {
 			return new WP_Error(
