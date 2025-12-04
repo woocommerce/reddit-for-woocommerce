@@ -5,7 +5,6 @@ import classnames from 'classnames';
 import { __ } from '@wordpress/i18n';
 import { forwardRef } from '@wordpress/element';
 import { Tooltip } from '@wordpress/components';
-import { Link } from '@woocommerce/components';
 import GridiconInfoOutline from 'gridicons/dist/info-outline';
 
 /**

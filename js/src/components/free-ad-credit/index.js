@@ -19,10 +19,10 @@ const FreeAdCredit = () => {
 
 			<div>
 				<div className="rfw-free-ad-credit__description">
-					{__(
+					{ __(
 						'New to Reddit Ads? You might be eligible for ad credits when you spend a certain amount in your first 60 days.',
 						'reddit-for-woocommerce'
-					)}
+					) }
 				</div>
 			</div>
 		</div>
