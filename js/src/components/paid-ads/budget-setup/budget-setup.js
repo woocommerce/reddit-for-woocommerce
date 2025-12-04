@@ -181,7 +181,7 @@ export default function BudgetSetup( { hideRecommendations = false } ) {
 
 	return (
 		<div className={ styles.container }>
-			<BudgetSetupHeader />
+			{/* <BudgetSetupHeader /> */}
 
 			{ options.map( ( { level, radioProps, metrics } ) => {
 				const helperContentClassName =
@@ -192,10 +192,10 @@ export default function BudgetSetup( { hideRecommendations = false } ) {
 				return (
 					<div key={ level } className={ getRowClassName( level ) }>
 						<BudgetRadioControl { ...radioProps } />
-						<BudgetMetrics
+						{/* <BudgetMetrics
 							formatAmount={ formatAmount }
 							metrics={ metrics }
-						/>
+						/> */}
 						<div className={ styles.helper }>
 							<span className={ helperContentClassName }>
 								{ i18nLevel[ level ] }
