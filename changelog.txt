@@ -1,4 +1,9 @@
 *** Reddit for WooCommerce Changelog ***
 
-TBD - version 0.1.0
+2025-12-09 - version 1.0.1
+* Improved - create campaign defaults and UI improvements.
+* Tweak - WordPress 6.9 compatibility.
+* Tweak - WooCommerce 10.4 compatibility.
+
+2025-11-11 - version 1.0.0
 * Initial release
