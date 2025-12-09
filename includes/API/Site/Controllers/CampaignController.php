@@ -316,9 +316,14 @@ class CampaignController extends RESTBaseController {
 	private function create_ads( $ad_group_ids ) {
 		$ad_ids = array();
 
+		$profile_id = $this->get_profile_id();
+		if ( is_wp_error( $profile_id ) ) {
+			return $profile_id;
+		}
+
 		foreach ( $ad_group_ids as $ad_group_id ) {
 			// Create a new ad for the campaign.
-			$ad = $this->ad_partner_api->ads->create( $ad_group_id );
+			$ad = $this->ad_partner_api->ads->create( $ad_group_id, $profile_id );
 			if ( is_wp_error( $ad ) ) {
 				return $ad;
 			}
@@ -361,5 +366,35 @@ class CampaignController extends RESTBaseController {
 			);
 		}
 		return true;
+	}
+
+	/**
+	 * Get the profile ID.
+	 *
+	 * @return string|WP_Error Profile ID or WP_Error if profile ID is not found.
+	 */
+	private function get_profile_id() {
+		$profile_id = Options::get( OptionDefaults::PROFILE_ID );
+		if ( empty( $profile_id ) ) {
+			// Get the profile ID from the Reddit member.
+			$member = $this->ad_partner_api->members->me();
+
+			if ( is_wp_error( $member ) ) {
+				return $member;
+			}
+
+			$member_data = $member->get_data();
+			$profile_id  = $member_data['data']['id'] ?? '';
+			if ( empty( $profile_id ) ) {
+				return new WP_Error(
+					'profile_id_not_found',
+					__( 'Profile ID not found.', 'reddit-for-woocommerce' )
+				);
+			}
+
+			Options::set( OptionDefaults::PROFILE_ID, $profile_id );
+		}
+
+		return $profile_id;
 	}
 }

@@ -14,7 +14,6 @@ import useBudgetMetrics from '~/hooks/useBudgetMetrics';
 import useAdsCurrency from '~/hooks/useAdsCurrency';
 import AppInputPriceControl from '~/components/app-input-price-control';
 import BudgetBadge from './budget-badge';
-import BudgetSetupHeader from './budget-setup-header';
 import BudgetRadioControl from './budget-radio-control';
 import DailyBudgetLabel from './daily-budget-label';
 import LowBudgetNotice from './low-budget-notice';
@@ -181,9 +180,7 @@ export default function BudgetSetup( { hideRecommendations = false } ) {
 
 	return (
 		<div className={ styles.container }>
-			<BudgetSetupHeader />
-
-			{ options.map( ( { level, radioProps, metrics } ) => {
+			{ options.map( ( { level, radioProps } ) => {
 				const helperContentClassName =
 					level === 'recommended'
 						? styles.highlightRecommended
@@ -192,10 +189,6 @@ export default function BudgetSetup( { hideRecommendations = false } ) {
 				return (
 					<div key={ level } className={ getRowClassName( level ) }>
 						<BudgetRadioControl { ...radioProps } />
-						<BudgetMetrics
-							formatAmount={ formatAmount }
-							metrics={ metrics }
-						/>
 						<div className={ styles.helper }>
 							<span className={ helperContentClassName }>
 								{ i18nLevel[ level ] }

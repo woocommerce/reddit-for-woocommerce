@@ -13,9 +13,6 @@ import { __, sprintf } from '@wordpress/i18n';
  * @property {Function} formatAmount A function to format the budget amount according to the currency settings.
  */
 
-// Minimum percentage of the recommended daily budget.
-const BUDGET_MIN_PERCENT = 0.3;
-
 /**
  * Validate campaign form. Accepts the form values object and returns errors object.
  *
@@ -39,7 +36,7 @@ const validateCampaign = ( values, opts ) => {
 		const { amount } = values;
 		const { dailyBudget, formatAmount } = opts;
 
-		const minAmount = Math.ceil( dailyBudget * BUDGET_MIN_PERCENT );
+		const minAmount = Number( dailyBudget );
 
 		if ( amount < minAmount ) {
 			return {

@@ -5,7 +5,6 @@ import classnames from 'classnames';
 import { __ } from '@wordpress/i18n';
 import { forwardRef } from '@wordpress/element';
 import { Tooltip } from '@wordpress/components';
-import { Link } from '@woocommerce/components';
 import GridiconInfoOutline from 'gridicons/dist/info-outline';
 
 /**
@@ -37,16 +36,6 @@ export default function BudgetSetupHeader() {
 								'The estimated total value of all the conversions (sales volume) your campaign will generate in a week.',
 								'reddit-for-woocommerce'
 							) }
-							<Link
-								type="external"
-								target="_blank"
-								href="https://support.google.com/google-ads/answer/7197048"
-							>
-								{ __(
-									'Learn more TBD.',
-									'reddit-for-woocommerce'
-								) }
-							</Link>
 						</>
 					}
 				>
