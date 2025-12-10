@@ -65,7 +65,7 @@ class AdPartnerApi {
 	 * Handles Ad Account operations.
 	 *
 	 * @since 0.1.0
-	 * @var AdAccounstApi
+	 * @var AdAccountsApi
 	 */
 	public AdAccountsApi $ad_accounts;
 
@@ -73,7 +73,7 @@ class AdPartnerApi {
 	 * Handles Pixels operations.
 	 *
 	 * @since 0.1.0
-	 * @var AdAccounstApi
+	 * @var PixelsApi
 	 */
 	public PixelsApi $pixels;
 
@@ -86,6 +86,38 @@ class AdPartnerApi {
 	public MembersApi $members;
 
 	/**
+	 * Handles Campaigns operations.
+	 *
+	 * @since 0.1.0
+	 * @var CampaignApi
+	 */
+	public CampaignApi $campaigns;
+
+	/**
+	 * Handles Ad Groups operations.
+	 *
+	 * @since 0.1.0
+	 * @var AdGroupApi
+	 */
+	public AdGroupApi $ad_groups;
+
+	/**
+	 * Handles Product Sets operations.
+	 *
+	 * @since 0.1.0
+	 * @var ProductSetApi
+	 */
+	public ProductSetApi $product_sets;
+
+	/**
+	 * Handles Ads operations.
+	 *
+	 * @since 0.1.0
+	 * @var AdApi
+	 */
+	public AdApi $ads;
+
+	/**
 	 * Private constructor to enforce singleton pattern.
 	 *
 	 * Initializes all API submodules with the shared {@see WcsClient} instance,
@@ -96,12 +128,16 @@ class AdPartnerApi {
 	 * @param WcsClient $wcs WCS client used for authenticated proxy API requests.
 	 */
 	private function __construct( WcsClient $wcs ) {
-		$this->catalog     = new CatalogApi( $wcs );
-		$this->feed        = new FeedApi( $wcs );
-		$this->business    = new BusinessApi( $wcs );
-		$this->ad_accounts = new AdAccountsApi( $wcs );
-		$this->pixels      = new PixelsApi( $wcs );
-		$this->members     = new MembersApi( $wcs );
+		$this->catalog      = new CatalogApi( $wcs );
+		$this->feed         = new FeedApi( $wcs );
+		$this->business     = new BusinessApi( $wcs );
+		$this->ad_accounts  = new AdAccountsApi( $wcs );
+		$this->pixels       = new PixelsApi( $wcs );
+		$this->members      = new MembersApi( $wcs );
+		$this->campaigns    = new CampaignApi( $wcs );
+		$this->ad_groups    = new AdGroupApi( $wcs );
+		$this->product_sets = new ProductSetApi( $wcs );
+		$this->ads          = new AdApi( $wcs );
 	}
 
 	/**

@@ -1,0 +1,29 @@
+.rfw-budget-section {
+	&__card-body {
+		display: flex;
+		flex-direction: column;
+		gap: var(--main-gap);
+	}
+
+	.rfw-subsection-title {
+		margin-bottom: wpVariables.$grid-unit-05;
+		font-weight: 400;
+	}
+
+	.components-tip {
+		padding: wpVariables.$grid-unit-15 wpVariables.$grid-unit-20;
+		background-color: #f0f6fc;
+
+		> p {
+			line-height: variables.$rfw-line-height-smaller;
+			font-size: variables.$rfw-font-smaller;
+			color: wpColors.$black;
+		}
+
+		> svg {
+			align-self: initial;
+			margin: wpVariables.$grid-unit-05 wpVariables.$grid-unit-05 * 2.5 0 0;
+			fill: wpColors.$gray-900;
+		}
+	}
+}

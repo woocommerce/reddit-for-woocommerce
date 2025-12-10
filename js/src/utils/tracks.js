@@ -4,6 +4,7 @@
 import { select } from '@wordpress/data';
 import { queueRecordEvent, recordEvent } from '@woocommerce/tracks';
 import { noop } from 'lodash';
+import { createHooks } from '@wordpress/hooks';
 
 /**
  * Internal dependencies
@@ -13,6 +14,20 @@ import { STORE_KEY } from '~/data';
 
 export const recordStepperChangeEvent = noop;
 export const recordStepContinueEvent = noop;
+
+export const hooks = createHooks();
+
+export const NAMESPACE = 'tracking';
+export const FILTER_ONBOARDING = 'FILTER_ONBOARDING';
+export const FILTER_BUDGET_RECOMMENDATIONS = 'FILTER_BUDGET_RECOMMENDATIONS';
+
+export const filterPropertiesMap = new Map();
+
+filterPropertiesMap.set( FILTER_ONBOARDING, [ 'context', 'step' ] );
+filterPropertiesMap.set( FILTER_BUDGET_RECOMMENDATIONS, [
+	'source',
+	'recommended_budget',
+] );
 
 /**
  * Returns an event properties with base properties.

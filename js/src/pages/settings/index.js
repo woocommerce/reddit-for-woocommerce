@@ -19,6 +19,7 @@ import OnboardingSuccessModal from '~/components/onboarding-success-modal';
 import { getOnboardingUrl } from '~/utils/urls';
 import useMenuLinkUpdate from '~/hooks/useMenuLinkUpdate';
 import './index.scss';
+import Faqs from '~/components/paid-ads/ads-campaign/faqs';
 
 const Settings = () => {
 	// Make the component highlight SFW entry in the WC legacy menu.
@@ -71,6 +72,10 @@ const Settings = () => {
 				) }
 			>
 				<LinkedAccounts />
+			</Section>
+
+			<Section>
+				<Faqs />
 			</Section>
 		</div>
 	);

@@ -174,11 +174,25 @@ final class OptionDefaults {
 	public const WCS_PRODUCTS_TOKEN = 'wcs_products_token';
 
 	/**
+	 * Option key to store the Ad Partner's Profile ID.
+	 *
+	 * @since 0.1.0
+	 */
+	public const PROFILE_ID = 'profile_id';
+
+	/**
 	 * Option key to store the dummy purchase tracked status.
 	 *
 	 * @since 0.1.0
 	 */
 	public const DUMMY_PURCHASE_TRACKED = 'dummy_purchase_tracked';
+
+	/**
+	 * Option key to store the Ad Partner's currency.
+	 *
+	 * @since 0.1.0
+	 */
+	public const ADS_ACCOUNT_CURRENCY = 'ad_account_currency';
 
 	/**
 	 * Returns default values for all known Ad Partner options.
@@ -211,7 +225,9 @@ final class OptionDefaults {
 			self::EXPORT_PRODUCT_IDS     => array(),
 			self::LAST_EXPORT_TIMESTAMP  => 0,
 			self::WCS_PRODUCTS_TOKEN     => '',
+			self::PROFILE_ID             => '',
 			self::DUMMY_PURCHASE_TRACKED => 'no',
+			self::ADS_ACCOUNT_CURRENCY   => get_woocommerce_currency(),
 		);
 	}
 }

@@ -17,6 +17,7 @@ use WC_Product;
 use RedditForWooCommerce\Admin\Export\Contract\ExportRowBuilderInterface;
 use RedditForWooCommerce\Admin\Export\Contract\RowBuilderAdditionalData;
 use Automattic\WooCommerce\Enums\ProductStockStatus;
+use RedditForWooCommerce\Utils\Helper;
 
 /**
  * Converts WooCommerce products into catalog-compatible row arrays.
@@ -124,6 +125,13 @@ class ProductRowBuilder implements ExportRowBuilderInterface {
 			$row = array_merge( $row, $provider->get_additional_data( $product ) );
 		}
 
-		return $row;
+		/**
+		 * Filters the row built to be written.
+		 *
+		 * @param array      $row     Row of a CSV describing product properties.
+		 * @param WC_Product $product A WooCommerce product.
+		 * @return array
+		 */
+		return apply_filters( Helper::with_prefix( 'filter_builder_row' ), $row, $product );
 	}
 }

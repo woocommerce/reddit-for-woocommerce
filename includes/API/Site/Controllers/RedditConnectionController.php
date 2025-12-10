@@ -285,7 +285,8 @@ class RedditConnectionController extends RESTBaseController {
 	 * @return WP_REST_Response
 	 */
 	public function delete_connection() {
-		$catalog_id = Options::get( OptionDefaults::CATALOG_ID );
+		$catalog_id    = Options::get( OptionDefaults::CATALOG_ID );
+		$ad_account_id = Options::get( OptionDefaults::AD_ACCOUNT_ID );
 
 		// Delete the catalog if it exists.
 		if ( $catalog_id ) {
@@ -337,9 +338,12 @@ class RedditConnectionController extends RESTBaseController {
 		Options::delete( OptionDefaults::CATALOG_ID );
 		Options::delete( OptionDefaults::FEED_STATUS );
 		Options::delete( OptionDefaults::WCS_PRODUCTS_TOKEN );
+		Options::delete( OptionDefaults::PROFILE_ID );
 		Options::delete( OptionDefaults::DUMMY_PURCHASE_TRACKED );
+		Options::delete( OptionDefaults::ADS_ACCOUNT_CURRENCY );
 		Transients::delete( TransientDefaults::REDDIT_ACCOUNT_EMAIL );
 		Transients::delete( TransientDefaults::PIXEL_SCRIPT );
+		Transients::delete( sprintf( '%s_%s', TransientDefaults::PRODUCT_SET_ID, $ad_account_id ) );
 
 		/**
 		 * Triggers when Reddit is disconnected.
@@ -409,6 +413,22 @@ class RedditConnectionController extends RESTBaseController {
 
 			Options::set( OptionDefaults::ONBOARDING_STATUS, 'connected' );
 
+			// Set the profile ID.
+			$member = $this->ad_partner_api->members->me();
+
+			if ( is_wp_error( $member ) ) {
+				$logger = wc_get_logger();
+				$logger->alert(
+					'Reddit member not found.',
+				);
+			} else {
+				$member_data = $member->get_data();
+				if ( ! empty( $member_data['data'] ) ) {
+					Options::set( OptionDefaults::PROFILE_ID, $member_data['data']['id'] );
+				}
+			}
+
+			// Create a new catalog for the business.
 			$response = $this->ad_partner_api->catalog->create();
 
 			if ( is_wp_error( $response ) ) {
@@ -432,6 +452,14 @@ class RedditConnectionController extends RESTBaseController {
 				}
 			}
 
+			// Set the ad account currency.
+			$ad_account = $this->ad_partner_api->ad_accounts->get();
+			if ( ! is_wp_error( $ad_account ) ) {
+				$ad_account_data     = $ad_account->get_data();
+				$ad_account_currency = $ad_account_data['data']['currency'] ?? '';
+				Options::set( OptionDefaults::ADS_ACCOUNT_CURRENCY, $ad_account_currency );
+			}
+
 			/**
 			 * Triggers when the Reddit onboarding process is completed.
 			 *
@@ -451,6 +479,9 @@ class RedditConnectionController extends RESTBaseController {
 	 * @return WP_REST_Response
 	 */
 	public function get_connection_details() {
+		$currency = Options::get( OptionDefaults::ADS_ACCOUNT_CURRENCY );
+		$symbol   = html_entity_decode( get_woocommerce_currency_symbol( $currency ), ENT_QUOTES );
+
 		return rest_ensure_response(
 			array(
 				'business_id'     => Options::get( OptionDefaults::BUSINESS_ID ),
@@ -458,6 +489,8 @@ class RedditConnectionController extends RESTBaseController {
 				'ad_account_id'   => Options::get( OptionDefaults::AD_ACCOUNT_ID ),
 				'ad_account_name' => Options::get( OptionDefaults::AD_ACCOUNT_NAME ),
 				'pixel_id'        => Options::get( OptionDefaults::PIXEL_ID ),
+				'currency'        => $currency,
+				'symbol'          => $symbol,
 			)
 		);
 	}

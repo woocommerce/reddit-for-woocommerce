@@ -150,6 +150,19 @@ class Helper {
 	}
 
 	/**
+	 * Generate a sample headline for the ad.
+	 *
+	 * @since 0.1.0
+	 *
+	 * @return string A sample headline for the ad.
+	 */
+	public static function get_ad_headline() {
+		$site_name = get_bloginfo( 'name' );
+		/* translators: %s: Site name */
+		return sprintf( __( 'Check out products from %s', 'reddit-for-woocommerce' ), $site_name );
+	}
+
+	/**
 	 * Retrieve a valid IANA timezone string for the site.
 	 *
 	 * Behavior:
@@ -247,5 +260,16 @@ class Helper {
 
 		// Return scalars (int, float, bool, null) as-is.
 		return $data;
+	}
+
+	/**
+	 * Convert a decimal amount to microcurrency.
+	 *
+	 * @param float $amount The amount in normal currency units.
+	 * @return int The amount in microcurrency (integer).
+	 */
+	public static function amount_to_microcurrency( float $amount ): int {
+		// Convert to float, multiply by 1,000,000, and round to nearest integer.
+		return (int) round( $amount * 1_000_000 );
 	}
 }

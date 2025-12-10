@@ -24,3 +24,7 @@ export const ACCOUNT_TYPE = {
 	BUSINESS: 'business',
 	PIXEL: 'pixel',
 };
+export const GUIDE_NAMES = {
+	SUBMISSION_SUCCESS: 'submission-success',
+	CAMPAIGN_CREATION_SUCCESS: 'campaign-creation-success',
+};
