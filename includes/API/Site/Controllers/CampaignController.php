@@ -275,7 +275,7 @@ class CampaignController extends RESTBaseController {
 	 *
 	 * @param string $campaign_id    Campaign ID.
 	 * @param string $product_set_id Product set ID.
-	 * @param string $daily_budget   Daily budget.
+	 * @param float  $daily_budget   Daily budget.
 	 *
 	 * @return array|WP_Error Ad group IDs or WP_Error if something went wrong.
 	 */
