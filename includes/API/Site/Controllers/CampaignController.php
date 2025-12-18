@@ -283,13 +283,14 @@ class CampaignController extends RESTBaseController {
 		$ad_group_ids = array();
 
 		$targeting_types = array(
-			'PROSPECTING' => 0.50,
-			'RETARGETING' => 0.50,
+			'PROSPECTING' => 0.70,
+			'RETARGETING' => 0.30,
 		);
 
-		if ( $daily_budget >= 17 ) {
-			$targeting_types['PROSPECTING'] = 0.70;
-			$targeting_types['RETARGETING'] = 0.30;
+		// If the daily budget is less than $17, set the budget to 50% for both targeting types.
+		if ( $daily_budget < 17 ) {
+			$targeting_types['PROSPECTING'] = 0.50;
+			$targeting_types['RETARGETING'] = 0.50;
 		}
 
 		foreach ( $targeting_types as $targeting_type => $budget_percentage ) {
