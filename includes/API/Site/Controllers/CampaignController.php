@@ -258,10 +258,18 @@ class CampaignController extends RESTBaseController {
 	 *
 	 * Creates ad groups for the campaign to set the daily budget and targeting type.
 	 *
-	 * 2 Ad Groups are created with different targeting types and budgets (70% and 30% budget):
-	 * - Prospecting (70% budget)
-	 * - Retargeting (30% budget)
+	 * 2 Ad Groups are created with different targeting types and budgets:
+	 * - Prospecting
+	 * - Retargeting
 	 *   - Retarget people with previous events: add to cart + view content
+	 *
+	 * If a user enters a custom daily budget less than $17:
+	 * - Prospecting: 50% budget
+	 * - Retargeting: 50% budget
+	 *
+	 * If a user enters a custom daily budget greater than or equal to $17:
+	 * - Prospecting: 70% budget
+	 * - Retargeting: 30% budget
 	 *
 	 * @since 0.1.0
 	 *
@@ -275,9 +283,14 @@ class CampaignController extends RESTBaseController {
 		$ad_group_ids = array();
 
 		$targeting_types = array(
-			'PROSPECTING' => 0.70,
-			'RETARGETING' => 0.30,
+			'PROSPECTING' => 0.50,
+			'RETARGETING' => 0.50,
 		);
+
+		if ( $daily_budget >= 17 ) {
+			$targeting_types['PROSPECTING'] = 0.70;
+			$targeting_types['RETARGETING'] = 0.30;
+		}
 
 		foreach ( $targeting_types as $targeting_type => $budget_percentage ) {
 			$ad_group_data = array(
@@ -365,6 +378,14 @@ class CampaignController extends RESTBaseController {
 				__( 'Amount must be greater than 0.', 'reddit-for-woocommerce' )
 			);
 		}
+
+		if ( $amount < 10 ) {
+			return new WP_Error(
+				'invalid_daily_budget',
+				__( 'Daily budget must be greater than 10.', 'reddit-for-woocommerce' )
+			);
+		}
+
 		return true;
 	}
 
