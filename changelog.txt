@@ -1,5 +1,70 @@
 *** Reddit for WooCommerce Changelog ***
 
+2025-12-19 - version 1.0.2
+* Add FE base components.
+* Add PHP 8.4 tested up to header.
+* Add Pixel ID connection functionality.
+* Add Reddit to Marketing menu and list as a channel in Marketing > Overview > Channels.
+* Add UI Connect components.
+* Add a "Create Business Account" button if no business account is connected.
+* Add changelog file and fix security test issues.
+* Add min-height to woocommerce-layout__header element.
+* Add the deploy GH workflow.
+* Dev - Add support for `needs: WP RC test` label to run E2E tests against WordPress RC.
+* Dev - Bump WooCommerce "tested up to" version 10.3.
+* Dev - Bump WooCommerce "tested up to" version 10.4.
+* Dev - Bump WooCommerce minimum supported version to 10.1.
+* Dev - Bump WooCommerce minimum supported version to 10.2.
+* Finalize settings screen.
+* Hide number step from onboarding page.
+* N/A.
+* N/A.
+* Optimize UI connect screen.
+* REDTWOO-14: Implement Catalog and Feed Creation APIs.
+* REDTWOO-15: Implement Jetpack Account REST controller.
+* REDTWOO-22: Add E2E tests.
+* REDTWOO-23: Add PHPUnit tests.
+* REDTWOO-24: Implement post onboarding Settings screen.
+* REDTWOO-27: Adds TextField to set Conversion Access Token.
+* REDTWOO-28: Add a notice to inform users about the Catalog Manager role and catalog creation.
+* REDTWOO-29: Delete Catalog when Reddit is disconnected.
+* REDTWOO-2: Setup Linter Actions and fix linting issues.
+* REDTWOO-30: Add missing conversion ID in PageVisit Conversion event.
+* REDTWOO-31: Compatibility testing with Woo 10.2 Beta.
+* REDTWOO-34: Change text-domain from `reddit-for-woo` to `reddit-for-woocommerce`.
+* REDTWOO-37: Fix `fputcsv` warning on PHP 8.4.
+* REDTWOO-44: Add email ID in Reddit account card.
+* REDTWOO-46: Improve Conversion Access Token Textfield.
+* REDTWOO-57: Conversion Tracking UX improvements.
+* REDTWOO-59: Update Conversion events as per v3.
+* REDTWOO-60: Add user tracking data.
+* REDTWOO-61: Implement Create Campaign during Onboarding.
+* REDTWOO-64: Improve notice if no Business account is found.
+* REDTWOO-66: Implement the Campaign Feature List card.
+* REDTWOO-67: Improve Catalog creation failure error handling.
+* REDTWOO-68: Implements the "Set up billing" component.
+* REDTWOO-69: Implement the Campaign Budget form Component.
+* REDTWOO-6: Implement Pixel Tracking.
+* REDTWOO-70: Implement Create Campaign REST Controller.
+* REDTWOO-72: Ensure PHP 8.4 Compatibility.
+* REDTWOO-74: Update the Create Business Account URL in the onboarding flow.
+* REDTWOO-78: Update the FAQs content and add it to the settings page as well.
+* REDTWOO-79: Make CAPI enabled by default.
+* REDTWOO-7: Implement Conversion Tracking.
+* REDTWOO-80: Add a “Reddit Ads” section to the settings.
+* REDTWOO-84: Fix launch bugfixes.
+* REDTWOO-8: Implement REST controllers and Reddit APIs.
+* REDWOO-13: Implement CSV exporter.
+* Readme updates and update “automattic/jetpack-autoloader” from 5.0.9 to 5.0.11.
+* Release 1.0.1.
+* Remove pixel account connection UI.
+* Revert "Add min-height to woocommerce-layout__header element.".
+* Tweak - WC 4.2.0 compatibility.
+* Tweak - WP 6.9 compatibility.
+* Update - Average daily budget suggestions and minimum budget requirements.
+* Update E2E Tests.
+* Update the onboarding status to "connected" once all connections are complete.
+
 2025-12-09 - version 1.0.1
 * Improved - create campaign defaults and UI improvements.
 * Tweak - WordPress 6.9 compatibility.
