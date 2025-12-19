@@ -70,9 +70,9 @@ export default function CampaignAssetsForm( {
 } ) {
 	const { formatAmount } = useAdsCurrency();
 	const budgetRecommendation = {
-		dailyBudgetBaseline: 16.67, // This is the minimum daily budget required by Reddit for the 70/30 split.
+		dailyBudgetBaseline: 10,
 		recommended: {
-			dailyBudget: 63.3,
+			dailyBudget: 65,
 			metrics: {
 				cost: 443.1,
 				conversions: 13.1,
@@ -82,7 +82,7 @@ export default function CampaignAssetsForm( {
 			currency: 'USD',
 		},
 		high: {
-			dailyBudget: 75.96,
+			dailyBudget: 85,
 			metrics: {
 				cost: 531.72,
 				conversions: 13.5,
@@ -92,7 +92,7 @@ export default function CampaignAssetsForm( {
 			currency: 'USD',
 		},
 		low: {
-			dailyBudget: 50.64,
+			dailyBudget: 45,
 			metrics: {
 				cost: 354.48,
 				conversions: 12,
@@ -101,10 +101,10 @@ export default function CampaignAssetsForm( {
 			country: 'US',
 			currency: 'USD',
 		},
-		recommendedDailyBudget: 63.3,
+		recommendedDailyBudget: 65,
 		eventProps: {
 			source: 'reddit-ads-api',
-			recommended_budget: 63.3,
+			recommended_budget: 65,
 			metrics_availability: 'all',
 		},
 	};

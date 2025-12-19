@@ -258,16 +258,24 @@ class CampaignController extends RESTBaseController {
 	 *
 	 * Creates ad groups for the campaign to set the daily budget and targeting type.
 	 *
-	 * 2 Ad Groups are created with different targeting types and budgets (70% and 30% budget):
-	 * - Prospecting (70% budget)
-	 * - Retargeting (30% budget)
+	 * 2 Ad Groups are created with different targeting types and budgets:
+	 * - Prospecting
+	 * - Retargeting
 	 *   - Retarget people with previous events: add to cart + view content
+	 *
+	 * If a user enters a custom daily budget less than $17:
+	 * - Prospecting: 50% budget
+	 * - Retargeting: 50% budget
+	 *
+	 * If a user enters a custom daily budget greater than or equal to $17:
+	 * - Prospecting: 70% budget
+	 * - Retargeting: 30% budget
 	 *
 	 * @since 0.1.0
 	 *
 	 * @param string $campaign_id    Campaign ID.
 	 * @param string $product_set_id Product set ID.
-	 * @param string $daily_budget   Daily budget.
+	 * @param float  $daily_budget   Daily budget.
 	 *
 	 * @return array|WP_Error Ad group IDs or WP_Error if something went wrong.
 	 */
@@ -278,6 +286,12 @@ class CampaignController extends RESTBaseController {
 			'PROSPECTING' => 0.70,
 			'RETARGETING' => 0.30,
 		);
+
+		// If the daily budget is less than $17, set the budget to 50% for both targeting types.
+		if ( $daily_budget < 17 ) {
+			$targeting_types['PROSPECTING'] = 0.50;
+			$targeting_types['RETARGETING'] = 0.50;
+		}
 
 		foreach ( $targeting_types as $targeting_type => $budget_percentage ) {
 			$ad_group_data = array(
@@ -359,12 +373,14 @@ class CampaignController extends RESTBaseController {
 		}
 
 		$amount = floatval( wp_unslash( $amount ) );
-		if ( $amount <= 0 ) {
+
+		if ( $amount < 10 ) {
 			return new WP_Error(
-				'invalid_amount',
-				__( 'Amount must be greater than 0.', 'reddit-for-woocommerce' )
+				'invalid_daily_budget',
+				__( 'Daily budget must be greater than 10.', 'reddit-for-woocommerce' )
 			);
 		}
+
 		return true;
 	}
 
