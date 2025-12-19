@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Reddit for WooCommerce
  * Description: Seamlessly integrates your WooCommerce store with Reddit's powerful advertising platform, enabling you to reach millions of potential customers through engaging visual ads.
- * Version: 1.0.1
+ * Version: 1.0.2
  * Author: WooCommerce
  * Author URI: https://woocommerce.com/
  * Text Domain: reddit-for-woocommerce
