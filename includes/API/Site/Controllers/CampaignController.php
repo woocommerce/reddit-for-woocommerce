@@ -373,12 +373,6 @@ class CampaignController extends RESTBaseController {
 		}
 
 		$amount = floatval( wp_unslash( $amount ) );
-		if ( $amount <= 0 ) {
-			return new WP_Error(
-				'invalid_amount',
-				__( 'Amount must be greater than 0.', 'reddit-for-woocommerce' )
-			);
-		}
 
 		if ( $amount < 10 ) {
 			return new WP_Error(
