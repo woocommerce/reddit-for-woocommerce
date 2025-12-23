@@ -135,14 +135,14 @@ class ProductExportService {
 
 		add_action(
 			Helper::with_prefix( 'batch_export_job_complete' ),
-			array( $this, 'maybe_recreate_catalog' ),
+			array( $this, 'maybe_create_catalog' ),
 			10
 		);
 
 		add_action(
 			Helper::with_prefix( 'batch_export_job_complete' ),
 			array( $this, 'create_feed' ),
-			20 // Run after the catalog recreation checks.
+			20 // Run after the catalog creation checks.
 		);
 
 		Helper::register_ajax_action(
@@ -406,9 +406,9 @@ class ProductExportService {
 	}
 
 	/**
-	 * Recreates the product catalog if it is deleted on Reddit.
+	 * Creates the product catalog if it not exists on Reddit.
 	 *
-	 * This method checks if the catalog exists on Reddit and if not, it recreates it.
+	 * This method checks if the catalog exists on Reddit and if not, it creates it.
 	 *
 	 * This method is hooked to {@see Helper::with_prefix( 'batch_export_job_complete' )}.
 	 * It is triggered automatically after the final export batch has finished and the
@@ -416,7 +416,7 @@ class ProductExportService {
 	 *
 	 * @since x.x.x
 	 */
-	public function maybe_recreate_catalog() {
+	public function maybe_create_catalog() {
 		$catalog_id = Options::get( OptionDefaults::CATALOG_ID );
 
 		// Check if the catalog is exists on Reddit.
@@ -428,9 +428,9 @@ class ProductExportService {
 			}
 		}
 
-		// The catalog not exists on Reddit, recreate it.
+		// The catalog not exists on Reddit, create it.
 		$logger = wc_get_logger();
-		$logger->info( 'Catalog not exists on Reddit, recreating it.' );
+		$logger->info( 'Catalog not exists on Reddit, creating it.' );
 
 		$response = $this->ad_partner_api->catalog->create();
 		if ( is_wp_error( $response ) ) {
@@ -438,7 +438,7 @@ class ProductExportService {
 			$error_body = isset( $error_data['body'] ) ? json_decode( $error_data['body'], true ) : array();
 			$logger     = wc_get_logger();
 			$logger->alert(
-				'Catalog recreation failed with error code: ' . $response->get_error_code(),
+				'Catalog creation failed with error code: ' . $response->get_error_code(),
 				$error_body
 			);
 		} else {
@@ -449,7 +449,7 @@ class ProductExportService {
 				Options::set( OptionDefaults::CATALOG_ID, $catalog_data['id'] );
 				// Delete the feed status to create a new feed.
 				Options::delete( OptionDefaults::FEED_STATUS );
-				$logger->info( 'Catalog recreated successfully.' );
+				$logger->info( 'Catalog created successfully.' );
 			}
 		}
 	}
