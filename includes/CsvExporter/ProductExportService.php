@@ -135,7 +135,14 @@ class ProductExportService {
 
 		add_action(
 			Helper::with_prefix( 'batch_export_job_complete' ),
-			array( $this, 'create_feed' )
+			array( $this, 'maybe_recreate_catalog' ),
+			10
+		);
+
+		add_action(
+			Helper::with_prefix( 'batch_export_job_complete' ),
+			array( $this, 'create_feed' ),
+			20 // Run after the catalog recreation checks.
 		);
 
 		Helper::register_ajax_action(
@@ -396,6 +403,55 @@ class ProductExportService {
 		);
 
 		wp_send_json( $response );
+	}
+
+	/**
+	 * Recreates the product catalog if it is deleted on Reddit.
+	 *
+	 * This method checks if the catalog exists on Reddit and if not, it recreates it.
+	 *
+	 * This method is hooked to {@see Helper::with_prefix( 'batch_export_job_complete' )}.
+	 * It is triggered automatically after the final export batch has finished and the
+	 * CSV feed file has been successfully written.
+	 *
+	 * @since x.x.x
+	 */
+	public function maybe_recreate_catalog() {
+		$catalog_id = Options::get( OptionDefaults::CATALOG_ID );
+
+		// Check if the catalog is exists on Reddit.
+		if ( $catalog_id ) {
+			$response = $this->ad_partner_api->catalog->get( $catalog_id );
+			if ( ! is_wp_error( $response ) ) {
+				// The catalog is exists on Reddit, return.
+				return;
+			}
+		}
+
+		// The catalog is not exists on Reddit, recreate it.
+		$logger = wc_get_logger();
+		$logger->info( 'Catalog not found on Reddit, recreating it.' );
+
+		$response = $this->ad_partner_api->catalog->create();
+		if ( is_wp_error( $response ) ) {
+			$error_data = $response->get_error_data();
+			$error_body = isset( $error_data['body'] ) ? json_decode( $error_data['body'], true ) : array();
+			$logger     = wc_get_logger();
+			$logger->alert(
+				'Catalog recreation failed with error code: ' . $response->get_error_code(),
+				$error_body
+			);
+		} else {
+			$data         = $response->get_data();
+			$catalog_data = $data['data'] ?? array();
+
+			if ( ! empty( $catalog_data ) ) {
+				Options::set( OptionDefaults::CATALOG_ID, $catalog_data['id'] );
+				// Delete the feed status to create a new feed.
+				Options::delete( OptionDefaults::FEED_STATUS );
+				$logger->info( 'Catalog recreated successfully.' );
+			}
+		}
 	}
 
 	/**
