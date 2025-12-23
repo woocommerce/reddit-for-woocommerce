@@ -428,9 +428,9 @@ class ProductExportService {
 			}
 		}
 
-		// The catalog is not exists on Reddit, recreate it.
+		// The catalog not exists on Reddit, recreate it.
 		$logger = wc_get_logger();
-		$logger->info( 'Catalog not found on Reddit, recreating it.' );
+		$logger->info( 'Catalog not exists on Reddit, recreating it.' );
 
 		$response = $this->ad_partner_api->catalog->create();
 		if ( is_wp_error( $response ) ) {
