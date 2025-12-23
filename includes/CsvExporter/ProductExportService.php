@@ -445,8 +445,8 @@ class ProductExportService {
 			$data         = $response->get_data();
 			$catalog_data = $data['data'] ?? array();
 
-			if ( ! empty( $catalog_data ) ) {
-				Options::set( OptionDefaults::CATALOG_ID, $catalog_data['id'] );
+			if ( ! empty( $catalog_data ) && ! empty( $catalog_data['id'] ) ) {
+				Options::set( OptionDefaults::CATALOG_ID, sanitize_text_field( $catalog_data['id'] ) );
 				// Delete the feed status to create a new feed.
 				Options::delete( OptionDefaults::FEED_STATUS );
 				$logger->info( 'Catalog created successfully.' );
