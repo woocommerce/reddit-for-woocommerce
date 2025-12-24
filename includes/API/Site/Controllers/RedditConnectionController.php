@@ -331,6 +331,7 @@ class RedditConnectionController extends RESTBaseController {
 		Options::delete( OptionDefaults::PIXEL_ID );
 		Options::delete( OptionDefaults::IS_JETPACK_CONNECTED );
 		Options::delete( OptionDefaults::ONBOARDING_STATUS );
+		Options::delete( OptionDefaults::ONBOARDING_STEP );
 		Options::delete( OptionDefaults::LAST_EXPORT_TIMESTAMP );
 		Options::delete( OptionDefaults::EXPORT_FILE_PATH );
 		Options::delete( OptionDefaults::EXPORT_FILE_URL );
@@ -413,6 +414,7 @@ class RedditConnectionController extends RESTBaseController {
 			do_action( Helper::with_prefix( 'before_onboarding_complete' ) );
 
 			Options::set( OptionDefaults::ONBOARDING_STATUS, 'connected' );
+			Options::set( OptionDefaults::ONBOARDING_STEP, 'paid_ads' );
 
 			// Set the profile ID.
 			$member = $this->ad_partner_api->members->me();
