@@ -44,13 +44,15 @@ const RedditAds = () => {
 	const { isCampaignCreated, hasFinishedResolution } = useSettings();
 	const adminUrl = useAdminUrl();
 	const getDescription = () => {
-		return isCampaignCreated ? __(
-				'Manage your campaigns and view performance reports.',
-				'reddit-for-woocommerce'
-			) : __(
-				'Create a Reddit campaign to promote your products.',
-				'reddit-for-woocommerce'
-			);
+		return isCampaignCreated
+			? __(
+					'Manage your campaigns and view performance reports.',
+					'reddit-for-woocommerce'
+			  )
+			: __(
+					'Create a Reddit campaign to promote your products.',
+					'reddit-for-woocommerce'
+			  );
 	};
 
 	const getIndicator = () => {
@@ -82,10 +84,7 @@ const RedditAds = () => {
 					eventName="rfw_reddit_ads_create_campaign_button_click"
 					eventProps={ { context: 'settings' } }
 				>
-					{ __(
-						'Create Campaign',
-						'reddit-for-woocommerce'
-					) }
+					{ __( 'Create Campaign', 'reddit-for-woocommerce' ) }
 				</AppButton>
 			);
 		}
@@ -98,10 +97,7 @@ const RedditAds = () => {
 					eventName="rfw_reddit_ads_create_campaign_on_reddit_button_click"
 					eventProps={ { context: 'settings' } }
 				>
-					{ __(
-						'Create Campaign',
-						'reddit-for-woocommerce'
-					) }
+					{ __( 'Create Campaign', 'reddit-for-woocommerce' ) }
 				</AppButton>
 				<AppButton
 					variant="secondary"
@@ -109,10 +105,7 @@ const RedditAds = () => {
 					eventName="rfw_reddit_go_to_dashboard_button_click"
 					eventProps={ { context: 'settings' } }
 				>
-					{ __(
-						'Go to Dashboard',
-						'reddit-for-woocommerce'
-					) }
+					{ __( 'Go to Dashboard', 'reddit-for-woocommerce' ) }
 				</AppButton>
 			</div>
 		);
