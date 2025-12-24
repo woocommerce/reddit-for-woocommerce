@@ -99,13 +99,13 @@ class CampaignController extends RESTBaseController {
 		$ad_account_id = Options::get( OptionDefaults::AD_ACCOUNT_ID );
 
 		// Create a new campaign. If the campaign creation fails, return an error.
-		$campaign = $this->create_campaign();
+		$campaign_id = $this->create_campaign();
 
-		if ( is_wp_error( $campaign ) ) {
+		if ( is_wp_error( $campaign_id ) ) {
 			return new WP_REST_Response(
 				array(
 					'status'  => 'error',
-					'message' => $campaign->get_error_message(),
+					'message' => $campaign_id->get_error_message(),
 				),
 				500
 			);
@@ -125,7 +125,7 @@ class CampaignController extends RESTBaseController {
 		}
 
 		// Create ad groups for the campaign to set the daily budget and targeting type.
-		$ad_group_ids = $this->create_ad_groups( $campaign, $product_set_id, $amount );
+		$ad_group_ids = $this->create_ad_groups( $campaign_id, $product_set_id, $amount );
 
 		if ( is_wp_error( $ad_group_ids ) ) {
 			return new WP_REST_Response(
@@ -152,6 +152,11 @@ class CampaignController extends RESTBaseController {
 
 		// Delete the transients.
 		Transients::delete( sprintf( '%s_%s', TransientDefaults::PRODUCT_SET_ID, $ad_account_id ) );
+
+		// Set created campaign ID to the options, to archive it while disconnect account.
+		$campaign_ids   = Options::get( OptionDefaults::CAMPAIGN_IDS );
+		$campaign_ids[] = $campaign_id;
+		Options::set( OptionDefaults::CAMPAIGN_IDS, $campaign_ids );
 
 		return rest_ensure_response(
 			array(
