@@ -58,10 +58,17 @@ class OnboardingController extends RESTBaseController {
 	 * @return WP_REST_Response
 	 */
 	public function get_setup_state(): WP_REST_Response {
+		$status = Options::get( OptionDefaults::ONBOARDING_STATUS );
+		$step   = Options::get( OptionDefaults::ONBOARDING_STEP );
+
+		if ( 'connected' === $status ) {
+			$step = 'paid_ads';
+		}
+
 		return rest_ensure_response(
 			array(
-				'status' => Options::get( OptionDefaults::ONBOARDING_STATUS ),
-				'step'   => Options::get( OptionDefaults::ONBOARDING_STEP ),
+				'status' => $status,
+				'step'   => $step,
 			)
 		);
 	}
