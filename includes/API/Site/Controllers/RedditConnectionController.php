@@ -378,6 +378,19 @@ class RedditConnectionController extends RESTBaseController {
 		$params = $request->get_json_params();
 
 		if ( isset( $params['business_id'] ) ) {
+			$stored_business_id = Options::get( OptionDefaults::BUSINESS_ID );
+			// Check if the business id has changed, if so, delete the catalog and feed to create a new one with the new business id.
+			if ( ! empty( $stored_business_id ) && sanitize_text_field( wp_unslash( $params['business_id'] ) ) !== $stored_business_id ) {
+				$catalog_id = Options::get( OptionDefaults::CATALOG_ID );
+				if ( ! empty( $catalog_id ) ) {
+					$delete_catalog = $this->ad_partner_api->catalog->delete( $catalog_id );
+					if ( ! is_wp_error( $delete_catalog ) ) {
+						Options::delete( OptionDefaults::CATALOG_ID );
+						Options::delete( OptionDefaults::FEED_STATUS );
+					}
+				}
+			}
+
 			Options::set( OptionDefaults::BUSINESS_ID, sanitize_text_field( $params['business_id'] ) );
 		}
 
