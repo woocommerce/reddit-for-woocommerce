@@ -30,7 +30,7 @@ use RedditForWooCommerce\ServiceKey;
 defined( 'ABSPATH' ) || exit;
 
 if ( ! defined( 'REDDIT_FOR_WOOCOMMERCE_VERSION' ) ) {
-	define( 'REDDIT_FOR_WOOCOMMERCE_VERSION', '1.0.1' ); // WRCS: DEFINED_VERSION.
+	define( 'REDDIT_FOR_WOOCOMMERCE_VERSION', '1.0.2' ); // WRCS: DEFINED_VERSION.
 }
 
 if ( ! defined( 'REDDIT_FOR_WOOCOMMERCE_FILE' ) ) {
