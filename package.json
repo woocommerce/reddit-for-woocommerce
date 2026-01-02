@@ -16,6 +16,9 @@
 	"bugs": {
 		"url": "https://github.com/woocommerce/reddit-for-woocommerce/issues"
 	},
+	"config": {
+		"wp_org_slug": "reddit-for-woocommerce"
+	},
 	"dependencies": {
 		"@woocommerce/components": "^12.3.0",
 		"@woocommerce/currency": "^4.3.0",
