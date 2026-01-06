@@ -56,16 +56,14 @@ Yes, it uses a [Jetpack](https://jetpack.com/) account to connect and communicat
 == Changelog ==
 
 = 1.0.2 - 2026-01-02 =
-* Add - Implement Create Campaign during onboarding.
-* Dev - Set up woorelease GH workflows.
-* Tweak - WC 10.4 compatibility.
-* Tweak - WP 6.9 compatibility.
 * Update - Average daily budget suggestions.
+* Tweak - WooCommerce 10.4 compatibility.
+* Dev - Set up woorelease GH workflows.
 
 = 1.0.1 - 2025-12-09 =
+* Add - Implement Create Campaign during onboarding.
 * Improved - create campaign defaults and UI improvements.
 * Tweak - WordPress 6.9 compatibility.
-* Tweak - WooCommerce 10.4 compatibility.
 
 = 1.0.0 - 2025-11-11 =
 * Initial release
