@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Reddit for WooCommerce
  * Description: Seamlessly integrates your WooCommerce store with Reddit's powerful advertising platform, enabling you to reach millions of potential customers through engaging visual ads.
- * Version: 1.0.1
+ * Version: 1.0.2
  * Author: WooCommerce
  * Author URI: https://woocommerce.com/
  * Text Domain: reddit-for-woocommerce
@@ -14,6 +14,7 @@
  * Tested up to: 6.9
  * WC requires at least: 10.2
  * WC tested up to: 10.4
+ * Woo:
  *
  * License: GNU General Public License v3.0
  * License URI: http://www.gnu.org/licenses/gpl-3.0.html
@@ -29,7 +30,7 @@ use RedditForWooCommerce\ServiceKey;
 defined( 'ABSPATH' ) || exit;
 
 if ( ! defined( 'REDDIT_FOR_WOOCOMMERCE_VERSION' ) ) {
-	define( 'REDDIT_FOR_WOOCOMMERCE_VERSION', '1.0.1' );
+	define( 'REDDIT_FOR_WOOCOMMERCE_VERSION', '1.0.2' ); // WRCS: DEFINED_VERSION.
 }
 
 if ( ! defined( 'REDDIT_FOR_WOOCOMMERCE_FILE' ) ) {
