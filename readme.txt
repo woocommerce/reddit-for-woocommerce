@@ -55,7 +55,7 @@ Yes, it uses a [Jetpack](https://jetpack.com/) account to connect and communicat
 
 == Changelog ==
 
-= 1.0.2 - 2026-01-06 =
+= 1.0.2 - 2026-01-07 =
 * Update - Average daily budget suggestions.
 * Tweak - WooCommerce 10.4 compatibility.
 * Dev - Set up woorelease GH workflows.
