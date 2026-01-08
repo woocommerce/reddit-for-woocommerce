@@ -61,10 +61,6 @@ class OnboardingController extends RESTBaseController {
 		$status = Options::get( OptionDefaults::ONBOARDING_STATUS );
 		$step   = Options::get( OptionDefaults::ONBOARDING_STEP );
 
-		if ( 'connected' === $status ) {
-			$step = 'paid_ads';
-		}
-
 		return rest_ensure_response(
 			array(
 				'status' => $status,
