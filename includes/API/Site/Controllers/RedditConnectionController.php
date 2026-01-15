@@ -391,6 +391,8 @@ class RedditConnectionController extends RESTBaseController {
 						Options::delete( OptionDefaults::FEED_STATUS );
 					}
 				}
+				// Remove the dummy purchase tracked flag.
+				Options::delete( OptionDefaults::DUMMY_PURCHASE_TRACKED );
 			}
 
 			Options::set( OptionDefaults::BUSINESS_ID, sanitize_text_field( $params['business_id'] ) );
