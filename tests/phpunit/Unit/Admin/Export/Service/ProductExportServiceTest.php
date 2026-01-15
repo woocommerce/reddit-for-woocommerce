@@ -130,6 +130,7 @@ class ProductExportServiceTest extends WP_UnitTestCase {
 
 		$product_2 = new \WC_Product_Simple();
 		$product_2->set_name( 'Sample Product' );
+		$product_2->set_date_created( time() + 1 );
 		$product_2->save();
 
 		Options::set( OptionDefaults::EXPORT_PRODUCT_IDS, array( $product->get_id(), $product_2->get_id() ) );
@@ -162,25 +163,25 @@ class ProductExportServiceTest extends WP_UnitTestCase {
 			$csv[0]
 		);
 
-		$this->assertEquals( (string) $product->get_id(), $csv[1][0] );
-		$this->assertEquals( 'Test Product', $csv[1][1] );
+		$this->assertEquals( (string) $product_2->get_id(), $csv[1][0] );
+		$this->assertEquals( 'Sample Product', $csv[1][1] );
 		$this->assertEquals( '', $csv[1][2] );
-		$this->assertStringContainsString( '?product=test-product', $csv[1][3] );
+		$this->assertStringContainsString( '?product=sample-product', $csv[1][3] );
 		$this->assertEquals( '', $csv[1][4] );
-		$this->assertEquals( '29.99 USD', $csv[1][5] );
+		$this->assertEquals( '0 USD', $csv[1][5] );
 		$this->assertEquals( '', $csv[1][6] );
 		$this->assertEquals( '', $csv[1][7] );
-		$this->assertEquals( 'in_stock', $csv[1][8] );
+		$this->assertEquals( 'out_of_stock', $csv[1][8] );
 
-		$this->assertEquals( (string) $product_2->get_id(), $csv[2][0] );
-		$this->assertEquals( 'Sample Product', $csv[2][1] );
+		$this->assertEquals( (string) $product->get_id(), $csv[2][0] );
+		$this->assertEquals( 'Test Product', $csv[2][1] );
 		$this->assertEquals( '', $csv[2][2] );
-		$this->assertStringContainsString( '?product=sample-product', $csv[2][3] );
+		$this->assertStringContainsString( '?product=test-product', $csv[2][3] );
 		$this->assertEquals( '', $csv[2][4] );
-		$this->assertEquals( '0 USD', $csv[2][5] );
+		$this->assertEquals( '29.99 USD', $csv[2][5] );
 		$this->assertEquals( '', $csv[2][6] );
 		$this->assertEquals( '', $csv[2][7] );
-		$this->assertEquals( 'out_of_stock', $csv[2][8] );
+		$this->assertEquals( 'in_stock', $csv[2][8] );
 
 		if ( file_exists( $file_path ) ) {
 			unlink( $file_path );
