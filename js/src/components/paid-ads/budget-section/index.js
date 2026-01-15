@@ -10,6 +10,7 @@ import { Tip } from '@wordpress/components';
 import Section from '~/components/section';
 import Subsection from '~/components/subsection';
 import BudgetSetup from '../budget-setup';
+import BillingNotice from '~/components/paid-ads/billing-notice';
 import './index.scss';
 
 /**
@@ -50,6 +51,8 @@ const BudgetSection = ( { children } ) => {
 								'reddit-for-woocommerce'
 							) }
 						</Tip>
+						<BillingNotice />
+
 					</Section.Card.Body>
 				</Section.Card>
 				{ children }
