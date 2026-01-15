@@ -2,7 +2,7 @@
 Contributors: automattic, woocommerce
 Tags: woocommerce, reddit, product feed, ads
 Tested up to: 6.9
-Stable tag: 1.0.1
+Stable tag: 1.0.2
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -52,3 +52,20 @@ This service is provided by "Reddit, Inc.": [terms of use](https://redditinc.com
 
 = Does the plugin use any external services? =
 Yes, it uses a [Jetpack](https://jetpack.com/) account to connect and communicate with the [Reddit](https://www.reddit.com) API.
+
+== Changelog ==
+
+= 1.0.2 - 2026-01-07 =
+* Update - Average daily budget suggestions.
+* Tweak - WooCommerce 10.4 compatibility.
+* Dev - Set up woorelease GH workflows.
+
+= 1.0.1 - 2025-12-09 =
+* Add - Implement Create Campaign during onboarding.
+* Improved - create campaign defaults and UI improvements.
+* Tweak - WordPress 6.9 compatibility.
+
+= 1.0.0 - 2025-11-11 =
+* Initial release
+
+[See changelog for all versions](https://raw.githubusercontent.com/woocommerce/reddit-for-woocommerce/trunk/changelog.txt).
