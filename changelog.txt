@@ -1,9 +1,14 @@
 *** Reddit for WooCommerce Changelog ***
 
-2025-12-09 - version 1.0.1
+= 1.0.2 - 2026-01-07 =
+* Update - Average daily budget suggestions.
+* Tweak - WooCommerce 10.4 compatibility.
+* Dev - Set up woorelease GH workflows.
+
+= 1.0.1 - 2025-12-09 =
+* Add - Implement Create Campaign during onboarding.
 * Improved - create campaign defaults and UI improvements.
 * Tweak - WordPress 6.9 compatibility.
-* Tweak - WooCommerce 10.4 compatibility.
 
-2025-11-11 - version 1.0.0
+= 1.0.0 - 2025-11-11 =
 * Initial release
