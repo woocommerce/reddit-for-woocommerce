@@ -304,6 +304,28 @@ class RedditConnectionController extends RESTBaseController {
 			}
 		}
 
+		// Archive the campaigns if they exist.
+		$campaign_ids = Options::get( OptionDefaults::CAMPAIGN_IDS );
+		if ( ! empty( $campaign_ids ) ) {
+			foreach ( $campaign_ids as $campaign_id ) {
+				$update_campaign_response = $this->ad_partner_api->campaigns->update(
+					$campaign_id,
+					array( 'configured_status' => 'ARCHIVED' ),
+				);
+
+				// If the campaign archiving fails, log the error but don't stop the disconnection process.
+				if ( is_wp_error( $update_campaign_response ) ) {
+					$error_data = $update_campaign_response->get_error_data();
+					$error_body = isset( $error_data['body'] ) ? json_decode( $error_data['body'], true ) : array();
+					$logger     = wc_get_logger();
+					$logger->alert(
+						'Archiving campaign failed with error code: ' . $update_campaign_response->get_error_code(),
+						$error_body
+					);
+				}
+			}
+		}
+
 		$response = $this->stop_connection();
 
 		if ( is_wp_error( $response ) ) {
