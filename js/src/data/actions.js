@@ -342,6 +342,7 @@ export async function upsertBusinessAccount(
 			},
 		} );
 
+		await fetchExistingAdsAccounts();
 		return receiveRedditAccountConfig( response );
 	} catch ( error ) {
 		handleApiError(
