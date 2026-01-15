@@ -22,7 +22,7 @@ const BillingNotice = () => {
 			<p>
 				{ createInterpolateElement(
 					__(
-						'To run ads on Reddit, you need to have billing information set up in your Reddit Ads account. If you haven\'t set up billing yet, please set it up from <link>here</link> before continuing.',
+						"To run ads on Reddit, you need to have billing information set up in your Reddit Ads account. If you haven't set up billing yet, please set it up from <link>here</link> before continuing.",
 						'reddit-for-woocommerce'
 					),
 					{

@@ -52,7 +52,6 @@ const BudgetSection = ( { children } ) => {
 							) }
 						</Tip>
 						<BillingNotice />
-
 					</Section.Card.Body>
 				</Section.Card>
 				{ children }
