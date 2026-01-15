@@ -77,4 +77,41 @@ class CampaignApi extends BaseAdPartnerApi {
 			$payload
 		);
 	}
+
+	/**
+	 * Updates a campaign with the given data.
+	 *
+	 * This method builds and submits the campaign updating request using the
+	 * campaign ID.
+	 *
+	 * @since x.x.x
+	 *
+	 * @param string $campaign_id The campaign ID.
+	 * @param array  $update_data The data to update the campaign with.
+	 * @example array(
+	 *     'configured_status' => 'ARCHIVED',
+	 * )
+	 * @return \WP_REST_Response|WP_Error REST response from WCS or error if inputs are missing.
+	 */
+	public function update( $campaign_id, $update_data = array() ) {
+		$campaign_id = $campaign_id ?? '';
+		$update_data = $update_data ?? array();
+
+		/*
+		 * Validate the campaign ID.
+		 */
+		if ( ! $campaign_id ) {
+			return new WP_Error(
+				'campaign_id_required',
+				__( 'Campaign ID is required.', 'reddit-for-woocommerce' ),
+			);
+		}
+
+		return $this->wcs->proxy_patch(
+			sprintf( '/ads/campaigns/%s', rawurlencode( $campaign_id ) ),
+			array(
+				'data' => $update_data,
+			),
+		);
+	}
 }
