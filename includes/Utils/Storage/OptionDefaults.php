@@ -195,6 +195,13 @@ final class OptionDefaults {
 	public const ADS_ACCOUNT_CURRENCY = 'ad_account_currency';
 
 	/**
+	 * Option key to store the Ad Partner's Campaign IDs.
+	 *
+	 * @since 0.1.0
+	 */
+	public const CAMPAIGN_IDS = 'campaign_ids';
+
+	/**
 	 * Returns default values for all known Ad Partner options.
 	 *
 	 * Used by {@see Options} to provide fallbacks when option values
@@ -228,6 +235,7 @@ final class OptionDefaults {
 			self::PROFILE_ID             => '',
 			self::DUMMY_PURCHASE_TRACKED => 'no',
 			self::ADS_ACCOUNT_CURRENCY   => get_woocommerce_currency(),
+			self::CAMPAIGN_IDS           => array(),
 		);
 	}
 }
