@@ -58,7 +58,7 @@ const BudgetSection = ( { children } ) => {
 											href="https://ads.reddit.com/billing"
 											target="_blank"
 											rel="noopener noreferrer"
-											external="true"
+											type="external"
 										/>
 									),
 								}
