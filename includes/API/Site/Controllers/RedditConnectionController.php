@@ -441,7 +441,14 @@ class RedditConnectionController extends RESTBaseController {
 				);
 
 				if ( isset( $error_body['error']['code'] ) ) {
-					Options::set( OptionDefaults::CATALOG_STATUS, absint( $error_body['error']['code'] ) );
+					$error_code    = absint( $error_body['error']['code'] );
+					$catalog_error = '';
+					if ( 403 === $error_code ) {
+						$catalog_error = 'PERMISSION_ERROR';
+					} elseif ( 400 === $error_code && strpos( $error_body['error']['message'], 'pixels already attached to a catalog' ) !== false ) {
+						$catalog_error = 'CATALOG_ALREADY_EXISTS';
+					}
+					Options::set( OptionDefaults::CATALOG_ERROR, $catalog_error );
 				}
 			} else {
 				$data         = $response->get_data();
@@ -449,6 +456,7 @@ class RedditConnectionController extends RESTBaseController {
 
 				if ( ! empty( $catalog_data ) ) {
 					Options::set( OptionDefaults::CATALOG_ID, $catalog_data['id'] );
+					Options::delete( OptionDefaults::CATALOG_ERROR );
 				}
 			}
 

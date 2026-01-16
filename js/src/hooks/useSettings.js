@@ -33,7 +33,7 @@ const useSettings = () => {
 			lastExportTimeStamp: settings.lastExportTimeStamp,
 			exportFileUrl: settings.exportFileUrl,
 			catalogId: settings.catalogId,
-			catalogStatus: settings.catalogStatus,
+			catalogError: settings.catalogError,
 			hasFinishedResolution: selector.hasFinishedResolution(
 				selectorName,
 				[]

@@ -39,7 +39,7 @@ const store = createReduxStore( STORE_KEY, {
 		adsBudgetMetrics: [],
 		settings: {
 			catalogId: '',
-			catalogStatus: '',
+			catalogError: '',
 			exportFileUrl: '',
 			lastExportTimeStamp: '',
 			productsToken: '',
