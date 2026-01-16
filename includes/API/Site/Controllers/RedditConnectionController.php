@@ -336,6 +336,7 @@ class RedditConnectionController extends RESTBaseController {
 		Options::delete( OptionDefaults::EXPORT_FILE_URL );
 		Options::delete( OptionDefaults::EXPORT_PRODUCT_IDS );
 		Options::delete( OptionDefaults::CATALOG_ID );
+		Options::delete( OptionDefaults::CATALOG_ERROR );
 		Options::delete( OptionDefaults::FEED_STATUS );
 		Options::delete( OptionDefaults::WCS_PRODUCTS_TOKEN );
 		Options::delete( OptionDefaults::PROFILE_ID );

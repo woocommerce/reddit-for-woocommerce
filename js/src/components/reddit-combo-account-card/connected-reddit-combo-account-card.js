@@ -24,6 +24,7 @@ import Indicator from './indicator';
 import SpinnerCard from '~/components/spinner-card';
 import CreateBusinessAccountNotice from './create-business-account-notice';
 import './connected-reddit-combo-account-card.scss';
+import CatalogRoleNotice from '~/pages/settings/product-catalog/catalog-role-notice';
 
 const ConnectedRedditComboAccountCard = () => {
 	const [ editMode, setEditMode ] = useState( false );
@@ -65,6 +66,7 @@ const ConnectedRedditComboAccountCard = () => {
 		! connectingWhich &&
 		! isConnectingAdsAccount &&
 		( editMode || ! hasAdsConnection );
+	const showCatalogRoleNotice = hasBusinessConnection && hasAdsConnection;
 
 	useEffect( () => {
 		const upsertAccount = async () => {
@@ -170,6 +172,7 @@ const ConnectedRedditComboAccountCard = () => {
 
 			{ showConnectBusiness && <ConnectBusiness /> }
 			{ showConnectAds && <ConnectAds /> }
+			{ showCatalogRoleNotice && <CatalogRoleNotice /> }
 		</div>
 	);
 };

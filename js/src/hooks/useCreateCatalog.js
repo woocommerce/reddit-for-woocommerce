@@ -35,13 +35,14 @@ const useCreateCatalog = () => {
 	const [ errorCode, setErrorCode ] = useState( 0 );
 	const { createNotice } = useDispatchCoreNotices();
 
-	const createCatalog = useCallback( async () => {
+	const createCatalog = useCallback( async ( deleteExistingCatalog = false ) => {
 		setLoading( true );
 		const response = await fetch( ajaxurl, {
 			method: 'POST',
 			body: new URLSearchParams( {
 				action: `${ redditAdsAdminData.prefix }create_catalog`,
 				security: adminNonce,
+				delete_existing_catalog: deleteExistingCatalog,
 			} ),
 		} );
 
@@ -73,7 +74,7 @@ const useCreateCatalog = () => {
 					)
 				);
 
-				setErrorCode( res.data.code );
+				setErrorCode( res.data?.error_code );
 			}
 		} else {
 			createNotice(
