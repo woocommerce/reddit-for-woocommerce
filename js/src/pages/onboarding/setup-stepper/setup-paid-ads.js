@@ -45,7 +45,8 @@ export default function SetupPaidAds() {
 	const getEventProps = useEventPropertiesFilter(
 		FILTER_BUDGET_RECOMMENDATIONS
 	);
-	const { catalog_id: catalogId, hasFinishedResolution } = useRedditAccountConfig();
+	const { catalog_id: catalogId, hasFinishedResolution } =
+		useRedditAccountConfig();
 	const isCatalogCreated = catalogId && hasFinishedResolution;
 
 	const finishOnboardingSetup = async ( onBeforeFinish = noop ) => {

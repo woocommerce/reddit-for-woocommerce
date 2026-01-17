@@ -74,7 +74,7 @@ const CatalogRoleNotice = () => {
 					'reddit-for-woocommerce'
 				),
 				{
-					strong: <strong />
+					strong: <strong />,
 				}
 			) }
 		</p>
@@ -111,7 +111,9 @@ const CatalogRoleNotice = () => {
 				permissionsErrorNotice }
 			{ catalogCreationError === 'CATALOG_ALREADY_EXISTS' &&
 				pixelAlreadyAttachedNotice }
-			{ catalogCreationError !== 'PERMISSION_ERROR' && catalogCreationError !== 'CATALOG_ALREADY_EXISTS' && otherErrorNotice }
+			{ catalogCreationError !== 'PERMISSION_ERROR' &&
+				catalogCreationError !== 'CATALOG_ALREADY_EXISTS' &&
+				otherErrorNotice }
 			<AppButton
 				className="rfw-reddit-catalog-role-notice__create-catalog-button"
 				variant="secondary"
@@ -119,7 +121,11 @@ const CatalogRoleNotice = () => {
 				isBusy={ loading }
 				isDisabled={ loading }
 				onClick={ () => {
-					createCatalog( catalogCreationError === 'CATALOG_ALREADY_EXISTS' ? true : false )
+					createCatalog(
+						catalogCreationError === 'CATALOG_ALREADY_EXISTS'
+							? true
+							: false
+					);
 				} }
 			/>
 		</AppNotice>
