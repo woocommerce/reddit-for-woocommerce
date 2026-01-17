@@ -331,6 +331,7 @@ class RedditConnectionController extends RESTBaseController {
 		Options::delete( OptionDefaults::PIXEL_ID );
 		Options::delete( OptionDefaults::IS_JETPACK_CONNECTED );
 		Options::delete( OptionDefaults::ONBOARDING_STATUS );
+		Options::delete( OptionDefaults::ONBOARDING_STEP );
 		Options::delete( OptionDefaults::LAST_EXPORT_TIMESTAMP );
 		Options::delete( OptionDefaults::EXPORT_FILE_PATH );
 		Options::delete( OptionDefaults::EXPORT_FILE_URL );
@@ -412,8 +413,6 @@ class RedditConnectionController extends RESTBaseController {
 			 */
 			do_action( Helper::with_prefix( 'before_onboarding_complete' ) );
 
-			Options::set( OptionDefaults::ONBOARDING_STATUS, 'connected' );
-
 			// Set the profile ID.
 			$member = $this->ad_partner_api->members->me();
 
@@ -468,13 +467,6 @@ class RedditConnectionController extends RESTBaseController {
 				$ad_account_currency = $ad_account_data['data']['currency'] ?? '';
 				Options::set( OptionDefaults::ADS_ACCOUNT_CURRENCY, $ad_account_currency );
 			}
-
-			/**
-			 * Triggers when the Reddit onboarding process is completed.
-			 *
-			 * @since 0.1.0
-			 */
-			do_action( Helper::with_prefix( 'onboarding_complete' ) );
 		}
 
 		return $this->get_connection_details();

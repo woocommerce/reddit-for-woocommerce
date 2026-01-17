@@ -4,7 +4,7 @@
 import { __ } from '@wordpress/i18n';
 import { noop } from 'lodash';
 import { getQuery } from '@woocommerce/navigation';
-import { useEffect } from '@wordpress/element';
+import { useEffect, useState } from '@wordpress/element';
 
 /**
  * Internal dependencies
@@ -42,11 +42,13 @@ const SetupAccounts = ( props ) => {
 	const { onContinue = noop } = props;
 	const { products_token: productsTokenParam } = getQuery();
 	const { jetpack } = useJetpackAccount();
-	const { updateSettings } = useAppDispatch();
+	const { updateSettings, completeSetupAccounts } = useAppDispatch();
 	const { hasConnection: hasBusinessConnection } = useRedditBusinessAccount();
 	const { hasConnection: hasAdsConnection } = useRedditAdsAccount();
 	const { hasConnection: hasPixelIdConnection } = useRedditPixelId();
-	const {	catalog_id: catalogId, hasFinishedResolution } = useRedditAccountConfig();
+	const [ isSubmitting, setSubmitting ] = useState( false );
+	const { catalog_id: catalogId, hasFinishedResolution } =
+		useRedditAccountConfig();
 	const {
 		isConnected: isRedditConnected,
 		hasFinishedResolution: hasResolvedRedditAccount,
@@ -71,7 +73,6 @@ const SetupAccounts = ( props ) => {
 		! hasAdsConnection ||
 		! hasPixelIdConnection ||
 		! isCatalogCreated;
-	const isSubmitting = false;
 
 	useEffect( () => {
 		if ( ! productsTokenParam ) {
@@ -87,8 +88,13 @@ const SetupAccounts = ( props ) => {
 		return <AppSpinner />;
 	}
 
-	const handleOnClick = () => {
-		onContinue();
+	const handleOnClick = async () => {
+		setSubmitting( true );
+		completeSetupAccounts().then( () => {
+			onContinue();
+		}).catch( () => {
+			setSubmitting( false );
+		});
 	};
 
 	return (

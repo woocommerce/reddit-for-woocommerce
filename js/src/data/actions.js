@@ -493,6 +493,32 @@ export async function upsertPixelId( pixelId ) {
 }
 
 /**
+ * Completes the setup accounts.
+ *
+ * @return {Promise<Object>} The updated setup data.
+ * @throws {Error} If the API request fails.
+ */
+export async function completeSetupAccounts() {
+	try {
+		const response = await apiFetch( {
+			path: `${ API_NAMESPACE }/reddit/setup/complete`,
+			method: 'POST',
+		} );
+
+		return receiveSetup( response );
+	} catch ( error ) {
+		handleApiError(
+			error,
+			__(
+				'There was an error completing your setup. Please try again.',
+				'reddit-for-woocommerce'
+			)
+		);
+		throw error;
+	}
+}
+
+/**
  * Create a new ads campaign.
  *
  * @param {number} amount Daily average cost of the paid ads campaign.

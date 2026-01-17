@@ -42,7 +42,6 @@ export default function AdsCampaign( {
 	const formContext = useAdaptiveFormContext();
 	const { catalog_id: catalogId, hasFinishedResolution } =
 		useRedditAccountConfig();
-	const isCatalogCreated = catalogId && hasFinishedResolution;
 
 	return (
 		<StepContent>
@@ -58,7 +57,7 @@ export default function AdsCampaign( {
 
 			<BudgetSection />
 			<BillingCard />
-			{ ! isCatalogCreated && (
+			{ hasFinishedResolution && ! catalogId && (
 				<Section>
 					<CatalogRoleNotice />
 				</Section>
