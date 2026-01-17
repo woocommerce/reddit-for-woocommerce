@@ -53,7 +53,7 @@ const useCreateCatalog = () => {
 
 			if ( res.success ) {
 				setCreatedCatalogId( res.data.id || '' );
-				invalidateResolution( 'getSettings', [] );
+				invalidateResolution( 'getRedditAccountConfig', [] );
 				createNotice(
 					'success',
 					__(

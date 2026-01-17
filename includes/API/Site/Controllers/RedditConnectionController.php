@@ -498,6 +498,8 @@ class RedditConnectionController extends RESTBaseController {
 				'ad_account_id'   => Options::get( OptionDefaults::AD_ACCOUNT_ID ),
 				'ad_account_name' => Options::get( OptionDefaults::AD_ACCOUNT_NAME ),
 				'pixel_id'        => Options::get( OptionDefaults::PIXEL_ID ),
+				'catalog_id'      => Options::get( OptionDefaults::CATALOG_ID ),
+				'catalog_error'   => (string) Options::get( OptionDefaults::CATALOG_ERROR ),
 				'currency'        => $currency,
 				'symbol'          => $symbol,
 			)

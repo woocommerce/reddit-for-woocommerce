@@ -9,7 +9,6 @@ import { createInterpolateElement } from '@wordpress/element';
  */
 import AppNotice from '~/components/app-notice';
 import AppButton from '~/components/app-button';
-import useSettings from '~/hooks/useSettings';
 import useCreateCatalog from '~/hooks/useCreateCatalog';
 import useRedditAccountConfig from '~/hooks/useRedditAccountConfig';
 import './catalog-role-notice.scss';
@@ -21,11 +20,12 @@ import './catalog-role-notice.scss';
  * @return {JSX.Element|null} A warning notice with a link to set the catalog role and create the catalog, or null if resolution is not finished.
  */
 const CatalogRoleNotice = () => {
-	const { catalogId, catalogError, hasFinishedResolution } = useSettings();
 	const {
+		catalog_id: catalogId,
+		catalog_error: catalogError,
 		business_id: businessId,
 		pixel_id: pixelId,
-		hasFinishedResolution: hasFinishedResolutionRedditAccountConfig,
+		hasFinishedResolution,
 	} = useRedditAccountConfig();
 
 	const { createCatalog, loading, createdCatalogId, errorCode } =
@@ -34,7 +34,6 @@ const CatalogRoleNotice = () => {
 
 	if (
 		! hasFinishedResolution ||
-		! hasFinishedResolutionRedditAccountConfig ||
 		catalogId ||
 		createdCatalogId ||
 		! businessId ||

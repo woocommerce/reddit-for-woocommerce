@@ -15,7 +15,9 @@ import BudgetSection from '../budget-section';
 import Faqs from './faqs';
 import PaidAdsFeaturesSection from './paid-ads-features-section';
 import BillingCard from '../billing-card';
-import CatalogCard from '../catalog-card';
+import CatalogRoleNotice from '~/pages/settings/product-catalog/catalog-role-notice';
+import Section from '~/components/section';
+import useRedditAccountConfig from '~/hooks/useRedditAccountConfig';
 
 /**
  * @typedef {import('~/components/adaptive-form/adaptive-form-context').AdaptiveFormContext} AdaptiveFormContext
@@ -38,6 +40,8 @@ export default function AdsCampaign( {
 	continueButton,
 } ) {
 	const formContext = useAdaptiveFormContext();
+	const { catalog_id: catalogId, hasFinishedResolution } = useRedditAccountConfig();
+	const isCatalogCreated = catalogId && hasFinishedResolution;
 
 	return (
 		<StepContent>
@@ -52,8 +56,11 @@ export default function AdsCampaign( {
 			<PaidAdsFeaturesSection />
 
 			<BudgetSection />
-			<CatalogCard />
 			<BillingCard />
+			{ ! isCatalogCreated && <Section>
+					<CatalogRoleNotice />
+				</Section>
+			}
 
 			<StepContentFooter>
 				<StepContentActions>

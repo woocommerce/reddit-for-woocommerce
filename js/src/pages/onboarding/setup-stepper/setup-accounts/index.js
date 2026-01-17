@@ -24,8 +24,8 @@ import useRedditAdsAccount from '~/hooks/useRedditAdsAccount';
 import useRedditBusinessAccount from '~/hooks/useRedditBusinessAccount';
 import useRedditPixelId from '~/hooks/useRedditPixelId';
 import { useAppDispatch } from '~/data';
+import useRedditAccountConfig from '~/hooks/useRedditAccountConfig';
 import './index.scss';
-import useSettings from '~/hooks/useSettings';
 
 /**
  * Clicking on the "Continue" button to complete the onboarding process.
@@ -46,7 +46,7 @@ const SetupAccounts = ( props ) => {
 	const { hasConnection: hasBusinessConnection } = useRedditBusinessAccount();
 	const { hasConnection: hasAdsConnection } = useRedditAdsAccount();
 	const { hasConnection: hasPixelIdConnection } = useRedditPixelId();
-	const { catalogId, hasFinishedResolution } = useSettings();
+	const {	catalog_id: catalogId, hasFinishedResolution } = useRedditAccountConfig();
 	const {
 		isConnected: isRedditConnected,
 		hasFinishedResolution: hasResolvedRedditAccount,
