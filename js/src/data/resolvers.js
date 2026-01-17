@@ -125,8 +125,6 @@ export function getSettings() {
 
 			dispatch(
 				receiveSettings( {
-					catalogId: response.catalog_id,
-					catalogError: response.catalog_error,
 					exportFileUrl: response.export_file_url,
 					lastExportTimeStamp: response.last_export_timestamp,
 					productsToken: response.products_token,
