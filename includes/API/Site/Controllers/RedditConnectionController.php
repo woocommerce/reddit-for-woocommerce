@@ -331,6 +331,7 @@ class RedditConnectionController extends RESTBaseController {
 		Options::delete( OptionDefaults::PIXEL_ID );
 		Options::delete( OptionDefaults::IS_JETPACK_CONNECTED );
 		Options::delete( OptionDefaults::ONBOARDING_STATUS );
+		Options::delete( OptionDefaults::ONBOARDING_STEP );
 		Options::delete( OptionDefaults::LAST_EXPORT_TIMESTAMP );
 		Options::delete( OptionDefaults::EXPORT_FILE_PATH );
 		Options::delete( OptionDefaults::EXPORT_FILE_URL );
@@ -388,7 +389,10 @@ class RedditConnectionController extends RESTBaseController {
 						Options::delete( OptionDefaults::FEED_STATUS );
 					}
 				}
-				// Remove the dummy purchase tracked flag.
+				// Remove business specific options.
+				Options::delete( OptionDefaults::ONBOARDING_STATUS );
+				Options::delete( OptionDefaults::ONBOARDING_STEP );
+				Options::delete( OptionDefaults::ADS_ACCOUNT_CURRENCY );
 				Options::delete( OptionDefaults::DUMMY_PURCHASE_TRACKED );
 			}
 
