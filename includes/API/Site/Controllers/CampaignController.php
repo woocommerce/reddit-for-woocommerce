@@ -385,30 +385,28 @@ class CampaignController extends RESTBaseController {
 	}
 
 	/**
-	 * Get the profile ID.
+	 * Get the profile ID for the configured business.
+	 *
+	 * This method fetches all profiles for the configured business and returns the first profile ID.
 	 *
 	 * @return string|WP_Error Profile ID or WP_Error if profile ID is not found.
 	 */
 	private function get_profile_id() {
-		$profile_id = Options::get( OptionDefaults::PROFILE_ID );
+		// Get the list of profiles.
+		$profiles = $this->ad_partner_api->profiles->list();
+
+		if ( is_wp_error( $profiles ) ) {
+			return $profiles;
+		}
+
+		$profiles_data = $profiles->get_data();
+		$profile       = current( $profiles_data['data'] ?? array() );
+		$profile_id    = $profile['id'] ?? '';
 		if ( empty( $profile_id ) ) {
-			// Get the profile ID from the Reddit member.
-			$member = $this->ad_partner_api->members->me();
-
-			if ( is_wp_error( $member ) ) {
-				return $member;
-			}
-
-			$member_data = $member->get_data();
-			$profile_id  = $member_data['data']['id'] ?? '';
-			if ( empty( $profile_id ) ) {
-				return new WP_Error(
-					'profile_id_not_found',
-					__( 'Profile ID not found.', 'reddit-for-woocommerce' )
-				);
-			}
-
-			Options::set( OptionDefaults::PROFILE_ID, $profile_id );
+			return new WP_Error(
+				'profile_id_not_found',
+				__( 'Profile ID not found.', 'reddit-for-woocommerce' )
+			);
 		}
 
 		return $profile_id;

@@ -338,7 +338,6 @@ class RedditConnectionController extends RESTBaseController {
 		Options::delete( OptionDefaults::CATALOG_ID );
 		Options::delete( OptionDefaults::FEED_STATUS );
 		Options::delete( OptionDefaults::WCS_PRODUCTS_TOKEN );
-		Options::delete( OptionDefaults::PROFILE_ID );
 		Options::delete( OptionDefaults::DUMMY_PURCHASE_TRACKED );
 		Options::delete( OptionDefaults::ADS_ACCOUNT_CURRENCY );
 		Transients::delete( TransientDefaults::REDDIT_ACCOUNT_EMAIL );
@@ -427,21 +426,6 @@ class RedditConnectionController extends RESTBaseController {
 			do_action( Helper::with_prefix( 'before_onboarding_complete' ) );
 
 			Options::set( OptionDefaults::ONBOARDING_STATUS, 'connected' );
-
-			// Set the profile ID.
-			$member = $this->ad_partner_api->members->me();
-
-			if ( is_wp_error( $member ) ) {
-				$logger = wc_get_logger();
-				$logger->alert(
-					'Reddit member not found.',
-				);
-			} else {
-				$member_data = $member->get_data();
-				if ( ! empty( $member_data['data'] ) ) {
-					Options::set( OptionDefaults::PROFILE_ID, $member_data['data']['id'] );
-				}
-			}
 
 			// Create a new catalog for the business.
 			$response = $this->ad_partner_api->catalog->create();
