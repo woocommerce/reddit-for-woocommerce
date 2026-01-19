@@ -547,7 +547,7 @@ class ProductExportService {
 	 *
 	 * This method deletes the existing catalog which is associated with the current pixel to allow the creation of a new catalog.
 	 *
-	 * @since 0.1.0
+	 * @since x.x.x
 	 *
 	 * @param string $pixel_id The ID of the pixel to delete the catalog for.
 	 *
