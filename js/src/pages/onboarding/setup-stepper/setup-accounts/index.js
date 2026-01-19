@@ -90,11 +90,13 @@ const SetupAccounts = ( props ) => {
 
 	const handleOnClick = async () => {
 		setSubmitting( true );
-		completeSetupAccounts().then( () => {
-			onContinue();
-		}).catch( () => {
-			setSubmitting( false );
-		});
+		completeSetupAccounts()
+			.then( () => {
+				onContinue();
+			} )
+			.catch( () => {
+				setSubmitting( false );
+			} );
 	};
 
 	return (
