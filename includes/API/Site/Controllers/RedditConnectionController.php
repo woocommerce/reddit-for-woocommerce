@@ -253,27 +253,32 @@ class RedditConnectionController extends RESTBaseController {
 			);
 		}
 
-		$data  = $response->get_data();
-		$email = Transients::get( TransientDefaults::REDDIT_ACCOUNT_EMAIL );
+		$data   = $response->get_data();
+		$status = $data['status'] ?? '';
+		$email  = '';
 
-		if ( empty( $email ) ) {
-			$member = $this->ad_partner_api->members->me();
+		if ( 'connected' === $status ) {
+			$email = Transients::get( TransientDefaults::REDDIT_ACCOUNT_EMAIL );
 
-			if ( is_wp_error( $member ) ) {
-				$logger = wc_get_logger();
-				$logger->alert(
-					'Reddit member not found.',
-				);
-			} else {
-				$member_data = $member->get_data();
-				$email       = $member_data['data']['email'] ?? '';
-				Transients::set( TransientDefaults::REDDIT_ACCOUNT_EMAIL, $email );
+			if ( empty( $email ) ) {
+				$member = $this->ad_partner_api->members->me();
+
+				if ( is_wp_error( $member ) ) {
+					$logger = wc_get_logger();
+					$logger->alert(
+						'Reddit member not found.',
+					);
+				} else {
+					$member_data = $member->get_data();
+					$email       = $member_data['data']['email'] ?? '';
+					Transients::set( TransientDefaults::REDDIT_ACCOUNT_EMAIL, $email );
+				}
 			}
 		}
 
 		return rest_ensure_response(
 			array(
-				'status' => $data['status'],
+				'status' => $status,
 				'email'  => $email,
 			)
 		);
