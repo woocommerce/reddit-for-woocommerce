@@ -407,11 +407,11 @@ class RedditConnectionController extends RESTBaseController {
 		// Mark the onboarding process as connected, if Jetpack is connected, and the business id, ad account id, and pixel id are set.
 		if ( $is_jetpack_connected && ! empty( $business_id ) && ! empty( $ad_account_id ) && ! empty( $pixel_id ) ) {
 			/**
-			 * Triggers before the Reddit onboarding process marked as completed.
+			 * Triggers when the Reddit ad account and pixel id are connected.
 			 *
-			 * @since 0.1.0
+			 * @since x.x.x
 			 */
-			do_action( Helper::with_prefix( 'before_onboarding_complete' ) );
+			do_action( Helper::with_prefix( 'ad_account_connected' ) );
 
 			// Set the profile ID.
 			$member = $this->ad_partner_api->members->me();

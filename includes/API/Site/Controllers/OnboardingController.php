@@ -87,6 +87,13 @@ class OnboardingController extends RESTBaseController {
 	 * @return WP_REST_Response
 	 */
 	public function complete_setup(): WP_REST_Response {
+		/**
+		 * Triggers before the Reddit onboarding process marked as completed.
+		 *
+		 * @since 0.1.0
+		 */
+		do_action( Helper::with_prefix( 'before_onboarding_complete' ) );
+
 		Options::set( OptionDefaults::ONBOARDING_STATUS, 'connected' );
 		Options::set( OptionDefaults::ONBOARDING_STEP, 'paid_ads' );
 
