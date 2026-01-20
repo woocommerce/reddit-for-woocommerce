@@ -116,6 +116,7 @@ class AdPartnerApi {
 	 * @var AdApi
 	 */
 	public AdApi $ads;
+
 	/**
 	 * Handles Profiles operations.
 	 *
