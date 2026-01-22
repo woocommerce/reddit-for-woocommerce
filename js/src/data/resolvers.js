@@ -131,6 +131,7 @@ export function getSettings() {
 					lastExportTimeStamp: response.last_export_timestamp,
 					productsToken: response.products_token,
 					trackConversions: Boolean( response.capi_enabled ),
+					campaignCreated: Boolean( response.campaign_created ),
 					triggerExport: Boolean( response.trigger_export ),
 				} )
 			);
