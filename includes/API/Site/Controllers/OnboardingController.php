@@ -59,6 +59,7 @@ class OnboardingController extends RESTBaseController {
 					'permission_callback' => array( $this, 'permissions_check' ),
 					'callback'            => array( $this, 'complete_setup' ),
 				),
+				'schema' => array( $this, 'setup_state_schema' ),
 			)
 		);
 	}
