@@ -2,7 +2,7 @@
 Contributors: automattic, woocommerce
 Tags: woocommerce, reddit, product feed, ads
 Tested up to: 6.9
-Stable tag: 1.0.2
+Stable tag: 1.0.3
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -54,6 +54,17 @@ This service is provided by "Reddit, Inc.": [terms of use](https://redditinc.com
 Yes, it uses a [Jetpack](https://jetpack.com/) account to connect and communicate with the [Reddit](https://www.reddit.com) API.
 
 == Changelog ==
+
+= 1.0.3 - 2026-01-22 =
+* Dev – Fix flaky PHPUnit test in `ProductExportServiceTest`.
+* Fix - Ensure that the catalog is recreated after product export if the user deletes the auto-generated catalog.
+* Fix - Ensure that the created campaign is archived when disconnecting the Reddit account.
+* Fix - Strip HTML tags from the product description for the CSV export.
+* Fix - UX improvements for catalog creation failure handling.
+* Fix – Ensure that switching businesses during onboarding connects the correct ad account.
+* Release 1.0.2.
+* Update - Replace the billing card with an informational note to prevent potential confusion.
+* Update - UX improvements for the Reddit Ads card.
 
 = 1.0.2 - 2026-01-07 =
 * Update - Average daily budget suggestions.
