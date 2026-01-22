@@ -15,6 +15,7 @@ namespace RedditForWooCommerce\API\Site\Controllers;
 
 use WP_REST_Response;
 use RedditForWooCommerce\Config;
+use RedditForWooCommerce\Utils\Helper;
 use RedditForWooCommerce\Utils\Storage\Options;
 use RedditForWooCommerce\Utils\Storage\OptionDefaults;
 
@@ -48,6 +49,19 @@ class OnboardingController extends RESTBaseController {
 				'schema' => array( $this, 'setup_state_schema' ),
 			)
 		);
+
+		register_rest_route(
+			Config::REST_NAMESPACE . '/reddit',
+			'/setup/complete',
+			array(
+				array(
+					'methods'             => 'POST',
+					'permission_callback' => array( $this, 'permissions_check' ),
+					'callback'            => array( $this, 'complete_setup' ),
+				),
+				'schema' => array( $this, 'setup_state_schema' ),
+			)
+		);
 	}
 
 	/**
@@ -67,6 +81,34 @@ class OnboardingController extends RESTBaseController {
 				'step'   => $step,
 			)
 		);
+	}
+
+	/**
+	 * Completes the onboarding setup.
+	 *
+	 * @since x.x.x
+	 *
+	 * @return WP_REST_Response
+	 */
+	public function complete_setup(): WP_REST_Response {
+		/**
+		 * Triggers before the Reddit onboarding process marked as completed.
+		 *
+		 * @since 0.1.0
+		 */
+		do_action( Helper::with_prefix( 'before_onboarding_complete' ) );
+
+		Options::set( OptionDefaults::ONBOARDING_STATUS, 'connected' );
+		Options::set( OptionDefaults::ONBOARDING_STEP, 'paid_ads' );
+
+		/**
+		 * Triggers when the Reddit onboarding process is completed.
+		 *
+		 * @since x.x.x
+		 */
+		do_action( Helper::with_prefix( 'onboarding_complete' ) );
+
+		return $this->get_setup_state();
 	}
 
 	/**

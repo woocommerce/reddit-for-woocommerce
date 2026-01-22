@@ -9,7 +9,6 @@ import { createInterpolateElement } from '@wordpress/element';
  */
 import AppNotice from '~/components/app-notice';
 import AppButton from '~/components/app-button';
-import useSettings from '~/hooks/useSettings';
 import useCreateCatalog from '~/hooks/useCreateCatalog';
 import useRedditAccountConfig from '~/hooks/useRedditAccountConfig';
 import './catalog-role-notice.scss';
@@ -21,22 +20,24 @@ import './catalog-role-notice.scss';
  * @return {JSX.Element|null} A warning notice with a link to set the catalog role and create the catalog, or null if resolution is not finished.
  */
 const CatalogRoleNotice = () => {
-	const { catalogId, catalogStatus, hasFinishedResolution } = useSettings();
 	const {
+		catalog_id: catalogId,
+		catalog_error: catalogError,
 		business_id: businessId,
-		hasFinishedResolution: hasFinishedResolutionRedditAccountConfig,
+		pixel_id: pixelId,
+		hasFinishedResolution,
 	} = useRedditAccountConfig();
 
 	const { createCatalog, loading, createdCatalogId, errorCode } =
 		useCreateCatalog();
-	const catalogCreationStatus = errorCode || catalogStatus;
+	const catalogCreationError = errorCode || catalogError;
 
 	if (
 		! hasFinishedResolution ||
-		! hasFinishedResolutionRedditAccountConfig ||
 		catalogId ||
 		createdCatalogId ||
-		! businessId
+		! businessId ||
+		! pixelId
 	) {
 		return null;
 	}
@@ -65,6 +66,27 @@ const CatalogRoleNotice = () => {
 		</p>
 	);
 
+	const pixelAlreadyAttachedNotice = (
+		<p>
+			{ createInterpolateElement(
+				__(
+					'Catalog creation failed because the pixel is already associated with an existing catalog. Please click <strong>Replace Catalog</strong> to delete the existing catalog and create a new one.',
+					'reddit-for-woocommerce'
+				),
+				{
+					strong: <strong />,
+				}
+			) }
+			<br />
+			<strong>
+				{ __(
+					'Careful: this can not be undone.',
+					'reddit-for-woocommerce'
+				) }
+			</strong>
+		</p>
+	);
+
 	const otherErrorNotice = (
 		<p>
 			{ createInterpolateElement(
@@ -86,7 +108,10 @@ const CatalogRoleNotice = () => {
 		</p>
 	);
 
-	const httpErrorCode = Number( catalogCreationStatus );
+	const isPermissionError = catalogCreationError === 'PERMISSION_ERROR';
+	const isCatalogAlreadyExists =
+		catalogCreationError === 'CATALOG_ALREADY_EXISTS';
+	const isOtherError = ! isPermissionError && ! isCatalogAlreadyExists;
 
 	return (
 		<AppNotice
@@ -94,17 +119,26 @@ const CatalogRoleNotice = () => {
 			isDismissible={ false }
 			className="rfw-reddit-catalog-role-notice"
 		>
-			{ httpErrorCode > 0 &&
-				httpErrorCode === 403 &&
-				permissionsErrorNotice }
-			{ httpErrorCode > 0 && httpErrorCode !== 403 && otherErrorNotice }
+			{ isPermissionError && permissionsErrorNotice }
+			{ isCatalogAlreadyExists && pixelAlreadyAttachedNotice }
+			{ isOtherError && otherErrorNotice }
 			<AppButton
 				className="rfw-reddit-catalog-role-notice__create-catalog-button"
 				variant="secondary"
-				text={ __( 'Create Catalog', 'reddit-for-woocommerce' ) }
+				text={
+					isCatalogAlreadyExists
+						? __( 'Replace Catalog', 'reddit-for-woocommerce' )
+						: __( 'Create Catalog', 'reddit-for-woocommerce' )
+				}
 				isBusy={ loading }
 				isDisabled={ loading }
-				onClick={ createCatalog }
+				onClick={ () => {
+					createCatalog(
+						catalogCreationError === 'CATALOG_ALREADY_EXISTS'
+							? true
+							: false
+					);
+				} }
 			/>
 		</AppNotice>
 	);

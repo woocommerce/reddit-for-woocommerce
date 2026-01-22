@@ -4,6 +4,8 @@ export const connectedConfigPayload = {
 	ad_account_id: 'ad-account-def123',
 	ad_account_name: 'R4W Ad Account',
 	pixel_id: 'pixel-def123',
+	catalog_id: 'catalog-abc123',
+	catalog_error: '',
 };
 
 export const businesses = [

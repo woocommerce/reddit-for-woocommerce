@@ -15,7 +15,7 @@ import AdsCampaign from '~/components/paid-ads/ads-campaign';
 import CampaignAssetsForm from '~/components/paid-ads/campaign-assets-form';
 import AppButton from '~/components/app-button';
 import useEventPropertiesFilter from '~/hooks/useEventPropertiesFilter';
-import useSettings from '~/hooks/useSettings';
+import useRedditAccountConfig from '~/hooks/useRedditAccountConfig';
 import { getSettingsUrl } from '~/utils/urls';
 import { handleApiError } from '~/utils/handleError';
 import { FILTER_BUDGET_RECOMMENDATIONS, recordRfwEvent } from '~/utils/tracks';
@@ -45,7 +45,8 @@ export default function SetupPaidAds() {
 	const getEventProps = useEventPropertiesFilter(
 		FILTER_BUDGET_RECOMMENDATIONS
 	);
-	const { catalogId, hasFinishedResolution } = useSettings();
+	const { catalog_id: catalogId, hasFinishedResolution } =
+		useRedditAccountConfig();
 	const isCatalogCreated = catalogId && hasFinishedResolution;
 
 	const finishOnboardingSetup = async ( onBeforeFinish = noop ) => {

@@ -110,9 +110,9 @@ final class OptionDefaults {
 	public const CATALOG_ID = 'catalog_id';
 
 	/**
-	 * Option key indicating whether the catalog has been created.
+	 * Option key indicating whether the catalog creation has an error.
 	 */
-	public const CATALOG_STATUS = 'catalog_status';
+	public const CATALOG_ERROR = 'catalog_error';
 
 	/**
 	 * Option key for the Ad Partner's Product Feed ID.
@@ -217,7 +217,7 @@ final class OptionDefaults {
 			self::PIXEL_ID               => '',
 			self::CONVERSIONS_ENABLED    => 'yes',
 			self::CATALOG_ID             => '',
-			self::CATALOG_STATUS         => 'empty',
+			self::CATALOG_ERROR          => '',
 			self::PRODUCT_FEED_ID        => '',
 			self::FEED_STATUS            => 'empty',
 			self::EXPORT_FILE_PATH       => '',

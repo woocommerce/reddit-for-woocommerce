@@ -191,8 +191,6 @@ export async function updateSettings( updatedSettings ) {
 		} );
 
 		return receiveSettings( {
-			catalogId: response.catalog_id,
-			catalogStatus: response.catalog_status,
 			exportFileUrl: response.export_file_url,
 			lastExportTimeStamp: response.last_export_timestamp,
 			productsToken: response.products_token,
@@ -489,6 +487,32 @@ export async function upsertPixelId( pixelId ) {
 			error,
 			__(
 				'There was an error connecting your Pixel ID.',
+				'reddit-for-woocommerce'
+			)
+		);
+		throw error;
+	}
+}
+
+/**
+ * Completes the setup accounts.
+ *
+ * @return {Promise<Object>} The updated setup data.
+ * @throws {Error} If the API request fails.
+ */
+export async function completeSetupAccounts() {
+	try {
+		const response = await apiFetch( {
+			path: `${ API_NAMESPACE }/reddit/setup/complete`,
+			method: 'POST',
+		} );
+
+		return receiveSetup( response );
+	} catch ( error ) {
+		handleApiError(
+			error,
+			__(
+				'There was an error completing your setup. Please try again.',
 				'reddit-for-woocommerce'
 			)
 		);

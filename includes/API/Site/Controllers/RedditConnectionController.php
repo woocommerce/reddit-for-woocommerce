@@ -253,27 +253,32 @@ class RedditConnectionController extends RESTBaseController {
 			);
 		}
 
-		$data  = $response->get_data();
-		$email = Transients::get( TransientDefaults::REDDIT_ACCOUNT_EMAIL );
+		$data   = $response->get_data();
+		$status = $data['status'] ?? '';
+		$email  = '';
 
-		if ( empty( $email ) ) {
-			$member = $this->ad_partner_api->members->me();
+		if ( 'connected' === $status ) {
+			$email = Transients::get( TransientDefaults::REDDIT_ACCOUNT_EMAIL );
 
-			if ( is_wp_error( $member ) ) {
-				$logger = wc_get_logger();
-				$logger->alert(
-					'Reddit member not found.',
-				);
-			} else {
-				$member_data = $member->get_data();
-				$email       = $member_data['data']['email'] ?? '';
-				Transients::set( TransientDefaults::REDDIT_ACCOUNT_EMAIL, $email );
+			if ( empty( $email ) ) {
+				$member = $this->ad_partner_api->members->me();
+
+				if ( is_wp_error( $member ) ) {
+					$logger = wc_get_logger();
+					$logger->alert(
+						'Reddit member not found.',
+					);
+				} else {
+					$member_data = $member->get_data();
+					$email       = $member_data['data']['email'] ?? '';
+					Transients::set( TransientDefaults::REDDIT_ACCOUNT_EMAIL, $email );
+				}
 			}
 		}
 
 		return rest_ensure_response(
 			array(
-				'status' => $data['status'],
+				'status' => $status,
 				'email'  => $email,
 			)
 		);
@@ -359,6 +364,7 @@ class RedditConnectionController extends RESTBaseController {
 		Options::delete( OptionDefaults::EXPORT_FILE_URL );
 		Options::delete( OptionDefaults::EXPORT_PRODUCT_IDS );
 		Options::delete( OptionDefaults::CATALOG_ID );
+		Options::delete( OptionDefaults::CATALOG_ERROR );
 		Options::delete( OptionDefaults::FEED_STATUS );
 		Options::delete( OptionDefaults::WCS_PRODUCTS_TOKEN );
 		Options::delete( OptionDefaults::DUMMY_PURCHASE_TRACKED );
@@ -446,14 +452,11 @@ class RedditConnectionController extends RESTBaseController {
 		// Mark the onboarding process as connected, if Jetpack is connected, and the business id, ad account id, and pixel id are set.
 		if ( $is_jetpack_connected && ! empty( $business_id ) && ! empty( $ad_account_id ) && ! empty( $pixel_id ) ) {
 			/**
-			 * Triggers before the Reddit onboarding process marked as completed.
+			 * Triggers when the Reddit ad account and pixel id are connected.
 			 *
-			 * @since 0.1.0
+			 * @since x.x.x
 			 */
-			do_action( Helper::with_prefix( 'before_onboarding_complete' ) );
-
-			Options::set( OptionDefaults::ONBOARDING_STATUS, 'connected' );
-			Options::set( OptionDefaults::ONBOARDING_STEP, 'paid_ads' );
+			do_action( Helper::with_prefix( 'ad_account_connected' ) );
 
 			// Create a new catalog for the business.
 			$response = $this->ad_partner_api->catalog->create();
@@ -468,7 +471,14 @@ class RedditConnectionController extends RESTBaseController {
 				);
 
 				if ( isset( $error_body['error']['code'] ) ) {
-					Options::set( OptionDefaults::CATALOG_STATUS, absint( $error_body['error']['code'] ) );
+					$error_code    = absint( $error_body['error']['code'] );
+					$catalog_error = '';
+					if ( 403 === $error_code ) {
+						$catalog_error = 'PERMISSION_ERROR';
+					} elseif ( 400 === $error_code && strpos( $error_body['error']['message'], 'pixels already attached to a catalog' ) !== false ) {
+						$catalog_error = 'CATALOG_ALREADY_EXISTS';
+					}
+					Options::set( OptionDefaults::CATALOG_ERROR, $catalog_error );
 				}
 			} else {
 				$data         = $response->get_data();
@@ -476,6 +486,7 @@ class RedditConnectionController extends RESTBaseController {
 
 				if ( ! empty( $catalog_data ) ) {
 					Options::set( OptionDefaults::CATALOG_ID, $catalog_data['id'] );
+					Options::delete( OptionDefaults::CATALOG_ERROR );
 				}
 			}
 
@@ -486,13 +497,6 @@ class RedditConnectionController extends RESTBaseController {
 				$ad_account_currency = $ad_account_data['data']['currency'] ?? '';
 				Options::set( OptionDefaults::ADS_ACCOUNT_CURRENCY, $ad_account_currency );
 			}
-
-			/**
-			 * Triggers when the Reddit onboarding process is completed.
-			 *
-			 * @since 0.1.0
-			 */
-			do_action( Helper::with_prefix( 'onboarding_complete' ) );
 		}
 
 		return $this->get_connection_details();
@@ -516,6 +520,8 @@ class RedditConnectionController extends RESTBaseController {
 				'ad_account_id'   => Options::get( OptionDefaults::AD_ACCOUNT_ID ),
 				'ad_account_name' => Options::get( OptionDefaults::AD_ACCOUNT_NAME ),
 				'pixel_id'        => Options::get( OptionDefaults::PIXEL_ID ),
+				'catalog_id'      => Options::get( OptionDefaults::CATALOG_ID ),
+				'catalog_error'   => (string) Options::get( OptionDefaults::CATALOG_ERROR ),
 				'currency'        => $currency,
 				'symbol'          => $symbol,
 			)

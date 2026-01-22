@@ -512,6 +512,29 @@ class ProductExportService {
 			);
 		}
 
+		// Delete the existing catalog to allow the creation of a new catalog if the delete_existing_catalog parameter is set to true.
+		$delete_existing_catalog = isset( $_POST['delete_existing_catalog'] ) ? 'true' === sanitize_text_field( wp_unslash( $_POST['delete_existing_catalog'] ) ) : false;
+		$pixel_id                = Options::get( OptionDefaults::PIXEL_ID );
+		if ( $delete_existing_catalog && ! empty( $pixel_id ) ) {
+			$delete_response = $this->delete_existing_catalog( $pixel_id );
+			if ( is_wp_error( $delete_response ) ) {
+				$error_data = $delete_response->get_error_data();
+				$error_body = isset( $error_data['body'] ) ? json_decode( $error_data['body'], true ) : array();
+				$logger     = wc_get_logger();
+				$logger->alert(
+					'Catalog deletion failed with error code' . $delete_response->get_error_code(),
+					$error_body
+				);
+
+				wp_send_json_error(
+					array(
+						'error_code' => 403 === absint( $error_body['error']['code'] ) ? 'PERMISSION_ERROR' : 'CATALOG_NOT_DELETED',
+						'message'    => $delete_response->get_error_message() ?? '',
+					)
+				);
+			}
+		}
+
 		// Create the catalog.
 		$response = $this->ad_partner_api->catalog->create();
 
@@ -524,14 +547,25 @@ class ProductExportService {
 				$error_body
 			);
 
+			$catalog_error = '';
+			$error_message = esc_html( $error_body['error']['message'] ?? $response->get_error_message() );
 			if ( isset( $error_body['error']['code'] ) ) {
-				Options::set( OptionDefaults::CATALOG_STATUS, absint( $error_body['error']['code'] ) );
+				$error_code = absint( $error_body['error']['code'] );
+				if ( 403 === $error_code ) {
+					$catalog_error = 'PERMISSION_ERROR';
+					$error_message = __( 'You do not have permission to create a catalog.', 'reddit-for-woocommerce' );
+				} elseif ( 400 === $error_code && strpos( $error_body['error']['message'] ?? '', 'pixels already attached to a catalog' ) !== false ) {
+					$error_message = __( 'The pixel is already associated with an existing catalog.', 'reddit-for-woocommerce' );
+					$catalog_error = 'CATALOG_ALREADY_EXISTS';
+				}
+				Options::set( OptionDefaults::CATALOG_ERROR, $catalog_error );
 			}
 
 			wp_send_json_error(
 				array(
-					'code'    => (string) $error_body['error']['code'] ?? '',
-					'message' => $response->get_error_message(),
+					'code'       => (string) $error_body['error']['code'] ?? '',
+					'error_code' => $catalog_error,
+					'message'    => $error_message,
 				)
 			);
 		}
@@ -541,6 +575,7 @@ class ProductExportService {
 
 		if ( ! empty( $catalog_data ) ) {
 			Options::set( OptionDefaults::CATALOG_ID, $catalog_data['id'] );
+			Options::delete( OptionDefaults::CATALOG_ERROR );
 
 			$is_job_in_progress = $this->job->is_job_in_progress( self::ACTION_HOOK );
 			$file_url           = Options::get( OptionDefaults::EXPORT_FILE_URL );
@@ -561,6 +596,41 @@ class ProductExportService {
 				'message' => __( 'Catalog created successfully.', 'reddit-for-woocommerce' ),
 			)
 		);
+	}
+
+	/**
+	 * Deletes the existing catalog for the current business.
+	 *
+	 * This method deletes the existing catalog which is associated with the current pixel to allow the creation of a new catalog.
+	 *
+	 * @since x.x.x
+	 *
+	 * @param string $pixel_id The ID of the pixel to delete the catalog for.
+	 *
+	 * @return bool|\WP_Error True if the catalog is deleted, false if no catalog is found, WP_Error if the catalog is not deleted.
+	 */
+	public function delete_existing_catalog( $pixel_id ) {
+		// Get the list of catalogs and get through each catalog to find the one that is associated with the current pixel.
+		$catalogs = $this->ad_partner_api->catalog->list();
+		if ( is_wp_error( $catalogs ) ) {
+			return $catalogs;
+		}
+
+		$catalogs = $catalogs->get_data();
+		foreach ( $catalogs['data'] ?? array() as $catalog ) {
+			if ( ! empty( $catalog['event_sources'] ) && in_array( $pixel_id, $catalog['event_sources'], true ) ) {
+				$delete_catalog_response = $this->ad_partner_api->catalog->delete( $catalog['id'] );
+				if ( is_wp_error( $delete_catalog_response ) ) {
+					// Return the error if the catalog is not deleted.
+					return $delete_catalog_response;
+				}
+				// Return true if the catalog is deleted.
+				return true;
+			}
+		}
+
+		// Return false if no catalog is found.
+		return false;
 	}
 
 	/**

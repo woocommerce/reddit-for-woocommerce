@@ -111,6 +111,32 @@ class CatalogApi extends BaseAdPartnerApi {
 	}
 
 	/**
+	 * Lists all product catalogs for the current merchant business.
+	 *
+	 * This method submits the catalog listing request for the current merchant business.
+	 *
+	 * It returns a {@see WP_REST_Response} on success or a {@see WP_Error} on failure.
+	 *
+	 * @since x.x.x
+	 *
+	 * @return \WP_REST_Response|WP_Error REST response from WCS or error if inputs are missing.
+	 */
+	public function list() {
+		$business_id = Options::get( OptionDefaults::BUSINESS_ID );
+
+		if ( ! $business_id ) {
+			return new WP_Error(
+				'business_id_not_set',
+				__( 'Business ID not found.', 'reddit-for-woocommerce' ),
+			);
+		}
+
+		return $this->wcs->proxy_get(
+			sprintf( '/ads/businesses/%s/product_catalogs', rawurlencode( $business_id ) )
+		);
+	}
+
+	/**
 	 * Retrieves a product catalog by its ID.
 	 *
 	 * This method submits the catalog retrieval request for a given

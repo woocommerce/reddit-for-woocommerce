@@ -56,6 +56,7 @@ test.describe( 'Reddit Settings', () => {
 		await settingPage.mockRedditBusiness( [ businesses[ 0 ] ] );
 		await settingPage.mockRedditAdAccounts( [ adAccounts[ 0 ] ] );
 		await settingPage.mockRedditPixels( [ pixels[ 0 ] ] );
+		await settingPage.mockRedditAccount( connectedConfigPayload );
 		await page.goto(
 			'/wp-admin/admin.php?page=wc-admin&path=%2Freddit%2Fsetup',
 			{ waitUntil: 'domcontentloaded' }

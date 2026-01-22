@@ -4,7 +4,7 @@
 import { __ } from '@wordpress/i18n';
 import { noop } from 'lodash';
 import { getQuery } from '@woocommerce/navigation';
-import { useEffect } from '@wordpress/element';
+import { useEffect, useState } from '@wordpress/element';
 
 /**
  * Internal dependencies
@@ -24,6 +24,7 @@ import useRedditAdsAccount from '~/hooks/useRedditAdsAccount';
 import useRedditBusinessAccount from '~/hooks/useRedditBusinessAccount';
 import useRedditPixelId from '~/hooks/useRedditPixelId';
 import { useAppDispatch } from '~/data';
+import useRedditAccountConfig from '~/hooks/useRedditAccountConfig';
 import './index.scss';
 
 /**
@@ -41,14 +42,19 @@ const SetupAccounts = ( props ) => {
 	const { onContinue = noop } = props;
 	const { products_token: productsTokenParam } = getQuery();
 	const { jetpack } = useJetpackAccount();
-	const { updateSettings } = useAppDispatch();
+	const { updateSettings, completeSetupAccounts } = useAppDispatch();
 	const { hasConnection: hasBusinessConnection } = useRedditBusinessAccount();
 	const { hasConnection: hasAdsConnection } = useRedditAdsAccount();
 	const { hasConnection: hasPixelIdConnection } = useRedditPixelId();
+	const [ isSubmitting, setSubmitting ] = useState( false );
+	const { catalog_id: catalogId, hasFinishedResolution } =
+		useRedditAccountConfig();
 	const {
 		isConnected: isRedditConnected,
 		hasFinishedResolution: hasResolvedRedditAccount,
 	} = useRedditAccount();
+
+	const isCatalogCreated = catalogId && hasFinishedResolution;
 
 	/**
 	 * When jetpack is loading, or when Reddit account is loading,
@@ -65,8 +71,8 @@ const SetupAccounts = ( props ) => {
 		! isRedditConnected ||
 		! hasBusinessConnection ||
 		! hasAdsConnection ||
-		! hasPixelIdConnection;
-	const isSubmitting = false;
+		! hasPixelIdConnection ||
+		! isCatalogCreated;
 
 	useEffect( () => {
 		if ( ! productsTokenParam ) {
@@ -82,8 +88,15 @@ const SetupAccounts = ( props ) => {
 		return <AppSpinner />;
 	}
 
-	const handleOnClick = () => {
-		onContinue();
+	const handleOnClick = async () => {
+		setSubmitting( true );
+		completeSetupAccounts()
+			.then( () => {
+				onContinue();
+			} )
+			.catch( () => {
+				setSubmitting( false );
+			} );
 	};
 
 	return (

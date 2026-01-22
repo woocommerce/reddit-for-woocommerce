@@ -35,57 +35,61 @@ const useCreateCatalog = () => {
 	const [ errorCode, setErrorCode ] = useState( 0 );
 	const { createNotice } = useDispatchCoreNotices();
 
-	const createCatalog = useCallback( async () => {
-		setLoading( true );
-		const response = await fetch( ajaxurl, {
-			method: 'POST',
-			body: new URLSearchParams( {
-				action: `${ redditAdsAdminData.prefix }create_catalog`,
-				security: adminNonce,
-			} ),
-		} );
+	const createCatalog = useCallback(
+		async ( deleteExistingCatalog = false ) => {
+			setLoading( true );
+			const response = await fetch( ajaxurl, {
+				method: 'POST',
+				body: new URLSearchParams( {
+					action: `${ redditAdsAdminData.prefix }create_catalog`,
+					security: adminNonce,
+					delete_existing_catalog: deleteExistingCatalog,
+				} ),
+			} );
 
-		if ( response.ok ) {
-			const res = await response.json();
+			if ( response.ok ) {
+				const res = await response.json();
 
-			setLoading( false );
+				setLoading( false );
 
-			if ( res.success ) {
-				setCreatedCatalogId( res.data.id || '' );
-				invalidateResolution( 'getSettings', [] );
-				createNotice(
-					'success',
-					__(
-						'Product catalog created successfully.',
-						'reddit-for-woocommerce'
-					)
-				);
+				if ( res.success ) {
+					setCreatedCatalogId( res.data.id || '' );
+					invalidateResolution( 'getRedditAccountConfig', [] );
+					createNotice(
+						'success',
+						__(
+							'Product catalog created successfully.',
+							'reddit-for-woocommerce'
+						)
+					);
+				} else {
+					createNotice(
+						'error',
+						sprintf(
+							/* translators: %s is the error message */
+							__(
+								'Failed to create product catalog: %s',
+								'reddit-for-woocommerce'
+							),
+							res.data.message
+						)
+					);
+
+					setErrorCode( res.data?.error_code );
+				}
 			} else {
 				createNotice(
 					'error',
-					sprintf(
-						/* translators: %s is the error message */
-						__(
-							'Failed to create product catalog: %s',
-							'reddit-for-woocommerce'
-						),
-						res.data.message
+					__(
+						'There was an error with the request.',
+						'reddit-for-woocommerce'
 					)
 				);
-
-				setErrorCode( res.data.code );
+				setLoading( false );
 			}
-		} else {
-			createNotice(
-				'error',
-				__(
-					'There was an error with the request.',
-					'reddit-for-woocommerce'
-				)
-			);
-			setLoading( false );
-		}
-	}, [ createNotice, setCreatedCatalogId, setLoading ] );
+		},
+		[ createNotice, setCreatedCatalogId, setLoading ]
+	);
 
 	return { createCatalog, loading, createdCatalogId, errorCode };
 };
