@@ -120,7 +120,7 @@ class AdPartnerApi {
 	/**
 	 * Handles Profiles operations.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.3
 	 * @var ProfilesApi
 	 */
 	public ProfilesApi $profiles;

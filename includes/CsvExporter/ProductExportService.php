@@ -414,7 +414,7 @@ class ProductExportService {
 	 * It is triggered automatically after the final export batch has finished and the
 	 * CSV feed file has been successfully written.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.3
 	 */
 	public function maybe_create_catalog() {
 		$catalog_id = Options::get( OptionDefaults::CATALOG_ID );
@@ -603,7 +603,7 @@ class ProductExportService {
 	 *
 	 * This method deletes the existing catalog which is associated with the current pixel to allow the creation of a new catalog.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.3
 	 *
 	 * @param string $pixel_id The ID of the pixel to delete the catalog for.
 	 *

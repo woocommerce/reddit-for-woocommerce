@@ -454,7 +454,7 @@ class RedditConnectionController extends RESTBaseController {
 			/**
 			 * Triggers when the Reddit ad account and pixel id are connected.
 			 *
-			 * @since x.x.x
+			 * @since 1.0.3
 			 */
 			do_action( Helper::with_prefix( 'ad_account_connected' ) );
 

@@ -86,7 +86,7 @@ class OnboardingController extends RESTBaseController {
 	/**
 	 * Completes the onboarding setup.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.3
 	 *
 	 * @return WP_REST_Response
 	 */
@@ -104,7 +104,7 @@ class OnboardingController extends RESTBaseController {
 		/**
 		 * Triggers when the Reddit onboarding process is completed.
 		 *
-		 * @since x.x.x
+		 * @since 1.0.3
 		 */
 		do_action( Helper::with_prefix( 'onboarding_complete' ) );
 

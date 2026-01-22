@@ -84,7 +84,7 @@ class CampaignApi extends BaseAdPartnerApi {
 	 * This method builds and submits the campaign updating request using the
 	 * campaign ID.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.3
 	 *
 	 * @param string $campaign_id The campaign ID.
 	 * @param array  $update_data The data to update the campaign with.
