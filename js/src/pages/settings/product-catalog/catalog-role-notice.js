@@ -102,7 +102,8 @@ const CatalogRoleNotice = () => {
 	);
 
 	const isPermissionError = catalogCreationError === 'PERMISSION_ERROR';
-	const isCatalogAlreadyExists = catalogCreationError === 'CATALOG_ALREADY_EXISTS';
+	const isCatalogAlreadyExists =
+		catalogCreationError === 'CATALOG_ALREADY_EXISTS';
 	const isOtherError = ! isPermissionError && ! isCatalogAlreadyExists;
 
 	return (
@@ -111,16 +112,17 @@ const CatalogRoleNotice = () => {
 			isDismissible={ false }
 			className="rfw-reddit-catalog-role-notice"
 		>
-			{ isPermissionError &&
-				permissionsErrorNotice }
-			{ isCatalogAlreadyExists &&
-				pixelAlreadyAttachedNotice }
-			{ isOtherError &&
-				otherErrorNotice }
+			{ isPermissionError && permissionsErrorNotice }
+			{ isCatalogAlreadyExists && pixelAlreadyAttachedNotice }
+			{ isOtherError && otherErrorNotice }
 			<AppButton
 				className="rfw-reddit-catalog-role-notice__create-catalog-button"
 				variant="secondary"
-				text={ isCatalogAlreadyExists ? __( 'Replace Catalog', 'reddit-for-woocommerce' ) : __( 'Create Catalog', 'reddit-for-woocommerce' ) }
+				text={
+					isCatalogAlreadyExists
+						? __( 'Replace Catalog', 'reddit-for-woocommerce' )
+						: __( 'Create Catalog', 'reddit-for-woocommerce' )
+				}
 				isBusy={ loading }
 				isDisabled={ loading }
 				onClick={ () => {
