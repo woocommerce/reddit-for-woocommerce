@@ -70,13 +70,20 @@ const CatalogRoleNotice = () => {
 		<p>
 			{ createInterpolateElement(
 				__(
-					'Catalog creation failed because the pixel is already associated with an existing catalog. Please click <strong>Replace Catalog</strong> to delete the existing catalog and create a new one. <strong>Careful: this can not be undone.</strong>',
+					'Catalog creation failed because the pixel is already associated with an existing catalog. Please click <strong>Replace Catalog</strong> to delete the existing catalog and create a new one.',
 					'reddit-for-woocommerce'
 				),
 				{
 					strong: <strong />,
 				}
 			) }
+			<br />
+			<strong>
+				{ __(
+					'Careful: this can not be undone.',
+					'reddit-for-woocommerce'
+				) }
+			</strong>
 		</p>
 	);
 
