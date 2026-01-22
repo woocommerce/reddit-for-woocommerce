@@ -361,7 +361,6 @@ class RedditConnectionController extends RESTBaseController {
 		Options::delete( OptionDefaults::CATALOG_ID );
 		Options::delete( OptionDefaults::FEED_STATUS );
 		Options::delete( OptionDefaults::WCS_PRODUCTS_TOKEN );
-		Options::delete( OptionDefaults::PROFILE_ID );
 		Options::delete( OptionDefaults::DUMMY_PURCHASE_TRACKED );
 		Options::delete( OptionDefaults::ADS_ACCOUNT_CURRENCY );
 		Options::delete( OptionDefaults::CAMPAIGN_IDS );
@@ -402,6 +401,24 @@ class RedditConnectionController extends RESTBaseController {
 		$params = $request->get_json_params();
 
 		if ( isset( $params['business_id'] ) ) {
+			$stored_business_id = Options::get( OptionDefaults::BUSINESS_ID );
+			// Check if the business id has changed, if so, delete the catalog and feed to create a new one with the new business id.
+			if ( ! empty( $stored_business_id ) && sanitize_text_field( wp_unslash( $params['business_id'] ) ) !== $stored_business_id ) {
+				$catalog_id = Options::get( OptionDefaults::CATALOG_ID );
+				if ( ! empty( $catalog_id ) ) {
+					$delete_catalog = $this->ad_partner_api->catalog->delete( $catalog_id );
+					if ( ! is_wp_error( $delete_catalog ) ) {
+						Options::delete( OptionDefaults::CATALOG_ID );
+						Options::delete( OptionDefaults::FEED_STATUS );
+					}
+				}
+				// Remove business specific options.
+				Options::delete( OptionDefaults::ONBOARDING_STATUS );
+				Options::delete( OptionDefaults::ONBOARDING_STEP );
+				Options::delete( OptionDefaults::ADS_ACCOUNT_CURRENCY );
+				Options::delete( OptionDefaults::DUMMY_PURCHASE_TRACKED );
+			}
+
 			Options::set( OptionDefaults::BUSINESS_ID, sanitize_text_field( $params['business_id'] ) );
 		}
 
@@ -437,21 +454,6 @@ class RedditConnectionController extends RESTBaseController {
 
 			Options::set( OptionDefaults::ONBOARDING_STATUS, 'connected' );
 			Options::set( OptionDefaults::ONBOARDING_STEP, 'paid_ads' );
-
-			// Set the profile ID.
-			$member = $this->ad_partner_api->members->me();
-
-			if ( is_wp_error( $member ) ) {
-				$logger = wc_get_logger();
-				$logger->alert(
-					'Reddit member not found.',
-				);
-			} else {
-				$member_data = $member->get_data();
-				if ( ! empty( $member_data['data'] ) ) {
-					Options::set( OptionDefaults::PROFILE_ID, $member_data['data']['id'] );
-				}
-			}
 
 			// Create a new catalog for the business.
 			$response = $this->ad_partner_api->catalog->create();
