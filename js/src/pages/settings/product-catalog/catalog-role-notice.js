@@ -70,7 +70,7 @@ const CatalogRoleNotice = () => {
 		<p>
 			{ createInterpolateElement(
 				__(
-					'Catalog creation failed because the pixel is already associated with an existing catalog. Please click <strong>Create Catalog</strong> to delete the existing catalog and create a new one.',
+					'Catalog creation failed because the pixel is already associated with an existing catalog. Please click <strong>Replace Catalog</strong> to delete the existing catalog and create a new one. <strong>Careful: this can not be undone.</strong>',
 					'reddit-for-woocommerce'
 				),
 				{
@@ -101,23 +101,26 @@ const CatalogRoleNotice = () => {
 		</p>
 	);
 
+	const isPermissionError = catalogCreationError === 'PERMISSION_ERROR';
+	const isCatalogAlreadyExists = catalogCreationError === 'CATALOG_ALREADY_EXISTS';
+	const isOtherError = ! isPermissionError && ! isCatalogAlreadyExists;
+
 	return (
 		<AppNotice
 			status="warning"
 			isDismissible={ false }
 			className="rfw-reddit-catalog-role-notice"
 		>
-			{ catalogCreationError === 'PERMISSION_ERROR' &&
+			{ isPermissionError &&
 				permissionsErrorNotice }
-			{ catalogCreationError === 'CATALOG_ALREADY_EXISTS' &&
+			{ isCatalogAlreadyExists &&
 				pixelAlreadyAttachedNotice }
-			{ catalogCreationError !== 'PERMISSION_ERROR' &&
-				catalogCreationError !== 'CATALOG_ALREADY_EXISTS' &&
+			{ isOtherError &&
 				otherErrorNotice }
 			<AppButton
 				className="rfw-reddit-catalog-role-notice__create-catalog-button"
 				variant="secondary"
-				text={ __( 'Create Catalog', 'reddit-for-woocommerce' ) }
+				text={ isCatalogAlreadyExists ? __( 'Replace Catalog', 'reddit-for-woocommerce' ) : __( 'Create Catalog', 'reddit-for-woocommerce' ) }
 				isBusy={ loading }
 				isDisabled={ loading }
 				onClick={ () => {
