@@ -65,7 +65,4 @@ Yes, it uses a [Jetpack](https://jetpack.com/) account to connect and communicat
 * Improved - create campaign defaults and UI improvements.
 * Tweak - WordPress 6.9 compatibility.
 
-= 1.0.0 - 2025-11-11 =
-* Initial release
-
 [See changelog for all versions](https://raw.githubusercontent.com/woocommerce/reddit-for-woocommerce/trunk/changelog.txt).
