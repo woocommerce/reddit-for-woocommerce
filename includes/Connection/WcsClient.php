@@ -83,6 +83,22 @@ final class WcsClient {
 	}
 
 	/**
+	 * Sends a proxy PATCH request to an arbitrary WCS endpoint.
+	 *
+	 * @since x.x.x
+	 *
+	 * @param string $path           Path within the WCS API (relative to service base).
+	 * @param mixed  $body           Body payload to send in JSON format.
+	 * @param bool   $requires_auth  Whether to include the Jetpack auth header.
+	 * @param array  $headers        Optional additional headers to include in the request.
+	 *
+	 * @return WP_REST_Response|WP_Error API response or error.
+	 */
+	public function proxy_patch( string $path, $body, bool $requires_auth = true, array $headers = array() ) {
+		return $this->proxy_request( 'PATCH', $path, $body, $requires_auth, $headers );
+	}
+
+	/**
 	 * Sends a proxy DELETE request to an arbitrary WCS endpoint.
 	 *
 	 * @since 0.1.0
@@ -181,7 +197,7 @@ final class WcsClient {
 			$args['headers']['Authorization'] = $jetpack_token;
 		}
 
-		if ( 'POST' === $method && ! empty( $body ) ) {
+		if ( in_array( $method, array( 'POST', 'PUT', 'PATCH' ), true ) && ! empty( $body ) ) {
 			$args['headers']['Content-Type'] = 'application/json';
 		}
 
@@ -193,7 +209,7 @@ final class WcsClient {
 				$args,
 				array( 'url' => $url ),
 			),
-			'POST' === $method && $body ? wp_json_encode( $body ) : null
+			in_array( $method, array( 'POST', 'PUT', 'PATCH' ), true ) && $body ? wp_json_encode( $body ) : null
 		);
 
 		return $this->handle_response( $response );

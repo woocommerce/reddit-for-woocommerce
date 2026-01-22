@@ -14,7 +14,6 @@ import { useAdaptiveFormContext } from '~/components/adaptive-form';
 import BudgetSection from '../budget-section';
 import Faqs from './faqs';
 import PaidAdsFeaturesSection from './paid-ads-features-section';
-import BillingCard from '../billing-card';
 import CatalogRoleNotice from '~/pages/settings/product-catalog/catalog-role-notice';
 import Section from '~/components/section';
 import useRedditAccountConfig from '~/hooks/useRedditAccountConfig';
@@ -56,7 +55,6 @@ export default function AdsCampaign( {
 			<PaidAdsFeaturesSection />
 
 			<BudgetSection />
-			<BillingCard />
 			{ hasFinishedResolution && ! catalogId && (
 				<Section>
 					<CatalogRoleNotice />

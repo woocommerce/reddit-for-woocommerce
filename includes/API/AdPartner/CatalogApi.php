@@ -135,4 +135,28 @@ class CatalogApi extends BaseAdPartnerApi {
 			sprintf( '/ads/businesses/%s/product_catalogs', rawurlencode( $business_id ) )
 		);
 	}
+
+	/**
+	 * Retrieves a product catalog by its ID.
+	 *
+	 * This method submits the catalog retrieval request for a given
+	 * catalog ID.
+	 *
+	 * It returns a {@see WP_REST_Response} on success or a {@see WP_Error} on failure.
+	 *
+	 * @since x.x.x
+	 *
+	 * @param string $catalog_id The ID of the catalog to get.
+	 * @return \WP_REST_Response|WP_Error REST response from WCS or error if inputs are missing.
+	 */
+	public function get( $catalog_id ) {
+		if ( ! $catalog_id ) {
+			return new WP_Error(
+				'catalog_id_required',
+				__( 'Catalog ID is required.', 'reddit-for-woocommerce' ),
+			);
+		}
+
+		return $this->wcs->proxy_get( sprintf( '/ads/product_catalogs/%s', rawurlencode( $catalog_id ) ) );
+	}
 }

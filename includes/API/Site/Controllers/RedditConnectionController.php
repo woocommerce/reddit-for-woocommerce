@@ -309,6 +309,28 @@ class RedditConnectionController extends RESTBaseController {
 			}
 		}
 
+		// Archive the campaigns if they exist.
+		$campaign_ids = Options::get( OptionDefaults::CAMPAIGN_IDS );
+		if ( ! empty( $campaign_ids ) ) {
+			foreach ( $campaign_ids as $campaign_id ) {
+				$update_campaign_response = $this->ad_partner_api->campaigns->update(
+					$campaign_id,
+					array( 'configured_status' => 'ARCHIVED' ),
+				);
+
+				// If the campaign archiving fails, log the error but don't stop the disconnection process.
+				if ( is_wp_error( $update_campaign_response ) ) {
+					$error_data = $update_campaign_response->get_error_data();
+					$error_body = isset( $error_data['body'] ) ? json_decode( $error_data['body'], true ) : array();
+					$logger     = wc_get_logger();
+					$logger->alert(
+						'Archiving campaign failed with error code: ' . $update_campaign_response->get_error_code(),
+						$error_body
+					);
+				}
+			}
+		}
+
 		$response = $this->stop_connection();
 
 		if ( is_wp_error( $response ) ) {
@@ -345,9 +367,9 @@ class RedditConnectionController extends RESTBaseController {
 		Options::delete( OptionDefaults::CATALOG_ERROR );
 		Options::delete( OptionDefaults::FEED_STATUS );
 		Options::delete( OptionDefaults::WCS_PRODUCTS_TOKEN );
-		Options::delete( OptionDefaults::PROFILE_ID );
 		Options::delete( OptionDefaults::DUMMY_PURCHASE_TRACKED );
 		Options::delete( OptionDefaults::ADS_ACCOUNT_CURRENCY );
+		Options::delete( OptionDefaults::CAMPAIGN_IDS );
 		Transients::delete( TransientDefaults::REDDIT_ACCOUNT_EMAIL );
 		Transients::delete( TransientDefaults::PIXEL_SCRIPT );
 		Transients::delete( sprintf( '%s_%s', TransientDefaults::PRODUCT_SET_ID, $ad_account_id ) );
@@ -385,6 +407,24 @@ class RedditConnectionController extends RESTBaseController {
 		$params = $request->get_json_params();
 
 		if ( isset( $params['business_id'] ) ) {
+			$stored_business_id = Options::get( OptionDefaults::BUSINESS_ID );
+			// Check if the business id has changed, if so, delete the catalog and feed to create a new one with the new business id.
+			if ( ! empty( $stored_business_id ) && sanitize_text_field( wp_unslash( $params['business_id'] ) ) !== $stored_business_id ) {
+				$catalog_id = Options::get( OptionDefaults::CATALOG_ID );
+				if ( ! empty( $catalog_id ) ) {
+					$delete_catalog = $this->ad_partner_api->catalog->delete( $catalog_id );
+					if ( ! is_wp_error( $delete_catalog ) ) {
+						Options::delete( OptionDefaults::CATALOG_ID );
+						Options::delete( OptionDefaults::FEED_STATUS );
+					}
+				}
+				// Remove business specific options.
+				Options::delete( OptionDefaults::ONBOARDING_STATUS );
+				Options::delete( OptionDefaults::ONBOARDING_STEP );
+				Options::delete( OptionDefaults::ADS_ACCOUNT_CURRENCY );
+				Options::delete( OptionDefaults::DUMMY_PURCHASE_TRACKED );
+			}
+
 			Options::set( OptionDefaults::BUSINESS_ID, sanitize_text_field( $params['business_id'] ) );
 		}
 
@@ -417,21 +457,6 @@ class RedditConnectionController extends RESTBaseController {
 			 * @since x.x.x
 			 */
 			do_action( Helper::with_prefix( 'ad_account_connected' ) );
-
-			// Set the profile ID.
-			$member = $this->ad_partner_api->members->me();
-
-			if ( is_wp_error( $member ) ) {
-				$logger = wc_get_logger();
-				$logger->alert(
-					'Reddit member not found.',
-				);
-			} else {
-				$member_data = $member->get_data();
-				if ( ! empty( $member_data['data'] ) ) {
-					Options::set( OptionDefaults::PROFILE_ID, $member_data['data']['id'] );
-				}
-			}
 
 			// Create a new catalog for the business.
 			$response = $this->ad_partner_api->catalog->create();

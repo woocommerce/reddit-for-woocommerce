@@ -41,6 +41,7 @@ const store = createReduxStore( STORE_KEY, {
 			exportFileUrl: '',
 			lastExportTimeStamp: '',
 			productsToken: '',
+			campaignCreated: false,
 			trackConversions: false,
 			triggerExport: false,
 		},

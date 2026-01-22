@@ -99,8 +99,9 @@ class SettingsController extends RESTBaseController {
 	 * @return WP_REST_Response
 	 */
 	private function get_settings_response() {
-		$timestamp = Options::get( OptionDefaults::LAST_EXPORT_TIMESTAMP );
-		$csv_path  = Options::get( OptionDefaults::EXPORT_FILE_PATH );
+		$timestamp        = Options::get( OptionDefaults::LAST_EXPORT_TIMESTAMP );
+		$csv_path         = Options::get( OptionDefaults::EXPORT_FILE_PATH );
+		$campaign_created = ! empty( Options::get( OptionDefaults::CAMPAIGN_IDS ) );
 
 		return rest_ensure_response(
 			array(
@@ -109,6 +110,7 @@ class SettingsController extends RESTBaseController {
 				'last_export_timestamp' => Helper::get_formatted_timestamp( $timestamp ),
 				'export_file_url'       => file_exists( $csv_path ) ? Options::get( OptionDefaults::EXPORT_FILE_URL ) : '',
 				'products_token'        => Options::get( OptionDefaults::WCS_PRODUCTS_TOKEN ),
+				'campaign_created'      => $campaign_created,
 			)
 		);
 	}

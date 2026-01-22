@@ -42,6 +42,9 @@ class ProductRowBuilderTest extends WP_UnitTestCase {
 		$this->assertArrayHasKey( 'title', $row );
 		$this->assertArrayHasKey( 'price', $row );
 		$this->assertArrayHasKey( 'availability', $row );
+		$this->assertArrayHasKey( 'description', $row );
+		// Assert that the description is stripped of HTML tags and contains only plain text.
+		$this->assertSame( 'Test Description', $row['description'] );
 	}
 
 	/**
@@ -67,6 +70,7 @@ class ProductRowBuilderTest extends WP_UnitTestCase {
 	private function create_test_product( array $props = array() ) {
 		$product = new \WC_Product_Simple();
 		$product->set_name( 'Test Product' );
+		$product->set_description( '<p>Test Description</p>' );
 		$product->set_regular_price( '199.99' );
 		$product->save();
 

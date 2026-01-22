@@ -12,6 +12,11 @@
 			max-width: 328px;
 			padding-top: var(--large-gap);
 		}
+
+		.rfw-reddit-ads-buttons {
+			display: flex;
+			gap: wpVariables.$grid-unit-10;
+		}
 	}
 
 	.rfw-subsection-helper-text {

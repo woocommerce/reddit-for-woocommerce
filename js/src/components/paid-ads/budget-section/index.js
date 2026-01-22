@@ -3,6 +3,8 @@
  */
 import { __ } from '@wordpress/i18n';
 import { Tip } from '@wordpress/components';
+import { Link } from '@woocommerce/components';
+import { createInterpolateElement } from '@wordpress/element';
 
 /**
  * Internal dependencies
@@ -45,9 +47,21 @@ const BudgetSection = ( { children } ) => {
 						<BudgetSetup />
 
 						<Tip>
-							{ __(
-								'We recommend running campaigns at least 1 month so it can learn to optimize for your business.',
-								'reddit-for-woocommerce'
+							{ createInterpolateElement(
+								__(
+									"We recommend running campaigns at least 1 month so it can learn to optimize for your business. To run ads on Reddit, you need to have billing information set up in your Reddit Ads account. If you haven't set up billing yet, please set it up from <link>here</link> before continuing.",
+									'reddit-for-woocommerce'
+								),
+								{
+									link: (
+										<Link
+											href="https://ads.reddit.com/billing"
+											target="_blank"
+											rel="noopener noreferrer"
+											type="external"
+										/>
+									),
+								}
 							) }
 						</Tip>
 					</Section.Card.Body>
