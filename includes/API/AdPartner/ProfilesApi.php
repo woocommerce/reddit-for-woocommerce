@@ -9,7 +9,7 @@
  * Requests are proxied through WCS, which manages authentication and
  * secure communication with the Ad Partner's remote API.
  *
- * @since x.x.x
+ * @since 1.0.3
  * @package RedditForWooCommerce\API\AdPartner
  */
 
@@ -27,7 +27,7 @@ use WP_Error;
  * associated with the currently configured business. Profiles are used
  * for ad targeting and campaign management within the Ad Partner’s platform.
  *
- * @since x.x.x
+ * @since 1.0.3
  */
 class ProfilesApi extends BaseAdPartnerApi {
 
@@ -40,7 +40,7 @@ class ProfilesApi extends BaseAdPartnerApi {
 	 *
 	 * If no business ID is set, a {@see WP_Error} is returned.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.3
 	 *
 	 * @return \WP_REST_Response|WP_Error REST response containing the list of profiles
 	 *                                    or error if the business ID is not configured.

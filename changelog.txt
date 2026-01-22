@@ -1,5 +1,15 @@
 *** Reddit for WooCommerce Changelog ***
 
+= 1.0.3 - 2026-01-22 =
+* Update - Replace the billing card with an informational note to prevent potential confusion.
+* Update - UX improvements for the Reddit Ads card.
+* Fix - Ensure that the catalog is recreated after product export if the user deletes the auto-generated catalog.
+* Fix - Ensure that the created campaign is archived when disconnecting the Reddit account.
+* Fix - Strip HTML tags from the product description for the CSV export.
+* Fix - UX improvements for catalog creation failure handling.
+* Fix – Ensure that switching businesses during onboarding connects the correct ad account.
+* Dev – Fix flaky PHPUnit test in `ProductExportServiceTest`.
+
 = 1.0.2 - 2026-01-07 =
 * Update - Average daily budget suggestions.
 * Tweak - WooCommerce 10.4 compatibility.

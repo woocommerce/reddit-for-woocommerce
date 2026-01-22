@@ -85,7 +85,7 @@ final class WcsClient {
 	/**
 	 * Sends a proxy PATCH request to an arbitrary WCS endpoint.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.3
 	 *
 	 * @param string $path           Path within the WCS API (relative to service base).
 	 * @param mixed  $body           Body payload to send in JSON format.

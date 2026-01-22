@@ -117,7 +117,7 @@ class CatalogApi extends BaseAdPartnerApi {
 	 *
 	 * It returns a {@see WP_REST_Response} on success or a {@see WP_Error} on failure.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.3
 	 *
 	 * @return \WP_REST_Response|WP_Error REST response from WCS or error if inputs are missing.
 	 */
@@ -144,7 +144,7 @@ class CatalogApi extends BaseAdPartnerApi {
 	 *
 	 * It returns a {@see WP_REST_Response} on success or a {@see WP_Error} on failure.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.3
 	 *
 	 * @param string $catalog_id The ID of the catalog to get.
 	 * @return \WP_REST_Response|WP_Error REST response from WCS or error if inputs are missing.
