@@ -12,8 +12,8 @@
  * PHP tested up to: 8.4
  * Requires at least: 6.7
  * Tested up to: 6.9
- * WC requires at least: 10.2
- * WC tested up to: 10.4
+ * WC requires at least: 10.3
+ * WC tested up to: 10.5
  * Woo:
  *
  * License: GNU General Public License v3.0
