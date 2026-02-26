@@ -118,6 +118,24 @@ class ProductExportServiceTest extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Tests that start_export() returns false when the store has only virtual/downloadable products.
+	 */
+	public function test_start_export_returns_false_when_only_virtual_products(): void {
+		$product = new \WC_Product_Simple();
+		$product->set_name( 'Virtual product' );
+		$product->set_status( 'publish' );
+		$product->set_virtual( true );
+		$product->save();
+
+		$this->assertFalse( $this->service->start_export() );
+
+		$this->assertFalse(
+			as_has_scheduled_action( Helper::with_prefix( ProductIdCacheBuilder::ACTION_HOOK ) ),
+			'Cache builder scan should not be scheduled when store has only virtual products.'
+		);
+	}
+
+	/**
 	 * Tests that start_export() returns true and triggers cache builder when ready.
 	 */
 	public function test_start_export_returns_true_and_triggers_cache(): void {

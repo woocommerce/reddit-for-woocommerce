@@ -269,6 +269,10 @@ class ProductExportService {
 			return false;
 		}
 
+		if ( ! Helper::has_physical_products() ) {
+			return false;
+		}
+
 		try {
 			$this->validate_export_environment();
 		} catch ( \RuntimeException $e ) {
@@ -365,7 +369,31 @@ class ProductExportService {
 		check_ajax_referer( 'admin_nonce', 'security' );
 
 		if ( ! Helper::has_products() ) {
-			wp_send_json_error( array( 'code' => Helper::with_prefix( 'no_products_found' ) ) );
+			$msg = __( 'No products found. Please create products to generate the CSV.', 'reddit-for-woocommerce' );
+			wp_send_json(
+				array(
+					'success' => false,
+					'data'    => array(
+						'code'    => Helper::with_prefix( 'no_products_found' ),
+						'message' => $msg,
+					),
+					'message'  => $msg,
+				)
+			);
+		}
+
+		if ( ! Helper::has_physical_products() ) {
+			$msg = __( 'There are only virtual products published; CSV generation is only for physical products.', 'reddit-for-woocommerce' );
+			wp_send_json(
+				array(
+					'success' => false,
+					'data'    => array(
+						'code'    => Helper::with_prefix( 'only_virtual_products' ),
+						'message' => $msg,
+					),
+					'message'  => $msg,
+				)
+			);
 		}
 
 		$status = $this->start_export();
@@ -374,7 +402,14 @@ class ProductExportService {
 			wp_send_json_success();
 		}
 
-		wp_send_json_error();
+		$msg = __( 'Export could not be started. Please try again or check that your server can write files.', 'reddit-for-woocommerce' );
+		wp_send_json(
+			array(
+				'success' => false,
+				'data'    => array( 'message' => $msg ),
+				'message'  => $msg,
+			)
+		);
 	}
 
 	/**
