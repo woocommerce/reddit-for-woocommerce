@@ -45,7 +45,8 @@ const useProductCatalogExport = (
 			}
 
 			const errorMessage =
-				( typeof res === 'object' && ( res.message || res.data?.message ) ) ||
+				( typeof res === 'object' &&
+					( res.message || res.data?.message ) ) ||
 				__( 'An error occurred', 'reddit-for-woocommerce' );
 
 			createNotice( 'error', errorMessage );

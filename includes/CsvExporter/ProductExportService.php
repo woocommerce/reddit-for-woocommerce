@@ -377,7 +377,7 @@ class ProductExportService {
 						'code'    => Helper::with_prefix( 'no_products_found' ),
 						'message' => $msg,
 					),
-					'message'  => $msg,
+					'message' => $msg,
 				)
 			);
 		}
@@ -391,7 +391,7 @@ class ProductExportService {
 						'code'    => Helper::with_prefix( 'only_virtual_products' ),
 						'message' => $msg,
 					),
-					'message'  => $msg,
+					'message' => $msg,
 				)
 			);
 		}
@@ -407,7 +407,7 @@ class ProductExportService {
 			array(
 				'success' => false,
 				'data'    => array( 'message' => $msg ),
-				'message'  => $msg,
+				'message' => $msg,
 			)
 		);
 	}
