@@ -265,6 +265,10 @@ class ProductExportService {
 	 * @return bool|null
 	 */
 	public function start_export() {
+		if ( ! Helper::has_products() ) {
+			return false;
+		}
+
 		try {
 			$this->validate_export_environment();
 		} catch ( \RuntimeException $e ) {

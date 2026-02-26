@@ -73,6 +73,12 @@ class ProductExportServiceTest extends WP_UnitTestCase {
 	 * Tests that start_export() returns false if the writer throws during validation.
 	 */
 	public function test_start_export_returns_false_on_filesystem_error(): void {
+		// Create a product because the CSV is skipped if there are no products
+		$product = new \WC_Product_Simple();
+		$product->set_name( 'Dummy product' );
+		$product->set_status( 'publish' );
+		$product->save();
+
 		$this->writer->method( 'create_file' )
 			->willThrowException( new RuntimeException( 'Simulated FS failure' ) );
 
@@ -83,6 +89,11 @@ class ProductExportServiceTest extends WP_UnitTestCase {
 	 * Tests that start_export() returns false if export jobs are already scheduled.
 	 */
 	public function test_start_export_returns_false_if_jobs_already_scheduled(): void {
+		$product = new \WC_Product_Simple();
+		$product->set_name( 'Dummy product' );
+		$product->set_status( 'publish' );
+		$product->save();
+
 		as_schedule_single_action(
 			time() + 60,
 			Helper::with_prefix( ProductExportService::ACTION_HOOK )
@@ -95,9 +106,27 @@ class ProductExportServiceTest extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Tests that start_export() returns false when the store has zero products.
+	 */
+	public function test_start_export_returns_false_when_zero_products(): void {
+		$this->assertFalse( $this->service->start_export() );
+
+		$this->assertFalse(
+			as_has_scheduled_action( Helper::with_prefix( ProductIdCacheBuilder::ACTION_HOOK ) ),
+			'Cache builder scan should not be scheduled when store has 0 products.'
+		);
+	}
+
+	/**
 	 * Tests that start_export() returns true and triggers cache builder when ready.
 	 */
 	public function test_start_export_returns_true_and_triggers_cache(): void {
+		// Create a product because the CSV is skipped if there are no products
+		$product = new \WC_Product_Simple();
+		$product->set_name( 'Dummy product for export test' );
+		$product->set_status( 'publish' );
+		$product->save();
+
 		$this->writer->method( 'create_file' )
 			->willReturn( '/tmp/dummy.csv' );
 
