@@ -1,5 +1,5 @@
 .rfw-paid-ads-section-title {
-	margin-bottom: wpVariables.$grid-unit-15;
+	margin-block-end: wpVariables.$grid-unit-15;
 	line-height: variables.$rfw-line-height-medium-large;
 	font-weight: normal;
 	font-size: variables.$rfw-font-small-medium;
@@ -13,27 +13,27 @@
 }
 
 .rfw-paid-ads-feature-list {
-	max-width: 336px;
+	max-inline-size: 336px;
 
 	@media (max-width: wpBreakpoints.$break-small) {
-		max-width: 100%;
+		max-inline-size: 100%;
 		order: 1;
 	}
 }
 
 .rfw-paid-ads-feature-list-item {
-	display: flex;
 	align-items: start;
+	display: flex;
 	flex-flow: row nowrap;
-	margin-bottom: 24px;
 	gap: 20px;
+	margin-block-end: 24px;
 
 	&:last-child {
-		margin-bottom: 0;
+		margin-block-end: 0;
 	}
 
 	.rfw-paid-ads-feature-list-icon {
-		margin-top: 2px;
+		margin-block-start: 2px;
 	}
 
 	.rfw-paid-ads-feature-list-title {
@@ -43,18 +43,18 @@
 	}
 
 	.rfw-paid-ads-feature-list-description {
+		color: wpColors.$gray-700;
 		font-size: variables.$rfw-font-smaller;
 		line-height: variables.$rfw-line-height-smaller;
-		color: wpColors.$gray-700;
-		margin-top: 8px;
+		margin-block-start: 8px;
 	}
 }
 
 .rfw-paid-ads-features-section__feature-info {
 	display: flex;
 	flex-flow: row nowrap;
-	margin-top: 40px;
 	gap: wpVariables.$grid-unit-20;
+	margin-block-start: 40px;
 
 	@media (max-width: wpBreakpoints.$break-small) {
 		flex-flow: row wrap;
@@ -63,11 +63,12 @@
 
 .rfw-paid-ads-feature-mobile-view-image {
 	img {
-		width: 100%;
+		inline-size: 100%;
 	}
 
 	@media (max-width: wpBreakpoints.$break-small) {
+		margin-block: 0;
+		margin-inline: auto;
 		order: 0;
-		margin: 0 auto;
 	}
 }

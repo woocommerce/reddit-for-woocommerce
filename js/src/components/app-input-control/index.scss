@@ -1,8 +1,8 @@
 .app-input-control {
 	.components-flex-item {
-		width: 100%;
-		max-width: 100%;
-		margin-right: 0;
+		inline-size: 100%;
+		margin-inline-end: 0;
+		max-inline-size: 100%;
 
 		// hack with !important to override the specificity in @wordpress/components.
 		label.components-input-control__label {
@@ -12,8 +12,8 @@
 	}
 
 	&__character-count {
-		margin-top: calc(wpVariables.$grid-unit-05 / 2);
-		text-align: right;
+		margin-block-start: calc(wpVariables.$grid-unit-05 / 2);
+		text-align: end;
 		line-height: variables.$rfw-line-height-smaller;
 		font-size: variables.$rfw-font-smaller;
 		color: wpColors.$gray-700;

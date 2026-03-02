@@ -1,7 +1,8 @@
 .rfw-badge {
-	padding: 0 wpVariables.$grid-unit-10;
-	min-height: wpVariables.$grid-unit-30;
-	max-width: 100%;
+	max-inline-size: 100%;
+	min-block-size: wpVariables.$grid-unit-30;
+	padding-block: 0;
+	padding-inline: wpVariables.$grid-unit-10;
 	border-radius: variables.$rfw-border-radius;
 	font-size: variables.$rfw-font-smaller;
 	font-weight: 400;
