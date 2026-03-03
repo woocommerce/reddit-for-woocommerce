@@ -82,7 +82,7 @@ const SetupAccounts = ( props ) => {
 		( async () => {
 			await updateSettings( { productsToken: productsTokenParam } );
 		} )();
-	}, [ productsTokenParam ] );
+	}, [ productsTokenParam, updateSettings ] );
 
 	if ( isLoadingJetpack || ! hasResolvedRedditAccount ) {
 		return <AppSpinner />;
