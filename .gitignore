@@ -34,3 +34,13 @@ phpunit.xml
 
 # Do not include backup PHP files
 *.php.bak
+
+# Claude related files
+**/.claude/**/*.local.*
+CLAUDE.local.md
+
+# Cursor related files
+.cursorignore
+.cursorindexingignore
+.cursor/rules/custom-*
+.cursor/rules/local-*
