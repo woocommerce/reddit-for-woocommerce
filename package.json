@@ -101,6 +101,9 @@
 		"env:destroy": "wp-env destroy",
 		"postenv:start": "bash ./tests/e2e/bin/initialize.sh",
 		"test:e2e": "npx playwright test --config tests/e2e/playwright.config.js",
+		"test:unit": "php vendor/bin/phpunit -c phpunit.xml.dist",
+		"test:unit:wp-env:setup": "docker exec -u root $(docker ps --filter name=tests-cli -q) apk add --no-cache subversion git && npx wp-env run tests-cli --env-cwd=wp-content/plugins/reddit-for-woocommerce bash -c 'WP_TESTS_DIR=/tmp/wordpress-tests-lib bash tests/phpunit/bin/install-wp-tests.sh wordpress_test root password tests-mysql latest nightly'",
+		"test:unit:wp-env": "npx wp-env run tests-cli --env-cwd=wp-content/plugins/reddit-for-woocommerce bash -c 'WP_TESTS_DIR=/tmp/wordpress-tests-lib php vendor/bin/phpunit -c phpunit.xml.dist'",
 		"start": "wp-scripts start --webpack-src-dir=js/src"
 	},
 	"browserslist": [
