@@ -51,7 +51,7 @@ The plugin uses **no custom database tables**. All data is stored in WordPress o
 
 **Transients:** `ads_pixel_script` (1 month), `reddit_account_email` (1 day), `product_set_id_{ad_account_id}`.
 
-**Order meta:** `reddit_conversion_tracked` — marks an order as tracked.
+**Order meta:** `_reddit_conversion_tracked` — marks an order as tracked.
 
 **Product meta:** `product_catalog_item` — include/exclude from catalog export.
 
@@ -209,3 +209,9 @@ The build extends `@wordpress/scripts` webpack config with `WooCommerceDependenc
 - **Service registration requires two steps.** When adding a service, update both `ServiceKey` (add a constant) and `ServiceContainer::resolve()` (add a case). Missing either will cause runtime errors.
 - **Product meta key is `product_catalog_item`.** This controls catalog export inclusion. Don't introduce a second meta key for the same purpose.
 - **E2E tests use Playwright.** Do not introduce Codeception or other frameworks. Write new tests in `tests/e2e/specs/` following existing patterns.
+- **Plugin boots on `woocommerce_loaded`, not `plugins_loaded`.** WooCommerce is always available inside a service (intentional). Anything that must run earlier (e.g. hooking into `plugins_loaded` or `init`) has to be registered in the main plugin file `reddit-for-woocommerce.php`, not inside a service class.
+- **`AdPartnerApi` is a separate singleton, not in ServiceContainer.** Use `AdPartnerApi::get_instance( $wcs_client )`. The constructor is private. It lives outside the container because it needs `$wcs_client` injected at first use.
+- **Do not "fix" the `BaseAdPartnerApi` namespace.** Its namespace is `RedditForWooCommerce\Api\AdPartner` (lowercase `Api`); other classes in that directory use `RedditForWooCommerce\API\AdPartner`. The inconsistency is deliberate. Normalising the casing would break on Linux (case-sensitive filesystem).
+- **`npm run build` strips PHP dev dependencies.** The prebuild script runs `composer install --no-dev`, removing PHPUnit, PHPCS, and everything in `require-dev` from `vendor/`. After a production build locally, run `composer install` again before linting or running tests.
+- **Boolean options are stored as `'yes'` / `'no'` strings.** `PIXEL_ENABLED`, `CONVERSIONS_ENABLED`, `IS_JETPACK_CONNECTED`, and `DUMMY_PURCHASE_TRACKED` store literal strings, not PHP booleans. Use `'yes' === Options::get( OptionDefaults::PIXEL_ENABLED )`. A `(bool)` cast is wrong: `(bool) 'no'` is `true`.
+- **`Store::get()` cannot distinguish "not set" from `false`.** If an option doesn't exist, `get_option()` returns `false`, and the storage layer treats that the same as an explicitly stored `false` — both fall back to the default. Bear this in mind when you need to tell "not configured yet" from "explicitly set to off".
