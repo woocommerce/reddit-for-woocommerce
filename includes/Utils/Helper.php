@@ -128,35 +128,6 @@ class Helper {
 	}
 
 	/**
-	 * Check if the store has at least one published product that is physical (not virtual and not downloadable).
-	 *
-	 * Reddit's product catalog only supports physical products; virtual and downloadable products
-	 * are excluded from the export. Use this to block export when all products are virtual/downloadable.
-	 *
-	 * @since 0.1.0
-	 *
-	 * @return bool True if there is at least one published physical product, false otherwise.
-	 */
-	public static function has_physical_products(): bool {
-		$products = wc_get_products(
-			array(
-				'limit'  => 100,
-				'status' => 'publish',
-				'return' => 'ids',
-			)
-		);
-
-		foreach ( $products as $product_id ) {
-			$product = wc_get_product( $product_id );
-			if ( $product && ! $product->is_virtual() && ! $product->is_downloadable() ) {
-				return true;
-			}
-		}
-
-		return false;
-	}
-
-	/**
 	 * Generates a unique store name based on the site's home URL and the current timestamp.
 	 *
 	 * This function removes the protocol (http:// or https://) from the home URL

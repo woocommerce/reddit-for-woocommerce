@@ -118,8 +118,13 @@ class ProductIdCacheBuilder implements CacheBuilderInterface {
 	 * IDs that match the export eligibility meta key, appends them to the cached list,
 	 * and enqueues the next page.
 	 *
-	 * If the current page is empty and not the first, it fires a custom action to
-	 * indicate that the caching process has completed.
+	 * If the current page returns no results from the database, it fires a custom
+	 * action to indicate that the caching process has completed.
+	 *
+	 * When results are found, each product is checked to ensure it is physical
+	 * (not virtual and not downloadable). Only physical product IDs are cached.
+	 * If a page contains results but none are physical, the next page is still
+	 * enqueued to continue scanning.
 	 *
 	 * @since 0.1.0
 	 *
@@ -141,27 +146,34 @@ class ProductIdCacheBuilder implements CacheBuilderInterface {
 		$results = $query->get_products();
 
 		if ( empty( $results ) ) {
-			if ( 1 !== $page ) {
-				/**
-				 * Fires when exportable product IDs have been cached and export can begin.
-				 *
-				 * This hook is triggered after the cache builder has finished scanning and storing
-				 * the list of product IDs to be exported. It signals that the export writing process
-				 * (e.g., CSV generation) can now be initiated.
-				 *
-				 * @since 0.1.0
-				 *
-				 * @hook reddit_for_woocommerce_export_products_cache_completed
-				 */
-				do_action( Helper::with_prefix( 'export_products_cache_completed' ) );
-			}
+			/**
+			 * Fires when exportable product IDs have been cached and export can begin.
+			 *
+			 * This hook is triggered after the cache builder has finished scanning and storing
+			 * the list of product IDs to be exported. It signals that the export writing process
+			 * (e.g., CSV generation) can now be initiated.
+			 *
+			 * @since 0.1.0
+			 *
+			 * @hook reddit_for_woocommerce_export_products_cache_completed
+			 */
+			do_action( Helper::with_prefix( 'export_products_cache_completed' ) );
 			return;
 		}
 
-		$existing = Options::get( OptionDefaults::EXPORT_PRODUCT_IDS, array() );
-		$existing = array_unique( array_merge( $existing, array_map( 'intval', $results ) ) );
+		$physical_ids = array();
+		foreach ( $results as $product_id ) {
+			$product = wc_get_product( $product_id );
+			if ( $product && ! $product->is_virtual() && ! $product->is_downloadable() ) {
+				$physical_ids[] = (int) $product_id;
+			}
+		}
 
-		Options::set( OptionDefaults::EXPORT_PRODUCT_IDS, $existing );
+		if ( ! empty( $physical_ids ) ) {
+			$existing = Options::get( OptionDefaults::EXPORT_PRODUCT_IDS, array() );
+			$existing = array_unique( array_merge( $existing, $physical_ids ) );
+			Options::set( OptionDefaults::EXPORT_PRODUCT_IDS, $existing );
+		}
 
 		as_enqueue_async_action(
 			Helper::with_prefix( self::ACTION_HOOK ),

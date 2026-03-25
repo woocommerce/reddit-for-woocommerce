@@ -26,6 +26,7 @@ use RedditForWooCommerce\Utils\Storage\Options;
 use RedditForWooCommerce\Utils\Storage\OptionDefaults;
 use RedditForWooCommerce\Connection\WcsClient;
 use RedditForWooCommerce\API\AdPartner\AdPartnerApi;
+use RedditForWooCommerce\API\AdPartner\CatalogApi;
 
 /**
  * @covers \RedditForWooCommerce\Admin\Export\Service\ProductExportService
@@ -73,12 +74,6 @@ class ProductExportServiceTest extends WP_UnitTestCase {
 	 * Tests that start_export() returns false if the writer throws during validation.
 	 */
 	public function test_start_export_returns_false_on_filesystem_error(): void {
-		// Create a product because the CSV is skipped if there are no products
-		$product = new \WC_Product_Simple();
-		$product->set_name( 'Dummy product' );
-		$product->set_status( 'publish' );
-		$product->save();
-
 		$this->writer->method( 'create_file' )
 			->willThrowException( new RuntimeException( 'Simulated FS failure' ) );
 
@@ -86,14 +81,9 @@ class ProductExportServiceTest extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Tests that start_export() returns false if export jobs are already scheduled.
+	 * Tests that start_export() returns null if export jobs are already scheduled.
 	 */
-	public function test_start_export_returns_false_if_jobs_already_scheduled(): void {
-		$product = new \WC_Product_Simple();
-		$product->set_name( 'Dummy product' );
-		$product->set_status( 'publish' );
-		$product->save();
-
+	public function test_start_export_returns_null_if_jobs_already_scheduled(): void {
 		as_schedule_single_action(
 			time() + 60,
 			Helper::with_prefix( ProductExportService::ACTION_HOOK )
@@ -106,45 +96,9 @@ class ProductExportServiceTest extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Tests that start_export() returns false when the store has zero products.
-	 */
-	public function test_start_export_returns_false_when_zero_products(): void {
-		$this->assertFalse( $this->service->start_export() );
-
-		$this->assertFalse(
-			as_has_scheduled_action( Helper::with_prefix( ProductIdCacheBuilder::ACTION_HOOK ) ),
-			'Cache builder scan should not be scheduled when store has 0 products.'
-		);
-	}
-
-	/**
-	 * Tests that start_export() returns false when the store has only virtual/downloadable products.
-	 */
-	public function test_start_export_returns_false_when_only_virtual_products(): void {
-		$product = new \WC_Product_Simple();
-		$product->set_name( 'Virtual product' );
-		$product->set_status( 'publish' );
-		$product->set_virtual( true );
-		$product->save();
-
-		$this->assertFalse( $this->service->start_export() );
-
-		$this->assertFalse(
-			as_has_scheduled_action( Helper::with_prefix( ProductIdCacheBuilder::ACTION_HOOK ) ),
-			'Cache builder scan should not be scheduled when store has only virtual products.'
-		);
-	}
-
-	/**
 	 * Tests that start_export() returns true and triggers cache builder when ready.
 	 */
 	public function test_start_export_returns_true_and_triggers_cache(): void {
-		// Create a product because the CSV is skipped if there are no products
-		$product = new \WC_Product_Simple();
-		$product->set_name( 'Dummy product for export test' );
-		$product->set_status( 'publish' );
-		$product->save();
-
 		$this->writer->method( 'create_file' )
 			->willReturn( '/tmp/dummy.csv' );
 
@@ -152,10 +106,13 @@ class ProductExportServiceTest extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Tests that start_writing() enqueues the first export batch with offset 0.
+	 * Tests that start_writing() enqueues the first export batch with offset 0
+	 * when the product ID cache is populated.
 	 */
 	public function test_start_writing_enqueues_initial_batch(): void {
 		as_unschedule_all_actions( Helper::with_prefix( ProductExportService::ACTION_HOOK ) );
+
+		Options::set( OptionDefaults::EXPORT_PRODUCT_IDS, array( 1 ) );
 
 		$this->service->start_writing();
 
@@ -163,6 +120,35 @@ class ProductExportServiceTest extends WP_UnitTestCase {
 			Helper::with_prefix( ProductExportService::ACTION_HOOK ),
 			array( 'offset' => 0 )
 		) !== false );
+
+		Options::delete( OptionDefaults::EXPORT_PRODUCT_IDS );
+	}
+
+	/**
+	 * Tests that start_writing() does not enqueue a batch and calls maybe_create_catalog()
+	 * when the product ID cache is empty.
+	 */
+	public function test_start_writing_returns_early_on_empty_cache(): void {
+		as_unschedule_all_actions( Helper::with_prefix( ProductExportService::ACTION_HOOK ) );
+
+		Options::set( OptionDefaults::EXPORT_PRODUCT_IDS, array() );
+
+		$catalog_mock = $this->createMock( CatalogApi::class );
+		$catalog_mock->method( 'get' )->willReturn( new \WP_Error( 'not_found', 'Not found' ) );
+		$catalog_mock->method( 'create' )->willReturn( new \WP_Error( 'test', 'Test' ) );
+		$this->api->catalog = $catalog_mock;
+
+		$this->service->start_writing();
+
+		$this->assertFalse(
+			as_has_scheduled_action(
+				Helper::with_prefix( ProductExportService::ACTION_HOOK ),
+				array( 'offset' => 0 )
+			),
+			'No export batch should be scheduled when the product ID cache is empty.'
+		);
+
+		Options::delete( OptionDefaults::EXPORT_PRODUCT_IDS );
 	}
 
 	/**

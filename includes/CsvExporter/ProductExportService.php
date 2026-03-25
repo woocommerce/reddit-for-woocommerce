@@ -20,7 +20,6 @@ use RedditForWooCommerce\Admin\Export\BatchExportJob;
 use RedditForWooCommerce\Utils\Storage\Options;
 use RedditForWooCommerce\Utils\Storage\OptionDefaults;
 use RedditForWooCommerce\API\AdPartner\AdPartnerApi;
-use WC_Product;
 
 /**
  * Handles batch-based product export via Action Scheduler.
@@ -87,13 +86,6 @@ class ProductExportService {
 	 */
 	public function register_hooks(): void {
 		$this->job->cache_builder->register();
-
-		add_filter(
-			Helper::with_prefix( 'filter_builder_row' ),
-			array( $this, 'allow_only_physical_products' ),
-			10,
-			2
-		);
 
 		add_action(
 			Helper::with_prefix( 'onboarding_complete' ),
@@ -256,23 +248,21 @@ class ProductExportService {
 	 * Initiates the product export by clearing previous state and triggering product scanning.
 	 *
 	 * This method:
+	 * - Validates the export environment (filesystem).
 	 * - Deletes previously saved file path and URL options.
-	 * - Triggers the cache builder to compute exportable products.
+	 * - Triggers the cache builder to compute exportable physical products.
 	 * - Does not immediately begin file writing — that is triggered once caching completes.
+	 *
+	 * Product eligibility (has products, has physical products) is not checked here.
+	 * The cache builder filters to physical products only, and start_writing() handles
+	 * the case where the resulting cache is empty. User-facing guards live in
+	 * trigger_export_callback().
 	 *
 	 * @since 0.1.0
 	 *
 	 * @return bool|null
 	 */
 	public function start_export() {
-		if ( ! Helper::has_products() ) {
-			return false;
-		}
-
-		if ( ! Helper::has_physical_products() ) {
-			return false;
-		}
-
 		try {
 			$this->validate_export_environment();
 		} catch ( \RuntimeException $e ) {
@@ -298,13 +288,22 @@ class ProductExportService {
 	 * Starts writing the export file from offset 0.
 	 *
 	 * This method is hooked to run after exportable product IDs have been fully cached.
-	 * It schedules the first export batch asynchronously.
+	 * If the cache is empty (e.g. all products are virtual/downloadable), it ensures the
+	 * catalog is created and returns without generating a CSV or scheduling batches.
+	 * Otherwise it schedules the first export batch asynchronously.
 	 *
 	 * @since 0.1.0
 	 *
 	 * @return void
 	 */
 	public function start_writing(): void {
+		$product_ids = Options::get( OptionDefaults::EXPORT_PRODUCT_IDS );
+
+		if ( empty( $product_ids ) ) {
+			$this->maybe_create_catalog();
+			return;
+		}
+
 		as_enqueue_async_action(
 			Helper::with_prefix( self::ACTION_HOOK ),
 			array( 'offset' => 0 ),
@@ -360,6 +359,7 @@ class ProductExportService {
 	 *
 	 * This method:
 	 * - Verifies the security nonce.
+	 * - Checks for published products and at least one physical product.
 	 * - Attempts to start the export process.
 	 * - Sends a JSON success or error response.
 	 *
@@ -369,46 +369,65 @@ class ProductExportService {
 		check_ajax_referer( 'admin_nonce', 'security' );
 
 		if ( ! Helper::has_products() ) {
-			$msg = __( 'No products found. Please create products to generate the CSV.', 'reddit-for-woocommerce' );
-			wp_send_json(
-				array(
-					'success' => false,
-					'data'    => array(
-						'code'    => Helper::with_prefix( 'no_products_found' ),
-						'message' => $msg,
-					),
-					'message' => $msg,
-				)
+			wp_send_json_error(
+				array( 'message' => __( 'No products found. Please create products to generate the CSV.', 'reddit-for-woocommerce' ) )
 			);
+			return;
 		}
 
-		if ( ! Helper::has_physical_products() ) {
-			$msg = __( 'There are only virtual products published; CSV generation is only for physical products.', 'reddit-for-woocommerce' );
-			wp_send_json(
-				array(
-					'success' => false,
-					'data'    => array(
-						'code'    => Helper::with_prefix( 'only_virtual_products' ),
-						'message' => $msg,
+		$physical_query = new \WP_Query(
+			array(
+				'post_type'      => 'product',
+				'post_status'    => 'publish',
+				'posts_per_page' => 1,
+				'fields'         => 'ids',
+				// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
+				'meta_query'     => array(
+					'relation' => 'AND',
+					array(
+						'relation' => 'OR',
+						array(
+							'key'     => '_virtual',
+							'value'   => 'yes',
+							'compare' => '!=',
+						),
+						array(
+							'key'     => '_virtual',
+							'compare' => 'NOT EXISTS',
+						),
 					),
-					'message' => $msg,
-				)
+					array(
+						'relation' => 'OR',
+						array(
+							'key'     => '_downloadable',
+							'value'   => 'yes',
+							'compare' => '!=',
+						),
+						array(
+							'key'     => '_downloadable',
+							'compare' => 'NOT EXISTS',
+						),
+					),
+				),
+			)
+		);
+
+		if ( ! $physical_query->have_posts() ) {
+			wp_send_json_error(
+				array( 'message' => __( 'There are only virtual products published; CSV generation is only for physical products.', 'reddit-for-woocommerce' ) )
 			);
+			return;
 		}
 
 		$status = $this->start_export();
 
 		if ( true === $status || null === $status ) {
 			wp_send_json_success();
+			return;
 		}
 
-		$msg = __( 'Export could not be started. Please try again or check that your server can write files.', 'reddit-for-woocommerce' );
-		wp_send_json(
-			array(
-				'success' => false,
-				'data'    => array( 'message' => $msg ),
-				'message' => $msg,
-			)
+		wp_send_json_error(
+			array( 'message' => __( 'Export could not be started. Please try again or check that your server can write files.', 'reddit-for-woocommerce' ) )
 		);
 	}
 
@@ -670,28 +689,5 @@ class ProductExportService {
 
 		// Return false if no catalog is found.
 		return false;
-	}
-
-	/**
-	 * Virtual and downloaded products are excluded from CSV exports because
-	 * DPA (Dynamic Product Ads) only allows physical products.
-	 *
-	 * {@see https://business.reddithelp.com/s/article/dynamic-product-ads}
-	 *
-	 * @param array      $row     Row of a CSV describing product properties.
-	 * @param WC_Product $product A WooCommerce product.
-	 *
-	 * @return array
-	 */
-	public function allow_only_physical_products( $row, $product ) {
-		if ( ! $product instanceof WC_Product ) {
-			return null;
-		}
-
-		if ( $product->is_virtual() || $product->is_downloadable() ) {
-			return null;
-		}
-
-		return $row;
 	}
 }
