@@ -106,7 +106,7 @@ final class UserIdentifier {
 	}
 
 	/**
-	 * normalises an email address per Reddit's Advanced Matching specification.
+	 * Normalises an email address per Reddit's Advanced Matching specification.
 	 *
 	 * Steps:
 	 * 1. Convert to lowercase.
