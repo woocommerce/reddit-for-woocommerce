@@ -127,7 +127,13 @@ export default function BudgetSetup( { hideRecommendations = false } ) {
 		}
 
 		setValue( 'amount', normalizedNextAmount );
-	}, [ budgetRecommendation, currencyPrecision, setValue, values ] );
+	}, [
+		budgetRecommendation,
+		currencyPrecision,
+		setValue,
+		values.currentAmount,
+		values.level,
+	] );
 
 	const options = [ 'high', 'recommended', 'low' ].reduce( ( acc, level ) => {
 		const item = hideRecommendations

@@ -359,7 +359,7 @@ class ProductExportService {
 	 *
 	 * This method:
 	 * - Verifies the security nonce.
-	 * - Checks for published products and at least one physical product.
+	 * - Checks for published products.
 	 * - Attempts to start the export process.
 	 * - Sends a JSON success or error response.
 	 *
@@ -371,50 +371,6 @@ class ProductExportService {
 		if ( ! Helper::has_products() ) {
 			wp_send_json_error(
 				array( 'message' => __( 'No products found. Please create products to generate the CSV.', 'reddit-for-woocommerce' ) )
-			);
-			return;
-		}
-
-		$physical_query = new \WP_Query(
-			array(
-				'post_type'      => 'product',
-				'post_status'    => 'publish',
-				'posts_per_page' => 1,
-				'fields'         => 'ids',
-				// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
-				'meta_query'     => array(
-					'relation' => 'AND',
-					array(
-						'relation' => 'OR',
-						array(
-							'key'     => '_virtual',
-							'value'   => 'yes',
-							'compare' => '!=',
-						),
-						array(
-							'key'     => '_virtual',
-							'compare' => 'NOT EXISTS',
-						),
-					),
-					array(
-						'relation' => 'OR',
-						array(
-							'key'     => '_downloadable',
-							'value'   => 'yes',
-							'compare' => '!=',
-						),
-						array(
-							'key'     => '_downloadable',
-							'compare' => 'NOT EXISTS',
-						),
-					),
-				),
-			)
-		);
-
-		if ( ! $physical_query->have_posts() ) {
-			wp_send_json_error(
-				array( 'message' => __( 'There are only virtual products published; CSV generation is only for physical products.', 'reddit-for-woocommerce' ) )
 			);
 			return;
 		}

@@ -41,7 +41,7 @@ function useMenuLinkUpdate() {
 		) {
 			setupLink.setAttribute( 'href', redirectUrl );
 		}
-	}, [ setupLink, status ] );
+	}, [ setupLink ] );
 }
 
 export default useMenuLinkUpdate;
