@@ -40,6 +40,7 @@ final class UserIdentifierTest extends WP_UnitTestCase {
 
 		unset( $_SERVER['REMOTE_ADDR'], $_SERVER['HTTP_USER_AGENT'] );
 		set_query_var( 'order-received', '' );
+		remove_all_filters( 'woocommerce_geolocate_ip' );
 		parent::tearDown();
 	}
 
@@ -229,6 +230,8 @@ final class UserIdentifierTest extends WP_UnitTestCase {
 	 * Test that get_user_data includes email and phone on the order-received page.
 	 */
 	public function test_get_user_data_includes_email_and_phone_on_order_received_page(): void {
+		add_filter( 'woocommerce_geolocate_ip', fn() => 'US' );
+
 		$order = $this->create_order_with_billing( 'buyer@shop.org', '+15559876543' );
 		set_query_var( 'order-received', $order->get_id() );
 

@@ -69,6 +69,12 @@ final class ConsentTest extends WP_UnitTestCase {
 		$this->assertTrue( Consent::has_marketing_consent() );
 	}
 
+	public function test_returns_false_when_geolocation_unavailable(): void {
+		$this->set_geolocated_country( '' );
+
+		$this->assertFalse( Consent::has_marketing_consent() );
+	}
+
 	// -------------------------------------------------------------------------
 	// is_consent_required_region() — protected, tested via reflection
 	// -------------------------------------------------------------------------
@@ -116,11 +122,10 @@ final class ConsentTest extends WP_UnitTestCase {
 		$this->assertSame( 'FR', $this->invoke_protected( 'get_user_country' ) );
 	}
 
-	public function test_get_user_country_falls_back_to_base_country(): void {
+	public function test_get_user_country_returns_empty_when_geolocation_fails(): void {
 		$this->set_geolocated_country( '' );
-		update_option( 'woocommerce_default_country', 'AU' );
 
-		$this->assertSame( 'AU', $this->invoke_protected( 'get_user_country' ) );
+		$this->assertSame( '', $this->invoke_protected( 'get_user_country' ) );
 	}
 
 	// -------------------------------------------------------------------------

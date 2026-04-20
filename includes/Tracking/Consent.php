@@ -4,9 +4,10 @@
  *
  * Provides a static interface for checking user consent for marketing-related
  * tracking, using the WordPress Consent API. When the Consent API is not
- * available, applies regional logic: visitors geolocated to EU/EEA, UK, or
- * Switzerland are denied by default (fail-safe), while visitors in all other
- * regions are assumed to have consented (fail-open).
+ * available, consent is only granted when the visitor can be geolocated to a
+ * region that does not require explicit consent. Visitors in the EU/EEA, UK,
+ * or Switzerland are denied, and visitors whose location cannot be determined
+ * are also denied.
  *
  * @package RedditForWooCommerce\Tracking
  * @since 0.1.0
@@ -31,15 +32,23 @@ final class Consent {
 	 * Uses the WordPress Consent API to verify if the visitor has opted into
 	 * marketing tracking. If the API is not available (e.g., no Consent plugin
 	 * installed), falls back to regional logic: returns false for EU/EEA, UK,
-	 * and Switzerland visitors, and true for all other regions.
+	 * and Switzerland visitors, and also returns false when the visitor's
+	 * location cannot be determined. Returns true only for visitors confirmed
+	 * to be in non-consent-required regions.
 	 *
 	 * @since 0.1.0
 	 *
-	 * @return bool True if consent is granted or undetermined; false if explicitly denied or in a consent-required region without a consent plugin.
+	 * @return bool True if consent is granted; false if denied, in a consent-required region, or location is unknown.
 	 */
 	public static function has_marketing_consent(): bool {
 		if ( function_exists( 'wp_has_consent' ) ) {
 			return wp_has_consent( 'marketing' );
+		}
+
+		$country = self::get_user_country();
+
+		if ( '' === $country ) {
+			return false;
 		}
 
 		if ( self::is_consent_required_region() ) {
@@ -101,12 +110,13 @@ final class Consent {
 	/**
 	 * Determines the visitor's country code.
 	 *
-	 * Attempts WooCommerce geolocation first. Falls back to the store's
-	 * base country if geolocation is unavailable or returns no result.
+	 * Attempts WooCommerce geolocation first. Returns an empty string if
+	 * geolocation is unavailable or returns no result, so that callers
+	 * can treat an unknown location as "consent denied".
 	 *
 	 * @since 1.0.4
 	 *
-	 * @return string ISO 3166-1 alpha-2 country code.
+	 * @return string ISO 3166-1 alpha-2 country code, or empty string if unknown.
 	 */
 	protected static function get_user_country(): string {
 		if ( class_exists( 'WC_Geolocation' ) ) {
@@ -117,6 +127,6 @@ final class Consent {
 			}
 		}
 
-		return WC()->countries->get_base_country();
+		return '';
 	}
 }

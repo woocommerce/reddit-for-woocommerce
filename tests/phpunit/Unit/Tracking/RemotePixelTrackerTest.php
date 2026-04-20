@@ -38,6 +38,7 @@ class RemotePixelTrackerTest extends WP_UnitTestCase {
 		Options::delete( OptionDefaults::PIXEL_ENABLED );
 		Options::delete( OptionDefaults::AD_ACCOUNT_ID );
 		remove_filter( Helper::with_prefix( 'filter_pixel_script' ), array( $this, 'mock_script' ) );
+		remove_all_filters( 'woocommerce_geolocate_ip' );
 
 		parent::tear_down();
 	}
@@ -50,6 +51,8 @@ class RemotePixelTrackerTest extends WP_UnitTestCase {
 	 * Test that the pixel script is rendered from cache if present.
 	 */
 	public function test_maybe_inject_pixel_outputs_cached_script() {
+		add_filter( 'woocommerce_geolocate_ip', fn() => 'US' );
+
 		Options::set( OptionDefaults::PIXEL_ENABLED, 'yes' );
 
 		$wcs     = $this->createMock( WcsClient::class );
