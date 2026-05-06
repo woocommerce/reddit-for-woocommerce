@@ -78,4 +78,11 @@ final class ServiceKey {
 	 * @since 0.1.0
 	 */
 	public const SETTINGS_REST_CONTROLLER_SETUP = 'settings_rest_controller_setup';
+
+	/**
+	 * Identifier for the Channel Visibility meta box service.
+	 *
+	 * @since 0.1.0
+	 */
+	public const CHANNEL_VISIBILITY_METABOX = 'channel_visibility_metabox';
 }
