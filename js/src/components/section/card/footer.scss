@@ -1,5 +1,6 @@
 .rfw-section-card-footer {
-	padding: calc(var(--large-gap) / 2) var(--large-gap);
+	padding-block: calc(var(--large-gap) / 2);
+	padding-inline: var(--large-gap);
 
 	&[hidden] {
 		display: none;
