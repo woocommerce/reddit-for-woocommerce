@@ -42,7 +42,7 @@ class OrderAttributionDataTest extends WP_UnitTestCase {
 	 * @param bool $mock_screen   Value returned by is_wc_order_edit_screen().
 	 * @return OrderAttributionData
 	 */
-	private function create_testable_attribution_data( int $mock_order_id, bool $mock_screen ): OrderAttributionData {
+	private function create_order_attribution( int $mock_order_id, bool $mock_screen ): OrderAttributionData {
 		return new class( $mock_order_id, $mock_screen ) extends OrderAttributionData {
 			private int $mock_order_id;
 			private bool $mock_screen;
@@ -67,9 +67,9 @@ class OrderAttributionDataTest extends WP_UnitTestCase {
 	 */
 	public function test_hpos_path_returns_reddit(): void {
 		$order            = $this->create_order_with_attribution( 'reddit' );
-		$attribution_data = $this->create_testable_attribution_data( $order->get_id(), true );
+		$order_attribution = $this->create_order_attribution( $order->get_id(), true );
 
-		$this->assertSame( 'reddit', $attribution_data->get_order_attribution_source_for_edit_screen() );
+		$this->assertSame( 'reddit', $order_attribution->get_order_attribution_source_for_edit_screen() );
 	}
 
 	/**
@@ -77,9 +77,9 @@ class OrderAttributionDataTest extends WP_UnitTestCase {
 	 */
 	public function test_legacy_path_returns_reddit(): void {
 		$order            = $this->create_order_with_attribution( 'reddit' );
-		$attribution_data = $this->create_testable_attribution_data( $order->get_id(), true );
+		$order_attribution = $this->create_order_attribution( $order->get_id(), true );
 
-		$this->assertSame( 'reddit', $attribution_data->get_order_attribution_source_for_edit_screen() );
+		$this->assertSame( 'reddit', $order_attribution->get_order_attribution_source_for_edit_screen() );
 	}
 
 	/**
@@ -87,18 +87,18 @@ class OrderAttributionDataTest extends WP_UnitTestCase {
 	 */
 	public function test_non_reddit_utm_source_returns_null(): void {
 		$order            = $this->create_order_with_attribution( 'google' );
-		$attribution_data = $this->create_testable_attribution_data( $order->get_id(), true );
+		$order_attribution = $this->create_order_attribution( $order->get_id(), true );
 
-		$this->assertNull( $attribution_data->get_order_attribution_source_for_edit_screen() );
+		$this->assertNull( $order_attribution->get_order_attribution_source_for_edit_screen() );
 	}
 
 	/**
 	 * No order ID in the request must return null even when on the correct screen.
 	 */
 	public function test_no_order_id_returns_null(): void {
-		$attribution_data = $this->create_testable_attribution_data( 0, true );
+		$order_attribution = $this->create_order_attribution( 0, true );
 
-		$this->assertNull( $attribution_data->get_order_attribution_source_for_edit_screen() );
+		$this->assertNull( $order_attribution->get_order_attribution_source_for_edit_screen() );
 	}
 
 	/**
@@ -106,8 +106,8 @@ class OrderAttributionDataTest extends WP_UnitTestCase {
 	 */
 	public function test_wrong_screen_returns_null(): void {
 		$order            = $this->create_order_with_attribution( 'reddit' );
-		$attribution_data = $this->create_testable_attribution_data( $order->get_id(), false );
+		$order_attribution = $this->create_order_attribution( $order->get_id(), false );
 
-		$this->assertNull( $attribution_data->get_order_attribution_source_for_edit_screen() );
+		$this->assertNull( $order_attribution->get_order_attribution_source_for_edit_screen() );
 	}
 }
