@@ -42,7 +42,7 @@ class OrderAttributionDataTest extends WP_UnitTestCase {
 	 * @param bool $mock_screen   Value returned by is_wc_order_edit_screen().
 	 * @return OrderAttributionData
 	 */
-	private function make_sut( int $mock_order_id, bool $mock_screen ): OrderAttributionData {
+	private function create_testable_attribution_data( int $mock_order_id, bool $mock_screen ): OrderAttributionData {
 		return new class( $mock_order_id, $mock_screen ) extends OrderAttributionData {
 			private int $mock_order_id;
 			private bool $mock_screen;
@@ -66,48 +66,48 @@ class OrderAttributionDataTest extends WP_UnitTestCase {
 	 * HPOS path: simulates the order ID arriving via the ?id= query parameter.
 	 */
 	public function test_hpos_path_returns_reddit(): void {
-		$order = $this->create_order_with_attribution( 'reddit' );
-		$sut   = $this->make_sut( $order->get_id(), true );
+		$order            = $this->create_order_with_attribution( 'reddit' );
+		$attribution_data = $this->create_testable_attribution_data( $order->get_id(), true );
 
-		$this->assertSame( 'reddit', $sut->get_order_attribution_source_for_edit_screen() );
+		$this->assertSame( 'reddit', $attribution_data->get_order_attribution_source_for_edit_screen() );
 	}
 
 	/**
 	 * Legacy path: simulates the order ID arriving via the ?post= query parameter.
 	 */
 	public function test_legacy_path_returns_reddit(): void {
-		$order = $this->create_order_with_attribution( 'reddit' );
-		$sut   = $this->make_sut( $order->get_id(), true );
+		$order            = $this->create_order_with_attribution( 'reddit' );
+		$attribution_data = $this->create_testable_attribution_data( $order->get_id(), true );
 
-		$this->assertSame( 'reddit', $sut->get_order_attribution_source_for_edit_screen() );
+		$this->assertSame( 'reddit', $attribution_data->get_order_attribution_source_for_edit_screen() );
 	}
 
 	/**
 	 * A non-reddit utm_source must return null.
 	 */
 	public function test_non_reddit_utm_source_returns_null(): void {
-		$order = $this->create_order_with_attribution( 'google' );
-		$sut   = $this->make_sut( $order->get_id(), true );
+		$order            = $this->create_order_with_attribution( 'google' );
+		$attribution_data = $this->create_testable_attribution_data( $order->get_id(), true );
 
-		$this->assertNull( $sut->get_order_attribution_source_for_edit_screen() );
+		$this->assertNull( $attribution_data->get_order_attribution_source_for_edit_screen() );
 	}
 
 	/**
 	 * No order ID in the request must return null even when on the correct screen.
 	 */
 	public function test_no_order_id_returns_null(): void {
-		$sut = $this->make_sut( 0, true );
+		$attribution_data = $this->create_testable_attribution_data( 0, true );
 
-		$this->assertNull( $sut->get_order_attribution_source_for_edit_screen() );
+		$this->assertNull( $attribution_data->get_order_attribution_source_for_edit_screen() );
 	}
 
 	/**
 	 * A valid reddit-attributed order must still return null when not on the edit order screen.
 	 */
 	public function test_wrong_screen_returns_null(): void {
-		$order = $this->create_order_with_attribution( 'reddit' );
-		$sut   = $this->make_sut( $order->get_id(), false );
+		$order            = $this->create_order_with_attribution( 'reddit' );
+		$attribution_data = $this->create_testable_attribution_data( $order->get_id(), false );
 
-		$this->assertNull( $sut->get_order_attribution_source_for_edit_screen() );
+		$this->assertNull( $attribution_data->get_order_attribution_source_for_edit_screen() );
 	}
 }
