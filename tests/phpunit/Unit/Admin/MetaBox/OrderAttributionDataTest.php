@@ -66,7 +66,7 @@ class OrderAttributionDataTest extends WP_UnitTestCase {
 	 * HPOS path: simulates the order ID arriving via the ?id= query parameter.
 	 */
 	public function test_hpos_path_returns_reddit(): void {
-		$order            = $this->create_order_with_attribution( 'reddit' );
+		$order             = $this->create_order_with_attribution( 'reddit' );
 		$order_attribution = $this->create_order_attribution( $order->get_id(), true );
 
 		$this->assertSame( 'reddit', $order_attribution->get_order_attribution_source_for_edit_screen() );
@@ -76,7 +76,7 @@ class OrderAttributionDataTest extends WP_UnitTestCase {
 	 * Legacy path: simulates the order ID arriving via the ?post= query parameter.
 	 */
 	public function test_legacy_path_returns_reddit(): void {
-		$order            = $this->create_order_with_attribution( 'reddit' );
+		$order             = $this->create_order_with_attribution( 'reddit' );
 		$order_attribution = $this->create_order_attribution( $order->get_id(), true );
 
 		$this->assertSame( 'reddit', $order_attribution->get_order_attribution_source_for_edit_screen() );
@@ -86,7 +86,7 @@ class OrderAttributionDataTest extends WP_UnitTestCase {
 	 * A non-reddit utm_source must return null.
 	 */
 	public function test_non_reddit_utm_source_returns_null(): void {
-		$order            = $this->create_order_with_attribution( 'google' );
+		$order             = $this->create_order_with_attribution( 'google' );
 		$order_attribution = $this->create_order_attribution( $order->get_id(), true );
 
 		$this->assertNull( $order_attribution->get_order_attribution_source_for_edit_screen() );
@@ -105,7 +105,7 @@ class OrderAttributionDataTest extends WP_UnitTestCase {
 	 * A valid reddit-attributed order must still return null when not on the edit order screen.
 	 */
 	public function test_wrong_screen_returns_null(): void {
-		$order            = $this->create_order_with_attribution( 'reddit' );
+		$order             = $this->create_order_with_attribution( 'reddit' );
 		$order_attribution = $this->create_order_attribution( $order->get_id(), false );
 
 		$this->assertNull( $order_attribution->get_order_attribution_source_for_edit_screen() );
