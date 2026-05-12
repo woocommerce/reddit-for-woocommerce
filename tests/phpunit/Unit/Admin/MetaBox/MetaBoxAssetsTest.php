@@ -95,8 +95,8 @@ final class MetaBoxAssetsTest extends WP_UnitTestCase {
 		$decoded = $this->decode_registered_metabox_payload();
 
 		$this->assertSame( Config::PLUGIN_SLUG, $decoded['slug'] ?? null );
-		$this->assertTrue( $decoded['onboardingComplete'] ?? false );
-		$this->assertFalse( $decoded['hasCampaign'] ?? null );
+		$this->assert_metabox_payload_bool( $decoded['onboardingComplete'] ?? null, true );
+		$this->assert_metabox_payload_bool( $decoded['hasCampaign'] ?? null, false );
 		$this->assertArrayHasKey( 'orderAttributionSource', $decoded );
 		$this->assertNull( $decoded['orderAttributionSource'] );
 
@@ -117,8 +117,8 @@ final class MetaBoxAssetsTest extends WP_UnitTestCase {
 
 		$decoded = $this->decode_registered_metabox_payload();
 
-		$this->assertFalse( $decoded['onboardingComplete'] ?? null );
-		$this->assertTrue( $decoded['hasCampaign'] ?? null );
+		$this->assert_metabox_payload_bool( $decoded['onboardingComplete'] ?? null, false );
+		$this->assert_metabox_payload_bool( $decoded['hasCampaign'] ?? null, true );
 	}
 
 	public function test_wc_admin_urls_match_helper_output(): void {
@@ -269,13 +269,7 @@ final class MetaBoxAssetsTest extends WP_UnitTestCase {
 		$order      = \WC_Helper_Order::create_order();
 
 		try {
-			$this->run_real_enqueue_in_admin_screen_context(
-				array(
-					'post'   => (string) $order->get_id(),
-					'action' => 'edit',
-				),
-				'shop_order'
-			);
+			$this->run_legacy_shop_order_edit_enqueue( $order->get_id() );
 
 			$this->assertTrue(
 				OrderAttributionData::is_wc_order_edit_screen(),
@@ -291,6 +285,7 @@ final class MetaBoxAssetsTest extends WP_UnitTestCase {
 				'wp_scripts()->queue should list order-attribution on legacy Edit Order.'
 			);
 		} finally {
+			unset( $GLOBALS['reddit_for_woocommerce_tests_filter_input_get_post_id'] );
 			$_GET = $get_backup;
 		}
 	}
@@ -373,6 +368,55 @@ final class MetaBoxAssetsTest extends WP_UnitTestCase {
 			}
 			// phpcs:enable WordPress.WP.GlobalVariablesOverride.Prohibited
 		}
+	}
+
+	/**
+	 * Legacy CPT order edit: PageController uses filter_input( INPUT_GET, 'post' ), which often does not
+	 * see $_GET mutated at runtime in PHPUnit. Mirror WooCommerce PageControllerTest bootstrap.
+	 *
+	 * @param int $order_id Order post ID.
+	 * @return void
+	 */
+	private function run_legacy_shop_order_edit_enqueue( int $order_id ): void {
+		global $reddit_for_woocommerce_tests_filter_input_get_post_id;
+
+		self::ensure_admin_request_context_for_tests();
+
+		wp_set_current_user( self::factory()->user->create( array( 'role' => 'administrator' ) ) );
+
+		$this->purge_order_attribution_script_state();
+
+		$_GET = array(
+			'post'   => (string) $order_id,
+			'action' => 'edit',
+		);
+
+		$reddit_for_woocommerce_tests_filter_input_get_post_id = $order_id;
+
+		self::maybe_load_wp_screen_helpers();
+		set_current_screen();
+		$screen = get_current_screen();
+		$this->assertNotNull( $screen );
+		$screen->post_type = 'shop_order';
+		$screen->base      = 'post';
+		do_action( 'current_screen', $screen );
+
+		( new MetaBoxAssets() )->enqueue_assets();
+	}
+
+	/**
+	 * wp_localize_script JSON may decode booleans as 1/0 or "1"/"" depending on WP/WC pipeline — treat loosely.
+	 *
+	 * @param mixed $value   Raw decoded value.
+	 * @param bool  $expected Expected truthiness.
+	 * @return void
+	 */
+	private function assert_metabox_payload_bool( $value, bool $expected ): void {
+		$actual = filter_var( $value, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE );
+		if ( null === $actual ) {
+			$actual = (bool) $value;
+		}
+		$this->assertSame( $expected, $actual, 'Localized boolean field should match expected truthiness.' );
 	}
 
 	/**
@@ -482,5 +526,33 @@ final class MetaBoxAssetsTestDouble extends MetaBoxAssets {
 
 	protected function should_enqueue_order_attribution_bundle(): bool {
 		return $this->should_enqueue;
+	}
+}
+
+namespace Automattic\WooCommerce\Internal\Admin\Orders {
+
+	if ( ! function_exists( __NAMESPACE__ . '\\filter_input' ) ) {
+
+		/**
+		 * PHPUnit often mutates $_GET after bootstrap; PHP's filter_input( INPUT_GET, ... ) may not reflect that.
+		 * WooCommerce PageController uses filter_input for legacy CPT order edit detection (see PageControllerTest).
+		 *
+		 * @param int               $type    INPUT_* constant.
+		 * @param string|null       $key     Variable name.
+		 * @param int               $filter  Filter constant.
+		 * @param array<int|string> $options Filter options.
+		 * @return mixed
+		 */
+		function filter_input( $type, $key = null, $filter = FILTER_DEFAULT, $options = 0 ) { // phpcs:ignore Universal.NamingConventions.NoReservedKeywordParameterNames.filter_inputFound
+			if ( isset( $GLOBALS['reddit_for_woocommerce_tests_filter_input_get_post_id'] )
+				&& INPUT_GET === $type
+				&& 'post' === $key
+				&& FILTER_VALIDATE_INT === $filter
+			) {
+				return (int) $GLOBALS['reddit_for_woocommerce_tests_filter_input_get_post_id'];
+			}
+
+			return \call_user_func_array( '\filter_input', func_get_args() );
+		}
 	}
 }
