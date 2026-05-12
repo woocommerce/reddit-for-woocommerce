@@ -101,9 +101,9 @@ final class MetaBoxAssetsTest extends WP_UnitTestCase {
 		$this->assertNull( $decoded['orderAttributionSource'] );
 
 		$this->assertIsArray( $decoded['urls'] ?? null );
-		$this->assertStringContainsString( 'admin.php?page=wc-admin&path=/reddit/start', $decoded['urls']['start'] ?? '' );
-		$this->assertStringContainsString( '/reddit/campaigns/create', $decoded['urls']['campaignCreate'] ?? '' );
-		$this->assertStringContainsString( '/reddit/settings', $decoded['urls']['settings'] ?? '' );
+		$this->assert_wc_admin_url_has_reddit_path( $decoded['urls']['start'] ?? '', '/reddit/start' );
+		$this->assert_wc_admin_url_has_reddit_path( $decoded['urls']['campaignCreate'] ?? '', '/reddit/campaigns/create' );
+		$this->assert_wc_admin_url_has_reddit_path( $decoded['urls']['settings'] ?? '', '/reddit/settings' );
 	}
 
 	public function test_localized_data_when_not_connected_with_campaign_flag(): void {
@@ -420,6 +420,26 @@ final class MetaBoxAssetsTest extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Asserts a full admin URL is wc-admin with path= matching the expected Reddit route (encoded or not).
+	 *
+	 * @param string $url           Full URL from localized payload.
+	 * @param string $expected_path Expected path query value, e.g. `/reddit/start`.
+	 * @return void
+	 */
+	private function assert_wc_admin_url_has_reddit_path( string $url, string $expected_path ): void {
+		$this->assertStringContainsString( 'page=wc-admin', $url );
+
+		$query = wp_parse_url( $url, PHP_URL_QUERY );
+		$this->assertIsString( $query );
+
+		parse_str( $query, $parsed );
+		$this->assertArrayHasKey( 'path', $parsed );
+
+		$path = rawurldecode( (string) wp_unslash( $parsed['path'] ) );
+		$this->assertSame( $expected_path, $path, 'path= query param should resolve to the expected Reddit route.' );
+	}
+
+	/**
 	 * @param array<string,string> $get Query parameters (admin context).
 	 * @param string               $screen_id WordPress {@see WP_Screen} id passed to {@see set_current_screen()}.
 	 */
@@ -554,7 +574,8 @@ namespace Automattic\WooCommerce\Internal\Admin\Orders {
 				return (int) $GLOBALS['reddit_for_woocommerce_tests_filter_input_get_post_id'];
 			}
 
-			return \call_user_func_array( '\filter_input', func_get_args() );
+			// Forward explicitly — func_get_args() after parameter use breaks PHPCompat / PHP 7+ inspection rules.
+			return \filter_input( $type, (string) $key, $filter, $options );
 		}
 	}
 }
