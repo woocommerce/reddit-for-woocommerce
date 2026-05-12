@@ -5,7 +5,7 @@
  * @package RedditForWooCommerce\Tests\Unit\Admin\MetaBox
  */
 
-namespace RedditForWooCommerce\Tests\Unit\Admin\MetaBox;
+namespace RedditForWooCommerce\Tests\Unit\Admin\MetaBox {
 
 use Automattic\WooCommerce\Internal\Admin\Orders\PageController;
 use Automattic\WooCommerce\Utilities\OrderUtil;
@@ -527,6 +527,8 @@ final class MetaBoxAssetsTestDouble extends MetaBoxAssets {
 	protected function should_enqueue_order_attribution_bundle(): bool {
 		return $this->should_enqueue;
 	}
+}
+
 }
 
 namespace Automattic\WooCommerce\Internal\Admin\Orders {
