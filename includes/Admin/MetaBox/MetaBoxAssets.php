@@ -65,6 +65,10 @@ class MetaBoxAssets {
 	}
 
 	/**
+	 * Enqueues the order-attribution bundle and passes localized data for the Edit Order screen.
+	 *
+	 * @since 0.1.0
+	 *
 	 * @return void
 	 */
 	private function enqueue_order_attribution_assets(): void {
@@ -91,6 +95,10 @@ class MetaBoxAssets {
 	}
 
 	/**
+	 * Enqueues the channel-visibility bundle and passes localized data for the Edit Product screen.
+	 *
+	 * @since 0.1.0
+	 *
 	 * @return void
 	 */
 	private function enqueue_channel_visibility_assets(): void {
