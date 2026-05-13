@@ -7,8 +7,8 @@
 
 namespace RedditForWooCommerce\Tests\Unit\Admin\MetaBox;
 
-use WP_UnitTestCase;
 use RedditForWooCommerce\Admin\MetaBox\OrderAttributionData;
+use WP_UnitTestCase;
 
 /**
  * @covers \RedditForWooCommerce\Admin\MetaBox\OrderAttributionData
@@ -60,6 +60,30 @@ final class OrderAttributionDataTest extends WP_UnitTestCase {
 			// phpcs:enable WordPress.Security.NonceVerification.Recommended
 
 			$this->assertSame( 42, OrderAttributionData::get_editing_order_id() );
+		} finally {
+			$_GET = $get_backup;
+		}
+	}
+
+	public function test_get_order_attribution_source_returns_null_when_not_on_order_edit_screen(): void {
+		$get_backup = $_GET;
+
+		if ( ! defined( 'WP_ADMIN' ) ) {
+			define( 'WP_ADMIN', true );
+		}
+
+		require_once ABSPATH . 'wp-admin/includes/screen.php';
+
+		try {
+			$_GET = array(
+				'page'   => 'wc-orders',
+				'action' => 'edit',
+				'id'     => '99',
+			);
+
+			set_current_screen( 'dashboard' );
+
+			$this->assertNull( OrderAttributionData::get_order_attribution_source() );
 		} finally {
 			$_GET = $get_backup;
 		}

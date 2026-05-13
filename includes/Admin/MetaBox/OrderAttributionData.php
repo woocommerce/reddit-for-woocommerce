@@ -82,6 +82,10 @@ final class OrderAttributionData {
 	 * @return string|null 'reddit' when attribution matches Reddit traffic, null otherwise.
 	 */
 	public static function get_order_attribution_source(): ?string {
+		if ( ! self::is_wc_order_edit_screen() ) {
+			return null;
+		}
+
 		$order_id = self::get_editing_order_id();
 
 		if ( ! $order_id ) {

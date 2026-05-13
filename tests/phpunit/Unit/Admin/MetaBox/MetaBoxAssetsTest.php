@@ -50,10 +50,10 @@ final class MetaBoxAssetsTest extends WP_UnitTestCase {
 	}
 
 	public function test_order_attribution_script_not_enqueued_when_screen_gate_disabled(): void {
-		$sut = new MetaBoxAssetsTestDouble();
-		$sut->set_should_enqueue( false );
+		$asset = new MetaBoxAssetsTestDouble();
+		$asset->set_should_enqueue( false );
 
-		$sut->enqueue_assets();
+		$asset->enqueue_assets();
 
 		$this->assertFalse(
 			wp_script_is( Config::ASSET_HANDLE_PREFIX . self::SCRIPT_HANDLE_ORDER, 'enqueued' )
@@ -72,10 +72,10 @@ final class MetaBoxAssetsTest extends WP_UnitTestCase {
 	}
 
 	public function test_order_attribution_script_enqueued_when_screen_gate_enabled(): void {
-		$sut = new MetaBoxAssetsTestDouble();
-		$sut->set_should_enqueue( true );
+		$asset = new MetaBoxAssetsTestDouble();
+		$asset->set_should_enqueue( true );
 
-		$sut->enqueue_assets();
+		$asset->enqueue_assets();
 
 		$this->assertFalse(
 			wp_script_is( Config::ASSET_HANDLE_PREFIX . self::SCRIPT_HANDLE_CHANNEL, 'enqueued' )
@@ -99,10 +99,10 @@ final class MetaBoxAssetsTest extends WP_UnitTestCase {
 		Options::set( OptionDefaults::ONBOARDING_STATUS, 'connected' );
 		Options::set( OptionDefaults::CAMPAIGN_IDS, array() );
 
-		$sut = new MetaBoxAssetsTestDouble();
-		$sut->set_should_enqueue( true );
+		$asset = new MetaBoxAssetsTestDouble();
+		$asset->set_should_enqueue( true );
 
-		$sut->enqueue_assets();
+		$asset->enqueue_assets();
 
 		$decoded = $this->decode_registered_metabox_payload();
 
@@ -122,10 +122,10 @@ final class MetaBoxAssetsTest extends WP_UnitTestCase {
 		Options::set( OptionDefaults::ONBOARDING_STATUS, 'disconnected' );
 		Options::set( OptionDefaults::CAMPAIGN_IDS, array( 'c1_12345' ) );
 
-		$sut = new MetaBoxAssetsTestDouble();
-		$sut->set_should_enqueue( true );
+		$asset = new MetaBoxAssetsTestDouble();
+		$asset->set_should_enqueue( true );
 
-		$sut->enqueue_assets();
+		$asset->enqueue_assets();
 
 		$decoded = $this->decode_registered_metabox_payload();
 
@@ -134,10 +134,10 @@ final class MetaBoxAssetsTest extends WP_UnitTestCase {
 	}
 
 	public function test_wc_admin_urls_match_helper_output(): void {
-		$sut = new MetaBoxAssetsTestDouble();
-		$sut->set_should_enqueue( true );
+		$asset = new MetaBoxAssetsTestDouble();
+		$asset->set_should_enqueue( true );
 
-		$sut->enqueue_assets();
+		$asset->enqueue_assets();
 
 		$decoded = $this->decode_registered_metabox_payload();
 		$urls    = Helper::get_wc_admin_reddit_metabox_urls();
