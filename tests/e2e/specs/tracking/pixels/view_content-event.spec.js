@@ -6,7 +6,12 @@ const { test, expect } = require( '@playwright/test' );
 /**
  * Internal dependencies
  */
-import { findRedditEvent, getThemes, switchTheme, setConsent } from '../../../utils';
+import {
+	findRedditEvent,
+	getThemes,
+	switchTheme,
+	setConsent,
+} from '../../../utils';
 
 test.describe( 'ViewContent event', () => {
 	test.use( { storageState: process.env.ADMINSTATE } );

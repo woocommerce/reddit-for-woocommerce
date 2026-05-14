@@ -6,7 +6,12 @@ const { test, expect } = require( '@playwright/test' );
 /**
  * Internal dependencies
  */
-import { findRedditEvent, getThemes, switchTheme, setConsent } from '../../../utils';
+import {
+	findRedditEvent,
+	getThemes,
+	switchTheme,
+	setConsent,
+} from '../../../utils';
 
 const anyUuidRegex =
 	/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
