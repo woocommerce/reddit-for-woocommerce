@@ -15,6 +15,8 @@
 
 namespace RedditForWooCommerce\Tracking;
 
+use RedditForWooCommerce\Utils\Helper;
+
 /**
  * Static interface for checking marketing consent.
  *
@@ -42,20 +44,18 @@ final class Consent {
 	 */
 	public static function has_marketing_consent(): bool {
 		if ( function_exists( 'wp_has_consent' ) ) {
-			return wp_has_consent( 'marketing' );
+			$consent = wp_has_consent( 'marketing' );
+		} else {
+			$country = self::get_user_country();
+
+			if ( '' === $country || self::is_consent_required_region() ) {
+				$consent = false;
+			} else {
+				$consent = true;
+			}
 		}
 
-		$country = self::get_user_country();
-
-		if ( '' === $country ) {
-			return false;
-		}
-
-		if ( self::is_consent_required_region() ) {
-			return false;
-		}
-
-		return true;
+		return (bool) apply_filters( Helper::with_prefix( 'has_marketing_consent' ), $consent );
 	}
 
 	/**
