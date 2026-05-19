@@ -92,7 +92,7 @@ const webpackConfig = {
 		),
 		'channel-visibility-meta-box': path.resolve(
 			process.cwd(),
-			'js/src/meta-boxes/channel-visibility-meta-box',
+			'js/src/meta-boxes/channel-visibility',
 			'index.js'
 		),
 	} ),
