@@ -1,6 +1,6 @@
 <?php
 /**
- * Order attribution data helper for the Edit Order admin screen.
+ * Order edit screen and WooCommerce order attribution helpers.
  *
  * @package RedditForWooCommerce\Admin\MetaBox
  * @since 0.1.0
@@ -9,80 +9,126 @@
 namespace RedditForWooCommerce\Admin\MetaBox;
 
 use Automattic\WooCommerce\Utilities\OrderUtil;
+use WC_Order;
 
 /**
- * Provides helpers for determining whether the current Edit Order screen
- * is attributed to Reddit.
+ * WC Edit Order screen detection and Reddit order-attribution context.
  *
  * @since 0.1.0
  */
-class OrderAttributionData {
+final class OrderAttributionData {
 
 	/**
-	 * Returns true when the current admin screen is the WooCommerce Edit Order screen.
+	 * Whether the current admin request is the WooCommerce order edit screen (HPOS or CPT).
 	 *
-	 * Guards against a null return from get_current_screen(), which can occur before
-	 * the current_screen action fires. Delegates to OrderUtil::is_order_edit_screen()
-	 * which handles both HPOS (woocommerce_page_wc-orders) and legacy (shop_order) screens.
+	 * Requires {@see is_admin()} so this is not treated as an order screen on the front end or in CLI.
+	 * PHPUnit coverage that calls {@see OrderUtil::is_order_edit_screen()} should define `WP_ADMIN` and
+	 * run after {@see set_current_screen()} (see {@see MetaBoxAssetsTest::ensure_admin_request_context_for_tests()}).
 	 *
 	 * @since 0.1.0
 	 *
 	 * @return bool
 	 */
-	public function is_wc_order_edit_screen(): bool {
-		if ( null === get_current_screen() ) {
+	public static function is_wc_order_edit_screen(): bool {
+		if ( ! is_admin() || ! class_exists( OrderUtil::class ) ) {
 			return false;
 		}
-		return OrderUtil::is_order_edit_screen( 'shop_order' );
+
+		return OrderUtil::is_order_edit_screen();
 	}
 
 	/**
-	 * Returns 'reddit' when the order currently being edited is attributed to Reddit.
-	 *
-	 * Returns null in every other case — not on the edit order screen, missing or
-	 * invalid order ID, deleted/trashed order, attribution meta absent or any value
-	 * other than the exact string 'reddit'.
+	 * Resolves the ID of the order being edited in admin, if any.
 	 *
 	 * @since 0.1.0
 	 *
-	 * @return string|null
+	 * @return int|null
 	 */
-	public function get_order_attribution_source_for_edit_screen(): ?string {
-		if ( ! $this->is_wc_order_edit_screen() ) {
+	public static function get_editing_order_id(): ?int {
+		// phpcs:disable WordPress.Security.NonceVerification.Recommended -- Read-only routing context.
+		$page = isset( $_GET['page'] ) ? sanitize_text_field( wp_unslash( $_GET['page'] ) ) : '';
+		if ( isset( $_GET['action'], $_GET['id'] )
+			&& 'edit' === sanitize_text_field( wp_unslash( $_GET['action'] ) )
+			&& ( 'wc-orders' === $page || 0 === strpos( $page, 'wc-orders--' ) ) ) {
+			$id = absint( wp_unslash( $_GET['id'] ) );
+			// phpcs:enable WordPress.Security.NonceVerification.Recommended
+			return $id > 0 ? $id : null;
+		}
+
+		// phpcs:disable WordPress.Security.NonceVerification.Recommended
+		if ( isset( $_GET['post'], $_GET['action'] ) ) {
+			$post_id = absint( wp_unslash( $_GET['post'] ) );
+			$action  = sanitize_text_field( wp_unslash( $_GET['action'] ) );
+			// phpcs:enable WordPress.Security.NonceVerification.Recommended
+			if ( $post_id > 0 && 'edit' === $action && 'shop_order' === get_post_type( $post_id ) ) {
+				return $post_id;
+			}
+		}
+
+		global $post;
+
+		if ( $post && 'shop_order' === $post->post_type ) {
+			return (int) $post->ID;
+		}
+
+		return null;
+	}
+
+	/**
+	 * Reddit-specific order attribution source for the order currently being edited.
+	 *
+	 * @since 0.1.0
+	 *
+	 * @return string|null 'reddit' when attribution matches Reddit traffic, null otherwise.
+	 */
+	public static function get_order_attribution_source(): ?string {
+		if ( ! self::is_wc_order_edit_screen() ) {
 			return null;
 		}
 
-		$order_id = $this->get_order_id_from_request();
+		$order_id = self::get_editing_order_id();
+
 		if ( ! $order_id ) {
 			return null;
 		}
 
+		return self::get_order_attribution_source_for_order( $order_id );
+	}
+
+	/**
+	 * Reads WooCommerce order attribution meta and returns Reddit when it applies.
+	 *
+	 * @since 0.1.0
+	 *
+	 * @param int $order_id Order ID.
+	 * @return string|null 'reddit' or null.
+	 */
+	public static function get_order_attribution_source_for_order( int $order_id ): ?string {
 		$order = wc_get_order( $order_id );
-		if ( ! $order ) {
+
+		if ( ! $order instanceof WC_Order ) {
 			return null;
 		}
 
-		$source = $order->get_meta( '_wc_order_attribution_utm_source', true );
+		$field_prefix = (string) apply_filters(
+			'wc_order_attribution_tracking_field_prefix',
+			'wc_order_attribution_'
+		);
 
-		return 'reddit' === $source ? 'reddit' : null;
-	}
+		$field_prefix = trim( $field_prefix, '_' );
+		$meta_prefix  = '_' . $field_prefix . '_';
 
-	/**
-	 * Resolves the order ID from the current request.
-	 *
-	 * Checks the 'id' parameter first (HPOS), then falls back to 'post' (legacy posts storage).
-	 * Uses filter_input() rather than direct $_GET access to satisfy PHPCS
-	 * WordPress.Security.NonceVerification rules without suppression comments.
-	 *
-	 * @since 0.1.0
-	 *
-	 * @return int Zero when no valid order ID is present.
-	 */
-	protected function get_order_id_from_request(): int {
-		$order_id = absint( filter_input( INPUT_GET, 'id', FILTER_VALIDATE_INT ) );
-		if ( ! $order_id ) {
-			$order_id = absint( filter_input( INPUT_GET, 'post', FILTER_VALIDATE_INT ) );
+		$utm_source = strtolower( (string) $order->get_meta( $meta_prefix . 'utm_source', true ) );
+		$referrer   = (string) $order->get_meta( $meta_prefix . 'referrer', true );
+
+		if ( '' !== $utm_source && str_contains( $utm_source, 'reddit' ) ) {
+			return 'reddit';
 		}
-		return $order_id;
+
+		if ( '' !== $referrer && 1 === preg_match( '/reddit\.com/i', $referrer ) ) {
+			return 'reddit';
+		}
+
+		return null;
 	}
 }
