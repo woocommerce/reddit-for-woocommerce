@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import domReady from '@wordpress/dom-ready';
 import { createRoot, lazy, Suspense } from '@wordpress/element';
 
 const RedditAdsPromo = lazy( () =>
@@ -9,7 +10,7 @@ const RedditAdsPromo = lazy( () =>
 	)
 );
 
-document.addEventListener( 'DOMContentLoaded', () => {
+domReady( () => {
 	const orderAttributionBox = document.querySelector(
 		'#woocommerce-order-source-data .inside'
 	);
