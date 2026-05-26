@@ -175,7 +175,7 @@ Reddit Ads Promo "Create campaign" button is clicked.
 `context` | `string` | Context of the Reddit Ads Promo.
 `href` | `string` | URL of the "Create campaign" button.
 #### Emitters
-- [`RedditAdsPromo`](js/src/meta-boxes/order-attribution/reddit-ads-promo.js#L57) with `{ context: 'order-attribution-meta-box', href }`.
+- [`RedditAdsPromo`](js/src/meta-boxes/order-attribution/reddit-ads-promo.js#L63) with `{ context: 'order-attribution-meta-box', href }`.
 
 ### [`rfw_reddit_ads_promo_get_started_click`](js/src/meta-boxes/order-attribution/reddit-ads-promo.js#L24)
 Reddit Ads Promo "Get started" button is clicked.
@@ -185,7 +185,7 @@ Reddit Ads Promo "Get started" button is clicked.
 `context` | `string` | Context of the Reddit Ads Promo.
 `href` | `string` | URL of the "Get started" button.
 #### Emitters
-- [`RedditAdsPromo`](js/src/meta-boxes/order-attribution/reddit-ads-promo.js#L57) with `{ context: 'order-attribution-meta-box', href }`.
+- [`RedditAdsPromo`](js/src/meta-boxes/order-attribution/reddit-ads-promo.js#L63) with `{ context: 'order-attribution-meta-box', href }`.
 
 ### [`rfw_reddit_ads_promo_shown`](js/src/meta-boxes/order-attribution/reddit-ads-promo.js#L17)
 Reddit Ads Promo component is shown.
@@ -194,7 +194,7 @@ Reddit Ads Promo component is shown.
 | ---- | ---- | ----------- |
 `context` | `string` | Context of the Reddit Ads Promo.
 #### Emitters
-- [`RedditAdsPromo`](js/src/meta-boxes/order-attribution/reddit-ads-promo.js#L57) with `{ context: 'order-attribution-meta-box' }`.
+- [`RedditAdsPromo`](js/src/meta-boxes/order-attribution/reddit-ads-promo.js#L63) with `{ context: 'order-attribution-meta-box' }`.
 
 ### [`rfw_reddit_go_to_dashboard_button_click`](js/src/pages/settings/reddit-ads/index.js#L28)
 Clicking on the button to go to the Reddit Ads dashboard.
