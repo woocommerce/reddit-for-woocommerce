@@ -11,6 +11,7 @@
 
 namespace RedditForWooCommerce\Admin\ProductMeta;
 
+use RedditForWooCommerce\Admin\MetaBox\ChannelVisibilityMetaBox;
 use RedditForWooCommerce\Utils\Helper;
 
 /**
@@ -36,7 +37,7 @@ class ProductMetaFields {
 	 *
 	 * @since 0.1.0
 	 */
-	public const CATALOG_ITEM = 'product_catalog_item';
+	public const CATALOG_ITEM = ChannelVisibilityMetaBox::CATALOG_ITEM;
 
 	/**
 	 * Registers all WooCommerce hooks.
