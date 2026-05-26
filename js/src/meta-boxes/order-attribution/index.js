@@ -11,6 +11,10 @@ const RedditAdsPromo = lazy( () =>
 );
 
 domReady( () => {
+	if ( redditAdsMetaBoxData?.orderAttributionSource !== 'reddit' ) {
+		return;
+	}
+
 	const orderAttributionBox = document.querySelector(
 		'#woocommerce-order-source-data .inside'
 	);
@@ -36,8 +40,9 @@ domReady( () => {
 			'afterend',
 			rfwElement
 		);
+
 		return;
 	}
 
-	orderAttributionBox.append( rfwElement );
+	orderAttributionBox.prepend( rfwElement );
 } );
