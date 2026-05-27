@@ -22,18 +22,11 @@ const {
 		field_name: fieldName,
 		product_catalog_item: productCatalogItem,
 		product_is_visible: productIsVisible,
+		options: syncOptions,
 		sync_status: syncStatus = null,
 		issues = [],
 	} = {},
 } = window.redditAdsMetaBoxData || {};
-
-const SELECT_OPTIONS = [
-	{ value: '1', label: __( 'Sync and show', 'reddit-for-woocommerce' ) },
-	{
-		value: '0',
-		label: __( "Don't sync and show", 'reddit-for-woocommerce' ),
-	},
-];
 
 /**
  * Channel Visibility Settings component.
@@ -93,9 +86,12 @@ const ChannelVisibilitySettings = () => {
 
 						<FlexBlock>
 							<SelectControl
-								aria-labelledby={ LABEL_ID }
+								aria-label={ __(
+									'Channel visibility setting',
+									'reddit-for-woocommerce'
+								) }
 								name={ fieldName }
-								options={ SELECT_OPTIONS }
+								options={ syncOptions }
 								value={ value }
 								onChange={ setValue }
 								disabled={ ! productIsVisible }

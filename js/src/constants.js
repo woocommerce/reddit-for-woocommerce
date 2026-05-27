@@ -1,5 +1,5 @@
 // An inline script data only available for the admin pages of this extension.
-export const rfwData = window.redditAdsAdminData;
+export const rfwData = window.redditAdsAdminData || {};
 
 export const PREFERENCES_STORE_NAMESPACE = 'reddit-for-woocommerce';
 

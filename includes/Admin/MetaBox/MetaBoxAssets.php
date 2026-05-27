@@ -108,6 +108,19 @@ class MetaBoxAssets {
 			return;
 		}
 
+		// Inject AdminData because the main bundle is not loaded on order edit screens.
+		AssetLoader::localize_script(
+			'channel-visibility-meta-box',
+			'AdminData',
+			array(
+				'pluginVersion' => REDDIT_FOR_WOOCOMMERCE_VERSION,
+				'adsAccountId'  => Options::get( OptionDefaults::AD_ACCOUNT_ID ),
+				'status'        => Options::get( OptionDefaults::ONBOARDING_STATUS ),
+				'step'          => Options::get( OptionDefaults::ONBOARDING_STEP ),
+				'trackingSlug'  => 'redtwoo',
+			)
+		);
+
 		AssetLoader::enqueue_script( 'channel-visibility-meta-box', 'channel-visibility-meta-box' );
 
 		AssetLoader::localize_script(
