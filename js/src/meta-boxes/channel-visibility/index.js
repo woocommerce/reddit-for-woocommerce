@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import domReady from '@wordpress/dom-ready';
 import { createRoot, lazy, Suspense } from '@wordpress/element';
 
 const RedditAdsPromo = lazy( () =>
@@ -9,23 +10,30 @@ const RedditAdsPromo = lazy( () =>
 	)
 );
 
-document.addEventListener( 'DOMContentLoaded', () => {
-	const channelVisibilityBox = document.querySelector(
-		'#gla-channel-visibility-box'
-	);
+domReady( () => {
+	const data = window.redditAdsMetaBoxData?.channelVisibility;
 
-	if ( ! channelVisibilityBox ) {
+	if ( ! data ) {
 		return;
 	}
 
-	const element = document.createElement( 'div' );
-	const root = createRoot( element );
+	let mountEl = document.getElementById( 'reddit-channel-visibility-box' );
 
-	root.render(
-		<Suspense>
+	if ( ! mountEl ) {
+		const inside = document.querySelector( '#channel_visibility .inside' );
+
+		if ( ! inside ) {
+			return;
+		}
+
+		mountEl = document.createElement( 'div' );
+		mountEl.id = 'reddit-channel-visibility-row';
+		inside.insertBefore( mountEl, inside.firstChild );
+	}
+
+	createRoot( mountEl ).render(
+		<Suspense fallback={ null }>
 			<RedditAdsPromo />
 		</Suspense>
 	);
-
-	channelVisibilityBox.append( element );
 } );
