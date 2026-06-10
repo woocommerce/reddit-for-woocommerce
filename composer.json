@@ -35,7 +35,9 @@
 			"phpcs-compat.xml.dist",
 			"webpack.config.js",
 			".*",
-			"Tracking.md"
+			"Tracking.md",
+			"AGENTS.md",
+			"CLAUDE.md"
 		]
 	},
 	"config": {
