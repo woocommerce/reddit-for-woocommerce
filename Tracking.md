@@ -197,7 +197,7 @@ Reddit Ads Promo "Dismiss" button is clicked.
 - [`PromoCTA`](js/src/meta-boxes/channel-visibility/promo-cta.js#L29) with `{ context: channel-visibility-meta-box }`.
 - [`RedditAdsPromo`](js/src/meta-boxes/channel-visibility/reddit-ads-promo.js#L60) with `{ context: channel-visibility-meta-box }`.
 
-### [`rfw_reddit_ads_promo_get_started_click`](js/src/meta-boxes/channel-visibility/get-started-cta.js#L12)
+### [`rfw_reddit_ads_promo_get_started_click`](js/src/meta-boxes/channel-visibility/get-started-cta.js#L13)
 Reddit Ads Promo "Get started" button is clicked.
 #### Properties
 | name | type | description |
@@ -205,7 +205,7 @@ Reddit Ads Promo "Get started" button is clicked.
 `context` | `string` | Context of the Reddit Ads Promo.
 `href` | `string` | URL of the "Get started" button.
 #### Emitters
-- [`GetStartedCTA`](js/src/meta-boxes/channel-visibility/get-started-cta.js#L29) with `{ context: channel-visibility-meta-box, href }`.
+- [`GetStartedCTA`](js/src/meta-boxes/channel-visibility/get-started-cta.js#L28) with `{ context: channel-visibility-meta-box, href: 'admin.php?page=wc-admin&path=%2Freddit%2Fstart' }`.
 - [`RedditAdsPromo`](js/src/meta-boxes/channel-visibility/reddit-ads-promo.js#L60) with `{ context: channel-visibility-meta-box, href }`.
 - [`RedditAdsPromo`](js/src/meta-boxes/order-attribution/reddit-ads-promo.js#L63) with `{ context: 'order-attribution-meta-box', href }`.
 
@@ -217,7 +217,7 @@ Reddit Ads Promo "Get started" button is clicked.
 `context` | `string` | Context of the Reddit Ads Promo.
 `href` | `string` | URL of the "Get started" button.
 #### Emitters
-- [`GetStartedCTA`](js/src/meta-boxes/channel-visibility/get-started-cta.js#L29) with `{ context: channel-visibility-meta-box, href }`.
+- [`GetStartedCTA`](js/src/meta-boxes/channel-visibility/get-started-cta.js#L28) with `{ context: channel-visibility-meta-box, href: 'admin.php?page=wc-admin&path=%2Freddit%2Fstart' }`.
 - [`RedditAdsPromo`](js/src/meta-boxes/channel-visibility/reddit-ads-promo.js#L60) with `{ context: channel-visibility-meta-box, href }`.
 - [`RedditAdsPromo`](js/src/meta-boxes/order-attribution/reddit-ads-promo.js#L63) with `{ context: 'order-attribution-meta-box', href }`.
 
@@ -229,7 +229,7 @@ Reddit Ads Promo "Get started" button is clicked.
 `context` | `string` | Context of the Reddit Ads Promo.
 `href` | `string` | URL of the "Get started" button.
 #### Emitters
-- [`GetStartedCTA`](js/src/meta-boxes/channel-visibility/get-started-cta.js#L29) with `{ context: channel-visibility-meta-box, href }`.
+- [`GetStartedCTA`](js/src/meta-boxes/channel-visibility/get-started-cta.js#L28) with `{ context: channel-visibility-meta-box, href: 'admin.php?page=wc-admin&path=%2Freddit%2Fstart' }`.
 - [`RedditAdsPromo`](js/src/meta-boxes/channel-visibility/reddit-ads-promo.js#L60) with `{ context: channel-visibility-meta-box, href }`.
 - [`RedditAdsPromo`](js/src/meta-boxes/order-attribution/reddit-ads-promo.js#L63) with `{ context: 'order-attribution-meta-box', href }`.
 
