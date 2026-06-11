@@ -32,7 +32,7 @@ domReady( () => {
 	}
 
 	createRoot( mountEl ).render(
-		<Suspense fallback={ null }>
+		<Suspense>
 			<RedditAdsPromo />
 		</Suspense>
 	);
