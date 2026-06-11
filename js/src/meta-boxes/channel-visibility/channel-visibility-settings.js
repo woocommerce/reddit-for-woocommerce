@@ -37,12 +37,14 @@ const {
  * @return {JSX.Element} The Channel Visibility Settings component.
  */
 const ChannelVisibilitySettings = () => {
-	const defaultValue = productIsVisible ? productCatalogItem || '1' : '0';
+	const catalogValue = productCatalogItem || '1';
+	const defaultValue = productIsVisible ? catalogValue : '0';
 
 	const [ value, setValue ] = useState( defaultValue );
 
 	let syncStatusText = null;
 
+	// Parse the sync status from the backend to readable text.
 	if ( syncStatus === SYNC_STATUS_HAS_ERRORS ) {
 		syncStatusText = __( 'Issues detected', 'reddit-for-woocommerce' );
 	} else if ( syncStatus ) {
@@ -52,10 +54,7 @@ const ChannelVisibilitySettings = () => {
 	}
 
 	const shouldDisplaySyncNotice =
-		productIsVisible &&
-		syncStatus &&
-		value === '1' &&
-		syncStatus !== SYNC_STATUS_SYNCED;
+		productIsVisible && value === '1' && syncStatus !== SYNC_STATUS_SYNCED;
 
 	const hasIssues = issues.length > 0;
 
