@@ -69,16 +69,16 @@ final class ProductChannelVisibilityData {
 			'field_name'           => $field_name,
 			'product_catalog_item' => $catalog,
 			'product_is_visible'   => $product->is_visible(),
-			'options'              => [
-				[
+			'options'              => array(
+				array(
 					'value' => '1',
 					'label' => __( 'Sync and show', 'reddit-for-woocommerce' ),
-				],
-				[
+				),
+				array(
 					'value' => '0',
 					'label' => __( "Don't sync and show", 'reddit-for-woocommerce' ),
-				],
-			],
+				),
+			),
 		);
 	}
 }
