@@ -83,7 +83,7 @@ class MetaBoxAssets {
 				'adsAccountId'  => Options::get( OptionDefaults::AD_ACCOUNT_ID ),
 				'status'        => Options::get( OptionDefaults::ONBOARDING_STATUS ),
 				'step'          => Options::get( OptionDefaults::ONBOARDING_STEP ),
-				'trackingSlug'  => 'redtwoo',
+				'trackingSlug'  => REDDIT_FOR_WOOCOMMERCE_TRACKING_SLUG,
 			)
 		);
 

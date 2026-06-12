@@ -45,19 +45,17 @@ import './reddit-ads-promo.scss';
  * @property {string} context Context of the Reddit Ads Promo.
  */
 
-// TODO: update defaults once backend data shape is confirmed (REDTWOO-131).
-const { onboardingComplete = false } = window.redditAdsMetaBoxData || {};
-
 /**
  * Reddit Ads Promo component.
  *
  * @fires rfw_reddit_ads_promo_shown with `{ context: channel-visibility-meta-box }`.
- * @fires rfw_reddit_ads_promo_get_started_click with `{ context: channel-visibility-meta-box, href }`.
+ * @fires rfw_reddit_ads_promo_get_started_click with `{ context: channel-visibility-meta-box, href: 'admin.php?page=wc-admin&path=%2Freddit%2Fstart' }`.
  * @fires rfw_reddit_ads_promo_dismiss_click with `{ context: channel-visibility-meta-box }`.
  *
  * @return {JSX.Element} The Reddit Ads Promo component.
  */
 const RedditAdsPromo = () => {
+	const { onboardingComplete = false } = window.redditAdsMetaBoxData || {};
 	const { set } = useDispatch( preferencesStore );
 	const isDismissed = usePreference( CHANNEL_VISIBILITY_PROMO_KEY );
 	const hasTrackedRef = useRef( false );
