@@ -680,7 +680,9 @@ final class MetaBoxAssetsTest extends WP_UnitTestCase {
 
 		$this->assertStringContainsString( 'var redditAdsMetaBoxData =', $data_str );
 
-		$equals_at = strpos( $data_str, '=' );
+		$metabox_at = strpos( $data_str, 'var redditAdsMetaBoxData' );
+		$this->assertNotFalse( $metabox_at );
+		$equals_at = strpos( $data_str, '=', $metabox_at );
 		$this->assertNotFalse( $equals_at );
 		$brace_left = strpos( $data_str, '{', $equals_at );
 		$this->assertNotFalse( $brace_left );
