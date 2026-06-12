@@ -46,8 +46,8 @@ const ChannelVisibilitySettings = () => {
 
 	if ( syncStatus === SYNC_STATUS_HAS_ERRORS ) {
 		syncStatusText = __( 'Issues detected', 'reddit-for-woocommerce' );
-		// Parse the sync status from the backend to readable text. E.g. 'not-synced' -> 'Not synced'.
 	} else if ( syncStatus ) {
+		// Parse the sync status from the backend to readable text. E.g. 'not-synced' -> 'Not synced'.
 		syncStatusText =
 			syncStatus.charAt( 0 ).toUpperCase() +
 			syncStatus.slice( 1 ).replace( '-', ' ' );
