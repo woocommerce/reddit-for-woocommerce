@@ -121,7 +121,7 @@ class MetaBoxAssets {
 			return;
 		}
 
-		// Inject AdminData because the main bundle is not loaded on order edit screens.
+		// Inject AdminData because the main bundle is not loaded on product edit screens.
 		AssetLoader::localize_script(
 			'channel-visibility-meta-box',
 			'AdminData',

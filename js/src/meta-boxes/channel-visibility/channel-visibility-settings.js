@@ -55,7 +55,6 @@ const ChannelVisibilitySettings = () => {
 
 	const shouldDisplaySyncNotice =
 		productIsVisible && value === '1' && syncStatus !== SYNC_STATUS_SYNCED;
-
 	const hasIssues = issues.length > 0;
 
 	return (

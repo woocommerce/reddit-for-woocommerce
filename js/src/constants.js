@@ -1,7 +1,7 @@
 // An inline script data only available for the admin pages of this extension.
-export const rfwData = window.redditAdsAdminData || {};
+export const rfwData = window.redditAdsAdminData;
 
-export const PREFERENCES_STORE_NAMESPACE = 'reddit-for-woocommerce';
+export const PREFERENCES_STORE_NAMESPACE = 'woocommerce/reddit-for-woocommerce';
 
 export const API_RESPONSE_CODES = {
 	WPCOM_DISCONNECTED: 'JETPACK_DISCONNECTED',
