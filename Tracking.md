@@ -167,7 +167,7 @@ Clicking on the button to create a campaign on the Reddit Ads manager.
 #### Emitters
 - [`RedditAds`](js/src/pages/settings/reddit-ads/index.js#L43) When the user clicks on the button to create a campaign on the Reddit Ads manager.
 
-### [`rfw_reddit_ads_promo_create_campaign_click`](js/src/meta-boxes/order-attribution/reddit-ads-promo.js#L32)
+### [`rfw_reddit_ads_promo_create_campaign_click`](js/src/meta-boxes/order-attribution/reddit-ads-promo.js#L33)
 Reddit Ads Promo "Create campaign" button is clicked.
 #### Properties
 | name | type | description |
@@ -175,9 +175,9 @@ Reddit Ads Promo "Create campaign" button is clicked.
 `context` | `string` | Context of the Reddit Ads Promo.
 `href` | `string` | URL of the "Create campaign" button.
 #### Emitters
-- [`RedditAdsPromo`](js/src/meta-boxes/order-attribution/reddit-ads-promo.js#L63) with `{ context: 'order-attribution-meta-box', href }`.
+- [`RedditAdsPromo`](js/src/meta-boxes/order-attribution/reddit-ads-promo.js#L55) with `{ context: 'order-attribution-meta-box', href: 'admin.php?page=wc-admin&path=%2Freddit%2Fcampaigns%2Fcreate' }`.
 
-### [`rfw_reddit_ads_promo_get_started_click`](js/src/meta-boxes/order-attribution/reddit-ads-promo.js#L24)
+### [`rfw_reddit_ads_promo_get_started_click`](js/src/meta-boxes/order-attribution/reddit-ads-promo.js#L25)
 Reddit Ads Promo "Get started" button is clicked.
 #### Properties
 | name | type | description |
@@ -185,16 +185,16 @@ Reddit Ads Promo "Get started" button is clicked.
 `context` | `string` | Context of the Reddit Ads Promo.
 `href` | `string` | URL of the "Get started" button.
 #### Emitters
-- [`RedditAdsPromo`](js/src/meta-boxes/order-attribution/reddit-ads-promo.js#L63) with `{ context: 'order-attribution-meta-box', href }`.
+- [`RedditAdsPromo`](js/src/meta-boxes/order-attribution/reddit-ads-promo.js#L55) with `{ context: 'order-attribution-meta-box', href: 'admin.php?page=wc-admin&path=%2Freddit%2Fstart' }`.
 
-### [`rfw_reddit_ads_promo_shown`](js/src/meta-boxes/order-attribution/reddit-ads-promo.js#L17)
+### [`rfw_reddit_ads_promo_shown`](js/src/meta-boxes/order-attribution/reddit-ads-promo.js#L18)
 Reddit Ads Promo component is shown.
 #### Properties
 | name | type | description |
 | ---- | ---- | ----------- |
 `context` | `string` | Context of the Reddit Ads Promo.
 #### Emitters
-- [`RedditAdsPromo`](js/src/meta-boxes/order-attribution/reddit-ads-promo.js#L63) with `{ context: 'order-attribution-meta-box' }`.
+- [`RedditAdsPromo`](js/src/meta-boxes/order-attribution/reddit-ads-promo.js#L55) with `{ context: 'order-attribution-meta-box' }`.
 
 ### [`rfw_reddit_go_to_dashboard_button_click`](js/src/pages/settings/reddit-ads/index.js#L28)
 Clicking on the button to go to the Reddit Ads dashboard.
