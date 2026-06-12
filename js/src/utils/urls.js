@@ -8,6 +8,7 @@ export const pagePaths = {
 	onboarding: '/reddit/setup',
 	settings: '/reddit/settings',
 	dashboard: '/reddit/dashboard',
+	createCampaign: '/reddit/campaigns/create',
 };
 
 /**
@@ -45,4 +46,13 @@ export const getDashboardUrl = ( query = null ) => {
  */
 export const getSettingsUrl = () => {
 	return getNewPath( null, pagePaths.settings, null );
+};
+
+/**
+ * Returns the URL for the campaign creation page.
+ *
+ * @return {string} The constructed create campaign URL.
+ */
+export const getCreateCampaignUrl = () => {
+	return getNewPath( null, pagePaths.createCampaign, null );
 };

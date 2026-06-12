@@ -28,6 +28,12 @@ const Settings = lazy( () =>
 	import( /* webpackChunkName: "settings" */ './pages/settings' )
 );
 
+const CreateCampaign = lazy( () =>
+	import(
+		/* webpackChunkName: "create-campaign" */ './pages/campaigns/create'
+	)
+);
+
 export const pagePaths = new Set();
 
 const woocommerceTranslation =
@@ -71,6 +77,15 @@ const registerPluginAdminPages = () => {
 				],
 				container: Settings,
 				path: '/reddit/settings',
+				wpOpenMenu: 'toplevel_page_woocommerce-marketing',
+			},
+			{
+				breadcrumbs: [
+					...initialBreadcrumbs,
+					__( 'Create Campaign', 'reddit-for-woocommerce' ),
+				],
+				container: CreateCampaign,
+				path: '/reddit/campaigns/create',
 				wpOpenMenu: 'toplevel_page_woocommerce-marketing',
 			},
 		];

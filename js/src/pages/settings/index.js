@@ -8,18 +8,18 @@ import { getHistory, getQuery } from '@woocommerce/navigation';
 /**
  * Internal dependencies
  */
-import useMenuEffect from '~/hooks/useMenuEffect';
-import LinkedAccounts from './linked-accounts';
-import Section from '~/components/section';
-import ProductCatalog from './product-catalog';
-import ConversionsAPI from './conversions-api';
-import RedditAds from './reddit-ads';
-import useRedditAccount from '~/hooks/useRedditAccount';
 import OnboardingSuccessModal from '~/components/onboarding-success-modal';
-import { getOnboardingUrl } from '~/utils/urls';
-import useMenuLinkUpdate from '~/hooks/useMenuLinkUpdate';
-import './index.scss';
 import Faqs from '~/components/paid-ads/ads-campaign/faqs';
+import Section from '~/components/section';
+import useMenuEffect from '~/hooks/useMenuEffect';
+import useMenuLinkUpdate from '~/hooks/useMenuLinkUpdate';
+import useRedditAccount from '~/hooks/useRedditAccount';
+import { getOnboardingUrl } from '~/utils/urls';
+import ConversionsAPI from './conversions-api';
+import LinkedAccounts from './linked-accounts';
+import ProductCatalog from './product-catalog';
+import RedditAds from './reddit-ads';
+import './index.scss';
 
 const Settings = () => {
 	// Make the component highlight SFW entry in the WC legacy menu.
