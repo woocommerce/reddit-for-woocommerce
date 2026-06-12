@@ -94,6 +94,8 @@ const RedditAdsPromo = () => {
 						href: campaignCreateUrl,
 						context: ORDER_ATTRIBUTION_CONTEXT,
 					} }
+					target="_blank"
+					rel="noreferrer"
 					isSecondary
 				>
 					{ __( 'Create campaign', 'reddit-for-woocommerce' ) }

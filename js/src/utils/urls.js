@@ -4,7 +4,6 @@
 import { getNewPath } from '@woocommerce/navigation';
 
 export const pagePaths = {
-	campaignCreate: '/reddit/campaigns/create',
 	getStarted: '/reddit/start',
 	onboarding: '/reddit/setup',
 	settings: '/reddit/settings',
@@ -12,12 +11,12 @@ export const pagePaths = {
 };
 
 /**
- * Returns the URL path for the campaign create page.
+ * Returns the URL for the campaign create page.
  *
- * @return {string} The constructed campaign create page URL.
+ * @return {string} The campaign create page URL.
  */
 export const getCampaignCreateUrl = () => {
-	return getNewPath( null, pagePaths.campaignCreate, null );
+	return 'https://ads.reddit.com/create';
 };
 
 /**
