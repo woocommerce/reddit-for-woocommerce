@@ -11,6 +11,7 @@ import { __ } from '@wordpress/i18n';
 import AppButton from '~/components/app-button';
 import redditLogoURL from '~/images/logo/reddit.svg';
 import { recordRfwEvent } from '~/utils/tracks';
+import { getCampaignCreateUrl, getGetStartedUrl } from '~/utils/urls';
 import { ORDER_ATTRIBUTION_CONTEXT } from './constants';
 import './reddit-ads-promo.scss';
 
@@ -46,17 +47,14 @@ import './reddit-ads-promo.scss';
  *  - Onboarded with campaign: returns null (no banner).
  *
  * @fires rfw_reddit_ads_promo_shown with `{ context: 'order-attribution-meta-box' }`.
- * @fires rfw_reddit_ads_promo_get_started_click with `{ context: 'order-attribution-meta-box', href }`.
- * @fires rfw_reddit_ads_promo_create_campaign_click with `{ context: 'order-attribution-meta-box', href }`.
+ * @fires rfw_reddit_ads_promo_get_started_click with `{ context: 'order-attribution-meta-box', href: 'admin.php?page=wc-admin&path=%2Freddit%2Fstart' }`.
+ * @fires rfw_reddit_ads_promo_create_campaign_click with `{ context: 'order-attribution-meta-box', href: 'admin.php?page=wc-admin&path=%2Freddit%2Fcampaigns%2Fcreate' }`.
  *
  * @return {JSX.Element|null} The Reddit Ads Promo component or null.
  */
 const RedditAdsPromo = () => {
-	const {
-		onboardingComplete = false,
-		hasCampaign = false,
-		urls = {},
-	} = window.redditAdsMetaBoxData || {};
+	const { onboardingComplete = false, hasCampaign = false } =
+		window.redditAdsMetaBoxData || {};
 
 	const hasTrackedRef = useRef( false );
 	const shouldShowPromo = ! ( onboardingComplete && hasCampaign );
@@ -74,8 +72,11 @@ const RedditAdsPromo = () => {
 		return null;
 	}
 
+	const campaignCreateUrl = getCampaignCreateUrl();
+	const startUrl = getGetStartedUrl();
 	let content;
-	if ( onboardingComplete ) {
+
+	if ( onboardingComplete && ! hasCampaign ) {
 		content = {
 			title: __(
 				'Get more sales with Reddit Ads',
@@ -87,10 +88,10 @@ const RedditAdsPromo = () => {
 			),
 			cta: (
 				<AppButton
-					href={ urls?.campaignCreate }
+					href={ campaignCreateUrl }
 					eventName="rfw_reddit_ads_promo_create_campaign_click"
 					eventProps={ {
-						href: urls?.campaignCreate,
+						href: campaignCreateUrl,
 						context: ORDER_ATTRIBUTION_CONTEXT,
 					} }
 					isSecondary
@@ -111,10 +112,10 @@ const RedditAdsPromo = () => {
 			),
 			cta: (
 				<AppButton
-					href={ urls?.start }
+					href={ startUrl }
 					eventName="rfw_reddit_ads_promo_get_started_click"
 					eventProps={ {
-						href: urls?.start,
+						href: startUrl,
 						context: ORDER_ATTRIBUTION_CONTEXT,
 					} }
 					isSecondary
