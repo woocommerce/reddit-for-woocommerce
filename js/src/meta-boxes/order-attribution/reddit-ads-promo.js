@@ -12,7 +12,7 @@ import AppButton from '~/components/app-button';
 import redditLogoURL from '~/images/logo/reddit.svg';
 import { recordRfwEvent } from '~/utils/tracks';
 import { ORDER_ATTRIBUTION_CONTEXT } from './constants';
-import './index.scss';
+import './reddit-ads-promo.scss';
 
 /**
  * Reddit Ads Promo component is shown.
@@ -38,15 +38,6 @@ import './index.scss';
  */
 
 /**
- * Data from the Reddit Ads Meta Box. Defaults to empty object if not found.
- */
-const {
-	onboardingComplete = false,
-	hasCampaign = false,
-	urls = {},
-} = window.redditAdsMetaBoxData || {};
-
-/**
  * Reddit Ads Promo component.
  *
  * Renders one of three states:
@@ -61,6 +52,12 @@ const {
  * @return {JSX.Element|null} The Reddit Ads Promo component or null.
  */
 const RedditAdsPromo = () => {
+	const {
+		onboardingComplete = false,
+		hasCampaign = false,
+		urls = {},
+	} = window.redditAdsMetaBoxData || {};
+
 	const hasTrackedRef = useRef( false );
 	const shouldShowPromo = ! ( onboardingComplete && hasCampaign );
 
@@ -90,10 +87,10 @@ const RedditAdsPromo = () => {
 			),
 			cta: (
 				<AppButton
-					href={ urls?.createCampaign }
+					href={ urls?.campaignCreate }
 					eventName="rfw_reddit_ads_promo_create_campaign_click"
 					eventProps={ {
-						href: urls?.createCampaign,
+						href: urls?.campaignCreate,
 						context: ORDER_ATTRIBUTION_CONTEXT,
 					} }
 					isSecondary
@@ -114,10 +111,10 @@ const RedditAdsPromo = () => {
 			),
 			cta: (
 				<AppButton
-					href={ urls?.getStarted }
+					href={ urls?.start }
 					eventName="rfw_reddit_ads_promo_get_started_click"
 					eventProps={ {
-						href: urls?.getStarted,
+						href: urls?.start,
 						context: ORDER_ATTRIBUTION_CONTEXT,
 					} }
 					isSecondary
