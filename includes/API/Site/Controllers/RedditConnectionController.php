@@ -297,14 +297,14 @@ class RedditConnectionController extends RESTBaseController {
 		if ( $catalog_id ) {
 			$delete_catalog_response = $this->ad_partner_api->catalog->delete( $catalog_id );
 
+			// If catalog deletion fails, log the error but don't stop the disconnection process.
 			if ( is_wp_error( $delete_catalog_response ) ) {
-				return new WP_REST_Response(
-					array(
-						'status'  => 'error',
-						'message' => $delete_catalog_response->get_error_message(),
-						'data'    => $delete_catalog_response->get_error_data(),
-					),
-					500
+				$error_data = $delete_catalog_response->get_error_data();
+				$error_body = isset( $error_data['body'] ) ? json_decode( $error_data['body'], true ) : array();
+				$logger     = wc_get_logger();
+				$logger->alert(
+					'Deleting catalog failed with error code: ' . $delete_catalog_response->get_error_code(),
+					$error_body
 				);
 			}
 		}
