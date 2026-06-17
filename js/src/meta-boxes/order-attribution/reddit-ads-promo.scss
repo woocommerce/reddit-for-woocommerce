@@ -8,16 +8,17 @@
 	p:last-child {
 		margin: 0;
 	}
-}
 
-.rfw-order-attribution-promo__logo {
-	display: block;
-}
+	.rfw-order-attribution-promo__logo {
+		display: block;
+	}
 
-.rfw-order-attribution-promo__title {
-	font-size: variables.$rfw-font-base;
-	font-weight: 600;
-	line-height: variables.$rfw-line-height-medium;
-	letter-spacing: 0;
-	margin: 0;
+	.rfw-order-attribution-promo__title {
+		font-size: variables.$rfw-font-base;
+		font-weight: 600;
+		line-height: variables.$rfw-line-height-medium;
+		letter-spacing: 0;
+		margin: 0;
+	}
+
 }
