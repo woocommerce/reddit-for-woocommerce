@@ -98,7 +98,10 @@ describe( 'RedditAdsPromo', () => {
 			);
 			expect( recordRfwEvent ).toHaveBeenCalledWith(
 				'rfw_reddit_ads_promo_get_started_click',
-				{ context: 'order-attribution-meta-box', href: '/reddit/start' }
+				{
+					context: 'order-attribution-meta-box',
+					href: 'admin.php?page=wc-admin&path=%2Freddit%2Fstart',
+				}
 			);
 		} );
 
