@@ -121,6 +121,8 @@ class MetaBoxAssets {
 			return;
 		}
 
+		AssetLoader::enqueue_script( 'channel-visibility-meta-box', 'channel-visibility-meta-box' );
+
 		// Inject AdminData because the main bundle is not loaded on product edit screens.
 		AssetLoader::localize_script(
 			'channel-visibility-meta-box',
@@ -133,8 +135,6 @@ class MetaBoxAssets {
 				'trackingSlug'  => REDDIT_FOR_WOOCOMMERCE_TRACKING_SLUG,
 			)
 		);
-
-		AssetLoader::enqueue_script( 'channel-visibility-meta-box', 'channel-visibility-meta-box' );
 
 		AssetLoader::localize_script(
 			'channel-visibility-meta-box',
