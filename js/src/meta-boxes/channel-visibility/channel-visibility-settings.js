@@ -1,6 +1,9 @@
 /**
  * External dependencies
  */
+import { __ } from '@wordpress/i18n';
+import { startCase } from 'lodash';
+import { useState } from '@wordpress/element';
 import {
 	Flex,
 	FlexBlock,
@@ -8,8 +11,6 @@ import {
 	Notice,
 	SelectControl,
 } from '@wordpress/components';
-import { useState } from '@wordpress/element';
-import { __ } from '@wordpress/i18n';
 
 /**
  * Internal dependencies
@@ -46,11 +47,9 @@ const ChannelVisibilitySettings = () => {
 
 	if ( syncStatus === SYNC_STATUS_HAS_ERRORS ) {
 		syncStatusText = __( 'Issues detected', 'reddit-for-woocommerce' );
-		// Parse the sync status from the backend to readable text. E.g. 'not-synced' -> 'Not synced'.
 	} else if ( syncStatus ) {
-		syncStatusText =
-			syncStatus.charAt( 0 ).toUpperCase() +
-			syncStatus.slice( 1 ).replace( '-', ' ' );
+		// Convert the sync status to a human-readable string, e.g. "not-synced" -> "Not Synced"
+		syncStatusText = startCase( syncStatus );
 	}
 
 	const shouldDisplaySyncNotice =
