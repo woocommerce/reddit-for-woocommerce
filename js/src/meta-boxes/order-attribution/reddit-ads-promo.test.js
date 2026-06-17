@@ -20,10 +20,6 @@ describe( 'RedditAdsPromo', () => {
 		window.redditAdsMetaBoxData = {
 			onboardingComplete: false,
 			hasCampaign: false,
-			urls: {
-				start: '/reddit/start',
-				campaignCreate: '/reddit/campaigns/create',
-			},
 		};
 	} );
 
@@ -116,7 +112,7 @@ describe( 'RedditAdsPromo', () => {
 				'rfw_reddit_ads_promo_create_campaign_click',
 				{
 					context: 'order-attribution-meta-box',
-					href: '/reddit/campaigns/create',
+					href: 'https://ads.reddit.com/create',
 				}
 			);
 		} );
