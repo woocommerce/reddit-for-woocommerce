@@ -116,7 +116,6 @@ final class ServiceContainer {
 					new Admin\Menu(),
 					new Admin\Onboarding(),
 					new Admin\MetaBox\MetaBoxAssets(),
-					new ProductMeta\ProductMetaFields(),
 					self::get( ServiceKey::CHANNEL_VISIBILITY_METABOX ),
 				);
 
