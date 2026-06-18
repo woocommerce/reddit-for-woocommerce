@@ -16,7 +16,6 @@ use RedditForWooCommerce\Admin;
 use RedditForWooCommerce\Admin\Export;
 use RedditForWooCommerce\CsvExporter;
 use RedditForWooCommerce\Admin\MetaBox;
-use RedditForWooCommerce\Admin\ProductMeta;
 use RedditForWooCommerce\Tracking\ConversionEventLogger;
 use RedditForWooCommerce\API\AdPartner\AdPartnerApi;
 use function wc_get_logger;
@@ -117,7 +116,6 @@ final class ServiceContainer {
 					new Admin\Menu(),
 					new Admin\Onboarding(),
 					new Admin\MetaBox\MetaBoxAssets(),
-					new ProductMeta\ProductMetaFields(),
 					self::get( ServiceKey::CHANNEL_VISIBILITY_METABOX ),
 				);
 
