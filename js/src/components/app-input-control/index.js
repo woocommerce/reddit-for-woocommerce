@@ -4,7 +4,11 @@
 import classnames from 'classnames';
 import { __, sprintf } from '@wordpress/i18n';
 import { forwardRef } from '@wordpress/element';
-import { __experimentalInputControl as InputControl } from '@wordpress/components';
+import {
+	// InputControl is the recommended control; no stable non-experimental alternative yet.
+	// eslint-disable-next-line @wordpress/no-unsafe-wp-apis -- See https://github.com/WordPress/gutenberg/issues/59352
+	__experimentalInputControl as InputControl,
+} from '@wordpress/components';
 
 /**
  * Internal dependencies

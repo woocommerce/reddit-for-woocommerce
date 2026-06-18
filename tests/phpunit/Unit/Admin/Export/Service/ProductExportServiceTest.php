@@ -26,6 +26,7 @@ use RedditForWooCommerce\Utils\Storage\Options;
 use RedditForWooCommerce\Utils\Storage\OptionDefaults;
 use RedditForWooCommerce\Connection\WcsClient;
 use RedditForWooCommerce\API\AdPartner\AdPartnerApi;
+use RedditForWooCommerce\API\AdPartner\CatalogApi;
 
 /**
  * @covers \RedditForWooCommerce\Admin\Export\Service\ProductExportService
@@ -80,9 +81,9 @@ class ProductExportServiceTest extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Tests that start_export() returns false if export jobs are already scheduled.
+	 * Tests that start_export() returns null if export jobs are already scheduled.
 	 */
-	public function test_start_export_returns_false_if_jobs_already_scheduled(): void {
+	public function test_start_export_returns_null_if_jobs_already_scheduled(): void {
 		as_schedule_single_action(
 			time() + 60,
 			Helper::with_prefix( ProductExportService::ACTION_HOOK )
@@ -105,10 +106,13 @@ class ProductExportServiceTest extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Tests that start_writing() enqueues the first export batch with offset 0.
+	 * Tests that start_writing() enqueues the first export batch with offset 0
+	 * when the product ID cache is populated.
 	 */
 	public function test_start_writing_enqueues_initial_batch(): void {
 		as_unschedule_all_actions( Helper::with_prefix( ProductExportService::ACTION_HOOK ) );
+
+		Options::set( OptionDefaults::EXPORT_PRODUCT_IDS, array( 1 ) );
 
 		$this->service->start_writing();
 
@@ -116,6 +120,35 @@ class ProductExportServiceTest extends WP_UnitTestCase {
 			Helper::with_prefix( ProductExportService::ACTION_HOOK ),
 			array( 'offset' => 0 )
 		) !== false );
+
+		Options::delete( OptionDefaults::EXPORT_PRODUCT_IDS );
+	}
+
+	/**
+	 * Tests that start_writing() does not enqueue a batch and calls maybe_create_catalog()
+	 * when the product ID cache is empty.
+	 */
+	public function test_start_writing_returns_early_on_empty_cache(): void {
+		as_unschedule_all_actions( Helper::with_prefix( ProductExportService::ACTION_HOOK ) );
+
+		Options::set( OptionDefaults::EXPORT_PRODUCT_IDS, array() );
+
+		$catalog_mock = $this->createMock( CatalogApi::class );
+		$catalog_mock->method( 'get' )->willReturn( new \WP_Error( 'not_found', 'Not found' ) );
+		$catalog_mock->method( 'create' )->willReturn( new \WP_Error( 'test', 'Test' ) );
+		$this->api->catalog = $catalog_mock;
+
+		$this->service->start_writing();
+
+		$this->assertFalse(
+			as_has_scheduled_action(
+				Helper::with_prefix( ProductExportService::ACTION_HOOK ),
+				array( 'offset' => 0 )
+			),
+			'No export batch should be scheduled when the product ID cache is empty.'
+		);
+
+		Options::delete( OptionDefaults::EXPORT_PRODUCT_IDS );
 	}
 
 	/**

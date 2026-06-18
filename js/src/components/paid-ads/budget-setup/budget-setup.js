@@ -131,7 +131,6 @@ export default function BudgetSetup( { hideRecommendations = false } ) {
 		budgetRecommendation,
 		currencyPrecision,
 		setValue,
-		values.amount,
 		values.currentAmount,
 		values.level,
 	] );
