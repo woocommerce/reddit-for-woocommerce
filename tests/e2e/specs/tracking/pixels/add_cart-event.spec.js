@@ -6,7 +6,12 @@ const { test, expect } = require( '@playwright/test' );
 /**
  * Internal dependencies
  */
-import { findRedditEvent, getThemes, switchTheme } from '../../../utils';
+import {
+	findRedditEvent,
+	getThemes,
+	switchTheme,
+	setConsent,
+} from '../../../utils';
 
 const anyUuidRegex =
 	/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -18,6 +23,7 @@ test.describe( 'AddToCart event', () => {
 
 	for ( const theme in themes ) {
 		test( `[${ theme } theme] Shop page`, async ( { page } ) => {
+			await setConsent( page, true );
 			await switchTheme( page, themes[ theme ] );
 			await page.goto( '/shop' );
 
