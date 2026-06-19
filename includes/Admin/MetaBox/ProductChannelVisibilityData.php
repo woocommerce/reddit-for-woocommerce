@@ -70,8 +70,14 @@ final class ProductChannelVisibilityData {
 			'product_catalog_item' => $catalog,
 			'product_is_visible'   => $product->is_visible(),
 			'options'              => array(
-				'1' => __( 'Sync and show', 'reddit-for-woocommerce' ),
-				'0' => __( "Don't sync and show", 'reddit-for-woocommerce' ),
+				array(
+					'value' => '1',
+					'label' => __( 'Sync and show', 'reddit-for-woocommerce' ),
+				),
+				array(
+					'value' => '0',
+					'label' => __( "Don't sync and show", 'reddit-for-woocommerce' ),
+				),
 			),
 		);
 	}

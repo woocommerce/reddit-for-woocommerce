@@ -11,6 +11,15 @@ export const pagePaths = {
 };
 
 /**
+ * Returns the URL for the campaign create page.
+ *
+ * @return {string} The campaign create page URL.
+ */
+export const getCampaignCreateUrl = () => {
+	return 'https://ads.reddit.com/create';
+};
+
+/**
  * Generates the URL for the "Get Started" page.
  *
  * @return {string} The constructed URL for the Get Started page.

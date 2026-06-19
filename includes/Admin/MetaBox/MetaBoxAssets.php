@@ -74,6 +74,19 @@ class MetaBoxAssets {
 	private function enqueue_order_attribution_assets(): void {
 		AssetLoader::enqueue_script( 'order-attribution', 'order-attribution' );
 
+		// Inject AdminData because the main bundle is not loaded on order edit screens.
+		AssetLoader::localize_script(
+			'order-attribution',
+			'AdminData',
+			array(
+				'pluginVersion' => REDDIT_FOR_WOOCOMMERCE_VERSION,
+				'adsAccountId'  => Options::get( OptionDefaults::AD_ACCOUNT_ID ),
+				'status'        => Options::get( OptionDefaults::ONBOARDING_STATUS ),
+				'step'          => Options::get( OptionDefaults::ONBOARDING_STEP ),
+				'trackingSlug'  => REDDIT_FOR_WOOCOMMERCE_TRACKING_SLUG,
+			)
+		);
+
 		$urls = Helper::get_wc_admin_reddit_metabox_urls();
 
 		AssetLoader::localize_script(
@@ -109,6 +122,19 @@ class MetaBoxAssets {
 		}
 
 		AssetLoader::enqueue_script( 'channel-visibility-meta-box', 'channel-visibility-meta-box' );
+
+		// Inject AdminData because the main bundle is not loaded on product edit screens.
+		AssetLoader::localize_script(
+			'channel-visibility-meta-box',
+			'AdminData',
+			array(
+				'pluginVersion' => REDDIT_FOR_WOOCOMMERCE_VERSION,
+				'adsAccountId'  => Options::get( OptionDefaults::AD_ACCOUNT_ID ),
+				'status'        => Options::get( OptionDefaults::ONBOARDING_STATUS ),
+				'step'          => Options::get( OptionDefaults::ONBOARDING_STEP ),
+				'trackingSlug'  => REDDIT_FOR_WOOCOMMERCE_TRACKING_SLUG,
+			)
+		);
 
 		AssetLoader::localize_script(
 			'channel-visibility-meta-box',

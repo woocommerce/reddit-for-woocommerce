@@ -79,6 +79,16 @@ When a documentation link is clicked.
 `href` | `string` | link's URL
 #### Emitters
 - [`AppDocumentationLink`](js/src/components/app-documentation-link/index.js#L29)
+- [`SurveyModal`](js/src/pages/onboarding/setup-stepper/skip-paid-ads-confirmation-modal/survey-modal.js#L47) with `{ context: 'skip-paid-ads-survey-modal', link_id: 'paid-ads-learn-more', href: 'https://www.business.reddit.com/learn' }`
+
+### [`rfw_faq`](js/src/components/faqs-panel/index.js#L22)
+Clicking on faq item to collapse or expand it.
+#### Properties
+| name | type | description |
+| ---- | ---- | ----------- |
+`id` | `string` | FAQ identifier
+`action` | `string` | (`expand`\|`collapse`)
+`context` | `string` | Indicates which page / module the FAQ is in
 
 ### [`rfw_generate_csv_button_click`](js/src/pages/settings/product-catalog/index.js#L26)
 Clicking on the button to generate the product catalog CSV file.
@@ -94,10 +104,34 @@ Clicking on the button to generate the product catalog CSV file.
 #### Emitters
 - [`HelpIconButton`](js/src/components/help-icon-button/index.js#L31)
 
-### [`rfw_onboarding_completed`](js/src/pages/onboarding/setup-stepper/setup-accounts/index.js#L29)
+### [`rfw_onboarding_complete_button_click`](js/src/pages/onboarding/setup-stepper/skip-button.js#L16)
+Clicking on the skip paid ads button to complete the onboarding flow.
+ The 'unknown' value of properties may means:
+ - the final status has not yet been resolved when recording this event
+ - the status is not available, for example, the billing status is unknown if Reddit Ads account is not yet connected
+#### Properties
+| name | type | description |
+| ---- | ---- | ----------- |
+`reddit_ads_account_status` | `string` | The connection status of merchant's Reddit Ads account, e.g. 'connected', 'disconnected', 'incomplete'
+`billing_method_status` | `string` | The status of billing method of merchant's Reddit Ads account e.g. 'unknown', 'pending', 'approved', 'cancelled'
+`campaign_form_validation` | `string` | Whether the entered paid campaign form data are valid, e.g. 'unknown', 'valid', 'invalid'
+
+### [`rfw_onboarding_complete_with_paid_ads_button_click`](js/src/pages/onboarding/setup-stepper/setup-paid-ads.js#L26)
+Clicking on the "Complete setup" button to complete the onboarding flow with paid ads.
+#### Properties
+| name | type | description |
+| ---- | ---- | ----------- |
+`level` | `string` | The selected level of the budget recommendation, e.g. 'low', 'recommended', 'high', 'custom'.
+`budget` | `number` | The budget for the campaign
+`source` | `string` | The data source of the budget recommendations, e.g. 'reddit-ads-api', 'fallback-database'.
+`recommended_budget` | `number` | The recommended daily budget displayed to merchants regardless of the final amount they choose.
+#### Emitters
+- [`exports`](js/src/pages/onboarding/setup-stepper/setup-paid-ads.js#L41)
+
+### [`rfw_onboarding_completed`](js/src/pages/onboarding/setup-stepper/setup-accounts/index.js#L30)
 Clicking on the "Continue" button to complete the onboarding process.
 #### Emitters
-- [`SetupAccounts`](js/src/pages/onboarding/setup-stepper/setup-accounts/index.js#L40) When the user clicks on the "Continue" button to complete the onboarding process.
+- [`SetupAccounts`](js/src/pages/onboarding/setup-stepper/setup-accounts/index.js#L41) When the user clicks on the "Continue" button to complete the onboarding process.
 
 ### [`rfw_pixel_id_disconnect_button_click`](js/src/components/reddit-combo-account-card/connect-pixels/disconnect-account-button.js#L15)
 Clicking on the button to disconnect the Pixel ID.
@@ -123,10 +157,139 @@ Clicking on the "connect to a different Reddit account" button.
 #### Emitters
 - [`SwitchAccountButton`](js/src/components/reddit-combo-account-card/switch-account-button.js#L25)
 
+### [`rfw_reddit_ads_create_campaign_button_click`](js/src/pages/settings/reddit-ads/index.js#L22)
+Clicking on the button to create a campaign from the Onboarding flow.
+#### Emitters
+- [`RedditAds`](js/src/pages/settings/reddit-ads/index.js#L43) When the user clicks on the button to create a campaign from the Onboarding flow.
+
+### [`rfw_reddit_ads_create_campaign_on_reddit_button_click`](js/src/pages/settings/reddit-ads/index.js#L16)
+Clicking on the button to create a campaign on the Reddit Ads manager.
+#### Emitters
+- [`RedditAds`](js/src/pages/settings/reddit-ads/index.js#L43) When the user clicks on the button to create a campaign on the Reddit Ads manager.
+
+### [`rfw_reddit_ads_promo_create_campaign_click`](js/src/meta-boxes/order-attribution/reddit-ads-promo.js#L33)
+Reddit Ads Promo "Create campaign" button is clicked.
+#### Properties
+| name | type | description |
+| ---- | ---- | ----------- |
+`context` | `string` | Context of the Reddit Ads Promo.
+`href` | `string` | URL of the "Create campaign" button.
+#### Emitters
+- [`RedditAdsPromo`](js/src/meta-boxes/order-attribution/reddit-ads-promo.js#L55) with `{ context: 'order-attribution-meta-box', href: 'admin.php?page=wc-admin&path=%2Freddit%2Fcampaigns%2Fcreate' }`.
+
+### [`rfw_reddit_ads_promo_dismiss_click`](js/src/meta-boxes/channel-visibility/promo-cta.js#L14)
+Reddit Ads Promo "Dismiss" button is clicked.
+#### Properties
+| name | type | description |
+| ---- | ---- | ----------- |
+`context` | `string` | Context of the Reddit Ads Promo.
+#### Emitters
+- [`PromoCTA`](js/src/meta-boxes/channel-visibility/promo-cta.js#L29) with `{ context: channel-visibility-meta-box }`.
+- [`RedditAdsPromo`](js/src/meta-boxes/channel-visibility/reddit-ads-promo.js#L57) with `{ context: channel-visibility-meta-box }`.
+
+### [`rfw_reddit_ads_promo_dismiss_click`](js/src/meta-boxes/channel-visibility/reddit-ads-promo.js#L41)
+Reddit Ads Promo "Dismiss" button is clicked.
+#### Properties
+| name | type | description |
+| ---- | ---- | ----------- |
+`context` | `string` | Context of the Reddit Ads Promo.
+#### Emitters
+- [`PromoCTA`](js/src/meta-boxes/channel-visibility/promo-cta.js#L29) with `{ context: channel-visibility-meta-box }`.
+- [`RedditAdsPromo`](js/src/meta-boxes/channel-visibility/reddit-ads-promo.js#L57) with `{ context: channel-visibility-meta-box }`.
+
+### [`rfw_reddit_ads_promo_get_started_click`](js/src/meta-boxes/channel-visibility/get-started-cta.js#L13)
+Reddit Ads Promo "Get started" button is clicked.
+#### Properties
+| name | type | description |
+| ---- | ---- | ----------- |
+`context` | `string` | Context of the Reddit Ads Promo.
+`href` | `string` | URL of the "Get started" button.
+#### Emitters
+- [`GetStartedCTA`](js/src/meta-boxes/channel-visibility/get-started-cta.js#L28) with `{ context: channel-visibility-meta-box, href: 'admin.php?page=wc-admin&path=%2Freddit%2Fstart' }`.
+- [`RedditAdsPromo`](js/src/meta-boxes/channel-visibility/reddit-ads-promo.js#L57) with `{ context: channel-visibility-meta-box, href: 'admin.php?page=wc-admin&path=%2Freddit%2Fstart' }`.
+- [`RedditAdsPromo`](js/src/meta-boxes/order-attribution/reddit-ads-promo.js#L55) with `{ context: 'order-attribution-meta-box', href: 'admin.php?page=wc-admin&path=%2Freddit%2Fstart' }`.
+
+### [`rfw_reddit_ads_promo_get_started_click`](js/src/meta-boxes/channel-visibility/reddit-ads-promo.js#L33)
+Reddit Ads Promo "Get started" button is clicked.
+#### Properties
+| name | type | description |
+| ---- | ---- | ----------- |
+`context` | `string` | Context of the Reddit Ads Promo.
+`href` | `string` | URL of the "Get started" button.
+#### Emitters
+- [`GetStartedCTA`](js/src/meta-boxes/channel-visibility/get-started-cta.js#L28) with `{ context: channel-visibility-meta-box, href: 'admin.php?page=wc-admin&path=%2Freddit%2Fstart' }`.
+- [`RedditAdsPromo`](js/src/meta-boxes/channel-visibility/reddit-ads-promo.js#L57) with `{ context: channel-visibility-meta-box, href: 'admin.php?page=wc-admin&path=%2Freddit%2Fstart' }`.
+- [`RedditAdsPromo`](js/src/meta-boxes/order-attribution/reddit-ads-promo.js#L55) with `{ context: 'order-attribution-meta-box', href: 'admin.php?page=wc-admin&path=%2Freddit%2Fstart' }`.
+
+### [`rfw_reddit_ads_promo_get_started_click`](js/src/meta-boxes/order-attribution/reddit-ads-promo.js#L25)
+Reddit Ads Promo "Get started" button is clicked.
+#### Properties
+| name | type | description |
+| ---- | ---- | ----------- |
+`context` | `string` | Context of the Reddit Ads Promo.
+`href` | `string` | URL of the "Get started" button.
+#### Emitters
+- [`GetStartedCTA`](js/src/meta-boxes/channel-visibility/get-started-cta.js#L28) with `{ context: channel-visibility-meta-box, href: 'admin.php?page=wc-admin&path=%2Freddit%2Fstart' }`.
+- [`RedditAdsPromo`](js/src/meta-boxes/channel-visibility/reddit-ads-promo.js#L57) with `{ context: channel-visibility-meta-box, href: 'admin.php?page=wc-admin&path=%2Freddit%2Fstart' }`.
+- [`RedditAdsPromo`](js/src/meta-boxes/order-attribution/reddit-ads-promo.js#L55) with `{ context: 'order-attribution-meta-box', href: 'admin.php?page=wc-admin&path=%2Freddit%2Fstart' }`.
+
+### [`rfw_reddit_ads_promo_shown`](js/src/meta-boxes/channel-visibility/reddit-ads-promo.js#L26)
+Reddit Ads Promo banner is shown.
+#### Properties
+| name | type | description |
+| ---- | ---- | ----------- |
+`context` | `string` | Context of the Reddit Ads Promo.
+#### Emitters
+- [`RedditAdsPromo`](js/src/meta-boxes/channel-visibility/reddit-ads-promo.js#L57) with `{ context: channel-visibility-meta-box }`.
+- [`RedditAdsPromo`](js/src/meta-boxes/order-attribution/reddit-ads-promo.js#L55) with `{ context: 'order-attribution-meta-box' }`.
+
+### [`rfw_reddit_ads_promo_shown`](js/src/meta-boxes/order-attribution/reddit-ads-promo.js#L18)
+Reddit Ads Promo component is shown.
+#### Properties
+| name | type | description |
+| ---- | ---- | ----------- |
+`context` | `string` | Context of the Reddit Ads Promo.
+#### Emitters
+- [`RedditAdsPromo`](js/src/meta-boxes/channel-visibility/reddit-ads-promo.js#L57) with `{ context: channel-visibility-meta-box }`.
+- [`RedditAdsPromo`](js/src/meta-boxes/order-attribution/reddit-ads-promo.js#L55) with `{ context: 'order-attribution-meta-box' }`.
+
+### [`rfw_reddit_go_to_dashboard_button_click`](js/src/pages/settings/reddit-ads/index.js#L28)
+Clicking on the button to go to the Reddit Ads dashboard.
+#### Emitters
+- [`RedditAds`](js/src/pages/settings/reddit-ads/index.js#L43) When the user clicks on the button to go to the Reddit Ads dashboard.
+
 ### [`rfw_regenerate_csv_button_click`](js/src/pages/settings/product-catalog/index.js#L20)
 Clicking on the button to regenerate the product catalog CSV file.
 #### Emitters
 - [`ProductCatalog`](js/src/pages/settings/product-catalog/index.js#L48) When the user clicks on the button to regenerate the product catalog CSV file.
+
+### [`rfw_setup_ads_faq`](js/src/components/paid-ads/ads-campaign/faqs.js#L90)
+Clicking on faq items to collapse or expand it in the Onboarding Flow or creating/editing a campaign
+#### Properties
+| name | type | description |
+| ---- | ---- | ----------- |
+`id` | `string` | FAQ identifier
+`action` | `string` | (`expand`\|`collapse`)
+#### Emitters
+- [`Faqs`](js/src/components/paid-ads/ads-campaign/faqs.js#L103)
+
+### [`rfw_skip_campaign_creation_survey`](js/src/pages/onboarding/setup-stepper/skip-paid-ads-confirmation-modal/survey-modal.js#L21)
+Send survey responses when the user skips the paid ads setup.
+#### Properties
+| name | type | description |
+| ---- | ---- | ----------- |
+`context` | `string` | Name of the context where the survey was triggered (e.g. 'skip-paid-ads-survey-modal').
+`i_already_have_ads_on_reddit` | `boolean` | Indicates if the user already has ads on Reddit.
+`i_dont_have_the_budget_to_create_ads_now` | `boolean` | Indicates if the user doesn't have the budget to create ads now.
+`ive_tried_reddit_ads_before_without_success` | `boolean` | Indicates if the user has tried Reddit ads before without success.
+`i_dont_want_ads_on_reddit` | `boolean` | Indicates if the user doesn't want ads on Reddit.
+`i_dont_want_ads_on_reddit_text` | `string` | Text input for the reason why the user doesn't want ads on Reddit.
+`ill_create_ads_later` | `boolean` | Indicates if the user will create ads later.
+`ill_create_ads_later_text` | `string` | Text input for the reason why the user will create ads later.
+`other` | `boolean` | Indicates if the user has another reason.
+`other_text` | `string` | Text input for the user's other reason.
+#### Emitters
+- [`SurveyModal`](js/src/pages/onboarding/setup-stepper/skip-paid-ads-confirmation-modal/survey-modal.js#L47) with the survey responses and context 'skip-paid-ads-survey-modal'.
 
 ### [`rfw_wordpress_account_connect_button_click`](js/src/components/wpcom-account-card/connect-wpcom-account-card.js#L17)
 Clicking on the button to connect WordPress.com account.
