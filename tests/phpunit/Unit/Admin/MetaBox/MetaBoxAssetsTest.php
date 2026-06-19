@@ -224,8 +224,10 @@ final class MetaBoxAssetsTest extends WP_UnitTestCase {
 			$this->assertSame( Helper::with_prefix( ChannelVisibilityMetaBox::CATALOG_ITEM ), $cv['field_name'] ?? null );
 			$this->assertSame( '1', $cv['product_catalog_item'] ?? null, 'Unset meta should default to catalog 1.' );
 			$this->assert_metabox_payload_bool( $cv['product_is_visible'] ?? null, true );
-			$this->assertSame( __( 'Sync and show', 'reddit-for-woocommerce' ), $cv['options']['1'] ?? null );
-			$this->assertSame( __( "Don't sync and show", 'reddit-for-woocommerce' ), $cv['options']['0'] ?? null );
+			$this->assertSame( '1', $cv['options'][0]['value'] ?? null );
+			$this->assertSame( __( 'Sync and show', 'reddit-for-woocommerce' ), $cv['options'][0]['label'] ?? null );
+			$this->assertSame( '0', $cv['options'][1]['value'] ?? null );
+			$this->assertSame( __( "Don't sync and show", 'reddit-for-woocommerce' ), $cv['options'][1]['label'] ?? null );
 
 			$this->assertArrayNotHasKey( 'mode', $decoded );
 			$this->assertArrayNotHasKey( 'cohabit_target', $decoded );
@@ -678,7 +680,9 @@ final class MetaBoxAssetsTest extends WP_UnitTestCase {
 
 		$this->assertStringContainsString( 'var redditAdsMetaBoxData =', $data_str );
 
-		$equals_at = strpos( $data_str, '=' );
+		$metabox_at = strpos( $data_str, 'var redditAdsMetaBoxData' );
+		$this->assertNotFalse( $metabox_at );
+		$equals_at = strpos( $data_str, '=', $metabox_at );
 		$this->assertNotFalse( $equals_at );
 		$brace_left = strpos( $data_str, '{', $equals_at );
 		$this->assertNotFalse( $brace_left );
