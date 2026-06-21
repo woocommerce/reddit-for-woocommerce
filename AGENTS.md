@@ -106,11 +106,20 @@ npm run lint:css        # Stylelint
 
 ### Unit Tests
 
+**First-time setup:**
+
+1. Install Node and Composer dependencies: `npm install && composer install`
+2. Start the containers: `npm run env:start`
+3. Run the one-time PHPUnit setup: `npm run test:unit:wp-env:setup`
+4. Run the tests: `npm run test:unit:wp-env`
+
+**Subsequent runs** (containers already up):
+
 ```bash
-npm run env:start                   # Start wp-env containers
-npm run test:unit:wp-env:setup      # One-time setup after containers start
-npm run test:unit:wp-env            # Run PHPUnit via wp-env (latest WP, nightly WC)
+npm run test:unit:wp-env
 ```
+
+> **Note:** `npm run build` strips dev dependencies (`composer install --no-dev`). Run `composer install` again before running tests after a production build.
 
 Tests are in `tests/phpunit/Unit/` and follow the namespace structure of `includes/`.
 
@@ -126,6 +135,23 @@ npm run env:destroy     # Tear down containers
 - E2E tests use **Playwright** (not Codeception).
 - Test specs are in `tests/e2e/specs/`.
 - A test helper mu-plugin (`tests/e2e/plugins/reddit-options.php`) pre-configures plugin options for the test environment.
+
+**First-time setup:**
+
+```bash
+npx playwright install chromium   # Install browser (once)
+npm run env:start                 # Start containers and run initialize.sh
+npm run test:e2e                  # Run all E2E tests
+```
+
+**Subsequent runs** (containers already up):
+
+```bash
+npm run test:e2e                             # All tests
+npm run test:e2e -- --grep "Channel Visibility"  # Single suite
+```
+
+> **Note:** `npm run env:start` re-runs `initialize.sh` on every start, creating duplicate seed products if run more than once. If the shop ends up with duplicates, run `npm run env:destroy && npm run env:start` to reset.
 
 ### Other
 
