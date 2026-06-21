@@ -30,7 +30,30 @@ class MetaBoxAssets {
 	 * @return void
 	 */
 	public function register_hooks(): void {
+		add_action( 'add_meta_boxes_product', array( $this, 'register_channel_visibility_meta_box' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_assets' ) );
+	}
+
+	/**
+	 * Registers the Channel Visibility meta box on the product edit screen.
+	 *
+	 * WooCommerce no longer provides this meta box in recent versions, so the
+	 * plugin registers it directly. The JS bundle mounts the React component
+	 * into the `.inside` wrapper that WordPress generates for every meta box.
+	 *
+	 * @since 0.1.0
+	 *
+	 * @return void
+	 */
+	public function register_channel_visibility_meta_box(): void {
+		add_meta_box(
+			'channel_visibility',
+			__( 'Channel visibility', 'reddit-for-woocommerce' ),
+			'__return_empty_string',
+			'product',
+			'side',
+			'default'
+		);
 	}
 
 	/**
