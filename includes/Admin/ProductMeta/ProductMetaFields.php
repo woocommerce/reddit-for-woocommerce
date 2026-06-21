@@ -81,42 +81,25 @@ class ProductMetaFields {
 	/**
 	 * Renders the Reddit product data panel.
 	 *
-	 * Displays a checkbox allowing the merchant to mark the product as eligible
-	 * for inclusion in the Reddit product catalog.
+	 * The catalog-item value is managed by the channel-visibility sidebar select
+	 * control (ChannelVisibilitySettings), which posts the same meta key. This
+	 * panel exists solely to register the "Reddit" tab in the product data tabs.
 	 *
 	 * @since 0.1.0
 	 * @return void
 	 */
 	public function render_panel(): void {
-		global $post;
-
-		$meta_key = Helper::with_prefix( self::CATALOG_ITEM );
-		$value    = get_post_meta( $post->ID, $meta_key, true );
-
-		if ( '' === $value ) {
-			$value = '1';
-		}
-
 		?>
-		<div id="reddit_product_data" class="panel woocommerce_options_panel hidden">
-			<p class="form-field">
-				<label for="<?php echo esc_attr( $meta_key ); ?>">
-					<?php esc_html_e( 'Catalog Item', 'reddit-for-woocommerce' ); ?>
-				</label>
-				<input type="checkbox"
-					name="<?php echo esc_attr( $meta_key ); ?>"
-					id="<?php echo esc_attr( $meta_key ); ?>"
-					value="1" <?php checked( $value, '1' ); ?> />
-				<span class="description">
-					<?php esc_html_e( "Include this product in Reddit's product catalog.", 'reddit-for-woocommerce' ); ?>
-				</span>
-			</p>
-		</div>
+		<div id="reddit_product_data" class="panel woocommerce_options_panel hidden"></div>
 		<?php
 	}
 
 	/**
 	 * Saves the Reddit exportable flag when the product is saved.
+	 *
+	 * The value is posted by the channel-visibility sidebar SelectControl. When
+	 * the select is not rendered (e.g. promo banner is shown instead), the field
+	 * is absent from POST and the existing meta value is preserved.
 	 *
 	 * @since 0.1.0
 	 *
@@ -128,8 +111,12 @@ class ProductMetaFields {
 
 		// Nonce verification done in the Woo Core parent method.
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing
-		$enabled = isset( $_POST[ $meta_key ] ) && '1' === $_POST[ $meta_key ];
+		if ( ! isset( $_POST[ $meta_key ] ) ) {
+			return;
+		}
 
-		update_post_meta( $post_id, $meta_key, $enabled ? '1' : '0' );
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing
+		$value = '0' === $_POST[ $meta_key ] ? '0' : '1';
+		update_post_meta( $post_id, $meta_key, $value );
 	}
 }
