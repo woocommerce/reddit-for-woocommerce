@@ -59,7 +59,7 @@ abstract class AbstractEventPayloadBase implements ConversionCommonPayloadInterf
 	/**
 	 * Retrieves the integration version associated with the payload.
 	 *
-	 * @since 1.0.3
+	 * @since 1.0.4
 	 *
 	 * @return string Partner integration version.
 	 */

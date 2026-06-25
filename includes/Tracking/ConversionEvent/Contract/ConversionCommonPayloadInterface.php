@@ -58,7 +58,7 @@ interface ConversionCommonPayloadInterface {
 	 * to send the conversion event. Ad Partners may use it to distinguish
 	 * behavioral changes across platform-managed integrations.
 	 *
-	 * @since 1.0.3
+	 * @since 1.0.4
 	 *
 	 * @return string Partner integration version.
 	 */
