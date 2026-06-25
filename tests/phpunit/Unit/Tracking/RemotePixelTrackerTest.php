@@ -27,6 +27,7 @@ class RemotePixelTrackerTest extends WP_UnitTestCase {
 
 		// Enable pixel tracking.
 		Options::set( OptionDefaults::PIXEL_ENABLED, 'yes' );
+		Options::set( OptionDefaults::PIXEL_ID, 'pixel-123' );
 
 		// Provide a dummy ad account ID for API path construction.
 		Options::set( OptionDefaults::AD_ACCOUNT_ID, 'fake-account-id' );
@@ -36,6 +37,7 @@ class RemotePixelTrackerTest extends WP_UnitTestCase {
 
 	public function tear_down(): void {
 		Options::delete( OptionDefaults::PIXEL_ENABLED );
+		Options::delete( OptionDefaults::PIXEL_ID );
 		Options::delete( OptionDefaults::AD_ACCOUNT_ID );
 		remove_filter( Helper::with_prefix( 'filter_pixel_script' ), array( $this, 'mock_script' ) );
 
@@ -61,5 +63,23 @@ class RemotePixelTrackerTest extends WP_UnitTestCase {
 
 		$this->assertStringContainsString( '<script', $output );
 		$this->assertStringContainsString( 'scevent.min.js', $output );
+	}
+
+	public function test_maybe_inject_pixel_outputs_partner_config_in_generated_script() {
+		remove_filter( Helper::with_prefix( 'filter_pixel_script' ), array( $this, 'mock_script' ) );
+
+		$wcs     = $this->createMock( WcsClient::class );
+		$tracker = new RemotePixelTracker( $wcs );
+
+		ob_start();
+		$tracker->maybe_inject_pixel();
+		$output = ob_get_clean();
+
+		$this->assertStringContainsString( 'rdt(\'init\', "pixel-123", {', $output );
+		$this->assertStringContainsString( '"partner":"WOOCOMMERCE"', $output );
+		$this->assertStringContainsString(
+			'"partner_version":"' . REDDIT_FOR_WOOCOMMERCE_VERSION . '"',
+			$output
+		);
 	}
 }

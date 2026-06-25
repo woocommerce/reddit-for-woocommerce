@@ -37,6 +37,11 @@ use RedditForWooCommerce\Config;
  */
 final class RemotePixelTracker implements PixelTrackerInterface {
 	/**
+	 * Partner identifier expected by Reddit for platform-managed pixel integrations.
+	 */
+	private const PIXEL_PARTNER = 'WOOCOMMERCE';
+
+	/**
 	 * Meta key used to mark orders that have already been tracked.
 	 */
 	protected const ORDER_PIXEL_TRACKED_META_KEY = '_reddit_pixel_tracked';
@@ -146,11 +151,16 @@ final class RemotePixelTracker implements PixelTrackerInterface {
 			return '';
 		}
 
+		$pixel_init_config = array(
+			'partner'         => self::PIXEL_PARTNER,
+			'partner_version' => REDDIT_FOR_WOOCOMMERCE_VERSION,
+		);
+
 		ob_start();
 		?>
 		<!-- Reddit Pixel -->
 		<script>
-		!function(w,d){if(!w.rdt){var p=w.rdt=function(){p.sendEvent?p.sendEvent.apply(p,arguments):p.callQueue.push(arguments)};p.callQueue=[];var t=d.createElement("script");t.src="https://www.redditstatic.com/ads/pixel.js",t.async=!0;var s=d.getElementsByTagName("script")[0];s.parentNode.insertBefore(t,s)}}(window,document);rdt('init', "<?php echo esc_js( $pixel_id ); ?>");
+		!function(w,d){if(!w.rdt){var p=w.rdt=function(){p.sendEvent?p.sendEvent.apply(p,arguments):p.callQueue.push(arguments)};p.callQueue=[];var t=d.createElement("script");t.src="https://www.redditstatic.com/ads/pixel.js",t.async=!0;var s=d.getElementsByTagName("script")[0];s.parentNode.insertBefore(t,s)}}(window,document);rdt('init', "<?php echo esc_js( $pixel_id ); ?>", <?php echo wp_json_encode( $pixel_init_config ); ?>);
 		</script>
 		<!-- DO NOT MODIFY UNLESS TO REPLACE A USER IDENTIFIER -->
 		<!-- End Reddit Pixel -->

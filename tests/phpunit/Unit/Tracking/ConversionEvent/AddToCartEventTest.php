@@ -65,7 +65,9 @@ final class AddToCartEventTest extends WP_UnitTestCase {
 
 		$this->assertArrayHasKey( 'data', $payload );
 		$this->assertArrayHasKey( 'partner', $payload['data'] );
+		$this->assertArrayHasKey( 'partner_version', $payload['data'] );
 		$this->assertArrayHasKey( 'events', $payload['data'] );
+		$this->assertSame( REDDIT_FOR_WOOCOMMERCE_VERSION, $payload['data']['partner_version'] );
 
 		$events = $payload['data']['events'][0];
 
