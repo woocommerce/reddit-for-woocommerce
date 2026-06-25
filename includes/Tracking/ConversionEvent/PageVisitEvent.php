@@ -74,8 +74,9 @@ final class PageVisitEvent extends AbstractEventPayloadBase implements Conversio
 
 		$payload = array(
 			'data' => array(
-				'partner' => self::get_partner(),
-				'events'  => array( $events ),
+				'partner'         => self::get_partner(),
+				'partner_version' => self::get_partner_version(),
+				'events'          => array( $events ),
 			),
 		);
 

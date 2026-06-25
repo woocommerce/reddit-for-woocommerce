@@ -57,6 +57,17 @@ abstract class AbstractEventPayloadBase implements ConversionCommonPayloadInterf
 	}
 
 	/**
+	 * Retrieves the integration version associated with the payload.
+	 *
+	 * @since 1.0.3
+	 *
+	 * @return string Partner integration version.
+	 */
+	public static function get_partner_version(): string {
+		return REDDIT_FOR_WOOCOMMERCE_VERSION;
+	}
+
+	/**
 	 * Retrieves the Unix timestamp when the event occurred.
 	 *
 	 * Uses the {@see Helper::get_event_time()} utility method to return the
