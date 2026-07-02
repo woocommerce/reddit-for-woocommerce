@@ -114,6 +114,7 @@ final class ServiceContainer {
 					new Admin\Menu(),
 					new Admin\Onboarding(),
 					new Admin\MetaBox\MetaBoxAssets(),
+					new Admin\MetaBox\MetaBoxRegistration(),
 					new ProductMeta\ProductMetaFields(),
 				);
 

@@ -21,8 +21,10 @@ domReady( () => {
 	const orderAttributionDetailsContainer = document.querySelector(
 		'#woocommerce-order-source-data .woocommerce-order-attribution-details-container'
 	);
+	// Fallback container rendered by MetaBoxRegistration when GLA is inactive.
+	const standaloneBox = document.getElementById( 'reddit-order-attribution-box' );
 
-	if ( ! orderAttributionDetailsContainer && ! orderAttributionBox ) {
+	if ( ! orderAttributionDetailsContainer && ! orderAttributionBox && ! standaloneBox ) {
 		return;
 	}
 
@@ -44,5 +46,10 @@ domReady( () => {
 		return;
 	}
 
-	orderAttributionBox.prepend( rfwElement );
+	if ( orderAttributionBox ) {
+		orderAttributionBox.prepend( rfwElement );
+		return;
+	}
+
+	standaloneBox.appendChild( rfwElement );
 } );
