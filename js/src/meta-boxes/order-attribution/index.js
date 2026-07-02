@@ -22,9 +22,15 @@ domReady( () => {
 		'#woocommerce-order-source-data .woocommerce-order-attribution-details-container'
 	);
 	// Fallback container rendered by MetaBoxRegistration when GLA is inactive.
-	const standaloneBox = document.getElementById( 'reddit-order-attribution-box' );
+	const standaloneBox = document.getElementById(
+		'reddit-order-attribution-box'
+	);
 
-	if ( ! orderAttributionDetailsContainer && ! orderAttributionBox && ! standaloneBox ) {
+	if (
+		! orderAttributionDetailsContainer &&
+		! orderAttributionBox &&
+		! standaloneBox
+	) {
 		return;
 	}
 
