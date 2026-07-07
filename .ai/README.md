@@ -1,0 +1,1 @@
+Read @AGENTS.md first to understand the project.

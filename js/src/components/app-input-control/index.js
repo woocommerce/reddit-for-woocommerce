@@ -50,7 +50,7 @@ const AppInputControl = (
 
 	return (
 		<div className={ classnames( wrapperClassNames ) }>
-			<InputControl ref={ ref } { ...rest } />
+			<InputControl ref={ ref } __next40pxDefaultSize { ...rest } />
 			{ countText && (
 				<div className="app-input-control__character-count">
 					{ countText }
