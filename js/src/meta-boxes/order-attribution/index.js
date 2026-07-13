@@ -11,7 +11,7 @@ const RedditAdsPromo = lazy( () =>
 );
 
 domReady( () => {
-	if ( redditAdsMetaBoxData?.orderAttributionSource !== 'reddit' ) {
+	if ( window.redditAdsMetaBoxData?.orderAttributionSource !== 'reddit' ) {
 		return;
 	}
 
