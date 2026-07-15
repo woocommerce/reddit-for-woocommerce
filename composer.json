@@ -13,8 +13,7 @@
 		"yoast/phpunit-polyfills": "^4.0",
 		"dg/bypass-finals": "^1.9",
 		"wp-coding-standards/wpcs": "^3.1",
-		"phpcompatibility/phpcompatibility-wp": "*",
-		"wp-cli/i18n-command": "^2.2"
+		"phpcompatibility/phpcompatibility-wp": "*"
 	},
 	"archive": {
 		"exclude": [
