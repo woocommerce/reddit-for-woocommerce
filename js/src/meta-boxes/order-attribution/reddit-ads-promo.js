@@ -16,29 +16,6 @@ import { ORDER_ATTRIBUTION_CONTEXT } from './constants';
 import './reddit-ads-promo.scss';
 
 /**
- * Reddit Ads Promo component is shown.
- *
- * @event rfw_reddit_ads_promo_shown
- * @property {string} context Context of the Reddit Ads Promo.
- */
-
-/**
- * Reddit Ads Promo "Get started" button is clicked.
- *
- * @event rfw_reddit_ads_promo_get_started_click
- * @property {string} context Context of the Reddit Ads Promo.
- * @property {string} href URL of the "Get started" button.
- */
-
-/**
- * Reddit Ads Promo "Create campaign" button is clicked.
- *
- * @event rfw_reddit_ads_promo_create_campaign_click
- * @property {string} context Context of the Reddit Ads Promo.
- * @property {string} href URL of the "Create campaign" button.
- */
-
-/**
  * Reddit Ads Promo component.
  *
  * Renders one of three states:
@@ -48,7 +25,7 @@ import './reddit-ads-promo.scss';
  *
  * @fires rfw_reddit_ads_promo_shown with `{ context: 'order-attribution-meta-box' }`.
  * @fires rfw_reddit_ads_promo_get_started_click with `{ context: 'order-attribution-meta-box', href: 'admin.php?page=wc-admin&path=%2Freddit%2Fstart' }`.
- * @fires rfw_reddit_ads_promo_create_campaign_click with `{ context: 'order-attribution-meta-box', href: 'admin.php?page=wc-admin&path=%2Freddit%2Fcampaigns%2Fcreate' }`.
+ * @fires rfw_reddit_ads_promo_create_campaign_click with `{ context: 'order-attribution-meta-box', href: 'https://ads.reddit.com/create' }`.
  *
  * @return {JSX.Element|null} The Reddit Ads Promo component or null.
  */

@@ -24,28 +24,6 @@ import PromoCTA from './promo-cta';
 import './reddit-ads-promo.scss';
 
 /**
- * Reddit Ads Promo banner is shown.
- *
- * @event rfw_reddit_ads_promo_shown
- * @property {string} context Context of the Reddit Ads Promo.
- */
-
-/**
- * Reddit Ads Promo "Get started" button is clicked.
- *
- * @event rfw_reddit_ads_promo_get_started_click
- * @property {string} context Context of the Reddit Ads Promo.
- * @property {string} href URL of the "Get started" button.
- */
-
-/**
- * Reddit Ads Promo "Dismiss" button is clicked.
- *
- * @event rfw_reddit_ads_promo_dismiss_click
- * @property {string} context Context of the Reddit Ads Promo.
- */
-
-/**
  * Reddit Ads Promo component.
  *
  * @fires rfw_reddit_ads_promo_shown with `{ context: channel-visibility-meta-box }`.

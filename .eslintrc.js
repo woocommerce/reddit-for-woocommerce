@@ -83,6 +83,11 @@ module.exports = {
 					...jsdocConfig.rules[ 'jsdoc/no-undefined-types' ][ 1 ]
 						.definedTypes,
 					'rfw_documentation_link_click',
+					// Declared in `js/src/meta-boxes/events.js`.
+					'rfw_reddit_ads_promo_shown',
+					'rfw_reddit_ads_promo_get_started_click',
+					'rfw_reddit_ads_promo_create_campaign_click',
+					'rfw_reddit_ads_promo_dismiss_click',
 				],
 			},
 		],
