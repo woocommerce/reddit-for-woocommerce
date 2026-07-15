@@ -88,7 +88,7 @@ const useCreateCatalog = () => {
 				setLoading( false );
 			}
 		},
-		[ createNotice, setCreatedCatalogId, setLoading ]
+		[ createNotice, invalidateResolution, setCreatedCatalogId, setLoading ]
 	);
 
 	return { createCatalog, loading, createdCatalogId, errorCode };
