@@ -60,12 +60,7 @@ Yes, it uses a [Jetpack](https://jetpack.com/) account to connect and communicat
 * Add - Include Pixel ID when creating new campaigns.
 * Add - Add RTL support.
 * Fix - Fix disconnect failure when the Catalog Manager role is removed after initial setup.
-* Tweak - Add `woo` tag to readme.txt for improved plugin discoverability.
 * Dev - Scope Reddit JS bundle to load only on the Reddit admin page.
-* Dev - Add JS unit test infrastructure and CI workflow.
-* Dev - Fix ESLint warnings.
-* Dev - Add a pull request template to the repository.
-* Dev - Add AGENTS.md, CLAUDE.md, and other developer tooling improvements.
 
 = 1.0.3 - 2026-01-22 =
 * Update - Replace the billing card with an informational note to prevent potential confusion.
