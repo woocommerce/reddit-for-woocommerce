@@ -55,6 +55,24 @@ Yes, it uses a [Jetpack](https://jetpack.com/) account to connect and communicat
 
 == Changelog ==
 
+= 1.0.4 - 2026-07-20 =
+* Fix - [REDTWOO-109] Scope Reddit JS Bundle to Load Only on Reddit Admin Page.
+* Fix - [REDTWOO-118] Add a pull request template to the repository.
+* Fix - [REDTWOO-71] QA - Disconnect fails when Catalog Manager role is removed after initial setup.
+* Fix - <!--.
+* Fix - <!--.
+* Fix - <!--.
+* Fix - <!--.
+* Fix - Add `woo` tag to readme.txt for plugin discoverability.
+* Fix - Add JS unit test infrastructure and CI workflow.
+* Fix - Added AGENTS.md, CLAUDE.md, and improved developer tooling.
+* Fix - Added partner details to Reddit's Pixel + CAPI requests.
+* Fix - Fix/REDTWOO-110: Fix ESLint warnings.
+* Fix - Include Pixel ID when creating new campaigns.
+* Fix - Rebuild release prep as self-contained workflow chain.
+* Fix - REDTWOO-56: Add RTL Support.
+* Fix - Refresh develop from trunk.
+
 = 1.0.3 - 2026-01-22 =
 * Update - Replace the billing card with an informational note to prevent potential confusion.
 * Update - UX improvements for the Reddit Ads card.
@@ -69,10 +87,5 @@ Yes, it uses a [Jetpack](https://jetpack.com/) account to connect and communicat
 * Update - Average daily budget suggestions.
 * Tweak - WooCommerce 10.4 compatibility.
 * Dev - Set up woorelease GH workflows.
-
-= 1.0.1 - 2025-12-09 =
-* Add - Implement Create Campaign during onboarding.
-* Improved - create campaign defaults and UI improvements.
-* Tweak - WordPress 6.9 compatibility.
 
 [See changelog for all versions](https://raw.githubusercontent.com/woocommerce/reddit-for-woocommerce/trunk/changelog.txt).
