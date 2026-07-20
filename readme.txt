@@ -56,22 +56,16 @@ Yes, it uses a [Jetpack](https://jetpack.com/) account to connect and communicat
 == Changelog ==
 
 = 1.0.4 - 2026-07-20 =
-* Fix - [REDTWOO-109] Scope Reddit JS Bundle to Load Only on Reddit Admin Page.
-* Fix - [REDTWOO-118] Add a pull request template to the repository.
-* Fix - [REDTWOO-71] QA - Disconnect fails when Catalog Manager role is removed after initial setup.
-* Fix - <!--.
-* Fix - <!--.
-* Fix - <!--.
-* Fix - <!--.
-* Fix - Add `woo` tag to readme.txt for plugin discoverability.
-* Fix - Add JS unit test infrastructure and CI workflow.
-* Fix - Added AGENTS.md, CLAUDE.md, and improved developer tooling.
-* Fix - Added partner details to Reddit's Pixel + CAPI requests.
-* Fix - Fix/REDTWOO-110: Fix ESLint warnings.
-* Fix - Include Pixel ID when creating new campaigns.
-* Fix - Rebuild release prep as self-contained workflow chain.
-* Fix - REDTWOO-56: Add RTL Support.
-* Fix - Refresh develop from trunk.
+* Add - Include partner details in Reddit Pixel and CAPI requests.
+* Add - Include Pixel ID when creating new campaigns.
+* Add - Add RTL support.
+* Fix - Fix disconnect failure when the Catalog Manager role is removed after initial setup.
+* Tweak - Add `woo` tag to readme.txt for improved plugin discoverability.
+* Dev - Scope Reddit JS bundle to load only on the Reddit admin page.
+* Dev - Add JS unit test infrastructure and CI workflow.
+* Dev - Fix ESLint warnings.
+* Dev - Add a pull request template to the repository.
+* Dev - Add AGENTS.md, CLAUDE.md, and other developer tooling improvements.
 
 = 1.0.3 - 2026-01-22 =
 * Update - Replace the billing card with an informational note to prevent potential confusion.
