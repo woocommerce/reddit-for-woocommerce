@@ -27,6 +27,13 @@ import { recordRfwEvent } from '~/utils/tracks';
  */
 
 /**
+ * Toggle the Collect Customer PII setting.
+ *
+ * @event rfw_collect_pii_toggle
+ * @property {string} status (`on`\|`off`) - indicates the status of the Collect Customer PII setting.
+ */
+
+/**
  * ConversionsAPI component for managing the tracking setting.
  *
  * Renders a card UI allowing users to enable or disable server-side conversion event tracking.
@@ -34,6 +41,7 @@ import { recordRfwEvent } from '~/utils/tracks';
  * Shows a loading spinner while the current tracking status is being resolved.
  *
  * @fires rfw_conversion_tracking_toggle When the user toggles the Conversions API tracking.
+ * @fires rfw_collect_pii_toggle When the user toggles the Collect Customer PII setting.
  *
  * @return {JSX.Element} The rendered ConversionsAPI settings card.
  */
@@ -71,12 +79,17 @@ const ConversionsAPI = () => {
 		}
 	};
 
+	const togglePiiCollection = useCallback( async () => {
+		await updateSettings( { collectPii: ! isPiiCollectionEnabled } );
+		recordRfwEvent( 'rfw_collect_pii_toggle', {
+			status: ! isPiiCollectionEnabled ? 'on' : 'off',
+		} );
+	}, [ updateSettings, isPiiCollectionEnabled ] );
+
 	const handlePiiStatusOnChange = async () => {
 		try {
 			setIsSavingPii( true );
-			await updateSettings( {
-				collectPii: ! isPiiCollectionEnabled,
-			} );
+			await togglePiiCollection();
 
 			createNotice(
 				'success',

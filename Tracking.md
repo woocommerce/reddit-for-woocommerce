@@ -50,6 +50,15 @@ Clicking on the button to disconnect the Business  account.
 #### Emitters
 - [`DisconnectAccountButton`](js/src/components/reddit-combo-account-card/connect-business/disconnect-account-button.js#L30) When the user clicks on the button to disconnect the Business account.
 
+### [`rfw_collect_pii_toggle`](js/src/pages/settings/conversions-api/index.js#L29)
+Toggle the Collect Customer PII setting.
+#### Properties
+| name | type | description |
+| ---- | ---- | ----------- |
+`status` | `string` | (`on`\\|`off`) - indicates the status of the Collect Customer PII setting.
+#### Emitters
+- [`ConversionsAPI`](js/src/pages/settings/conversions-api/index.js#L48) When the user toggles the Collect Customer PII setting.
+
 ### [`rfw_conversion_tracking_toggle`](js/src/pages/settings/conversions-api/index.js#L22)
 Toggle the Conversions API tracking.
 #### Properties
@@ -57,7 +66,7 @@ Toggle the Conversions API tracking.
 | ---- | ---- | ----------- |
 `status` | `string` | (`on`\\|`off`) - indicates the status of the Conversions API tracking.
 #### Emitters
-- [`ConversionsAPI`](js/src/pages/settings/conversions-api/index.js#L40) When the user toggles the Conversions API tracking.
+- [`ConversionsAPI`](js/src/pages/settings/conversions-api/index.js#L48) When the user toggles the Conversions API tracking.
 
 ### [`rfw_disconnect_reddit_account_button_click`](js/src/pages/settings/linked-accounts.js#L17)
 Clicking on the button to disconnect the Reddit account.
