@@ -2,8 +2,11 @@
  * External dependencies
  */
 import { __ } from '@wordpress/i18n';
-import { CheckboxControl } from '@wordpress/components';
 import { useState, useCallback } from '@wordpress/element';
+import {
+	__experimentalVStack as VStack, // eslint-disable-line @wordpress/no-unsafe-wp-apis
+	CheckboxControl,
+} from '@wordpress/components';
 
 /**
  * Internal dependencies
@@ -35,8 +38,10 @@ import { recordRfwEvent } from '~/utils/tracks';
  * @return {JSX.Element} The rendered ConversionsAPI settings card.
  */
 const ConversionsAPI = () => {
-	const { isCapiEnabled, hasFinishedResolution } = useSettings();
+	const { isCapiEnabled, isPiiCollectionEnabled, hasFinishedResolution } =
+		useSettings();
 	const [ isSaving, setIsSaving ] = useState( false );
+	const [ isSavingPii, setIsSavingPii ] = useState( false );
 	const { createNotice } = useDispatchCoreNotices();
 	const { updateSettings } = useAppDispatch();
 
@@ -66,6 +71,27 @@ const ConversionsAPI = () => {
 		}
 	};
 
+	const handlePiiStatusOnChange = async () => {
+		try {
+			setIsSavingPii( true );
+			await updateSettings( {
+				collectPii: ! isPiiCollectionEnabled,
+			} );
+
+			createNotice(
+				'success',
+				__(
+					'Collect PII status updated successfully.',
+					'reddit-for-woocommerce'
+				)
+			);
+		} catch ( error ) {
+			// Silently fail because the error is handled within `updateSettings` action.
+		} finally {
+			setIsSavingPii( false );
+		}
+	};
+
 	if ( ! hasFinishedResolution ) {
 		return <SpinnerCard />;
 	}
@@ -79,7 +105,7 @@ const ConversionsAPI = () => {
 				'reddit-for-woocommerce'
 			) }
 			actions={
-				<div className="rfw-settings-track-conversions__actions">
+				<VStack spacing={ 4 }>
 					<CheckboxControl
 						label={ __(
 							'Enable Conversions API tracking',
@@ -89,7 +115,20 @@ const ConversionsAPI = () => {
 						disabled={ isSaving }
 						onChange={ handleCapiStatusOnChange }
 					/>
-				</div>
+					<CheckboxControl
+						label={ __(
+							'Collect Customer PII',
+							'reddit-for-woocommerce'
+						) }
+						help={ __(
+							'Share additional customer data (PII) with Conversions API events to improve ads measurement.',
+							'reddit-for-woocommerce'
+						) }
+						checked={ isPiiCollectionEnabled }
+						disabled={ isSavingPii }
+						onChange={ handlePiiStatusOnChange }
+					/>
+				</VStack>
 			}
 		/>
 	);

@@ -187,6 +187,7 @@ export async function updateSettings( updatedSettings ) {
 				// Convert settings keys to match REST keys
 				capi_enabled: updatedSettings.trackConversions,
 				products_token: updatedSettings.productsToken,
+				collect_pii: updatedSettings.collectPii,
 			},
 		} );
 
@@ -197,6 +198,7 @@ export async function updateSettings( updatedSettings ) {
 			trackConversions: Boolean( response.capi_enabled ),
 			campaignCreated: Boolean( response.campaign_created ),
 			triggerExport: Boolean( response.trigger_export ),
+			collectPii: Boolean( response.collect_pii ),
 		} );
 	} catch ( error ) {
 		handleApiError(
