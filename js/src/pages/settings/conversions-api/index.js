@@ -30,7 +30,7 @@ import { recordRfwEvent } from '~/utils/tracks';
  * Toggle the Collect Customer PII setting.
  *
  * @event rfw_collect_pii_toggle
- * @property {string} status (`on`\|`off`) - indicates the status of the Collect Customer PII setting.
+ * @property {string} status (`on`|`off`) - indicates the status of the Collect Customer PII setting.
  */
 
 /**
