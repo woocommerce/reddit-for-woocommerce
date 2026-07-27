@@ -6,25 +6,29 @@
 	}
 
 	.rfw-subsection-title {
-		margin-bottom: wpVariables.$grid-unit-05;
 		font-weight: 400;
+		margin-block-end: wpVariables.$grid-unit-05;
 	}
 
 	.components-tip,
 	.rfw-billing-notice {
-		padding: wpVariables.$grid-unit-15 wpVariables.$grid-unit-20;
 		background-color: #f0f6fc;
+		padding-block: wpVariables.$grid-unit-15;
+		padding-inline: wpVariables.$grid-unit-20;
 
 		> p {
-			line-height: variables.$rfw-line-height-smaller;
-			font-size: variables.$rfw-font-smaller;
 			color: wpColors.$black;
+			font-size: variables.$rfw-font-smaller;
+			line-height: variables.$rfw-line-height-smaller;
 		}
 
 		> svg {
 			align-self: initial;
-			margin: wpVariables.$grid-unit-05 wpVariables.$grid-unit-05 * 2.5 0 0;
 			fill: wpColors.$gray-900;
+			margin-block-start: wpVariables.$grid-unit-05;
+			margin-block-end: 0;
+			margin-inline-end: wpVariables.$grid-unit-05 * 2.5;
+			margin-inline-start: 0;
 		}
 	}
 }

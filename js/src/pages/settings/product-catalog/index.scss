@@ -1,6 +1,8 @@
 .rfw-product-catalog {
 	.rfw-product-catalog__help {
-		padding: 0 var(--large-gap) var(--large-gap);
+		padding-block-start: 0;
+		padding-block-end: var(--large-gap);
+		padding-inline: var(--large-gap);
 
 		p {
 			color: wpColors.$gray-700;

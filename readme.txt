@@ -1,6 +1,6 @@
 === Reddit for WooCommerce ===
 Contributors: automattic, woocommerce
-Tags: woocommerce, reddit, product feed, ads
+Tags: woocommerce, woo, reddit, product feed, ads
 Tested up to: 7.0
 Stable tag: 1.0.3
 License: GPLv3

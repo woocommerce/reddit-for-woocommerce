@@ -52,6 +52,19 @@ interface ConversionCommonPayloadInterface {
 	public static function get_partner(): string;
 
 	/**
+	 * Retrieves the integration version associated with the partner payload.
+	 *
+	 * This value identifies the current plugin/integration release being used
+	 * to send the conversion event. Ad Partners may use it to distinguish
+	 * behavioral changes across platform-managed integrations.
+	 *
+	 * @since 1.0.4
+	 *
+	 * @return string Partner integration version.
+	 */
+	public static function get_partner_version(): string;
+
+	/**
 	 * Retrieves the Unix timestamp when the event occurred.
 	 *
 	 * The timestamp should represent the moment the WooCommerce user action
