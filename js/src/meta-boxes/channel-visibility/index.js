@@ -17,19 +17,15 @@ domReady( () => {
 		return;
 	}
 
-	let mountEl = document.getElementById( 'reddit-channel-visibility-box' );
+	const inside = document.querySelector( '#channel_visibility .inside' );
 
-	if ( ! mountEl ) {
-		const inside = document.querySelector( '#channel_visibility .inside' );
-
-		if ( ! inside ) {
-			return;
-		}
-
-		mountEl = document.createElement( 'div' );
-		mountEl.id = 'reddit-channel-visibility-row';
-		inside.insertBefore( mountEl, inside.firstChild );
+	if ( ! inside ) {
+		return;
 	}
+
+	const mountEl = document.createElement( 'div' );
+	mountEl.id = 'reddit-channel-visibility-row';
+	inside.insertBefore( mountEl, inside.firstChild );
 
 	createRoot( mountEl ).render(
 		<Suspense>
