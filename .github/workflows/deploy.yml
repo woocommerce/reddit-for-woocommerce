@@ -30,7 +30,7 @@ jobs:
     steps:
       # Checkout the private action repository
       - name: Checkout woo-product-deploy action
-        uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # 4.3.0
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
         with:
           repository: woocommerce/woo-product-deploy
           ref: trunk
@@ -69,7 +69,7 @@ jobs:
           fi
 
       - name: Upload build artifact
-        uses: actions/upload-artifact@4cec3d8aa04e39d1a68397de0c4cd6fb9dce8ec1 # v4.6.1
+        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5.0.0
         with:
           name: reddit-for-woocommerce.zip
           path: ${{ github.workspace }}/reddit-for-woocommerce.zip

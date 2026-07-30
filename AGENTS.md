@@ -160,6 +160,10 @@ npm run doc:tracking    # Generate tracking documentation
 - **i18n:** All user-facing strings must use `reddit-for-woocommerce` text domain.
 - **Security:** Nonce verification, sanitization (`wc_clean()`), escaping (`esc_html()`, `esc_attr()`).
 
+### GitHub Actions
+
+- **Pin every third-party action to a full commit SHA, not a version tag.** Use `owner/repo@<40-char-sha> # vX.Y.Z` instead of `owner/repo@v6`. A mutable tag can be repointed to a compromised or breaking release without any change in this repo; pinning to a SHA prevents that. Resolve the SHA for a tag with `gh api repos/{owner}/{repo}/commits/{tag} --jq '.sha'`, and find the matching version comment with `gh api repos/{owner}/{repo}/tags --jq '.[] | select(.commit.sha=="<sha>") | .name'`. This applies to every `uses:` line under `.github/workflows/` except references to files inside this repo (`./.github/actions/...`, `./.github/workflows/...`), which aren't third-party actions. See [WPCS: unpinned uses](https://developer.wordpress.org/coding-standards/wordpress-coding-standards/github-actions/#unpinned-uses).
+
 ## Backward Compatibility
 
 Any change to a **public or externally exposed** class, interface, function, method, hook, or REST endpoint signature is **high-risk** and **must state its backward-compatibility impact in the PR description**. An internal-looking name or location is not by itself a guarantee that a symbol is safe to change: other extensions, themes, and custom site code implement and consume some of these contracts in practice. See the exposed-surface list for what counts and the **Scope** note for what does not; when a symbol is genuinely reachable and useful to outside code, err toward treating it as exposed.
