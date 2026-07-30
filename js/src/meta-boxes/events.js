@@ -10,10 +10,16 @@
  */
 
 /**
- * Reddit Ads Promo is shown.
+ * Reddit Ads Promo is loaded in a meta box.
+ *
+ * In the `order-attribution-meta-box` this fires only when the promo actually
+ * renders, i.e. not once the store is onboarded and has a campaign. In the
+ * `channel-visibility-meta-box` it fires on every meta box load, including
+ * after onboarding when the settings panel is shown instead of the promo, and
+ * when the promo has been dismissed.
  *
  * @event rfw_reddit_ads_promo_shown
- * @property {string} context (`order-attribution-meta-box`|`channel-visibility-meta-box`) - indicates the meta box the promo is rendered in.
+ * @property {string} context (`order-attribution-meta-box`|`channel-visibility-meta-box`) - indicates the meta box the event fires in.
  */
 
 /**

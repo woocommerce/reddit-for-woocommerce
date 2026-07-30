@@ -167,7 +167,7 @@ Clicking on the button to create a campaign on the Reddit Ads manager.
 #### Emitters
 - [`RedditAds`](js/src/pages/settings/reddit-ads/index.js#L43) When the user clicks on the button to create a campaign on the Reddit Ads manager.
 
-### [`rfw_reddit_ads_promo_create_campaign_click`](js/src/meta-boxes/events.js#L27)
+### [`rfw_reddit_ads_promo_create_campaign_click`](js/src/meta-boxes/events.js#L33)
 Reddit Ads Promo "Create campaign" button is clicked.
 #### Properties
 | name | type | description |
@@ -177,7 +177,7 @@ Reddit Ads Promo "Create campaign" button is clicked.
 #### Emitters
 - [`RedditAdsPromo`](js/src/meta-boxes/order-attribution/reddit-ads-promo.js#L32) with `{ context: 'order-attribution-meta-box', href: 'https://ads.reddit.com/create' }`.
 
-### [`rfw_reddit_ads_promo_dismiss_click`](js/src/meta-boxes/events.js#L35)
+### [`rfw_reddit_ads_promo_dismiss_click`](js/src/meta-boxes/events.js#L41)
 Reddit Ads Promo "Dismiss" button is clicked.
 #### Properties
 | name | type | description |
@@ -187,7 +187,7 @@ Reddit Ads Promo "Dismiss" button is clicked.
 - [`PromoCTA`](js/src/meta-boxes/channel-visibility/promo-cta.js#L22) with `{ context: channel-visibility-meta-box }`.
 - [`RedditAdsPromo`](js/src/meta-boxes/channel-visibility/reddit-ads-promo.js#L35) with `{ context: channel-visibility-meta-box }`.
 
-### [`rfw_reddit_ads_promo_get_started_click`](js/src/meta-boxes/events.js#L19)
+### [`rfw_reddit_ads_promo_get_started_click`](js/src/meta-boxes/events.js#L25)
 Reddit Ads Promo "Get started" button is clicked.
 #### Properties
 | name | type | description |
@@ -200,11 +200,17 @@ Reddit Ads Promo "Get started" button is clicked.
 - [`RedditAdsPromo`](js/src/meta-boxes/order-attribution/reddit-ads-promo.js#L32) with `{ context: 'order-attribution-meta-box', href: 'admin.php?page=wc-admin&path=%2Freddit%2Fstart' }`.
 
 ### [`rfw_reddit_ads_promo_shown`](js/src/meta-boxes/events.js#L12)
-Reddit Ads Promo is shown.
+Reddit Ads Promo is loaded in a meta box.
+
+ In the `order-attribution-meta-box` this fires only when the promo actually
+ renders, i.e. not once the store is onboarded and has a campaign. In the
+ `channel-visibility-meta-box` it fires on every meta box load, including
+ after onboarding when the settings panel is shown instead of the promo, and
+ when the promo has been dismissed.
 #### Properties
 | name | type | description |
 | ---- | ---- | ----------- |
-`context` | `string` | (`order-attribution-meta-box`\|`channel-visibility-meta-box`) - indicates the meta box the promo is rendered in.
+`context` | `string` | (`order-attribution-meta-box`\|`channel-visibility-meta-box`) - indicates the meta box the event fires in.
 #### Emitters
 - [`RedditAdsPromo`](js/src/meta-boxes/channel-visibility/reddit-ads-promo.js#L35) with `{ context: channel-visibility-meta-box }`.
 - [`RedditAdsPromo`](js/src/meta-boxes/order-attribution/reddit-ads-promo.js#L32) with `{ context: 'order-attribution-meta-box' }`.
