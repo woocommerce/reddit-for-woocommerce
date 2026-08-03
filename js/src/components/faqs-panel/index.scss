@@ -9,8 +9,7 @@
 
 	.components-panel__body-title {
 		.components-panel__body-toggle.components-button {
-			padding-block-end: wpVariables.$grid-unit-05 * 5;
-			padding-block-start: wpVariables.$grid-unit-05 * 5;
+			padding-block: wpVariables.$grid-unit-05 * 5 wpVariables.$grid-unit-05 * 5;
 		}
 	}
 }
