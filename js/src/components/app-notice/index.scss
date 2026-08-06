@@ -1,6 +1,5 @@
 .rfw-app-notice {
 	font-size: wpVariables.$helptext-font-size;
-	margin-block-start: 0;
-	margin-block-end: var(--main-gap);
+	margin-block: 0 var(--main-gap);
 	margin-inline: var(--large-gap);
 }

@@ -1,7 +1,6 @@
 .rfw-product-catalog {
 	.rfw-product-catalog__help {
-		padding-block-start: 0;
-		padding-block-end: var(--large-gap);
+		padding-block: 0 var(--large-gap);
 		padding-inline: var(--large-gap);
 
 		p {

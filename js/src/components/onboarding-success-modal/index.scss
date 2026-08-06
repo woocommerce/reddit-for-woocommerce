@@ -47,8 +47,7 @@
 
 	.rfw-app-modal__footer {
 		margin: 0;
-		padding-block-start: 0;
-		padding-block-end: wpVariables.$grid-unit-30;
+		padding-block: 0 wpVariables.$grid-unit-30;
 		padding-inline: wpVariables.$grid-unit-30;
 	}
 }

@@ -25,10 +25,8 @@
 		> svg {
 			align-self: initial;
 			fill: wpColors.$gray-900;
-			margin-block-start: wpVariables.$grid-unit-05;
-			margin-block-end: 0;
-			margin-inline-end: wpVariables.$grid-unit-05 * 2.5;
-			margin-inline-start: 0;
+			margin-block: wpVariables.$grid-unit-05 0;
+			margin-inline: 0 wpVariables.$grid-unit-05 * 2.5;
 		}
 	}
 }
