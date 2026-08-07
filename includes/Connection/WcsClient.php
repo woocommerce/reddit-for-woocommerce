@@ -75,11 +75,15 @@ final class WcsClient {
 	 * @param mixed  $body           Body payload to send in JSON format.
 	 * @param bool   $requires_auth  Whether to include the Jetpack auth header.
 	 * @param array  $headers        Optional additional headers to include in the request.
+	 * @param bool   $blocking       Whether to wait for the response. Pass false for
+	 *                               fire-and-forget requests that must not hold the
+	 *                               current PHP request open (e.g. high-volume tracking
+	 *                               beacons); the response is not available in that case.
 	 *
 	 * @return WP_REST_Response|WP_Error API response or error.
 	 */
-	public function proxy_post( string $path, $body, bool $requires_auth = true, array $headers = array() ) {
-		return $this->proxy_request( 'POST', $path, $body, $requires_auth, $headers );
+	public function proxy_post( string $path, $body, bool $requires_auth = true, array $headers = array(), bool $blocking = true ) {
+		return $this->proxy_request( 'POST', $path, $body, $requires_auth, $headers, $blocking );
 	}
 
 	/**
@@ -167,10 +171,13 @@ final class WcsClient {
 	 * @param array|null $body           Optional request body (for POST) or query parameters (for GET).
 	 * @param bool       $requires_auth  Whether to include the Jetpack auth header.
 	 * @param array      $headers        Optional additional headers to include in the request.
+	 * @param bool       $blocking       Whether to wait for the response. When false the
+	 *                                   request is dispatched fire-and-forget and a stub
+	 *                                   202 response is returned without reading Reddit's reply.
 	 *
 	 * @return WP_REST_Response|WP_Error Parsed response or error.
 	 */
-	public function proxy_request( string $method, string $path, $body = null, $requires_auth = true, array $headers = array() ) {
+	public function proxy_request( string $method, string $path, $body = null, $requires_auth = true, array $headers = array(), bool $blocking = true ) {
 		$url = sprintf(
 			'%s/%s/%s',
 			$this->get_wcs_url(),
@@ -183,8 +190,9 @@ final class WcsClient {
 		}
 
 		$args = array(
-			'method'  => strtoupper( $method ),
-			'timeout' => 15,
+			'method'   => strtoupper( $method ),
+			'timeout'  => 15,
+			'blocking' => $blocking,
 		);
 
 		if ( $requires_auth ) {
@@ -211,6 +219,12 @@ final class WcsClient {
 			),
 			in_array( $method, array( 'POST', 'PUT', 'PATCH' ), true ) && $body ? wp_json_encode( $body ) : null
 		);
+
+		// Fire-and-forget: with blocking disabled there is no response body to parse
+		// (wp_remote_request returns immediately after dispatching the request).
+		if ( ! $blocking ) {
+			return new WP_REST_Response( array( 'dispatched' => true ), 202 );
+		}
 
 		return $this->handle_response( $response );
 	}

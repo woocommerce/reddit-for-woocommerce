@@ -169,8 +169,12 @@ class RemoteConversionTracker implements ConversionTrackerInterface {
 	 * The payload includes basic product information, deduplication ID, and user identifiers
 	 * for improved event matching and attribution.
 	 *
-	 * Unlike critical events such as purchases or checkout starts, view content are considered
-	 * low-impact and are dispatched directly without enqueuing in Action Scheduler.
+	 * This is a high-volume, low-impact event fired on every product page view. To avoid
+	 * holding the visitor's request open on the WCS/Reddit round trip (and tying up a PHP
+	 * worker per page view), it is dispatched fire-and-forget: {@see send()} is called with
+	 * blocking disabled rather than enqueued in Action Scheduler, which would grow the queue
+	 * as fast as traffic arrives. The matching client-side pixel event shares the same
+	 * `event_id`, so Reddit deduplicates the two and any occasional dropped beacon is covered.
 	 *
 	 * @since 0.1.0
 	 *
@@ -192,7 +196,7 @@ class RemoteConversionTracker implements ConversionTrackerInterface {
 			)
 		);
 
-		$this->send( $payload, array( 'event' => ViewContentEvent::ID ) );
+		$this->send( $payload, array( 'event' => ViewContentEvent::ID ), false );
 	}
 
 	/**
@@ -206,8 +210,12 @@ class RemoteConversionTracker implements ConversionTrackerInterface {
 	 * The payload includes contextual user metadata and an optional deduplication identifier
 	 * (`event_id`) to align with a corresponding client-side pixel event.
 	 *
-	 * Unlike critical events such as purchases or checkout starts, page view events are considered
-	 * low-impact and are dispatched directly without enqueuing in Action Scheduler.
+	 * This is the highest-volume event, fired on every non-product page view. To avoid holding
+	 * the visitor's request open on the WCS/Reddit round trip (and tying up a PHP worker per
+	 * page view), it is dispatched fire-and-forget: {@see send()} is called with blocking
+	 * disabled rather than enqueued in Action Scheduler, which would grow the queue as fast as
+	 * traffic arrives. The matching client-side pixel event shares the same `event_id`, so
+	 * Reddit deduplicates the two and any occasional dropped beacon is covered.
 	 *
 	 * @since 0.1.0
 	 *
@@ -227,7 +235,7 @@ class RemoteConversionTracker implements ConversionTrackerInterface {
 			)
 		);
 
-		$this->send( $payload, array( 'event' => PageVisitEvent::ID ) );
+		$this->send( $payload, array( 'event' => PageVisitEvent::ID ), false );
 	}
 
 	/**
@@ -288,18 +296,23 @@ class RemoteConversionTracker implements ConversionTrackerInterface {
 	/**
 	 * Sends a previously built payload to the Ad Partner Conversions API via WCS.
 	 *
-	 * This method is intended to be triggered asynchronously by Action Scheduler
-	 * using the `send_conversion_event` hook. It retrieves the required pixel ID and
-	 * access token from plugin options, adds user-level metadata (e.g. IP and user agent),
-	 * and sends the payload to the Conversions API through the WCS proxy.
+	 * Triggered asynchronously by Action Scheduler (via the `send_conversion_event`
+	 * hook) for Purchase and AddToCart, and directly — but non-blocking — for the
+	 * high-volume PageVisit and ViewContent beacons. It retrieves the required pixel
+	 * ID from plugin options and sends the payload to the Conversions API through the
+	 * WCS proxy.
 	 *
 	 * @since 0.1.0
 	 *
 	 * @param array<string,mixed> $event_payload Single event payload.
 	 * @param array               $args          Additional args.
+	 * @param bool                $blocking      Whether to wait for the WCS/Reddit response.
+	 *                                           Pass false to dispatch fire-and-forget so the
+	 *                                           current request is not held open; the response
+	 *                                           is then unavailable and not logged.
 	 * @return void
 	 */
-	public function send( array $event_payload, array $args = array() ): void {
+	public function send( array $event_payload, array $args = array(), bool $blocking = true ): void {
 		$pixel_id = Options::get( OptionDefaults::PIXEL_ID );
 
 		if ( ! $pixel_id ) {
@@ -312,10 +325,14 @@ class RemoteConversionTracker implements ConversionTrackerInterface {
 		$response = $this->client->proxy_post(
 			$path,
 			$event_payload,
-			false
+			false,
+			array(),
+			$blocking
 		);
 
-		if ( Helper::is_logging_enabled() ) {
+		// Fire-and-forget dispatch returns no meaningful response, so there is
+		// nothing to inspect or log for it.
+		if ( $blocking && Helper::is_logging_enabled() ) {
 			$event = $args['event'] ?? 'unknown_event';
 
 			if ( is_wp_error( $response ) ) {
