@@ -16,6 +16,32 @@ import { ORDER_ATTRIBUTION_CONTEXT } from './constants';
 import './reddit-ads-promo.scss';
 
 /**
+ * Reddit Ads Promo banner is shown.
+ *
+ * Fires only when the promo actually renders, i.e. not once the store is
+ * onboarded and has a campaign.
+ *
+ * @event rfw_reddit_ads_promo_shown
+ * @property {string} context Context of the Reddit Ads Promo.
+ */
+
+/**
+ * Reddit Ads Promo "Get started" button is clicked.
+ *
+ * @event rfw_reddit_ads_promo_get_started_click
+ * @property {string} context Context of the Reddit Ads Promo.
+ * @property {string} href URL of the "Get started" button.
+ */
+
+/**
+ * Reddit Ads Promo "Create campaign" button is clicked.
+ *
+ * @event rfw_reddit_ads_promo_create_campaign_click
+ * @property {string} context Context of the Reddit Ads Promo.
+ * @property {string} href URL of the "Create campaign" button.
+ */
+
+/**
  * Reddit Ads Promo component.
  *
  * Renders one of three states:
