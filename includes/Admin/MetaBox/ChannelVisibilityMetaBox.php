@@ -48,7 +48,9 @@ class ChannelVisibilityMetaBox {
 	 *
 	 * Runs at priority 999 so GLA has already registered at its default priority.
 	 * In cohabit mode the React component injects Reddit's settings into GLA's box;
-	 * no second meta box should appear. In standalone mode Reddit owns the box.
+	 * no second meta box should appear. In standalone mode Reddit owns the box,
+	 * registered under the same 'channel_visibility' id GLA would use, so the box
+	 * wrapper carries a consistent DOM id whichever mode is active.
 	 *
 	 * @since 0.1.0
 	 *
@@ -68,7 +70,7 @@ class ChannelVisibilityMetaBox {
 		}
 
 		add_meta_box(
-			'reddit-channel-visibility',
+			'channel_visibility',
 			__( 'Channel visibility', 'reddit-for-woocommerce' ),
 			array( $this, 'render' ),
 			'product',
