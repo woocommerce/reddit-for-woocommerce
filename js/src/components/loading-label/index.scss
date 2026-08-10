@@ -2,13 +2,13 @@
 	display: inline-flex;
 	align-items: center;
 	gap: wpVariables.$grid-unit-10;
-	height: wpVariables.$button-size;
+	block-size: wpVariables.$button-size;
 	color: var(--wp-admin-theme-color);
 
 	.woocommerce-spinner {
-		width: wpVariables.$icon-size;
-		height: wpVariables.$icon-size;
-		min-width: wpVariables.$icon-size;
+		block-size: wpVariables.$icon-size;
+		inline-size: wpVariables.$icon-size;
+		min-inline-size: wpVariables.$icon-size;
 
 		&__circle {
 			stroke: currentcolor;
