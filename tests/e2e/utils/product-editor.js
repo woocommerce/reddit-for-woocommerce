@@ -11,7 +11,7 @@ import { expect } from '@playwright/test';
 export function getClassicProductEditorUtils( page ) {
 	const locators = {
 		getChannelVisibilityMetaBox() {
-			return page.locator( '#channel_visibility' );
+			return page.locator( '#reddit-channel-visibility' );
 		},
 
 		getChannelVisibilityMetaBoxContent() {
