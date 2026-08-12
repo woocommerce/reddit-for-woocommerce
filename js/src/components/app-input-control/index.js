@@ -4,7 +4,7 @@
 import classnames from 'classnames';
 import { __, sprintf } from '@wordpress/i18n';
 import { forwardRef } from '@wordpress/element';
-import { __experimentalInputControl as InputControl } from '@wordpress/components';
+import { __experimentalInputControl as InputControl } from '@wordpress/components'; // eslint-disable-line @wordpress/no-unsafe-wp-apis
 
 /**
  * Internal dependencies
@@ -50,7 +50,7 @@ const AppInputControl = (
 
 	return (
 		<div className={ classnames( wrapperClassNames ) }>
-			<InputControl ref={ ref } { ...rest } />
+			<InputControl ref={ ref } __next40pxDefaultSize { ...rest } />
 			{ countText && (
 				<div className="app-input-control__character-count">
 					{ countText }
