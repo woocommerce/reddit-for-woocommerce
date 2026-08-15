@@ -272,4 +272,49 @@ class Helper {
 		// Convert to float, multiply by 1,000,000, and round to nearest integer.
 		return (int) round( $amount * 1_000_000 );
 	}
+
+	/**
+	 * Absolute URLs into WooCommerce Admin (wc-admin) for Reddit meta box CTAs.
+	 *
+	 * Uses {@see \wc_admin_url()} when WooCommerce exposes it; WooCommerce historically
+	 * only applied the path when non-empty `$query` was passed, so a placeholder arg is added
+	 * and stripped. Falls back to the same URL shape as elsewhere in this plugin via
+	 * {@see admin_url()} (see {@see RedditChannel::get_setup_url()}).
+	 *
+	 * @since 0.1.0
+	 *
+	 * @return array{start:string,campaignCreate:string,settings:string}
+	 */
+	public static function get_wc_admin_reddit_metabox_urls(): array {
+		return array(
+			'start'          => self::wc_admin_path_url( '/reddit/start' ),
+			'campaignCreate' => self::wc_admin_path_url( '/reddit/campaigns/create' ),
+			'settings'       => self::wc_admin_path_url( '/reddit/settings' ),
+		);
+	}
+
+	/**
+	 * Builds `admin.php?page=wc-admin&path=…` for a React route.
+	 *
+	 * @since 0.1.0
+	 *
+	 * @param string $path Path beginning with `/` (e.g. `/reddit/start`).
+	 * @return string
+	 */
+	private static function wc_admin_path_url( string $path ): string {
+		$path = '/' . ltrim( $path, '/' );
+
+		if ( function_exists( '\wc_admin_url' ) ) {
+			$url = \wc_admin_url(
+				$path,
+				array(
+					'_rfw_path' => '1',
+				)
+			);
+
+			return \remove_query_arg( '_rfw_path', $url );
+		}
+
+		return \admin_url( 'admin.php?page=wc-admin&path=' . $path );
+	}
 }

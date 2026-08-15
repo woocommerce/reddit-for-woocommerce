@@ -7,7 +7,7 @@
  * `LIMIT` + `OFFSET` logic, and resolves each ID into a `WC_Product` object.
  *
  * Only products with the custom meta key defined in
- * {@see \RedditForWooCommerce\Admin\ProductMeta\ProductMetaFields::CATALOG_ITEM}
+ * {@see \RedditForWooCommerce\Admin\MetaBox\ChannelVisibilityMetaBox::CATALOG_ITEM}
  * and a value of `1`, `yes`, or `true` are included in the cached export list.
  *
  * @package RedditForWooCommerce\Admin\Export\EntityProvider

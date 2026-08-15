@@ -13,8 +13,7 @@
 
 namespace RedditForWooCommerce\Admin;
 
-use RedditForWooCommerce\Utils\Storage\Options;
-use RedditForWooCommerce\Utils\Storage\OptionDefaults;
+use RedditForWooCommerce\Utils\OnboardingStatus;
 
 /**
  * Registers the WooCommerce Marketing submenu entry for the Ad Partner.
@@ -54,14 +53,12 @@ class Menu {
 	 * @return void
 	 */
 	public function register_menu(): void {
-		$is_connected = 'connected' === Options::get( OptionDefaults::ONBOARDING_STATUS );
-
 		$this->register_classic_submenu_page(
 			array(
 				'id'       => 'reddit-for-woocommerce',
 				'title'    => __( 'Reddit', 'reddit-for-woocommerce' ),
 				'parent'   => 'woocommerce-marketing',
-				'path'     => $is_connected ? '/reddit/settings' : '/reddit/setup',
+				'path'     => OnboardingStatus::is_setup_completed() ? '/reddit/settings' : '/reddit/setup',
 				'position' => 30,
 			)
 		);
