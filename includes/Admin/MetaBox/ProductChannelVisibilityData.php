@@ -76,7 +76,7 @@ final class ProductChannelVisibilityData {
 				),
 				array(
 					'value' => '0',
-					'label' => __( "Don't sync and show", 'reddit-for-woocommerce' ),
+					'label' => __( "Don't Sync and show", 'reddit-for-woocommerce' ),
 				),
 			),
 		);
