@@ -227,7 +227,7 @@ final class MetaBoxAssetsTest extends WP_UnitTestCase {
 			$this->assertSame( '1', $cv['options'][0]['value'] ?? null );
 			$this->assertSame( __( 'Sync and show', 'reddit-for-woocommerce' ), $cv['options'][0]['label'] ?? null );
 			$this->assertSame( '0', $cv['options'][1]['value'] ?? null );
-			$this->assertSame( __( "Don't sync and show", 'reddit-for-woocommerce' ), $cv['options'][1]['label'] ?? null );
+			$this->assertSame( __( "Don't Sync and show", 'reddit-for-woocommerce' ), $cv['options'][1]['label'] ?? null );
 
 			$this->assertArrayNotHasKey( 'mode', $decoded );
 			$this->assertArrayNotHasKey( 'cohabit_target', $decoded );

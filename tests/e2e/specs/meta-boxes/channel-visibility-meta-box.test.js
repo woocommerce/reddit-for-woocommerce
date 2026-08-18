@@ -181,7 +181,7 @@ test.describe( 'Channel Visibility Meta Box', () => {
 			).toBeHidden();
 		} );
 
-		test( "Dropdown contains 'Sync and show' and 'Don't sync and show' options", async () => {
+		test( "Dropdown contains 'Sync and show' and 'Don't Sync and show' options", async () => {
 			await editorUtils.gotoEditProductPage( productId );
 
 			const rfwBox = editorUtils.getChannelVisibilityMetaBox();
