@@ -5,6 +5,13 @@
 		display: block;
 	}
 
+	.rfw-channel-visibility__label {
+		// Reads GLA's shared custom property when GLA is active (the box
+		// owner sets it once in google-ads-promo.scss); falls back to the
+		// same 70px default when GLA isn't present.
+		min-width: var(--gla-channel-visibility-label-width, 70px);
+	}
+
 	.rfw-channel-visibility__title {
 		font-size: variables.$rfw-font-base;
 		font-weight: 600;
