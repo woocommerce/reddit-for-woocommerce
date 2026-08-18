@@ -2,11 +2,11 @@
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	max-width: variables.$rfw-width-large;
+	max-inline-size: variables.$rfw-width-large;
 	text-align: center;
 	margin: auto;
 	gap: wpVariables.$grid-unit-15;
-	margin-bottom: var(--large-gap);
+	margin-block-end: var(--large-gap);
 
 	h1 {
 		font-size: variables.$rfw-font-large;

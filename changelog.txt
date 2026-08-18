@@ -1,5 +1,12 @@
 *** Reddit for WooCommerce Changelog ***
 
+= 1.0.4 - 2026-07-20 =
+* Add - Include partner details in Reddit Pixel and CAPI requests.
+* Add - Include Pixel ID when creating new campaigns.
+* Add - Add RTL support.
+* Fix - Fix disconnect failure when the Catalog Manager role is removed after initial setup.
+* Dev - Scope Reddit JS bundle to load only on the Reddit admin page.
+
 = 1.0.3 - 2026-01-22 =
 * Update - Replace the billing card with an informational note to prevent potential confusion.
 * Update - UX improvements for the Reddit Ads card.

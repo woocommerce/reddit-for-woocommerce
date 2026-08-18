@@ -17,6 +17,7 @@ Reddit for WooCommerce is a WooCommerce extension that integrates a store with R
 | `includes/` | Core PHP — PSR-4 root (`RedditForWooCommerce\`) |
 | `includes/Admin/` | Admin UI: menu, onboarding wizard, assets, product meta |
 | `includes/Admin/Export/` | Batch product catalog CSV export pipeline |
+| `includes/Admin/MetaBox/` | Edit Order / Edit Product meta boxes: registration, conditional asset enqueue, inline mount data |
 | `includes/API/Site/Controllers/` | REST API controllers (settings, onboarding, Reddit connection, Jetpack, campaigns) |
 | `includes/API/AdPartner/` | Reddit Ads API wrappers (catalog, feed, pixels, campaigns, ad groups, etc.) |
 | `includes/Connection/` | WCS and Jetpack HTTP clients and authentication |
@@ -25,6 +26,7 @@ Reddit for WooCommerce is a WooCommerce extension that integrates a store with R
 | `includes/Tracking/` | Pixel injection, server-side conversion tracking, event classes |
 | `includes/Utils/` | Helpers, asset loader, user identifier, option/transient storage |
 | `js/src/` | React admin app and frontend tracking source |
+| `js/src/meta-boxes/` | React roots mounted into WC meta boxes (order attribution, channel visibility) |
 | `js/build/` | **Generated** webpack output — never edit directly |
 | `tests/phpunit/` | PHPUnit unit tests |
 | `tests/e2e/` | Playwright E2E tests |
@@ -106,11 +108,20 @@ npm run lint:css        # Stylelint
 
 ### Unit Tests
 
+**First-time setup:**
+
+1. Install Node and Composer dependencies: `npm install && composer install`
+2. Start the containers: `npm run env:start`
+3. Run the one-time PHPUnit setup: `npm run test:unit:wp-env:setup`
+4. Run the tests: `npm run test:unit:wp-env`
+
+**Subsequent runs** (containers already up):
+
 ```bash
-npm run env:start                   # Start wp-env containers
-npm run test:unit:wp-env:setup      # One-time setup after containers start
-npm run test:unit:wp-env            # Run PHPUnit via wp-env (latest WP, nightly WC)
+npm run test:unit:wp-env
 ```
+
+> **Note:** `npm run build` strips dev dependencies (`composer install --no-dev`). Run `composer install` again before running tests after a production build.
 
 Tests are in `tests/phpunit/Unit/` and follow the namespace structure of `includes/`.
 
@@ -126,6 +137,23 @@ npm run env:destroy     # Tear down containers
 - E2E tests use **Playwright** (not Codeception).
 - Test specs are in `tests/e2e/specs/`.
 - A test helper mu-plugin (`tests/e2e/plugins/reddit-options.php`) pre-configures plugin options for the test environment.
+
+**First-time setup:**
+
+```bash
+npx playwright install chromium   # Install browser (once)
+npm run env:start                 # Start containers and run initialize.sh
+npm run test:e2e                  # Run all E2E tests
+```
+
+**Subsequent runs** (containers already up):
+
+```bash
+npm run test:e2e                             # All tests
+npm run test:e2e -- --grep "Channel Visibility"  # Single suite
+```
+
+> **Note:** `npm run env:start` re-runs `initialize.sh` on every start, creating duplicate seed products if run more than once. If the shop ends up with duplicates, run `npm run env:destroy && npm run env:start` to reset.
 
 ### Other
 
@@ -159,6 +187,47 @@ npm run doc:tracking    # Generate tracking documentation
 - **Formatting:** `wp-prettier`.
 - **i18n:** All user-facing strings must use `reddit-for-woocommerce` text domain.
 - **Security:** Nonce verification, sanitization (`wc_clean()`), escaping (`esc_html()`, `esc_attr()`).
+
+### GitHub Actions
+
+- **Pin every third-party action to a full commit SHA, not a version tag.** Use `owner/repo@<40-char-sha> # vX.Y.Z` instead of `owner/repo@v6`. A mutable tag can be repointed to a compromised or breaking release without any change in this repo; pinning to a SHA prevents that. Resolve the SHA for a tag with `gh api repos/{owner}/{repo}/commits/{tag} --jq '.sha'`, and find the matching version comment with `gh api repos/{owner}/{repo}/tags --jq '.[] | select(.commit.sha=="<sha>") | .name'`. This applies to every `uses:` line under `.github/workflows/` except references to files inside this repo (`./.github/actions/...`, `./.github/workflows/...`), which aren't third-party actions. See [WPCS: unpinned uses](https://developer.wordpress.org/coding-standards/wordpress-coding-standards/github-actions/#unpinned-uses).
+
+## Backward Compatibility
+
+Any change to a **public or externally exposed** class, interface, function, method, hook, or REST endpoint signature is **high-risk** and **must state its backward-compatibility impact in the PR description**. An internal-looking name or location is not by itself a guarantee that a symbol is safe to change: other extensions, themes, and custom site code implement and consume some of these contracts in practice. See the exposed-surface list for what counts and the **Scope** note for what does not; when a symbol is genuinely reachable and useful to outside code, err toward treating it as exposed.
+
+**Externally exposed surface** — treat changes here as high-risk:
+
+- **Custom hooks** — the actions and filters this plugin fires (the `reddit_for_woocommerce_` prefix, e.g. `reddit_for_woocommerce_onboarding_complete`). These are documented integration points for merchant site code and other extensions. Renaming a hook, changing or reordering its arguments, or dropping it breaks whatever is hooked in; to retire one, fire it through `do_action_deprecated()` / `apply_filters_deprecated()` for a deprecation window.
+- **REST API** — the `wc/rfw` routes, their request/response shapes, and their auth expectations.
+- **Public PHP** — any `public` class, method, or function another plugin or theme actually autoloads and calls, plus any symbol explicitly documented as extensible.
+- **Front-end globals** — the `redditAds` JS globals and the pixel event contract that page scripts may read.
+
+**Scope — what is *not* a third-party contract:** the static `ServiceContainer` and its `ServiceKey` constants are internal dependency-injection wiring — services are resolved internally via `ServiceContainer::resolve()`, not by outside code — so they are not an API other extensions build on. An ordinary signature change to a service that exists only so the container can construct and connect objects does **not** require a BC statement. When you are unsure whether a symbol is a contract, check the exposed surface above rather than assuming every `public` method is one.
+
+Rules:
+
+- **Never add or remove a required method on an interface that external code can implement** — existing implementers fatal on load. Prefer adding the method to the concrete class, introducing a new interface, or supplying a default implementation in an abstract base class. If an interface change is unavoidable, flag it explicitly.
+- **Deprecate, don't rename.** Never rename or remove an existing public symbol in place: mark it `@deprecated`, introduce the replacement alongside it, and keep both working through a deprecation window.
+- **Don't implement or type-hint WooCommerce core `Internal\` classes or interfaces** — core treats them as changeable in any release. If unavoidable, guard the dependency with `class_exists()` / `interface_exists()` / `method_exists()` checks so a core change doesn't cause a fatal error in this plugin.
+
+> Why: WooCommerce 10.9.0 was reverted on WP Cloud after woocommerce/woocommerce#64394 added a required method to core's internal `FeedInterface`, causing fatal errors in older WooCommerce Stripe Gateway versions that implemented it (fixed in woocommerce/woocommerce#65965). The same failure mode applies to any published WooCommerce extension.
+
+### The compatibility surface is wider than PHP signatures
+
+WordPress exposes more contracts than class and function signatures. A change to any of the following is equally high-risk and needs the same backward-compatibility impact statement in the PR.
+
+- **Global state.** Code runs in admin, REST, CLI, cron, webhook, and front-end contexts, and not all set the globals a front-end request does (`$post`, `$wp_query`, an initialized session or cart). A new read of a global — or of `WC()->…` state — in a path reachable outside a standard request fatals or silently misbehaves where it isn't set. Guard the exact dependency (`function_exists`/`class_exists` for symbols, `isset` for variables, `did_action` for lifecycle) and verify `WC()` and the component are initialized before dereferencing.
+- **Multisite.** Site-scoped vs network-scoped options (`get_option` vs `get_site_option`), per-site tables, capabilities, and upload paths all differ under multisite. A change that reads or writes site state must state whether it behaves correctly under multisite, or say it wasn't tested there.
+- **Install layout.** WordPress can run in a subdirectory, with relocated `wp-content`, and behind reverse proxies. Never build paths or URLs by concatenation from the domain root; derive them (`plugins_url()`, `plugin_dir_path()`, `wp_upload_dir()`, and mind `home_url()` vs `site_url()`).
+
+### Before changing any public or externally exposed surface (agent checklist)
+
+1. Identify the contract you are touching: signature, hook, global/scope expectation, site topology, or install layout.
+2. Assume unseen consumers — you cannot enumerate third-party code; if the surface is reachable from outside this plugin, someone may consume it.
+3. Prefer the additive path (new optional method, appended hook argument, new symbol + deprecation) over changing what exists.
+4. State the impact in the PR description: what changed, who could consume it, and why it is safe or what the deprecation path is.
+5. If you cannot establish the impact, stop and flag it for review.
 
 ## Architectural Decisions
 
@@ -202,6 +271,9 @@ The build extends `@wordpress/scripts` webpack config with `WooCommerceDependenc
 ## Common Pitfalls
 
 - **Never edit files in `js/build/`.** These are generated by webpack. Edit source files in `js/src/` and run `npm run build` or `npm run start`.
+- **Never edit `Tracking.md` below the `<woocommerce-grow-tracking-jsdoc>` marker.** It is generated from JSDoc `@event` / `@fires` annotations by `npm run doc:tracking`. Edit the annotations, then regenerate.
+- **Declare each tracking `@event` on the component that actually fires it.** `woocommerce-grow-tracking-jsdoc` renders one section per `@event` *declaration*, not per event name. Never add a separate doc-only module just to hold declarations. If a single reusable component fires the event and other files merely render it (e.g. `js/src/components/app-documentation-link/index.js` for `rfw_documentation_link_click`), declare it once there and reference it from callers with `@fires` only — cross-file `@fires` references require the event name to be added to `definedTypes` in `.eslintrc.js`, otherwise `jsdoc/no-undefined-types` flags it. If the same event name is independently fired by more than one component (e.g. the Reddit Ads promo's `rfw_reddit_ads_promo_shown`, fired separately by the order-attribution and channel-visibility meta boxes), declare `@event` on each of them — this renders one `Tracking.md` section per component, which is expected, and avoids `definedTypes` entries entirely.
+- **Write a bare `|` in `@property` descriptions.** The generator escapes it to `\|` for the Markdown table. Writing `\|` yourself renders `\\|`, which breaks the table cell.
 - **Always run linting before committing.** Run `npm run lint` to catch PHP, JS, and CSS issues early.
 - **Don't call Reddit APIs directly.** All external calls must go through `WcsClient` → WCS. Direct HTTP requests to Reddit will bypass auth and break in production.
 - **Don't store Reddit credentials locally.** Authentication is handled entirely by Jetpack tokens. The plugin holds no OAuth tokens directly.
