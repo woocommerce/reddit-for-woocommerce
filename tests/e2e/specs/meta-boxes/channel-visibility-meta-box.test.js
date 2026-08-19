@@ -148,6 +148,41 @@ test.describe( 'Channel Visibility Meta Box', () => {
 				rfwBoxAfterRefresh.getByRole( 'button', { name: 'Dismiss' } )
 			).toBeHidden();
 		} );
+
+		test( 'Saving a product before onboarding does not reset its channel visibility', async () => {
+			// Only the promo banner renders here — there is no channel visibility
+			// dropdown for the form to submit — so this reproduces the report:
+			// an unrelated product save must not flip the (default opted-in) sync
+			// preference to "Don't sync and show".
+			await setPromoDismissed( false );
+			await editorUtils.gotoEditProductPage( productId );
+
+			// Sanity: no settings dropdown is present before onboarding completes.
+			await expect(
+				editorUtils
+					.getChannelVisibilityMetaBox()
+					.getByRole( 'combobox' )
+			).toBeHidden();
+
+			// Save the product for an unrelated reason (the form is submitted with
+			// no channel visibility field present).
+			await editorUtils.save();
+
+			// Complete onboarding so the settings dropdown renders, then confirm the
+			// earlier save left the opt-in at its default ('1' = Sync and show)
+			// rather than resetting it to '0'.
+			await setOnboardingComplete( true );
+			await editorUtils.gotoEditProductPage( productId );
+
+			await expect(
+				editorUtils
+					.getChannelVisibilityMetaBox()
+					.getByRole( 'combobox' )
+			).toHaveValue( '1' );
+
+			// Restore onboarding state for the rest of this describe block.
+			await setOnboardingComplete( false );
+		} );
 	} );
 
 	test.describe( 'Onboarding completed', () => {
