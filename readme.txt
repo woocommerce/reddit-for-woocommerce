@@ -55,6 +55,13 @@ Yes, it uses a [Jetpack](https://jetpack.com/) account to connect and communicat
 
 == Changelog ==
 
+= 1.0.5 - 2026-08-19 =
+* Fix - <!--.
+* Fix - Add backward-compatibility guardrail to AGENTS.md.
+* Fix - Update CI workflows for Node.js 24 compatibility.
+* Fix - Update WPCS to 3.4.1 to pick up the fix for GHSA-3pwp-g2mj-5p3v.
+* Fix - Validate the order key before firing the Reddit purchase pixel on the order-received page, preventing order details from being exposed to unauthenticated visitors.
+
 = 1.0.4 - 2026-07-20 =
 * Add - Include partner details in Reddit Pixel and CAPI requests.
 * Add - Include Pixel ID when creating new campaigns.
@@ -71,10 +78,5 @@ Yes, it uses a [Jetpack](https://jetpack.com/) account to connect and communicat
 * Fix - UX improvements for catalog creation failure handling.
 * Fix – Ensure that switching businesses during onboarding connects the correct ad account.
 * Dev – Fix flaky PHPUnit test in `ProductExportServiceTest`.
-
-= 1.0.2 - 2026-01-07 =
-* Update - Average daily budget suggestions.
-* Tweak - WooCommerce 10.4 compatibility.
-* Dev - Set up woorelease GH workflows.
 
 [See changelog for all versions](https://raw.githubusercontent.com/woocommerce/reddit-for-woocommerce/trunk/changelog.txt).
