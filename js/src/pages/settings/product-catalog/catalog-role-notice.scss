@@ -1,8 +1,7 @@
 .rfw-admin-page {
 	.rfw-reddit-catalog-role-notice {
 		inline-size: 100%;
-		margin-block-start: wpVariables.$grid-unit-20;
-		margin-block-end: 0;
+		margin-block: wpVariables.$grid-unit-20 0;
 		margin-inline: 0;
 
 		&.components-notice {
