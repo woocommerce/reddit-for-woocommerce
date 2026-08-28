@@ -233,6 +233,7 @@ class RemotePixelTrackerTest extends WP_UnitTestCase {
 		$tracker->maybe_inject_pixel();
 		$output = ob_get_clean();
 
+		$this->assertStringContainsString( 'https://www.redditstatic.com/ads/pixel.js?pixel_id=pixel-123', $output );
 		$this->assertStringContainsString( 'rdt(\'init\', "pixel-123", {', $output );
 		$this->assertStringContainsString( '"partner":"WOOCOMMERCE"', $output );
 		$this->assertStringContainsString(
