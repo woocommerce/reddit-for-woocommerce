@@ -6,7 +6,12 @@ const { test, expect } = require( '@playwright/test' );
 /**
  * Internal dependencies
  */
-import { findRedditEvent, getThemes, switchTheme } from '../../../utils';
+import {
+	findRedditEvent,
+	getThemes,
+	switchTheme,
+	setConsent,
+} from '../../../utils';
 
 const anyUuidRegex =
 	/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -27,6 +32,7 @@ test.describe( 'PageVisit event', () => {
 	for ( const theme in themes ) {
 		for ( const PAGE of PAGES ) {
 			test( `[${ theme } theme] ${ PAGE.name }`, async ( { page } ) => {
+				await setConsent( page, true );
 				await switchTheme( page, themes[ theme ] );
 				await page.goto( PAGE.url );
 				const events = await page.evaluate( () => window.rdt.queue );
@@ -41,6 +47,7 @@ test.describe( 'PageVisit event', () => {
 		test( `[${ theme } themme] Does not send on Single Product page`, async ( {
 			page,
 		} ) => {
+			await setConsent( page, true );
 			await switchTheme( page, themes[ theme ] );
 			await page.goto( '/product/product-two' );
 			const events = await page.evaluate( () => window.rdt.queue );
