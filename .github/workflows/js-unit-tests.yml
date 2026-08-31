@@ -33,7 +33,7 @@ jobs:
         uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
 
       - name: Prepare node
-        uses: woocommerce/grow/prepare-node@da5279aa4d76745ef32970e49b5ef7903a3b457a # v2.2.2
+        uses: woocommerce/grow/prepare-node@b9c1e59aae9fdbe668b068ebd59c1545a88ea9fa # actions-v3.0.5
         with:
           node-version-file: ".nvmrc"
 

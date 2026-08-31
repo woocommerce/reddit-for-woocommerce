@@ -31,7 +31,7 @@ jobs:
         uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
 
       - name: Create branch & PR
-        uses: woocommerce/grow/prepare-extension-release@68794d4270fbfb19bb0bb76d6cebc8dd18f7d133 # v2.3.3
+        uses: woocommerce/grow/prepare-extension-release@b9c1e59aae9fdbe668b068ebd59c1545a88ea9fa # actions-v3.0.5
         with:
           version: ${{ github.event.inputs.version }}
           type: ${{ github.event.inputs.type }}
