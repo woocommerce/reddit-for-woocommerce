@@ -2,9 +2,8 @@
 /**
  * Tests for ConversionTrackingService AJAX handlers.
  *
- * These focus on REDTWOO-158: the public tracking beacons must process events
- * even when no valid nonce is present (e.g. a request from a page served from a
- * cache older than the nonce lifetime).
+ * The public tracking beacons must process events even when no valid nonce is present
+ * (e.g. a request from a page served from a cache older than the nonce lifetime).
  *
  * @package RedditForWooCommerce\Tests\Integration\Tracking
  */
@@ -28,7 +27,7 @@ class ConversionTrackingServiceTest extends WP_UnitTestCase {
 	/**
 	 * A PageVisit beacon with no nonce still reaches the tracker.
 	 *
-	 * Before REDTWOO-158 the handler called check_ajax_referer(), which would
+	 * Before, the handler called check_ajax_referer(), which would
 	 * wp_die() here and fail the test.
 	 */
 	public function test_page_view_processes_without_nonce(): void {

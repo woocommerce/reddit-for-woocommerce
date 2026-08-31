@@ -2,7 +2,7 @@
 /**
  * Tests for RemoteConversionTracker::send() logging behaviour.
  *
- * REDTWOO-158: failed conversion events must be recorded even when debug logging
+ * Failed conversion events must be recorded even when debug logging
  * is off, so lost events are visible to support instead of being silently dropped.
  *
  * @package RedditForWooCommerce\Tests\Integration\Tracking

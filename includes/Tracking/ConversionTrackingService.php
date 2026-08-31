@@ -179,7 +179,7 @@ class ConversionTrackingService implements ServiceStatusInterface {
 		 * lifetime (12–24h) every event fired from it was rejected and silently
 		 * lost. A nopriv nonce is also shared by all logged-out visitors, so it
 		 * never provided real CSRF protection. Requests remain consent-gated,
-		 * input-sanitized, and deduplicated by event_id. See REDTWOO-158.
+		 * input-sanitized, and deduplicated by event_id.
 		 */
 		$payload    = wp_unslash( $_POST['payload'] ?? '{}' ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.NonceVerification.Missing
 		$data       = json_decode( $payload, true );
@@ -202,7 +202,7 @@ class ConversionTrackingService implements ServiceStatusInterface {
 	 * @return void
 	 */
 	public function handle_async_view_content(): void {
-		// Public tracking beacon; intentionally not nonce-gated. See handle_async_add_to_cart() and REDTWOO-158.
+		// Public tracking beacon; intentionally not nonce-gated. See handle_async_add_to_cart().
 		$payload    = wp_unslash( $_POST['payload'] ?? '{}' ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.NonceVerification.Missing
 		$data       = json_decode( $payload, true );
 		$products   = $data['products'] ?? array();
@@ -228,7 +228,7 @@ class ConversionTrackingService implements ServiceStatusInterface {
 	 * @return void
 	 */
 	public function handle_async_page_view(): void {
-		// Public tracking beacon; intentionally not nonce-gated. See handle_async_add_to_cart() and REDTWOO-158.
+		// Public tracking beacon; intentionally not nonce-gated. See handle_async_add_to_cart().
 		$payload  = wp_unslash( $_POST['payload'] ?? '{}' ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.NonceVerification.Missing
 		$data     = json_decode( $payload, true );
 		$event_id = sanitize_text_field( $data['conversionId'] ?? '' );
