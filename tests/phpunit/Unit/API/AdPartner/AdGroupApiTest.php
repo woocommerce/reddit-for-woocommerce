@@ -73,4 +73,20 @@ class AdGroupApiTest extends WP_UnitTestCase {
 		);
 		$this->assertSame( 'pixel_abc', $data['conversion_pixel_id'] );
 	}
+
+	/**
+	 * The ad group payload MUST send a `bid_type` of `CPM`. Reddit still requires
+	 * `bid_type` even under `bid_strategy: BIDLESS`, and rejects `CPC` for this
+	 * shopping ad group (REDTWOO-169).
+	 */
+	public function test_ad_group_payload_bid_type_is_cpm(): void {
+		$data = $this->capture_create_payload();
+
+		$this->assertArrayHasKey(
+			'bid_type',
+			$data,
+			'Ad group payload is missing bid_type.'
+		);
+		$this->assertSame( 'CPM', $data['bid_type'] );
+	}
 }
