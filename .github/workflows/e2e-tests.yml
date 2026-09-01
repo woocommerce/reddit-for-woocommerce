@@ -8,6 +8,16 @@ on:
   pull_request:
     # We include `labeled` so adding the label re-triggers the workflow.
     types: [opened, synchronize, reopened, labeled]
+  workflow_dispatch:
+    inputs:
+      wp-rc-version:
+        description: 'WordPress RC version (e.g. 6.3-RC3) — leave blank to skip'
+        required: false
+        type: string
+      wc-rc-version:
+        description: 'WooCommerce RC version (e.g. 9.0.0-rc.1) — leave blank to skip'
+        required: false
+        type: string
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -64,6 +74,24 @@ jobs:
 
       - name: Setup WP environment
         run: npm run env:start
+
+      # Optional RC installs for manual (workflow_dispatch) runs. These steps are
+      # skipped on push/PR runs because `github.event.inputs.*` is empty there.
+      - name: Install WordPress release candidate (optional)
+        if: ${{ github.event.inputs.wp-rc-version != '' }}
+        env:
+          INPUT_WP_RC_VERSION: ${{ github.event.inputs.wp-rc-version }}
+        run: |
+          npx wp-env run tests-cli -- wp core update --version="${INPUT_WP_RC_VERSION}"
+          npx wp-env run tests-cli -- wp core update-db
+
+      - name: Install WooCommerce release candidate (optional)
+        if: ${{ github.event.inputs.wc-rc-version != '' }}
+        env:
+          INPUT_WC_RC_VERSION: ${{ github.event.inputs.wc-rc-version }}
+        run: |
+          npx wp-env run tests-cli -- wp plugin update woocommerce --version="${INPUT_WC_RC_VERSION}"
+          npx wp-env run tests-cli -- wp wc update
 
       - name: Check if the site is running
         run: curl -I http://localhost:8889
