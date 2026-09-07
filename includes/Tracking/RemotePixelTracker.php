@@ -171,7 +171,7 @@ final class RemotePixelTracker implements PixelTrackerInterface {
 	/**
 	 * Emits the Reddit `PURCHASE` tracking event after a successful order.
 	 *
-	 * Hooked into `woocommerce_before_thankyou`. Avoids duplicate firing via meta key.
+	 * Hooked into `wp_footer`. Avoids duplicate firing via meta key.
 	 *
 	 * @since 0.1.0
 	 */
@@ -187,8 +187,33 @@ final class RemotePixelTracker implements PixelTrackerInterface {
 		$order_id = (int) get_query_var( 'order-received' );
 		$order    = wc_get_order( $order_id );
 
-		// Make sure there is a valid order object and it is not already marked as tracked.
-		if ( ! $order || 1 === (int) $order->get_meta( self::ORDER_PIXEL_TRACKED_META_KEY, true ) ) {
+		if ( ! $order ) {
+			return;
+		}
+
+		// Confirm the request is authorized to view this order before reading its
+		// details or writing meta. This handler runs on `wp_footer` and loads the
+		// order straight from the public `order-received` query var, independently
+		// of WooCommerce's own rendering — which shows only a generic confirmation
+		// page when the order key is missing or invalid. Without this check the
+		// pixel would still expose the order's data, including the order key it
+		// embeds as `conversionId`, to any unauthenticated visitor who guesses the
+		// order ID. Mirror the key check in WC_Shortcode_Checkout::order_received()
+		// so both agree on who may see the order.
+		//
+		// The order key is itself the capability token (there is no nonce on this
+		// GET request), so nonce verification does not apply. sanitize_text_field()
+		// also coerces non-string input (e.g. `?key[]=x`) to '', keeping it out of
+		// hash_equals().
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$order_key = sanitize_text_field( wp_unslash( $_GET['key'] ?? '' ) );
+
+		if ( ! hash_equals( $order->get_order_key(), $order_key ) ) {
+			return;
+		}
+
+		// Make sure the order is not already marked as tracked.
+		if ( 1 === (int) $order->get_meta( self::ORDER_PIXEL_TRACKED_META_KEY, true ) ) {
 			return;
 		}
 

@@ -1,8 +1,8 @@
 === Reddit for WooCommerce ===
 Contributors: automattic, woocommerce
 Tags: woocommerce, woo, reddit, product feed, ads
-Tested up to: 7.0
-Stable tag: 1.0.3
+Tested up to: 7.1
+Stable tag: 1.0.5
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -55,6 +55,19 @@ Yes, it uses a [Jetpack](https://jetpack.com/) account to connect and communicat
 
 == Changelog ==
 
+= 1.0.5 - 2026-08-19 =
+* Fix - Validate the order key before firing the Reddit purchase pixel on the order-received page, preventing order details from being exposed to unauthenticated visitors.
+* Dev - Update WPCS to 3.4.1 to fix CVE-2026-45293, an arbitrary code execution vulnerability in WordPress Coding Standards.
+* Tweak - Bump WordPress "Tested up to" version to 7.1
+* Tweak - Bump WordPress "Requires at least" version to 6.9
+
+= 1.0.4 - 2026-07-20 =
+* Add - Include partner details in Reddit Pixel and CAPI requests.
+* Add - Include Pixel ID when creating new campaigns.
+* Add - Add RTL support.
+* Fix - Fix disconnect failure when the Catalog Manager role is removed after initial setup.
+* Dev - Scope Reddit JS bundle to load only on the Reddit admin page.
+
 = 1.0.3 - 2026-01-22 =
 * Update - Replace the billing card with an informational note to prevent potential confusion.
 * Update - UX improvements for the Reddit Ads card.
@@ -64,15 +77,5 @@ Yes, it uses a [Jetpack](https://jetpack.com/) account to connect and communicat
 * Fix - UX improvements for catalog creation failure handling.
 * Fix – Ensure that switching businesses during onboarding connects the correct ad account.
 * Dev – Fix flaky PHPUnit test in `ProductExportServiceTest`.
-
-= 1.0.2 - 2026-01-07 =
-* Update - Average daily budget suggestions.
-* Tweak - WooCommerce 10.4 compatibility.
-* Dev - Set up woorelease GH workflows.
-
-= 1.0.1 - 2025-12-09 =
-* Add - Implement Create Campaign during onboarding.
-* Improved - create campaign defaults and UI improvements.
-* Tweak - WordPress 6.9 compatibility.
 
 [See changelog for all versions](https://raw.githubusercontent.com/woocommerce/reddit-for-woocommerce/trunk/changelog.txt).
