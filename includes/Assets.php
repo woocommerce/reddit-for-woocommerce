@@ -91,7 +91,6 @@ class Assets {
 			 *
 			 *     @type bool   $is_pixel_enabled      Whether pixel tracking is enabled.
 			 *     @type bool   $is_conversion_enabled Whether conversion tracking is enabled.
-			 *     @type string $capi_nonce            Nonce used for secure AJAX requests.
 			 * }
 			 *
 			 * @return array Modified tracking data.
@@ -102,7 +101,6 @@ class Assets {
 					'ajax_url'              => admin_url( 'admin-ajax.php' ),
 					'is_pixel_enabled'      => PixelTrackingService::is_enabled(),
 					'is_conversion_enabled' => ConversionTrackingService::is_enabled(),
-					'capi_nonce'            => wp_create_nonce( 'capi_nonce' ),
 					'prefix'                => Helper::with_prefix( '' ),
 					'currency'              => get_woocommerce_currency(),
 				)
