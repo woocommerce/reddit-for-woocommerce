@@ -190,8 +190,15 @@ final class WcsClient {
 		if ( $requires_auth ) {
 			$jetpack_token = $this->authenticator->get_auth_header();
 
+			if ( is_wp_error( $jetpack_token ) ) {
+				return $jetpack_token;
+			}
+
 			if ( empty( $jetpack_token ) ) {
-				return new WP_REST_Response( array( 'message' => 'Jetpack token missing' ) );
+				return new WP_Error(
+					Helper::with_prefix( 'jetpack_token_missing' ),
+					__( 'Jetpack token missing.', 'reddit-for-woocommerce' )
+				);
 			}
 
 			$args['headers']['Authorization'] = $jetpack_token;
@@ -239,9 +246,11 @@ final class WcsClient {
 			return new WP_REST_Response( $body, $code );
 		}
 
+		$error_message = $body['error']['message'] ?? $body['message'] ?? __( 'Request failed', 'reddit-for-woocommerce' );
+
 		return new WP_Error(
 			Helper::with_prefix( 'request_failed' ),
-			__( 'Request failed', 'reddit-for-woocommerce' ),
+			$error_message,
 			$response
 		);
 	}
