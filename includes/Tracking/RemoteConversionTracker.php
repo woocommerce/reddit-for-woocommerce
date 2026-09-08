@@ -105,8 +105,9 @@ class RemoteConversionTracker implements ConversionTrackerInterface {
 		$event   = new PurchaseEvent( $order_id );
 		$payload = $event->build_payload(
 			array(
-				'conversion_id' => $order->get_order_key(),
-				'user_data'     => UserIdentifier::get_user_data(),
+				'conversion_id'    => $order->get_order_key(),
+				'user_data'        => UserIdentifier::get_user_data(),
+				'event_source_url' => Helper::get_event_source_url(),
 			)
 		);
 		$args    = array( 'order_id' => $order_id );
@@ -143,8 +144,9 @@ class RemoteConversionTracker implements ConversionTrackerInterface {
 		$event   = new AddToCartEvent( $product_id, $quantity );
 		$payload = $event->build_payload(
 			array(
-				'conversion_id' => $event_id,
-				'user_data'     => UserIdentifier::get_user_data(),
+				'conversion_id'    => $event_id,
+				'user_data'        => UserIdentifier::get_user_data(),
+				'event_source_url' => Helper::get_event_source_url(),
 			)
 		);
 
@@ -191,8 +193,9 @@ class RemoteConversionTracker implements ConversionTrackerInterface {
 		$event   = new ViewContentEvent( $product_id );
 		$payload = $event->build_payload(
 			array(
-				'conversion_id' => $event_id,
-				'user_data'     => UserIdentifier::get_user_data(),
+				'conversion_id'    => $event_id,
+				'user_data'        => UserIdentifier::get_user_data(),
+				'event_source_url' => Helper::get_event_source_url(),
 			)
 		);
 
@@ -230,8 +233,9 @@ class RemoteConversionTracker implements ConversionTrackerInterface {
 		$event   = new PageVisitEvent();
 		$payload = $event->build_payload(
 			array(
-				'conversion_id' => $event_id,
-				'user_data'     => UserIdentifier::get_user_data(),
+				'conversion_id'    => $event_id,
+				'user_data'        => UserIdentifier::get_user_data(),
+				'event_source_url' => Helper::get_event_source_url(),
 			)
 		);
 
@@ -277,8 +281,12 @@ class RemoteConversionTracker implements ConversionTrackerInterface {
 		$event        = new PurchaseEvent( $latest_order_id );
 		$payload      = $event->build_payload(
 			array(
-				'conversion_id' => $latest_order ? $latest_order->get_order_key() : wp_generate_uuid4(),
-				'user_data'     => UserIdentifier::get_user_data(),
+				'conversion_id'    => $latest_order ? $latest_order->get_order_key() : wp_generate_uuid4(),
+				'user_data'        => UserIdentifier::get_user_data(),
+				// Synthetic onboarding event fired from an admin request; use the
+				// store root so the payload carries the store domain rather than an
+				// admin URL.
+				'event_source_url' => home_url( '/' ),
 			)
 		);
 
