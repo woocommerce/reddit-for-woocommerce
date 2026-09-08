@@ -55,6 +55,17 @@ Yes, it uses a [Jetpack](https://jetpack.com/) account to connect and communicat
 
 == Changelog ==
 
+= 1.0.6 - 2026-09-08 =
+* Fix - Add widened backward-compatibility guardrails to AGENTS.md.
+* Fix - AddToCart CAPI events now carry a non-empty conversion ID for the `?add-to-cart=` flow.
+* Fix - Bump WooCommerce "tested up to" version to 11.1.
+* Fix - ci: add job-level timeout-minutes to workflow jobs.
+* Fix - Include pixel ID query parameter in the Reddit Pixel script URL.
+* Fix - Pin GitHub Actions and their nested dependencies to immutable commit SHAs.
+* Fix - REDTWOO-155 Include Event Source URL.
+* Fix - REDTWOO-157 Conversion API PageVisit and Sync Fix.
+* Fix - Set required `bid_type` of `CPM` when creating a Reddit ad group, fixing "Request failed" errors that blocked onboarding completion.
+
 = 1.0.5 - 2026-08-19 =
 * Fix - Validate the order key before firing the Reddit purchase pixel on the order-received page, preventing order details from being exposed to unauthenticated visitors.
 * Dev - Update WPCS to 3.4.1 to fix CVE-2026-45293, an arbitrary code execution vulnerability in WordPress Coding Standards.
@@ -67,15 +78,5 @@ Yes, it uses a [Jetpack](https://jetpack.com/) account to connect and communicat
 * Add - Add RTL support.
 * Fix - Fix disconnect failure when the Catalog Manager role is removed after initial setup.
 * Dev - Scope Reddit JS bundle to load only on the Reddit admin page.
-
-= 1.0.3 - 2026-01-22 =
-* Update - Replace the billing card with an informational note to prevent potential confusion.
-* Update - UX improvements for the Reddit Ads card.
-* Fix - Ensure that the catalog is recreated after product export if the user deletes the auto-generated catalog.
-* Fix - Ensure that the created campaign is archived when disconnecting the Reddit account.
-* Fix - Strip HTML tags from the product description for the CSV export.
-* Fix - UX improvements for catalog creation failure handling.
-* Fix – Ensure that switching businesses during onboarding connects the correct ad account.
-* Dev – Fix flaky PHPUnit test in `ProductExportServiceTest`.
 
 [See changelog for all versions](https://raw.githubusercontent.com/woocommerce/reddit-for-woocommerce/trunk/changelog.txt).
