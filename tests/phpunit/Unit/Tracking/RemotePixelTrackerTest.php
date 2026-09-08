@@ -233,10 +233,35 @@ class RemotePixelTrackerTest extends WP_UnitTestCase {
 		$tracker->maybe_inject_pixel();
 		$output = ob_get_clean();
 
+		$this->assertStringContainsString( 'https://www.redditstatic.com/ads/pixel.js?pixel_id=pixel-123', $output );
 		$this->assertStringContainsString( 'rdt(\'init\', "pixel-123", {', $output );
 		$this->assertStringContainsString( '"partner":"WOOCOMMERCE"', $output );
 		$this->assertStringContainsString(
 			'"partner_version":"' . REDDIT_FOR_WOOCOMMERCE_VERSION . '"',
+			$output
+		);
+	}
+
+	/**
+	 * Test that pixel IDs containing characters permitted by sanitize_text_field()
+	 * (e.g. `&` and spaces) are URL-encoded in the script `src`, rather than
+	 * breaking the query string.
+	 */
+	public function test_maybe_inject_pixel_encodes_pixel_id_in_script_src() {
+		remove_filter( Helper::with_prefix( 'filter_pixel_script' ), array( $this, 'mock_script' ) );
+
+		$pixel_id = 'pixel 123&foo=bar';
+		Options::set( OptionDefaults::PIXEL_ID, $pixel_id );
+
+		$wcs     = $this->createMock( WcsClient::class );
+		$tracker = new RemotePixelTracker( $wcs );
+
+		ob_start();
+		$tracker->maybe_inject_pixel();
+		$output = ob_get_clean();
+
+		$this->assertStringContainsString(
+			'https://www.redditstatic.com/ads/pixel.js?pixel_id=' . esc_js( rawurlencode( $pixel_id ) ),
 			$output
 		);
 	}
