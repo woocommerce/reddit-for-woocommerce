@@ -9,6 +9,8 @@
 namespace RedditForWooCommerce\Utils;
 
 use RedditForWooCommerce\Config;
+use RedditForWooCommerce\Utils\Storage\Options;
+use RedditForWooCommerce\Utils\Storage\OptionDefaults;
 use DateTime;
 use DateTimeZone;
 
@@ -271,5 +273,45 @@ class Helper {
 	public static function amount_to_microcurrency( float $amount ): int {
 		// Convert to float, multiply by 1,000,000, and round to nearest integer.
 		return (int) round( $amount * 1_000_000 );
+	}
+
+	/**
+	 * Determines whether collecting customer PII for conversion matching is enabled.
+	 *
+	 * @since 0.1.0
+	 *
+	 * @return bool True if the setting is enabled, false otherwise.
+	 */
+	public static function is_collect_pii_enabled(): bool {
+		return 'yes' === Options::get( OptionDefaults::COLLECT_PII );
+	}
+
+	/**
+	 * Determines whether the store's base country falls under GDPR or UK GDPR.
+	 *
+	 * When the base country cannot be resolved, the store is treated as GDPR so
+	 * consent-first defaults apply.
+	 *
+	 * @since 0.1.0
+	 *
+	 * @return bool True if the base country is in the EU, EEA, or the UK.
+	 */
+	public static function is_gdpr_region(): bool {
+		if ( ! function_exists( 'wc_get_base_location' ) || ! function_exists( 'WC' ) ) {
+			return true;
+		}
+
+		$base_location = wc_get_base_location();
+		$country       = $base_location['country'] ?? '';
+
+		if ( '' === $country ) {
+			return true;
+		}
+
+		// EU member states, plus the remaining EEA states and the UK, which apply GDPR-equivalent rules.
+		$eu_countries   = WC()->countries->get_european_union_countries();
+		$gdpr_countries = array_merge( $eu_countries, array( 'IS', 'LI', 'NO', 'GB' ) );
+
+		return in_array( $country, $gdpr_countries, true );
 	}
 }
