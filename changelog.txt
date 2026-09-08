@@ -1,15 +1,12 @@
 *** Reddit for WooCommerce Changelog ***
 
 = 1.0.6 - 2026-09-08 =
-* Fix - Add widened backward-compatibility guardrails to AGENTS.md.
-* Fix - AddToCart CAPI events now carry a non-empty conversion ID for the `?add-to-cart=` flow.
-* Fix - Bump WooCommerce "tested up to" version to 11.1.
-* Fix - ci: add job-level timeout-minutes to workflow jobs.
-* Fix - Include pixel ID query parameter in the Reddit Pixel script URL.
-* Fix - Pin GitHub Actions and their nested dependencies to immutable commit SHAs.
-* Fix - REDTWOO-155 Include Event Source URL.
-* Fix - REDTWOO-157 Conversion API PageVisit and Sync Fix.
 * Fix - Set required `bid_type` of `CPM` when creating a Reddit ad group, fixing "Request failed" errors that blocked onboarding completion.
+* Fix - AddToCart CAPI events now carry a non-empty conversion ID for the `?add-to-cart=` flow.
+* Fix - Include the event source URL in Reddit Conversions API payloads, improving domain detection and click ID fallback matching.
+* Fix - Send PageVisit and ViewContent Conversions API events asynchronously so they no longer block the visitor's page load.
+* Tweak - Bump WooCommerce "tested up to" version to 11.1.
+* Tweak - Include pixel ID query parameter in the Reddit Pixel script URL.
 
 = 1.0.5 - 2026-08-19 =
 * Fix - Validate the order key before firing the Reddit purchase pixel on the order-received page, preventing order details from being exposed to unauthenticated visitors.
