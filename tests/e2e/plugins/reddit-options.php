@@ -14,6 +14,51 @@ if ( class_exists( Options::class ) && defined( 'E2E_CONTEXT' ) ) {
 			return '<script>window.rdt=function(){window.rdt.queue.push(Array.from(arguments))},window.rdt.queue=[];</script>';
 		}
 	);
+
+	add_filter(
+		Helper::with_prefix( 'has_marketing_consent' ),
+		function() {
+			return 'no' !== get_option( 'reddit_e2e_consent', 'yes' );
+		}
+	);
+}
+
+/**
+ * Registers a REST API endpoint to control marketing consent state for E2E tests.
+ *
+ * Route: POST /wp-json/reddit-e2e/v1/set-consent
+ * Body:  { "consent": true|false }
+ */
+add_action( 'rest_api_init', function () {
+	register_rest_route( 'reddit-e2e/v1', '/set-consent', array(
+		'methods'             => 'POST',
+		'callback'            => 'reddit_e2e_set_consent_callback',
+		'permission_callback' => '__return_true',
+		'args'                => array(
+			'consent' => array(
+				'type'     => 'boolean',
+				'required' => true,
+			),
+		),
+	) );
+} );
+
+/**
+ * Sets the E2E marketing consent option.
+ *
+ * @param WP_REST_Request $request REST request object.
+ * @return WP_REST_Response
+ */
+function reddit_e2e_set_consent_callback( WP_REST_Request $request ) {
+	if ( ! defined( 'E2E_CONTEXT' ) || ! E2E_CONTEXT ) {
+		return new WP_REST_Response( array(
+			'error' => 'Endpoint only allowed in E2E context.',
+		), 403 );
+	}
+
+	update_option( 'reddit_e2e_consent', $request->get_param( 'consent' ) ? 'yes' : 'no' );
+
+	return new WP_REST_Response( array( 'success' => true ) );
 }
 
 /**

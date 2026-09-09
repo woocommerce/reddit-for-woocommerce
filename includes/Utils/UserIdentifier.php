@@ -11,11 +11,16 @@
 
 namespace RedditForWooCommerce\Utils;
 
+use RedditForWooCommerce\Tracking\Consent;
+
 /**
  * Builds the user_data structure for CAPI event payloads.
  *
- * This includes device metadata (IP, UA), Reddit cookies, and click ID data.
- * Intended to improve event match rate and attribution accuracy.
+ * This includes device metadata (IP, UA), Reddit cookies, click ID data,
+ * and — when marketing consent is granted — hashed billing email and phone
+ * number for Reddit Advanced Matching.
+ *
+ * @see https://business.reddithelp.com/s/article/advanced-matching-for-developers
  *
  * @since 0.1.0
  */
@@ -56,7 +61,100 @@ final class UserIdentifier {
 			$data['click_id'] = $click_id;
 		}
 
+		if ( Consent::has_marketing_consent() ) {
+			self::add_user_data( $data );
+		}
+
 		return $data;
+	}
+
+	/**
+	 * Adds hashed billing email and phone number from the current WooCommerce order
+	 * to the user data array for Reddit Advanced Matching.
+	 *
+	 * Values are only extracted on the WooCommerce order-received page. Email and
+	 * phone are normalised and hashed with SHA-256 per Reddit's specification.
+	 *
+	 * @see https://business.reddithelp.com/s/article/advanced-matching-for-developers
+	 *
+	 * @since 1.0.4
+	 *
+	 * @param array<string,mixed> $data Reference to the user_data array.
+	 * @return void
+	 */
+	public static function add_user_data( array &$data ): void {
+		$order_id = (int) get_query_var( 'order-received' );
+		$order    = wc_get_order( $order_id );
+
+		if ( ! $order instanceof \WC_Order ) {
+			return;
+		}
+
+		$email = $order->get_billing_email();
+		if ( $email ) {
+			$data['user']['email'] = hash( 'sha256', self::normalise_email( $email ) );
+		}
+
+		$phone = $order->get_billing_phone();
+		if ( $phone ) {
+			$normalised = self::normalise_phone( $phone );
+
+			if ( $normalised ) {
+				$data['user']['phone_number'] = hash( 'sha256', $normalised );
+			}
+		}
+	}
+
+	/**
+	 * Normalises an email address per Reddit's Advanced Matching specification.
+	 *
+	 * Steps:
+	 * 1. Convert to lowercase.
+	 * 2. Remove the alias (anything between + and @).
+	 * 3. Remove non-alphanumeric characters from what remains
+	 * 4. Return the normalised email address.
+	 *
+	 * @see https://business.reddithelp.com/s/article/advanced-matching-for-developers
+	 *
+	 * @since 1.0.4
+	 *
+	 * @param string $email Raw email address.
+	 * @return string normalised email address.
+	 */
+	public static function normalise_email( string $email ): string {
+		$normalised = strtolower( $email );
+		$normalised = preg_replace( '/\+[^@]*@/', '@', $normalised );
+
+		list( $email_prefix, $email_domain ) = explode( '@', $normalised, 2 );
+		$email_prefix                        = preg_replace( '/[^a-z0-9]/', '', $email_prefix );
+
+		return $email_prefix . '@' . $email_domain;
+	}
+
+	/**
+	 * Normalises a phone number per Reddit's Advanced Matching specification.
+	 *
+	 * Steps:
+	 * 1. Remove the extension (e.g. "ext. 789").
+	 * 2. Remove all non-numeric characters.
+	 * 3. Prepend + to ensure E.164-style format.
+	 *
+	 * @see https://business.reddithelp.com/s/article/advanced-matching-for-developers
+	 *
+	 * @since 1.0.4
+	 *
+	 * @param string $phone Raw phone number.
+	 * @return string normalised phone number, or empty string if no digits remain.
+	 */
+	public static function normalise_phone( string $phone ): string {
+		$normalised = preg_replace( '/\s*(ext\.?|extension)\s*\d+$/i', '', $phone );
+		$normalised = preg_replace( '/\D+/', '', $normalised );
+
+		if ( ! $normalised ) {
+			return '';
+		}
+
+		return '+' . $normalised;
 	}
 
 	/**
