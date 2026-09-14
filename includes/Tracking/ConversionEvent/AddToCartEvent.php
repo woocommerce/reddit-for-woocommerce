@@ -102,7 +102,7 @@ final class AddToCartEvent extends AbstractEventPayloadBase implements Conversio
 			return 0.0;
 		}
 
-		return self::round_price( floatval( wc_get_price_to_display( $this->product ) ) * $this->quantity );
+		return $this->get_unit_price() * $this->quantity;
 	}
 
 	/**
@@ -151,10 +151,25 @@ final class AddToCartEvent extends AbstractEventPayloadBase implements Conversio
 			array(
 				'id'         => (string) $this->product->get_id(),
 				'name'       => $this->product->get_name(),
-				'item_price' => self::round_price( (float) wc_get_price_to_display( $this->product ) ),
+				'item_price' => $this->get_unit_price(),
 				'quantity'   => (int) $this->quantity,
 			),
 		);
+	}
+
+	/**
+	 * Retrieves the product's displayed unit price, rounded to the store's
+	 * price precision.
+	 *
+	 * Shared by `get_value()` and `get_products()` so the event value always
+	 * agrees exactly with `item_price` × `quantity` in the payload.
+	 *
+	 * @since 1.0.7
+	 *
+	 * @return float Rounded unit price.
+	 */
+	private function get_unit_price(): float {
+		return self::round_price( (float) wc_get_price_to_display( $this->product ) );
 	}
 
 	/**
