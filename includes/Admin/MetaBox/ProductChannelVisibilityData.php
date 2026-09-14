@@ -21,17 +21,6 @@ use WC_Product;
 final class ProductChannelVisibilityData {
 
 	/**
-	 * Whether to enqueue the channel-visibility bundle on this request.
-	 *
-	 * @since 0.1.0
-	 *
-	 * @return bool
-	 */
-	public static function should_enqueue_channel_visibility_bundle(): bool {
-		return null !== self::get_channel_visibility_inline_block();
-	}
-
-	/**
 	 * Builds the `channelVisibility` object for `redditAdsMetaBoxData`.
 	 *
 	 * @since 0.1.0

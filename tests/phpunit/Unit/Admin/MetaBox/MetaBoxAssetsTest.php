@@ -244,6 +244,59 @@ final class MetaBoxAssetsTest extends WP_UnitTestCase {
 		}
 	}
 
+	public function test_real_channel_visibility_meta_read_only_once_per_enqueue_assets_call(): void {
+		$get_backup = $_GET;
+		global $post;
+		$post_backup = $post instanceof \WP_Post ? $post : null;
+
+		$wc_product = \WC_Helper_Product::create_simple_product();
+		$product_id = $wc_product->get_id();
+		$post_obj   = get_post( $product_id );
+		$this->assertNotNull( $post_obj );
+
+		$field_name = Helper::with_prefix( ChannelVisibilityMetaBox::CATALOG_ITEM );
+		$read_count = 0;
+
+		$count_reads = static function ( $value, $meta_post_id, $meta_key ) use ( &$read_count, $product_id, $field_name ) {
+			if ( $meta_post_id === $product_id && $meta_key === $field_name ) {
+				++$read_count;
+			}
+
+			return $value;
+		};
+
+		add_filter( 'get_post_metadata', $count_reads, 10, 4 );
+
+		try {
+			// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+			$post = $post_obj;
+
+			$this->run_real_enqueue_in_admin_screen_context(
+				array(
+					'post'   => (string) $product_id,
+					'action' => 'edit',
+				),
+				'product'
+			);
+
+			$this->assertSame(
+				1,
+				$read_count,
+				'Expected the channel-visibility meta to be read exactly once per enqueue_assets() call.'
+			);
+		} finally {
+			remove_filter( 'get_post_metadata', $count_reads, 10 );
+
+			if ( $post_backup instanceof \WP_Post ) {
+				// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+				$post = $post_backup;
+			} else {
+				unset( $GLOBALS['post'] );
+			}
+			$_GET = $get_backup;
+		}
+	}
+
 	public function test_real_channel_bundle_not_enqueued_on_product_screen_without_global_post(): void {
 		$get_backup = $_GET;
 		global $post;
