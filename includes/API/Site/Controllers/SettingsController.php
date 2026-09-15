@@ -84,6 +84,11 @@ class SettingsController extends RESTBaseController {
 			Options::set( OptionDefaults::WCS_PRODUCTS_TOKEN, sanitize_text_field( $request['products_token'] ) );
 		}
 
+		if ( isset( $request['collect_pii'] ) ) {
+			$collect_pii_status = rest_sanitize_boolean( $request['collect_pii'] );
+			Options::set( OptionDefaults::COLLECT_PII, $collect_pii_status ? 'yes' : 'no' );
+		}
+
 		return rest_ensure_response(
 			$this->get_settings_response()
 		);
@@ -111,6 +116,7 @@ class SettingsController extends RESTBaseController {
 				'export_file_url'       => file_exists( $csv_path ) ? Options::get( OptionDefaults::EXPORT_FILE_URL ) : '',
 				'products_token'        => Options::get( OptionDefaults::WCS_PRODUCTS_TOKEN ),
 				'campaign_created'      => $campaign_created,
+				'collect_pii'           => 'yes' === Options::get( OptionDefaults::COLLECT_PII ),
 			)
 		);
 	}

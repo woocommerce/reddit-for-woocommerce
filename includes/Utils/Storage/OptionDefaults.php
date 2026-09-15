@@ -195,6 +195,14 @@ final class OptionDefaults {
 	public const CAMPAIGN_IDS = 'campaign_ids';
 
 	/**
+	 * Option key that toggles whether customer PII is collected and shared
+	 * with Conversions API events to improve ads measurement.
+	 *
+	 * @since 0.1.0
+	 */
+	public const COLLECT_PII = 'collect_pii';
+
+	/**
 	 * Returns default values for all known Ad Partner options.
 	 *
 	 * Used by {@see Options} to provide fallbacks when option values
@@ -228,6 +236,7 @@ final class OptionDefaults {
 			self::DUMMY_PURCHASE_TRACKED => 'no',
 			self::ADS_ACCOUNT_CURRENCY   => get_woocommerce_currency(),
 			self::CAMPAIGN_IDS           => array(),
+			self::COLLECT_PII            => 'no',
 		);
 	}
 }
