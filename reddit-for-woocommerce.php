@@ -24,6 +24,7 @@
 
 use RedditForWooCommerce\Utils\Storage\Options;
 use RedditForWooCommerce\Utils\Storage\OptionDefaults;
+use RedditForWooCommerce\Utils\Helper;
 use RedditForWooCommerce\ServiceContainer;
 use RedditForWooCommerce\ServiceKey;
 
@@ -64,7 +65,14 @@ $export_service = ServiceContainer::get( ServiceKey::PRODUCT_EXPORT_SERVICE );
 register_activation_hook(
 	__FILE__,
 	function () use ( $export_service ) {
+		$is_fresh_install = get_option( Options::get_key( OptionDefaults::ONBOARDING_STATUS ), null ) === null;
+
 		Options::preload_defaults();
+
+		// New installs enable PII collection by default, except in GDPR regions where the merchant must opt in.
+		if ( $is_fresh_install && ! Helper::is_gdpr_region() ) {
+			Options::set( OptionDefaults::COLLECT_PII, 'yes' );
+		}
 
 		// Schedule recurring CSV export task when the plugin is activated.
 		if ( 'connected' === Options::get( OptionDefaults::ONBOARDING_STATUS ) ) {
