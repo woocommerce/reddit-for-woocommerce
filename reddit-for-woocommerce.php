@@ -57,6 +57,10 @@ if ( ! defined( 'REDDIT_FOR_WOOCOMMERCE_DEBUG' ) ) {
 	define( 'REDDIT_FOR_WOOCOMMERCE_DEBUG', false );
 }
 
+if ( ! defined( 'REDDIT_FOR_WOOCOMMERCE_TRACKING_SLUG' ) ) {
+	define( 'REDDIT_FOR_WOOCOMMERCE_TRACKING_SLUG', 'redtwoo' );
+}
+
 require_once plugin_dir_path( __FILE__ ) . '/vendor/autoload_packages.php';
 
 $export_service = ServiceContainer::get( ServiceKey::PRODUCT_EXPORT_SERVICE );
