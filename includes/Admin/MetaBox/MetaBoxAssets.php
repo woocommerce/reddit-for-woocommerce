@@ -48,8 +48,10 @@ class MetaBoxAssets {
 			return;
 		}
 
-		if ( ProductChannelVisibilityData::should_enqueue_channel_visibility_bundle() ) {
-			$this->enqueue_channel_visibility_assets();
+		$channel_visibility = ProductChannelVisibilityData::get_channel_visibility_inline_block();
+
+		if ( null !== $channel_visibility ) {
+			$this->enqueue_channel_visibility_assets( $channel_visibility );
 		}
 	}
 
@@ -112,15 +114,11 @@ class MetaBoxAssets {
 	 *
 	 * @since 0.1.0
 	 *
+	 * @param array<string,mixed> $channel_visibility Inline data built by ProductChannelVisibilityData.
+	 *
 	 * @return void
 	 */
-	private function enqueue_channel_visibility_assets(): void {
-		$channel_visibility = ProductChannelVisibilityData::get_channel_visibility_inline_block();
-
-		if ( null === $channel_visibility ) {
-			return;
-		}
-
+	private function enqueue_channel_visibility_assets( array $channel_visibility ): void {
 		AssetLoader::enqueue_script( 'channel-visibility-meta-box', 'channel-visibility-meta-box' );
 
 		// Inject AdminData because the main bundle is not loaded on product edit screens.
