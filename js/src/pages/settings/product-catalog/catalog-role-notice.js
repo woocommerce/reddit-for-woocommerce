@@ -108,10 +108,36 @@ const CatalogRoleNotice = () => {
 		</p>
 	);
 
+	const unsupportedCurrencyNotice = (
+		<p>
+			{ createInterpolateElement(
+				__(
+					'Store currency is not supported by Reddit for WooCommerce. Please <link>change your store currency</link> to one of the supported options: USD, GBP, CAD, EUR, AUD, JPY, CHF, NZD, SEK, NOK.',
+					'reddit-for-woocommerce'
+				),
+				{
+					link: (
+						// eslint-disable-next-line jsx-a11y/anchor-has-content
+						<a
+							target="_blank"
+							rel="external noreferrer noopener"
+							href="/wp-admin/admin.php?page=wc-settings&tab=general"
+						/>
+					),
+				}
+			) }
+		</p>
+	);
+
 	const isPermissionError = catalogCreationError === 'PERMISSION_ERROR';
 	const isCatalogAlreadyExists =
 		catalogCreationError === 'CATALOG_ALREADY_EXISTS';
-	const isOtherError = ! isPermissionError && ! isCatalogAlreadyExists;
+	const isUnsupportedCurrency =
+		catalogCreationError === 'UNSUPPORTED_CURRENCY';
+	const isOtherError =
+		! isPermissionError &&
+		! isCatalogAlreadyExists &&
+		! isUnsupportedCurrency;
 
 	return (
 		<AppNotice
@@ -121,6 +147,7 @@ const CatalogRoleNotice = () => {
 		>
 			{ isPermissionError && permissionsErrorNotice }
 			{ isCatalogAlreadyExists && pixelAlreadyAttachedNotice }
+			{ isUnsupportedCurrency && unsupportedCurrencyNotice }
 			{ isOtherError && otherErrorNotice }
 			<AppButton
 				className="rfw-reddit-catalog-role-notice__create-catalog-button"

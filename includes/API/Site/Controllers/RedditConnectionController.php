@@ -20,6 +20,7 @@ use WP_REST_Response;
 use WP_Error;
 use RedditForWooCommerce\Config;
 use RedditForWooCommerce\Connection\WcsClient;
+use RedditForWooCommerce\Utils\CurrencyValidator;
 use RedditForWooCommerce\Utils\Storage\Options;
 use RedditForWooCommerce\Utils\Storage\OptionDefaults;
 use RedditForWooCommerce\Utils\Storage\Transients;
@@ -458,35 +459,46 @@ class RedditConnectionController extends RESTBaseController {
 			 */
 			do_action( Helper::with_prefix( 'ad_account_connected' ) );
 
-			// Create a new catalog for the business.
-			$response = $this->ad_partner_api->catalog->create();
-
-			if ( is_wp_error( $response ) ) {
-				$error_data = $response->get_error_data();
-				$error_body = isset( $error_data['body'] ) ? json_decode( $error_data['body'], true ) : array();
-				$logger     = wc_get_logger();
-				$logger->alert(
-					'Catalog generation failed with error code: ' . $response->get_error_code(),
-					$error_body
-				);
-
-				if ( isset( $error_body['error']['code'] ) ) {
-					$error_code    = absint( $error_body['error']['code'] );
-					$catalog_error = '';
-					if ( 403 === $error_code ) {
-						$catalog_error = 'PERMISSION_ERROR';
-					} elseif ( 400 === $error_code && strpos( $error_body['error']['message'], 'pixels already attached to a catalog' ) !== false ) {
-						$catalog_error = 'CATALOG_ALREADY_EXISTS';
-					}
-					Options::set( OptionDefaults::CATALOG_ERROR, $catalog_error );
-				}
+			if ( ! CurrencyValidator::is_supported() ) {
+				// Store currency isn't one Reddit's Catalog API accepts, skip the request entirely.
+				Options::set( OptionDefaults::CATALOG_ERROR, 'UNSUPPORTED_CURRENCY' );
 			} else {
-				$data         = $response->get_data();
-				$catalog_data = $data['data'] ?? array();
+				// Create a new catalog for the business.
+				$response = $this->ad_partner_api->catalog->create();
 
-				if ( ! empty( $catalog_data ) ) {
-					Options::set( OptionDefaults::CATALOG_ID, $catalog_data['id'] );
-					Options::delete( OptionDefaults::CATALOG_ERROR );
+				if ( is_wp_error( $response ) ) {
+					$error_data = $response->get_error_data();
+					$error_body = isset( $error_data['body'] ) ? json_decode( $error_data['body'], true ) : array();
+					$logger     = wc_get_logger();
+					$logger->alert(
+						'Catalog generation failed with error code: ' . $response->get_error_code(),
+						$error_body
+					);
+
+					if ( isset( $error_body['error']['code'] ) ) {
+						$error_code    = absint( $error_body['error']['code'] );
+						$error_message = $error_body['error']['message'] ?? '';
+						$catalog_error = '';
+						if ( 403 === $error_code ) {
+							$catalog_error = 'PERMISSION_ERROR';
+						} elseif ( 400 === $error_code && strpos( $error_message, 'pixels already attached to a catalog' ) !== false ) {
+							$catalog_error = 'CATALOG_ALREADY_EXISTS';
+						} elseif ( 400 === $error_code && false !== stripos( $error_message, 'currency' ) ) {
+							// Fail-safe for when the local supported-currency list is stale and Reddit rejects the request.
+							// NOTE: the exact message Reddit returns for this case is unconfirmed; this matches on the
+							// word "currency" in the error message and should be verified against a real API response.
+							$catalog_error = 'UNSUPPORTED_CURRENCY';
+						}
+						Options::set( OptionDefaults::CATALOG_ERROR, $catalog_error );
+					}
+				} else {
+					$data         = $response->get_data();
+					$catalog_data = $data['data'] ?? array();
+
+					if ( ! empty( $catalog_data ) ) {
+						Options::set( OptionDefaults::CATALOG_ID, $catalog_data['id'] );
+						Options::delete( OptionDefaults::CATALOG_ERROR );
+					}
 				}
 			}
 
