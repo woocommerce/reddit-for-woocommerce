@@ -151,34 +151,34 @@ test.describe( 'Channel Visibility Meta Box', () => {
 
 		test( 'Saving a product before onboarding does not reset its channel visibility', async () => {
 			// Only the promo banner renders here — there is no channel visibility
-			// dropdown for the form to submit — so this reproduces the report:
+			// toggle for the form to submit — so this reproduces the report:
 			// an unrelated product save must not flip the (default opted-in) sync
 			// preference to "Don't sync and show".
 			await setPromoDismissed( false );
 			await editorUtils.gotoEditProductPage( productId );
 
-			// Sanity: no settings dropdown is present before onboarding completes.
+			// Sanity: no settings toggle is present before onboarding completes.
 			await expect(
 				editorUtils
 					.getChannelVisibilityMetaBox()
-					.getByRole( 'combobox' )
+					.getByRole( 'checkbox' )
 			).toBeHidden();
 
 			// Save the product for an unrelated reason (the form is submitted with
 			// no channel visibility field present).
 			await editorUtils.save();
 
-			// Complete onboarding so the settings dropdown renders, then confirm the
-			// earlier save left the opt-in at its default ('1' = Sync and show)
-			// rather than resetting it to '0'.
+			// Complete onboarding so the settings toggle renders, then confirm the
+			// earlier save left the opt-in at its default (checked = Sync and show)
+			// rather than resetting it to unchecked.
 			await setOnboardingComplete( true );
 			await editorUtils.gotoEditProductPage( productId );
 
 			await expect(
 				editorUtils
 					.getChannelVisibilityMetaBox()
-					.getByRole( 'combobox' )
-			).toHaveValue( '1' );
+					.getByRole( 'checkbox' )
+			).toBeChecked();
 
 			// Restore onboarding state for the rest of this describe block.
 			await setOnboardingComplete( false );
@@ -194,12 +194,12 @@ test.describe( 'Channel Visibility Meta Box', () => {
 			await setOnboardingComplete( false );
 		} );
 
-		test( 'Shows channel visibility settings with dropdown', async () => {
+		test( 'Shows channel visibility settings with a toggle', async () => {
 			await editorUtils.gotoEditProductPage( productId );
 
 			const rfwBox = editorUtils.getChannelVisibilityMetaBox();
 
-			await expect( rfwBox.getByRole( 'combobox' ) ).toBeVisible();
+			await expect( rfwBox.getByRole( 'checkbox' ) ).toBeVisible();
 
 			await expect(
 				rfwBox.getByText( 'Get your products on Reddit' )
@@ -216,72 +216,70 @@ test.describe( 'Channel Visibility Meta Box', () => {
 			).toBeHidden();
 		} );
 
-		test( "Dropdown contains 'Sync and show' and 'Don't sync and show' options", async () => {
+		test( 'Toggle defaults to checked (sync and show)', async () => {
 			await editorUtils.gotoEditProductPage( productId );
 
 			const rfwBox = editorUtils.getChannelVisibilityMetaBox();
-			const select = rfwBox.getByRole( 'combobox' );
-			const options = select.locator( 'option' );
+			const toggle = rfwBox.getByRole( 'checkbox' );
 
-			await expect( select ).toBeVisible();
-			await expect( options ).toHaveCount( 2 );
-			await expect( select ).toHaveValue( '1' );
+			await expect( toggle ).toBeVisible();
+			await expect( toggle ).toBeChecked();
 		} );
 
-		test( 'Changing the dropdown updates the selected value', async () => {
+		test( 'Clicking the toggle updates the checked state', async () => {
 			await editorUtils.gotoEditProductPage( productId );
 
 			const rfwBox = editorUtils.getChannelVisibilityMetaBox();
-			const select = rfwBox.getByRole( 'combobox' );
+			const toggle = rfwBox.getByRole( 'checkbox' );
 
-			await expect( select ).toBeVisible();
+			await expect( toggle ).toBeVisible();
 
-			await select.selectOption( '0' );
-			await expect( select ).toHaveValue( '0' );
+			await toggle.click();
+			await expect( toggle ).not.toBeChecked();
 
-			await select.selectOption( '1' );
-			await expect( select ).toHaveValue( '1' );
+			await toggle.click();
+			await expect( toggle ).toBeChecked();
 		} );
 
-		test( 'Selected visibility value is saved when the product form is submitted', async () => {
+		test( 'Unchecking the toggle and saving persists the unchecked state', async () => {
 			await editorUtils.gotoEditProductPage( productId );
 
 			const rfwBox = editorUtils.getChannelVisibilityMetaBox();
-			const select = rfwBox.getByRole( 'combobox' );
+			const toggle = rfwBox.getByRole( 'checkbox' );
 
-			await select.selectOption( '0' );
-			await expect( select ).toHaveValue( '0' );
+			await toggle.click();
+			await expect( toggle ).not.toBeChecked();
 
 			await editorUtils.save();
 
-			const savedSelect = editorUtils
+			const savedToggle = editorUtils
 				.getChannelVisibilityMetaBox()
-				.getByRole( 'combobox' );
-			await expect( savedSelect ).toHaveValue( '0' );
+				.getByRole( 'checkbox' );
+			await expect( savedToggle ).not.toBeChecked();
 
-			await savedSelect.selectOption( '1' );
+			await savedToggle.click();
 			await editorUtils.save();
 		} );
 
-		test( 'Changed visibility value persists after navigating away and back', async () => {
+		test( 'Checked visibility value persists after navigating away and back', async () => {
 			await editorUtils.gotoEditProductPage( productId );
 
-			const select = editorUtils
+			const toggle = editorUtils
 				.getChannelVisibilityMetaBox()
-				.getByRole( 'combobox' );
+				.getByRole( 'checkbox' );
 
-			await select.selectOption( '0' );
+			await toggle.click();
 			await editorUtils.save();
 
 			await editorUtils.gotoEditProductPage( productId );
 
-			const selectAfterRefresh = editorUtils
+			const toggleAfterRefresh = editorUtils
 				.getChannelVisibilityMetaBox()
-				.getByRole( 'combobox' );
+				.getByRole( 'checkbox' );
 
-			await expect( selectAfterRefresh ).toHaveValue( '0' );
+			await expect( toggleAfterRefresh ).not.toBeChecked();
 
-			await selectAfterRefresh.selectOption( '1' );
+			await toggleAfterRefresh.click();
 			await editorUtils.save();
 		} );
 	} );
