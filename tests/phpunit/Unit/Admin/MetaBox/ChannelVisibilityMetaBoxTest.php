@@ -150,9 +150,45 @@ class ChannelVisibilityMetaBoxTest extends WP_UnitTestCase {
 	}
 
 	/**
-	 * save_meta writes '0' when the form field is absent (standalone mode).
+	 * save_meta leaves an existing opt-in untouched when the form field is absent
+	 * (standalone mode). An unrelated product save must not reset the preference.
 	 */
-	public function test_save_meta_writes_zero_when_field_absent_in_standalone_mode(): void {
+	public function test_save_meta_leaves_existing_optin_unchanged_when_field_absent_in_standalone_mode(): void {
+		global $wp_meta_boxes;
+		$wp_meta_boxes = array();
+
+		$post_id = $this->factory()->post->create( array( 'post_type' => 'product' ) );
+		update_post_meta( $post_id, $this->meta_key, '1' );
+		unset( $_POST[ $this->meta_key ] );
+
+		$this->sut->save_meta( $post_id );
+
+		$this->assertSame( '1', get_post_meta( $post_id, $this->meta_key, true ) );
+	}
+
+	/**
+	 * save_meta does not flip a previously opted-out product back to opted-in when
+	 * the form field is absent (standalone mode).
+	 */
+	public function test_save_meta_keeps_optout_when_field_absent_in_standalone_mode(): void {
+		global $wp_meta_boxes;
+		$wp_meta_boxes = array();
+
+		$post_id = $this->factory()->post->create( array( 'post_type' => 'product' ) );
+		update_post_meta( $post_id, $this->meta_key, '0' );
+		unset( $_POST[ $this->meta_key ] );
+
+		$this->sut->save_meta( $post_id );
+
+		$this->assertSame( '0', get_post_meta( $post_id, $this->meta_key, true ) );
+	}
+
+	/**
+	 * On a brand-new product saved before the widget renders (only the promo banner
+	 * shows, no select), save_meta writes nothing, leaving the meta at its default
+	 * unset state — which ProductChannelVisibilityData renders as opted-in ('1').
+	 */
+	public function test_save_meta_writes_nothing_for_new_product_when_field_absent(): void {
 		global $wp_meta_boxes;
 		$wp_meta_boxes = array();
 
@@ -161,7 +197,7 @@ class ChannelVisibilityMetaBoxTest extends WP_UnitTestCase {
 
 		$this->sut->save_meta( $post_id );
 
-		$this->assertSame( '0', get_post_meta( $post_id, $this->meta_key, true ) );
+		$this->assertSame( '', get_post_meta( $post_id, $this->meta_key, true ) );
 	}
 
 	// -------------------------------------------------------------------------
@@ -192,9 +228,11 @@ class ChannelVisibilityMetaBoxTest extends WP_UnitTestCase {
 	}
 
 	/**
-	 * save_meta writes '0' when the form field is absent (cohabit mode).
+	 * save_meta leaves an existing opt-in untouched when the form field is absent
+	 * (cohabit mode). The fix lives in the shared save path, so both modes behave
+	 * identically.
 	 */
-	public function test_save_meta_writes_zero_when_field_absent_in_cohabit_mode(): void {
+	public function test_save_meta_leaves_existing_optin_unchanged_when_field_absent_in_cohabit_mode(): void {
 		global $wp_meta_boxes;
 		$wp_meta_boxes = array(
 			'product' => array(
@@ -207,10 +245,11 @@ class ChannelVisibilityMetaBoxTest extends WP_UnitTestCase {
 		);
 
 		$post_id = $this->factory()->post->create( array( 'post_type' => 'product' ) );
+		update_post_meta( $post_id, $this->meta_key, '1' );
 		unset( $_POST[ $this->meta_key ] );
 
 		$this->sut->save_meta( $post_id );
 
-		$this->assertSame( '0', get_post_meta( $post_id, $this->meta_key, true ) );
+		$this->assertSame( '1', get_post_meta( $post_id, $this->meta_key, true ) );
 	}
 }
