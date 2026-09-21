@@ -105,7 +105,11 @@ const ChannelVisibilitySettings = () => {
 
 				{ ! productIsVisible && (
 					<FlexBlock>
-						<Notice status="info" isDismissible={ false }>
+						<Notice
+							className="rfw-channel-visibility__sync-notice"
+							status="info"
+							isDismissible={ false }
+						>
 							<p>
 								{ __(
 									'This product cannot be shown on any channel because it is hidden from your store catalog.',

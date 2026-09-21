@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { Flex, FlexBlock } from '@wordpress/components';
+import { Flex, FlexItem } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 
 /**
@@ -28,12 +28,12 @@ import GetStartedCTA from './get-started-cta';
  */
 const PromoCTA = ( { onDismiss } ) => {
 	return (
-		<Flex gap={ 3 } align="flex-start">
-			<FlexBlock>
+		<Flex gap={ 3 } align="flex-start" justify="flex-start">
+			<FlexItem>
 				<GetStartedCTA />
-			</FlexBlock>
+			</FlexItem>
 
-			<FlexBlock>
+			<FlexItem>
 				<AppButton
 					eventName="rfw_reddit_ads_promo_dismiss_click"
 					eventProps={ {
@@ -44,7 +44,7 @@ const PromoCTA = ( { onDismiss } ) => {
 				>
 					{ __( 'Dismiss', 'reddit-for-woocommerce' ) }
 				</AppButton>
-			</FlexBlock>
+			</FlexItem>
 		</Flex>
 	);
 };

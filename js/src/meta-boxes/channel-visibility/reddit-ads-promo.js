@@ -64,7 +64,7 @@ const RedditAdsPromo = () => {
 	}
 
 	return (
-		<Flex className="rfw-channel-visibility" direction="column" gap={ 4 }>
+		<Flex className="rfw-channel-visibility" direction="column" gap={ 5 }>
 			<FlexBlock>
 				<Flex gap={ 2 } align="center" justify="flex-start">
 					<FlexItem>
