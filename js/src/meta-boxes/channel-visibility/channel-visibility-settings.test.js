@@ -37,15 +37,18 @@ describe( 'ChannelVisibilitySettings', () => {
 
 	test( 'Renders a checked toggle when the product is set to sync and show', () => {
 		setChannelVisibilityData();
-		render( <ChannelVisibilitySettings /> );
+		const { container } = render( <ChannelVisibilitySettings /> );
 
 		const toggle = screen.getByRole( 'checkbox', {
 			name: 'Channel visibility setting',
 		} );
 
+		const hiddenInput = container.querySelector(
+			`input[name="${ FIELD_NAME }"]`
+		);
+
 		expect( toggle ).toBeChecked();
-		expect( toggle ).toHaveAttribute( 'name', FIELD_NAME );
-		expect( toggle ).toHaveAttribute( 'value', '1' );
+		expect( hiddenInput ).toHaveValue( '1' );
 	} );
 
 	test( "Renders an unchecked toggle when set to don't sync and show", () => {
@@ -131,45 +134,22 @@ describe( 'ChannelVisibilitySettings', () => {
 		).not.toBeInTheDocument();
 	} );
 
-	test( 'Renders a hidden fallback input before the toggle so an unchecked save still submits a value', () => {
+	test( 'Hidden input value mirrors the toggle state', () => {
 		setChannelVisibilityData();
 		const { container } = render( <ChannelVisibilitySettings /> );
 
-		// querySelectorAll returns elements in document order, so this also
-		// asserts the hidden input precedes the toggle: when a form is
-		// submitted, a later same-named field's value overwrites an earlier
-		// one's, so the checked toggle's value only wins if it comes second.
-		const inputs = container.querySelectorAll(
+		const hiddenInput = container.querySelector(
 			`input[name="${ FIELD_NAME }"]`
 		);
-
-		expect( inputs ).toHaveLength( 2 );
-		expect( inputs[ 0 ] ).toHaveAttribute( 'type', 'hidden' );
-		expect( inputs[ 0 ] ).toHaveValue( '0' );
-		expect( inputs[ 1 ] ).toHaveAttribute( 'type', 'checkbox' );
-	} );
-
-	test( 'Submits only the OFF value when unchecked, and both values (OFF then ON) when checked', () => {
-		setChannelVisibilityData();
-		const { container } = render(
-			<form>
-				<ChannelVisibilitySettings />
-			</form>
-		);
-
-		const form = container.querySelector( 'form' );
 		const toggle = screen.getByRole( 'checkbox' );
 
-		expect( toggle ).toBeChecked();
-		expect( new FormData( form ).getAll( FIELD_NAME ) ).toEqual( [
-			'0',
-			'1',
-		] );
+		expect( hiddenInput ).toHaveValue( '1' );
 
 		fireEvent.click( toggle );
+		expect( hiddenInput ).toHaveValue( '0' );
 
-		expect( toggle ).not.toBeChecked();
-		expect( new FormData( form ).getAll( FIELD_NAME ) ).toEqual( [ '0' ] );
+		fireEvent.click( toggle );
+		expect( hiddenInput ).toHaveValue( '1' );
 	} );
 
 	test( 'Lists sync issues when the sync status has errors', () => {

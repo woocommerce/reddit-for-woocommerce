@@ -82,16 +82,19 @@ const ChannelVisibilitySettings = () => {
 						<FlexItem>
 							{ /*
 							 * Unchecked checkboxes are not sent via POST.
-							 * This hidden input submits the OFF value whenever
-							 * the control is on the page.
+							 * This hidden input submits the value whenever
+							 * the control is on the page, mirroring the toggle state.
 							 */ }
-							<input type="hidden" name={ fieldName } value="0" />
+							<input
+								type="hidden"
+								name={ fieldName }
+								value={ checked ? '1' : '0' }
+							/>
 							<FormToggle
 								aria-label={ __(
 									'Channel visibility setting',
 									'reddit-for-woocommerce'
 								) }
-								name={ fieldName }
 								value="1"
 								checked={ checked }
 								onChange={ ( event ) =>
