@@ -343,9 +343,10 @@ final class UserIdentifier {
 			return '';
 		}
 
+		// Drop a trailing extension (e.g. "x123", "ext. 123", "#123") before parsing digits, for both international and national numbers.
+		$phone = (string) preg_replace( '/\s*(?:ext|extension|x|#)\.?\s*\d+\s*$/i', '', $phone );
+
 		if ( 0 === strpos( $phone, '+' ) ) {
-			// Drop a trailing extension (e.g. "x123", "ext. 123", "#123"), then every non-digit character.
-			$phone  = (string) preg_replace( '/\s*(?:ext|extension|x|#)\.?\s*\d+\s*$/i', '', $phone );
 			$digits = preg_replace( '/\D/', '', substr( $phone, 1 ) );
 
 			return '' === $digits ? '' : '+' . $digits;
@@ -380,7 +381,7 @@ final class UserIdentifier {
 		}
 
 		$countries    = new WC_Countries();
-		$calling_code = $countries->get_country_calling_code( $country );
+		$calling_code = $countries->get_country_calling_code( strtoupper( $country ) );
 
 		if ( is_array( $calling_code ) ) {
 			$calling_code = $calling_code[0] ?? '';

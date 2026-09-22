@@ -161,6 +161,40 @@ final class UserIdentifierTest extends WP_UnitTestCase {
 	}
 
 	/**
+	 * A national number with a trailing extension drops the extension before the calling
+	 * code is prefixed, so the extension digits never leak into the E.164 number.
+	 */
+	public function test_phone_national_with_extension_strips_extension(): void {
+		Options::set( OptionDefaults::COLLECT_PII, 'yes' );
+
+		$order = wc_create_order( array( 'status' => 'pending', 'customer_id' => 7 ) );
+		$order->set_billing_phone( '07911 123456 ext. 22' );
+		$order->set_billing_country( 'GB' );
+		$order->save();
+
+		$data = UserIdentifier::get_user_data( $order );
+
+		$this->assertSame( hash( 'sha256', '+447911123456' ), $data['user']['phone_number'] );
+	}
+
+	/**
+	 * A lowercase billing country still resolves its calling code, since the lookup is
+	 * case-sensitive on the uppercase ISO code.
+	 */
+	public function test_phone_national_with_lowercase_country(): void {
+		Options::set( OptionDefaults::COLLECT_PII, 'yes' );
+
+		$order = wc_create_order( array( 'status' => 'pending', 'customer_id' => 7 ) );
+		$order->set_billing_phone( '07911 123456' );
+		$order->set_billing_country( 'gb' );
+		$order->save();
+
+		$data = UserIdentifier::get_user_data( $order );
+
+		$this->assertSame( hash( 'sha256', '+447911123456' ), $data['user']['phone_number'] );
+	}
+
+	/**
 	 * A national number with no resolvable calling code is omitted rather than hashed
 	 * in a form that can never match.
 	 */
