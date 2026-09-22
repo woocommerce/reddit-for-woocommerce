@@ -143,4 +143,37 @@ class PurchaseEventTest extends WP_UnitTestCase {
 
 		$this->assertArrayNotHasKey( 'event_source_url', $payload['data']['events'][0] );
 	}
+
+	/**
+	 * The hashed customer match keys flow through to events[].user alongside the
+	 * existing device identifiers, and the click ID stays at the event level.
+	 */
+	public function test_build_payload_passes_match_keys_to_event_user(): void {
+		$order = wc_create_order( array( 'status' => 'pending' ) );
+
+		$user_data = array(
+			'user'     => array(
+				'ip_address'   => '203.0.113.10',
+				'user_agent'   => 'UA',
+				'uuid'         => 'pixel-uuid',
+				'email'        => hash( 'sha256', 'buyer@example.com' ),
+				'phone_number' => hash( 'sha256', '+14155550100' ),
+				'external_id'  => hash( 'sha256', '42' ),
+			),
+			'click_id' => 'click-id',
+		);
+
+		$event   = new PurchaseEvent( $order->get_id() );
+		$payload = $event->build_payload(
+			array(
+				'conversion_id' => $order->get_order_key(),
+				'user_data'     => $user_data,
+			)
+		);
+
+		$events = $payload['data']['events'][0];
+
+		$this->assertSame( $user_data['user'], $events['user'] );
+		$this->assertSame( 'click-id', $events['click_id'] );
+	}
 }
