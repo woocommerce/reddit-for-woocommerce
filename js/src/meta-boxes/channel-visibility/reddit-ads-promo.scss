@@ -1,5 +1,5 @@
 .rfw-channel-visibility {
-	padding: wpVariables.$grid-unit-05;
+	padding-block: wpVariables.$grid-unit-15;
 
 	.rfw-channel-visibility__logo {
 		display: block;
@@ -14,8 +14,8 @@
 	}
 
 	.rfw-channel-visibility__content {
-		background-color: rgb(56 88 233 / 3%);
-		border: 1px solid rgb(56 88 233 / 16%);
+		background-color: colors.$rfw-color-gray-0;
+		border: 1px solid wpColors.$gray-300;
 		border-radius: wpVariables.$grid-unit-05;
 		padding: wpVariables.$grid-unit-20;
 

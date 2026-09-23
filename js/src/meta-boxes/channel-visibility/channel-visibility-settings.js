@@ -8,8 +8,8 @@ import {
 	Flex,
 	FlexBlock,
 	FlexItem,
+	FormToggle,
 	Notice,
-	SelectControl,
 } from '@wordpress/components';
 
 /**
@@ -18,30 +18,28 @@ import {
 import redditLogoURL from '~/images/logo/reddit.svg';
 import { SYNC_STATUS_HAS_ERRORS, SYNC_STATUS_SYNCED } from './constants';
 
-const {
-	channelVisibility: {
-		field_name: fieldName,
-		product_catalog_item: productCatalogItem,
-		product_is_visible: productIsVisible,
-		options: syncOptions,
-		sync_status: syncStatus = null,
-		issues = [],
-	} = {},
-} = window.redditAdsMetaBoxData || {};
-
 /**
  * Channel Visibility Settings component.
  *
- * Renders an uncontrolled SelectControl that participates in the WC product
- * form submission via its `name` attribute. No REST endpoints are called.
+ * Renders an uncontrolled toggle that participates in the WC product form
+ * submission via its `name` attribute. No REST endpoints are called.
  *
  * @return {JSX.Element} The Channel Visibility Settings component.
  */
 const ChannelVisibilitySettings = () => {
+	const {
+		channelVisibility: {
+			field_name: fieldName,
+			product_catalog_item: productCatalogItem,
+			product_is_visible: productIsVisible,
+			sync_status: syncStatus = null,
+			issues = [],
+		} = {},
+	} = window.redditAdsMetaBoxData || {};
 	const catalogValue = productCatalogItem || '1';
-	const defaultValue = productIsVisible ? catalogValue : '0';
+	const defaultChecked = productIsVisible && catalogValue === '1';
 
-	const [ value, setValue ] = useState( defaultValue );
+	const [ checked, setChecked ] = useState( defaultChecked );
 
 	let syncStatusText = null;
 
@@ -53,14 +51,14 @@ const ChannelVisibilitySettings = () => {
 	}
 
 	const shouldDisplaySyncNotice =
-		productIsVisible && value === '1' && syncStatus !== SYNC_STATUS_SYNCED;
+		productIsVisible && checked && syncStatus !== SYNC_STATUS_SYNCED;
 	const hasIssues = issues.length > 0;
 
 	return (
 		<Flex direction="column" gap={ 4 } className="rfw-channel-visibility">
 			<Flex direction="column" gap={ 4 }>
 				<FlexBlock>
-					<Flex gap={ 2 } align="center" justify="flex-start">
+					<Flex gap={ 2 } align="center">
 						<FlexItem>
 							<Flex gap={ 2 } align="center">
 								<FlexItem>
@@ -81,26 +79,40 @@ const ChannelVisibilitySettings = () => {
 							</Flex>
 						</FlexItem>
 
-						<FlexBlock>
-							<SelectControl
+						<FlexItem>
+							{ /*
+							 * Unchecked checkboxes are not sent via POST.
+							 * This hidden input submits the value whenever
+							 * the control is on the page, mirroring the toggle state.
+							 */ }
+							<input
+								type="hidden"
+								name={ fieldName }
+								value={ checked ? '1' : '0' }
+							/>
+							<FormToggle
 								aria-label={ __(
 									'Channel visibility setting',
 									'reddit-for-woocommerce'
 								) }
-								name={ fieldName }
-								options={ syncOptions }
-								value={ value }
-								onChange={ setValue }
+								value="1"
+								checked={ checked }
+								onChange={ ( event ) =>
+									setChecked( event.target.checked )
+								}
 								disabled={ ! productIsVisible }
-								__nextHasNoMarginBottom
 							/>
-						</FlexBlock>
+						</FlexItem>
 					</Flex>
 				</FlexBlock>
 
 				{ ! productIsVisible && (
 					<FlexBlock>
-						<Notice status="info" isDismissible={ false }>
+						<Notice
+							className="rfw-channel-visibility__sync-notice"
+							status="info"
+							isDismissible={ false }
+						>
 							<p>
 								{ __(
 									'This product cannot be shown on any channel because it is hidden from your store catalog.',
