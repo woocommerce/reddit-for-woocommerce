@@ -37,7 +37,8 @@ class CurrencyNotice {
 	 * @return void
 	 */
 	public function render_notice(): void {
-		if ( CurrencyValidator::is_supported() ) {
+		// Only users who can change the store currency can act on this notice.
+		if ( ! current_user_can( 'manage_woocommerce' ) || CurrencyValidator::is_supported() ) {
 			return;
 		}
 

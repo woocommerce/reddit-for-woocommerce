@@ -36,6 +36,8 @@ class CurrencyNoticeTest extends WP_UnitTestCase {
 		parent::setUp();
 		$this->notice            = new CurrencyNotice();
 		$this->original_currency = get_woocommerce_currency();
+
+		wp_set_current_user( self::factory()->user->create( array( 'role' => 'administrator' ) ) );
 	}
 
 	/**
@@ -71,6 +73,37 @@ class CurrencyNoticeTest extends WP_UnitTestCase {
 		$output = ob_get_clean();
 
 		$this->assertSame( '', $output );
+	}
+
+	/**
+	 * Test that users who can't manage WooCommerce don't see the notice.
+	 *
+	 * @dataProvider low_privilege_role_provider
+	 *
+	 * @param string $role Role without `manage_woocommerce`.
+	 */
+	public function test_render_notice_outputs_nothing_for_user_without_capability( string $role ): void {
+		update_option( 'woocommerce_currency', 'INR' );
+		wp_set_current_user( self::factory()->user->create( array( 'role' => $role ) ) );
+
+		ob_start();
+		$this->notice->render_notice();
+		$output = ob_get_clean();
+
+		$this->assertSame( '', $output );
+	}
+
+	/**
+	 * Data provider of roles without `manage_woocommerce`.
+	 *
+	 * @return array<string,array<string>>
+	 */
+	public function low_privilege_role_provider(): array {
+		return array(
+			'contributor' => array( 'contributor' ),
+			'author'      => array( 'author' ),
+			'editor'      => array( 'editor' ),
+		);
 	}
 
 	/**
