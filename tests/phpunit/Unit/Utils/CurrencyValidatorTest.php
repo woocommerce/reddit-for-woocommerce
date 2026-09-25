@@ -37,6 +37,7 @@ final class CurrencyValidatorTest extends TestCase {
 	 */
 	protected function tearDown(): void {
 		update_option( 'woocommerce_currency', $this->original_currency );
+		remove_all_filters( 'reddit_for_woocommerce_supported_currencies' );
 		parent::tearDown();
 	}
 
@@ -108,5 +109,44 @@ final class CurrencyValidatorTest extends TestCase {
 
 		update_option( 'woocommerce_currency', 'USD' );
 		$this->assertTrue( CurrencyValidator::is_supported() );
+	}
+
+	/**
+	 * Test that the supported currencies can be extended via a filter.
+	 */
+	public function test_supported_currencies_can_be_filtered(): void {
+		add_filter(
+			'reddit_for_woocommerce_supported_currencies',
+			function ( $currencies ) {
+				$currencies[] = 'inr';
+				return $currencies;
+			}
+		);
+
+		$this->assertContains( 'INR', CurrencyValidator::get_supported_currencies() );
+		$this->assertTrue( CurrencyValidator::is_supported( 'INR' ) );
+	}
+
+	/**
+	 * Test that non-string entries returned by a filter are discarded.
+	 */
+	public function test_supported_currencies_filter_discards_invalid_entries(): void {
+		add_filter(
+			'reddit_for_woocommerce_supported_currencies',
+			function () {
+				return array( 'USD', 123, null, array( 'GBP' ) );
+			}
+		);
+
+		$this->assertSame( array( 'USD' ), CurrencyValidator::get_supported_currencies() );
+	}
+
+	/**
+	 * Test that a filter returning a non-array falls back to the default list.
+	 */
+	public function test_supported_currencies_filter_falls_back_on_invalid_return(): void {
+		add_filter( 'reddit_for_woocommerce_supported_currencies', '__return_false' );
+
+		$this->assertSame( CurrencyValidator::SUPPORTED_CURRENCIES, CurrencyValidator::get_supported_currencies() );
 	}
 }

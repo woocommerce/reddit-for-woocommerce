@@ -51,7 +51,7 @@ class CurrencyNotice {
 					esc_html__( 'Store currency is not supported by Reddit for WooCommerce. Please %1$schange your store currency%2$s to one of the supported options: %3$s', 'reddit-for-woocommerce' ),
 					'<a href="' . esc_url( $settings_url ) . '">',
 					'</a>',
-					esc_html( implode( ', ', CurrencyValidator::SUPPORTED_CURRENCIES ) )
+					esc_html( implode( ', ', CurrencyValidator::get_supported_currencies() ) )
 				);
 				?>
 			</p>

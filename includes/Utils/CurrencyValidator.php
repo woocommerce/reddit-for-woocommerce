@@ -48,6 +48,35 @@ final class CurrencyValidator {
 	public static function is_supported( ?string $currency = null ): bool {
 		$currency = $currency ?? get_woocommerce_currency();
 
-		return in_array( strtoupper( $currency ), self::SUPPORTED_CURRENCIES, true );
+		return in_array( strtoupper( $currency ), self::get_supported_currencies(), true );
+	}
+
+	/**
+	 * Returns the currencies Reddit's Catalog API accepts, after filtering.
+	 *
+	 * Falls back to {@see self::SUPPORTED_CURRENCIES} if a filter callback
+	 * returns anything other than a list of currency codes.
+	 *
+	 * @since 1.0.7
+	 *
+	 * @return string[] Uppercase currency codes.
+	 */
+	public static function get_supported_currencies(): array {
+		/**
+		 * Filters the currencies Reddit's Catalog API accepts.
+		 *
+		 * @since 1.0.7
+		 *
+		 * @param string[] $currencies Uppercase ISO 4217 currency codes.
+		 */
+		$currencies = apply_filters( Helper::with_prefix( 'supported_currencies' ), self::SUPPORTED_CURRENCIES );
+
+		if ( ! is_array( $currencies ) ) {
+			return self::SUPPORTED_CURRENCIES;
+		}
+
+		$currencies = array_filter( $currencies, 'is_string' );
+
+		return array_values( array_unique( array_map( 'strtoupper', $currencies ) ) );
 	}
 }
