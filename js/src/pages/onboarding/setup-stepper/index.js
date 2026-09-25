@@ -1,14 +1,10 @@
 /**
- * External dependencies
- */
-import { __ } from '@wordpress/i18n';
-
-/**
  * Internal dependencies
  */
 import { STEP_NAME_KEY_MAP } from './constants';
 import AppSpinner from '~/components/app-spinner';
 import AppNotice from '~/components/app-notice';
+import UnsupportedCurrencyMessage from '~/components/unsupported-currency-message';
 import SavedSetupStepper from './saved-setup-stepper';
 import useSetup from '~/hooks/useSetup';
 
@@ -30,10 +26,7 @@ const SetupStepper = () => {
 	if ( isCurrencySupported === false ) {
 		return (
 			<AppNotice status="warning" isDismissible={ false }>
-				{ __(
-					'Store currency is not supported by Reddit for WooCommerce. Please change your store currency to one of the supported options: USD, GBP, CAD, EUR, AUD, JPY, CHF, NZD, SEK, NOK.',
-					'reddit-for-woocommerce'
-				) }
+				<UnsupportedCurrencyMessage />
 			</AppNotice>
 		);
 	}
