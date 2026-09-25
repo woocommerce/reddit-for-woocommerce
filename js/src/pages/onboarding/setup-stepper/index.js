@@ -27,7 +27,7 @@ const SetupStepper = () => {
 
 	const { step, isCurrencySupported } = rfwSetup;
 
-	if ( ! isCurrencySupported ) {
+	if ( isCurrencySupported === false ) {
 		return (
 			<AppNotice status="warning" isDismissible={ false }>
 				{ __(

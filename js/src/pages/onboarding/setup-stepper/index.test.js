@@ -50,4 +50,17 @@ describe( 'SetupStepper', () => {
 			)
 		).not.toBeInTheDocument();
 	} );
+
+	it( 'renders the stepper when isCurrencySupported is missing from the response', () => {
+		useSetup.mockReturnValue( {
+			hasFinishedResolution: true,
+			data: { step: '1' },
+		} );
+
+		const { container } = render( <SetupStepper /> );
+
+		expect(
+			within( container ).getByTestId( 'saved-setup-stepper' )
+		).toBeInTheDocument();
+	} );
 } );
