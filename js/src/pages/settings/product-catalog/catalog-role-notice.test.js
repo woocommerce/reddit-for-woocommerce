@@ -10,14 +10,20 @@ import { render, within } from '@testing-library/react';
 import CatalogRoleNotice from './catalog-role-notice';
 import useRedditAccountConfig from '~/hooks/useRedditAccountConfig';
 import useCreateCatalog from '~/hooks/useCreateCatalog';
+import { rfwData } from '~/constants';
 
 jest.mock( '~/hooks/useRedditAccountConfig', () => jest.fn() );
 jest.mock( '~/hooks/useCreateCatalog', () => jest.fn() );
+jest.mock( '~/constants', () => ( {
+	rfwData: { isCurrencySupported: true, supportedCurrencies: [ 'USD' ] },
+} ) );
 // AppButton transitively imports the wp-data store, which reads `window.redditAdsAdminData`
 // at module load time. That global isn't set up in the test environment, so stub the button
 // out rather than exercising it here; it isn't what this test is verifying.
-jest.mock( '~/components/app-button', () => () => (
-	<button type="button">mock-app-button</button>
+jest.mock( '~/components/app-button', () => ( { isDisabled } ) => (
+	<button type="button" disabled={ isDisabled }>
+		mock-app-button
+	</button>
 ) );
 
 const baseAccountConfig = {
@@ -37,9 +43,11 @@ const baseCreateCatalog = {
 describe( 'CatalogRoleNotice', () => {
 	beforeEach( () => {
 		useCreateCatalog.mockReturnValue( baseCreateCatalog );
+		rfwData.isCurrencySupported = true;
 	} );
 
 	it( 'renders the unsupported currency message distinctly from the generic error notice', () => {
+		rfwData.isCurrencySupported = false;
 		useRedditAccountConfig.mockReturnValue( {
 			...baseAccountConfig,
 			catalog_error: 'UNSUPPORTED_CURRENCY',
@@ -69,6 +77,36 @@ describe( 'CatalogRoleNotice', () => {
 		expect(
 			within( container ).queryByText(
 				/Store currency is not supported/i
+			)
+		).not.toBeInTheDocument();
+	} );
+
+	it( 'disables the create catalog button when the currency is unsupported', () => {
+		rfwData.isCurrencySupported = false;
+		useRedditAccountConfig.mockReturnValue( baseAccountConfig );
+
+		const { container } = render( <CatalogRoleNotice /> );
+
+		expect( within( container ).getByRole( 'button' ) ).toBeDisabled();
+	} );
+
+	it( 'enables the create catalog button and hides stale currency errors once the currency is supported', () => {
+		useRedditAccountConfig.mockReturnValue( {
+			...baseAccountConfig,
+			catalog_error: 'UNSUPPORTED_CURRENCY',
+		} );
+
+		const { container } = render( <CatalogRoleNotice /> );
+
+		expect( within( container ).getByRole( 'button' ) ).toBeEnabled();
+		expect(
+			within( container ).queryByText(
+				/Store currency is not supported/i
+			)
+		).not.toBeInTheDocument();
+		expect(
+			within( container ).queryByText(
+				/some error creating the Catalog/i
 			)
 		).not.toBeInTheDocument();
 	} );
