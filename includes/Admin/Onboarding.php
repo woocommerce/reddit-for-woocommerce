@@ -43,10 +43,11 @@ class Onboarding {
 			function () {
 				wc_admin_register_page(
 					array(
-						'title'  => __( 'Reddit Setup Wizard', 'reddit-for-woocommerce' ),
-						'parent' => '',
-						'path'   => '/reddit/onboarding',
-						'id'     => Helper::with_prefix( 'onboarding' ),
+						'title'      => __( 'Reddit Setup Wizard', 'reddit-for-woocommerce' ),
+						'parent'     => '',
+						'path'       => '/reddit/onboarding',
+						'id'         => Helper::with_prefix( 'onboarding' ),
+						'capability' => 'manage_woocommerce',
 					)
 				);
 			}
