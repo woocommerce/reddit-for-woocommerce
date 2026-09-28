@@ -77,7 +77,21 @@
 		"i18n-calypso@7.4.1": "7.4.0",
 		"@woocommerce/dependency-extraction-webpack-plugin": {
 			"@wordpress/dependency-extraction-webpack-plugin": "^6.56.0"
-		}
+		},
+		"@babel/runtime@<7.26.10": "^7.26.10",
+		"bundlewatch": {
+			"axios": "^0.34.0"
+		},
+		"colord@<2.9.4": "^2.9.4",
+		"express": {
+			"qs": "^6.16.0"
+		},
+		"copy-webpack-plugin": {
+			"serialize-javascript": "^7.0.5"
+		},
+		"d3-color": "^3.1.0",
+		"react-router-dom": "^6.30.6",
+		"uuid@<11.1.1": "^11.1.1"
 	},
 	"scripts": {
 		"prebuild": "composer install --no-dev",
