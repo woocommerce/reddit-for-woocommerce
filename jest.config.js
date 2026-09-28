@@ -7,8 +7,15 @@ module.exports = {
 	transformIgnorePatterns: [
 		// Fix that `is-plain-obj@4.1.0` doesn't provide the CommonJS build, so it needs to be transformed.
 		// The pattern covers is-plain-obj nested under any package (e.g. @woocommerce/data, @wordpress/core-data).
-		'<rootDir>/node_modules/(?!(?:@[^/]+/)?[^/]+/node_modules/is-plain-obj/|d3-.*/|internmap/)',
+		// `@wordpress/theme` (via @wordpress/ui) and `parsel-js` (via @wordpress/block-editor) are ESM-only,
+		// with no CJS build, so they need to be transformed too.
+		'<rootDir>/node_modules/(?!(?:@[^/]+/)?[^/]+/node_modules/is-plain-obj/|d3-.*/|internmap/|(?:.*/node_modules/)?(?:@wordpress/theme|parsel-js)/)',
 	],
+	transform: {
+		...defaultConfig.transform,
+		// The default transform only matches `.js/.jsx/.ts/.tsx`, so `@wordpress/theme`'s `.mjs` files need their own entry.
+		'\\.mjs$': defaultConfig.transform[ '\\.[jt]sx?$' ],
+	},
 	moduleNameMapper: {
 		'\\.svg$': '<rootDir>/tests/mocks/assets/svgFileMock.js',
 		'\\.scss$': '<rootDir>/tests/mocks/assets/styleMock.js',

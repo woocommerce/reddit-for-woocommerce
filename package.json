@@ -20,24 +20,24 @@
 		"wp_org_slug": "reddit-for-woocommerce"
 	},
 	"dependencies": {
-		"@woocommerce/components": "^12.3.0",
-		"@woocommerce/currency": "^4.3.0",
-		"@woocommerce/navigation": "^8.2.0",
-		"@woocommerce/number": "^2.5.0",
-		"@woocommerce/tracks": "^1.4.0",
-		"@wordpress/api-fetch": "^7.26.0",
-		"@wordpress/base-styles": "^6.2.0",
-		"@wordpress/components": "^29.12.0",
-		"@wordpress/compose": "^7.26.0",
-		"@wordpress/data": "^10.26.0",
-		"@wordpress/element": "^6.26.0",
-		"@wordpress/hooks": "^4.26.0",
-		"@wordpress/i18n": "^5.26.0",
-		"@wordpress/icons": "^10.31.0",
-		"@wordpress/url": "^4.26.0",
+		"@woocommerce/components": "^14.1.0",
+		"@woocommerce/currency": "^6.0.0",
+		"@woocommerce/navigation": "^9.0.0",
+		"@woocommerce/number": "^2.6.0",
+		"@woocommerce/tracks": "^1.5.1",
+		"@wordpress/api-fetch": "^7.33.1",
+		"@wordpress/base-styles": "^6.9.1",
+		"@wordpress/components": "^30.6.5",
+		"@wordpress/compose": "^7.33.1",
+		"@wordpress/data": "^10.33.1",
+		"@wordpress/element": "^6.33.1",
+		"@wordpress/hooks": "^4.33.1",
+		"@wordpress/i18n": "^6.6.1",
+		"@wordpress/icons": "^11.0.1",
+		"@wordpress/url": "^4.33.1",
 		"classnames": "^2.5.1",
 		"gridicons": "^3.4.2",
-		"lodash": "^4.17.21"
+		"lodash": "^4.18.0"
 	},
 	"devDependencies": {
 		"@playwright/test": "^1.53.1",
@@ -45,9 +45,9 @@
 		"@testing-library/jest-dom": "^6.6.3",
 		"@testing-library/react": "^16.0.0",
 		"@testing-library/user-event": "^14.5.2",
-		"@woocommerce/dependency-extraction-webpack-plugin": "^4.0.0",
-		"@woocommerce/e2e-utils-playwright": "^0.4.0",
-		"@woocommerce/eslint-plugin": "^2.3.0",
+		"@woocommerce/dependency-extraction-webpack-plugin": "^5.1.0",
+		"@woocommerce/e2e-utils-playwright": "^0.5.1",
+		"@woocommerce/eslint-plugin": "^3.0.0",
 		"@wordpress/env": "^10.26.0",
 		"@wordpress/jest-preset-default": "^12.26.0",
 		"@wordpress/prettier-config": "^4.26.0",
@@ -71,11 +71,12 @@
 		"woocommerce-grow-jsdoc": "git+https://github.com/woocommerce/grow#jsdoc-v1"
 	},
 	"overrides": {
+		"i18n-calypso@7.4.1": "7.4.0",
+		"@woocommerce/dependency-extraction-webpack-plugin": {
+			"@wordpress/dependency-extraction-webpack-plugin": "^6.56.0"
+		},
 		"@woocommerce/eslint-plugin": {
 			"@wordpress/eslint-plugin@<18.1.0": "^18.1.0"
-		},
-		"@woocommerce/components": {
-			"@woocommerce/csv-export@<1.9.0": "^1.9.0"
 		}
 	},
 	"scripts": {
@@ -113,7 +114,7 @@
 		"extends @wordpress/browserslist-config"
 	],
 	"engines": {
-		"node": "^20",
-		"npm": "^10 || ^9"
+		"node": "^24.15",
+		"npm": "^11 || ^10 || ^9"
 	}
 }

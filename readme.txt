@@ -37,7 +37,7 @@ Getting started with the Reddit for WooCommerce plugin is quick and easy! Just f
 
 == Instructions to build the plugin ==
 
-- Requires node v20 and NPM v10.
+- Requires node v24 and NPM v11.
 - Requires PHP composer v2.
 - Run `npm ci && npm run build` in the plugin's root.
 - Use the generated `reddit-for-woocommerce.zip` file.
