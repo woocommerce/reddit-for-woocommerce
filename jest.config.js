@@ -1,7 +1,16 @@
-const defaultConfig = require( '@wordpress/scripts/config/jest-unit.config' );
-
 module.exports = {
-	...defaultConfig,
+	// `@wordpress/scripts` 36 no longer ships a Jest config, so use the published
+	// preset and Babel transform it used to provide.
+	// Ref: https://github.com/WordPress/gutenberg/blob/%40wordpress/scripts%4036.0.0/packages/scripts/docs/vitest-migration.md#keep-an-existing-jest-suite
+	preset: '@wordpress/jest-preset-default',
+	transform: {
+		// `.mjs` is included for `@wordpress/theme`, see `transformIgnorePatterns` below.
+		'\\.(m?js|jsx|tsx?)$': [
+			'babel-jest',
+			{ presets: [ '@wordpress/babel-preset-default' ] },
+		],
+	},
+	reporters: [ 'default', 'github-actions' ],
 	testEnvironment: 'jsdom',
 	setupFiles: [ 'core-js', '<rootDir>/js/src/tests/jest-unit.setup.js' ],
 	transformIgnorePatterns: [
@@ -11,11 +20,6 @@ module.exports = {
 		// with no CJS build, so they need to be transformed too.
 		'<rootDir>/node_modules/(?!(?:@[^/]+/)?[^/]+/node_modules/is-plain-obj/|d3-.*/|internmap/|(?:.*/node_modules/)?(?:@wordpress/theme|parsel-js)/)',
 	],
-	transform: {
-		...defaultConfig.transform,
-		// The default transform only matches `.js/.jsx/.ts/.tsx`, so `@wordpress/theme`'s `.mjs` files need their own entry.
-		'\\.mjs$': defaultConfig.transform[ '\\.[jt]sx?$' ],
-	},
 	moduleNameMapper: {
 		'\\.svg$': '<rootDir>/tests/mocks/assets/svgFileMock.js',
 		'\\.scss$': '<rootDir>/tests/mocks/assets/styleMock.js',
@@ -28,8 +32,11 @@ module.exports = {
 		// Fix the React versioning conflicts between @wordpress/* and @woocommerce/*.
 		'^react$': require.resolve( 'react' ),
 		// Force 'uuid' to resolve with the CommonJS entry point, because jest doesn't
-		// support `package.json.exports`.
-		'^uuid$': require.resolve( 'uuid' ),
+		// support `package.json.exports`. Resolve it from `@wordpress/components`, which
+		// imports it, because npm doesn't always hoist a copy to the top level.
+		'^uuid$': require.resolve( 'uuid', {
+			paths: [ require.resolve( '@wordpress/components' ) ],
+		} ),
 	},
 	testPathIgnorePatterns: [ '/node_modules/', '<rootDir>/tests/e2e/' ],
 	coveragePathIgnorePatterns: [ '/node_modules/', '<rootDir>/tests/' ],

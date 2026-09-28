@@ -80,7 +80,6 @@ export function getCharacterCounterOfRedditAds() {
 	// Ref: https://unicode.org/charts/nameslist/n_0900.html
 	//
 	// The readability is better than applying the formatting here.
-	/* eslint-disable prettier/prettier */
 	// prettier-ignore
 	const zeroWidthSet = new Set( [
 		'\u0900', '\u0901', '\u0902', '\u093A', '\u093C',
@@ -89,7 +88,6 @@ export function getCharacterCounterOfRedditAds() {
 		'\u0952', '\u0953', '\u0954', '\u0955', '\u0956',
 		'\u0957', '\u0962', '\u0963',
 	] );
-	/* eslint-enable prettier/prettier */
 
 	function countChar( char ) {
 		if ( oneCountRules.some( ( rule ) => rule.test( char ) ) ) {

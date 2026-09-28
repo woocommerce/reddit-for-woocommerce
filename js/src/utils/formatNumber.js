@@ -13,7 +13,7 @@ export default function formatNumber( num ) {
 				notation: 'compact',
 				compactDisplay: 'short',
 			} ).format( num );
-		} catch ( e ) {}
+		} catch {}
 	}
 
 	// Fallback approach

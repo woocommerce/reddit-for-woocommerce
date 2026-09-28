@@ -1,5 +1,7 @@
 {
 	"phpVersion": null,
+	"port": 8888,
+	"testsPort": 8889,
 	"core": null,
 	"plugins": [
 		"https://downloads.wordpress.org/plugin/woocommerce.zip",

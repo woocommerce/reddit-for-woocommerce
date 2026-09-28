@@ -40,33 +40,36 @@
 		"lodash": "^4.18.0"
 	},
 	"devDependencies": {
-		"@playwright/test": "^1.53.1",
+		"@babel/core": "^7.29.0",
+		"@playwright/test": "^1.63.0",
 		"@testing-library/dom": "^10.4.0",
 		"@testing-library/jest-dom": "^6.6.3",
 		"@testing-library/react": "^16.0.0",
 		"@testing-library/user-event": "^14.5.2",
 		"@woocommerce/dependency-extraction-webpack-plugin": "^5.1.0",
 		"@woocommerce/e2e-utils-playwright": "^0.5.1",
-		"@woocommerce/eslint-plugin": "^3.0.0",
-		"@wordpress/env": "^10.26.0",
-		"@wordpress/jest-preset-default": "^12.26.0",
-		"@wordpress/prettier-config": "^4.26.0",
-		"@wordpress/scripts": "^30.19.0",
-		"ajv": "^8.17.1",
-		"axios": "^1.7.2",
+		"@woocommerce/eslint-plugin": "^4.0.0",
+		"@wordpress/babel-preset-default": "^8.55.0",
+		"@wordpress/env": "^11.16.0",
+		"@wordpress/jest-preset-default": "^14.2.0",
+		"@wordpress/prettier-config": "^4.56.0",
+		"@wordpress/scripts": "^36.0.0",
+		"ajv": "^8.18.0",
+		"axios": "^1.20.0",
+		"babel-jest": "^30.5.0",
 		"bundlewatch": "^0.4.0",
 		"dotenv": "^17.0.0",
-		"eslint": "^8.57.1",
+		"eslint": "^10.0.0",
 		"eslint-import-resolver-webpack": "^0.13.8",
-		"eslint-plugin-import": "^2.29.1",
-		"jest": "^30.0.4",
-		"jest-environment-jsdom": "^30.0.4",
+		"eslint-plugin-import": "^2.32.0",
+		"jest": "^30.5.0",
+		"jest-environment-jsdom": "^30.5.0",
 		"mini-css-extract-plugin": "^2.9.0",
 		"path-browserify": "^1.0.1",
 		"prettier": "npm:wp-prettier@^3.0.3",
 		"react": "^18",
 		"react-dom": "^18",
-		"stylelint-config-standard-scss": "^15.0.1",
+		"stylelint-config-standard-scss": "^17.0.0",
 		"typescript": "^5.5.4",
 		"woocommerce-grow-jsdoc": "git+https://github.com/woocommerce/grow#jsdoc-v1"
 	},
@@ -74,9 +77,6 @@
 		"i18n-calypso@7.4.1": "7.4.0",
 		"@woocommerce/dependency-extraction-webpack-plugin": {
 			"@wordpress/dependency-extraction-webpack-plugin": "^6.56.0"
-		},
-		"@woocommerce/eslint-plugin": {
-			"@wordpress/eslint-plugin@<18.1.0": "^18.1.0"
 		}
 	},
 	"scripts": {
@@ -106,7 +106,7 @@
 		"test:unit": "php vendor/bin/phpunit -c phpunit.xml.dist",
 		"test:unit:wp-env:setup": "docker exec -u root $(docker ps --filter name=tests-cli -q) apk add --no-cache subversion git && npx wp-env run tests-cli --env-cwd=wp-content/plugins/reddit-for-woocommerce bash -c 'WP_TESTS_DIR=/tmp/wordpress-tests-lib bash tests/phpunit/bin/install-wp-tests.sh wordpress_test root password tests-mysql latest nightly'",
 		"test:unit:wp-env": "npx wp-env run tests-cli --env-cwd=wp-content/plugins/reddit-for-woocommerce bash -c 'WP_TESTS_DIR=/tmp/wordpress-tests-lib php vendor/bin/phpunit -c phpunit.xml.dist'",
-		"test:js": "wp-scripts test-unit-js --coverage",
+		"test:js": "wp-scripts test-unit-jest --coverage",
 		"test:js:watch": "npm run test:js -- --watch",
 		"start": "wp-scripts start --webpack-src-dir=js/src"
 	},
