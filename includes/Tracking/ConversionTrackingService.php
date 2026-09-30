@@ -156,6 +156,14 @@ class ConversionTrackingService implements ServiceStatusInterface {
 
 		//phpcs:ignore WordPress.Security.NonceVerification.Missing
 		$event_id = sanitize_text_field( wp_unslash( $_POST[ Helper::with_prefix( 'event_id' ) ] ?? '' ) );
+
+		// No client-generated event ID was submitted (the `?add-to-cart=ID` link flow and
+		// other form-less add-to-cart paths), so mint a server-side UUID to keep the
+		// conversion ID non-empty.
+		if ( '' === $event_id ) {
+			$event_id = wp_generate_uuid4();
+		}
+
 		$this->tracker->track_add_to_cart( $variation_id ? $variation_id : $product_id, $quantity, $event_id );
 	}
 
