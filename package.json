@@ -54,11 +54,7 @@
 		"@wordpress/jest-preset-default": "^14.2.0",
 		"@wordpress/prettier-config": "^4.56.0",
 		"@wordpress/scripts": "^36.0.0",
-		"ajv": "^8.18.0",
-		"axios": "^1.20.0",
 		"babel-jest": "^30.5.0",
-		"bundlewatch": "^0.4.0",
-		"dotenv": "^17.0.0",
 		"eslint": "^10.0.0",
 		"eslint-import-resolver-webpack": "^0.13.8",
 		"eslint-plugin-import": "^2.32.0",
@@ -79,9 +75,6 @@
 			"@wordpress/dependency-extraction-webpack-plugin": "^6.56.0"
 		},
 		"@babel/runtime@<7.26.10": "^7.26.10",
-		"bundlewatch": {
-			"axios": "^0.34.0"
-		},
 		"colord@<2.9.4": "^2.9.4",
 		"express": {
 			"qs": "^6.16.0"
