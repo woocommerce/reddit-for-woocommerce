@@ -164,6 +164,29 @@ npm run doc:tracking    # Generate tracking documentation
 
 - **Pin every third-party action to a full commit SHA, not a version tag.** Use `owner/repo@<40-char-sha> # vX.Y.Z` instead of `owner/repo@v6`. A mutable tag can be repointed to a compromised or breaking release without any change in this repo; pinning to a SHA prevents that. Resolve the SHA for a tag with `gh api repos/{owner}/{repo}/commits/{tag} --jq '.sha'`, and find the matching version comment with `gh api repos/{owner}/{repo}/tags --jq '.[] | select(.commit.sha=="<sha>") | .name'`. This applies to every `uses:` line under `.github/workflows/` except references to files inside this repo (`./.github/actions/...`, `./.github/workflows/...`), which aren't third-party actions. See [WPCS: unpinned uses](https://developer.wordpress.org/coding-standards/wordpress-coding-standards/github-actions/#unpinned-uses).
 
+## PR Workflow
+
+Applies to every PR opened against this repository.
+
+### Branches
+
+- Prefix branches by intent: `add/` for new work, `update/` for changes to existing behavior, `fix/` for bug fixes.
+- Reserve `feature/` for major features only.
+
+### Requesting review
+
+- Keep the PR template's `Closes #` line and fill it with a markdown link to the tracking issue so it auto-links the PR to the issue, e.g. `Closes [REDTWOO-176](https://linear.app/a8c/issue/REDTWOO-176).`
+- All GitHub Actions checks must pass (CI green) before requesting review, so review time is not spent on issues that CI would have caught.
+- Run E2E tests (`npm run test:e2e`) before requesting review only when the change could introduce regressions. They are not required on every PR.
+- Include a changelog entry describing the change when the PR targets `develop`. Leave it blank when targeting a feature branch. Each line starts with a change-type prefix (`Break`, `Add`, `Update`, `Fix`, `Tweak`, `Dev`, `Doc`), e.g. `Fix - Correct pixel event deduplication`.
+
+### Code and comments are open source
+
+The plugin is public. A contributor without access to internal tooling must be able to read the code on its own.
+
+- Never put ticket IDs (e.g. `REDTWOO-202`) or internal ticket URLs in code or comments.
+- Comments explain *why* for a human reader. Do not restate what the code already says, and do not add comments that only narrate the code for AI or code-generation tooling.
+
 ## Backward Compatibility
 
 Any change to a **public or externally exposed** class, interface, function, method, hook, or REST endpoint signature is **high-risk** and **must state its backward-compatibility impact in the PR description**. An internal-looking name or location is not by itself a guarantee that a symbol is safe to change: other extensions, themes, and custom site code implement and consume some of these contracts in practice. See the exposed-surface list for what counts and the **Scope** note for what does not; when a symbol is genuinely reachable and useful to outside code, err toward treating it as exposed.
@@ -181,6 +204,7 @@ Rules:
 
 - **Never add or remove a required method on an interface that external code can implement** — existing implementers fatal on load. Prefer adding the method to the concrete class, introducing a new interface, or supplying a default implementation in an abstract base class. If an interface change is unavoidable, flag it explicitly.
 - **Deprecate, don't rename.** Never rename or remove an existing public symbol in place: mark it `@deprecated`, introduce the replacement alongside it, and keep both working through a deprecation window.
+- **Never trust data that flows through hooks.** Keep hook callback parameters untyped and validate or coerce the value before passing it to strictly typed code, since any callback can receive a value another one produced. And when firing a filter, validate the final return value before using it, since any callback in the chain can return the wrong thing.
 - **Don't implement or type-hint WooCommerce core `Internal\` classes or interfaces** — core treats them as changeable in any release. If unavoidable, guard the dependency with `class_exists()` / `interface_exists()` / `method_exists()` checks so a core change doesn't cause a fatal error in this plugin.
 
 > Why: WooCommerce 10.9.0 was reverted on WP Cloud after woocommerce/woocommerce#64394 added a required method to core's internal `FeedInterface`, causing fatal errors in older WooCommerce Stripe Gateway versions that implemented it (fixed in woocommerce/woocommerce#65965). The same failure mode applies to any published WooCommerce extension.
@@ -189,13 +213,15 @@ Rules:
 
 WordPress exposes more contracts than class and function signatures. A change to any of the following is equally high-risk and needs the same backward-compatibility impact statement in the PR.
 
+- **Overridable classes, including which internal methods get called.** Site code and extensions subclass exposed classes and override individual methods. Adding a fast path or skip that avoids calling an overridable method silently disables those overrides even though no signature changed: the subclass's code simply stops running. When optimizing such a class, ensure overridable methods are still invoked on every code path, or treat the change as breaking.
+- **Script and style handles.** Registered handles (the `reddit_` asset handle prefix from `Config::ASSET_HANDLE_PREFIX`) are public contracts: third-party code enqueues them and lists them as dependencies, including handles only ever registered incidentally. Renaming a handle breaks those consumers. To rename with a compatibility window, register the legacy handle as an alias that depends on the new one (the same pattern WordPress core uses for `jquery` → `jquery-core`); do not register the same file under both handles, or pages with mixed consumers will load it twice.
 - **Global state.** Code runs in admin, REST, CLI, cron, webhook, and front-end contexts, and not all set the globals a front-end request does (`$post`, `$wp_query`, an initialized session or cart). A new read of a global — or of `WC()->…` state — in a path reachable outside a standard request fatals or silently misbehaves where it isn't set. Guard the exact dependency (`function_exists`/`class_exists` for symbols, `isset` for variables, `did_action` for lifecycle) and verify `WC()` and the component are initialized before dereferencing.
 - **Multisite.** Site-scoped vs network-scoped options (`get_option` vs `get_site_option`), per-site tables, capabilities, and upload paths all differ under multisite. A change that reads or writes site state must state whether it behaves correctly under multisite, or say it wasn't tested there.
 - **Install layout.** WordPress can run in a subdirectory, with relocated `wp-content`, and behind reverse proxies. Never build paths or URLs by concatenation from the domain root; derive them (`plugins_url()`, `plugin_dir_path()`, `wp_upload_dir()`, and mind `home_url()` vs `site_url()`).
 
 ### Before changing any public or externally exposed surface (agent checklist)
 
-1. Identify the contract you are touching: signature, hook, global/scope expectation, site topology, or install layout.
+1. Identify the contract you are touching: signature, hook, script/style handle, global/scope expectation, site topology, or install layout.
 2. Assume unseen consumers — you cannot enumerate third-party code; if the surface is reachable from outside this plugin, someone may consume it.
 3. Prefer the additive path (new optional method, appended hook argument, new symbol + deprecation) over changing what exists.
 4. State the impact in the PR description: what changed, who could consume it, and why it is safe or what the deprecation path is.

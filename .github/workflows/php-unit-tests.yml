@@ -20,6 +20,7 @@ on:
 jobs:
   phpunit:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     strategy:
       matrix:
         php-version: [7.4, 8.0, 8.2, 8.3, 8.4]
@@ -36,7 +37,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Set up PHP ${{ matrix.php-version }}
         uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # 2.37.2
@@ -46,7 +47,7 @@ jobs:
           tools: composer, phpunit
 
       - name: Prepare MySQL
-        uses: woocommerce/grow/prepare-mysql@e5fa5c65e5b349b11d5679ba8958efa6e461cf36 # actions-v3.0.3
+        uses: woocommerce/grow/prepare-mysql@e981c25267d29c39ff6ab1ae4ea09b267efae86c # actions-v3.0.6
 
       - name: Install svn (used for installing WP versions)
         run: sudo apt-get -y install subversion

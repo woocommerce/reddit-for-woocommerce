@@ -225,6 +225,43 @@ class Helper {
 	}
 
 	/**
+	 * Returns the URL of the page where the current tracking event originated.
+	 *
+	 * Reddit recommends `event_source_url` on server-side WEBSITE events: it lets
+	 * Reddit detect the event's domain and, as a fallback, extract the click ID
+	 * from the URL's query string when it isn't supplied separately.
+	 *
+	 * The value is resolved from the current request:
+	 * - Asynchronous events (AJAX/REST) are dispatched from a background endpoint
+	 *   (e.g. `admin-ajax.php`), so the originating page is taken from the request
+	 *   referer — the front-end page that fired the event, which also carries any
+	 *   `rdt_cid` query parameter from the ad click.
+	 * - Synchronous events (e.g. the order-received page, a product-form add to
+	 *   cart) run in the context of the page itself, so the current request URL is
+	 *   used.
+	 *
+	 * `wp_get_referer()` only returns same-host URLs, so the value cannot be
+	 * spoofed to a foreign domain via the referer header.
+	 *
+	 * @since 1.0.4
+	 *
+	 * @return string Event source URL, or an empty string if it cannot be determined.
+	 */
+	public static function get_event_source_url(): string {
+		if ( self::is_request_async() ) {
+			$referer = wp_get_referer();
+
+			return $referer ? esc_url_raw( $referer ) : '';
+		}
+
+		$request_uri = isset( $_SERVER['REQUEST_URI'] )
+			? sanitize_text_field( wp_unslash( $_SERVER['REQUEST_URI'] ) )
+			: '';
+
+		return '' !== $request_uri ? esc_url_raw( home_url( $request_uri ) ) : '';
+	}
+
+	/**
 	 * Recursively replaces double quotes with single quotes in strings within an array or object.
 	 *
 	 * Sometimes Reddit API responses contain JSON strings that contain encoded double quotes,

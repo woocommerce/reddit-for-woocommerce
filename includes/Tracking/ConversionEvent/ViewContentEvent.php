@@ -165,13 +165,7 @@ final class ViewContentEvent extends AbstractEventPayloadBase implements Convers
 			'metadata'      => $meta_data,
 		);
 
-		if ( isset( $args['user_data']['click_id'] ) ) {
-			$events['click_id'] = $args['user_data']['click_id'];
-		}
-
-		if ( isset( $args['user_data']['user'] ) ) {
-			$events['user'] = $args['user_data']['user'];
-		}
+		$events = self::append_optional_event_fields( $events, $args );
 
 		$payload = array(
 			'data' => array(
