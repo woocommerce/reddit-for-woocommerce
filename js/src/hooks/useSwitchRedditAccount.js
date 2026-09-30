@@ -48,7 +48,7 @@ const useSwitchRedditAccount = () => {
 			if ( url ) {
 				window.location.href = url;
 			}
-		} catch ( error ) {
+		} catch {
 			removeNotice( notice.id );
 			createNotice(
 				'error',

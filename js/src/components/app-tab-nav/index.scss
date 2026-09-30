@@ -26,6 +26,9 @@
 			content: attr(data-label);
 			display: block;
 			overflow: hidden;
+
+			// Legacy aural CSS kept from the Gutenberg original above.
+			// stylelint-disable-next-line declaration-property-value-no-unknown
 			speak: none;
 			visibility: hidden;
 		}
