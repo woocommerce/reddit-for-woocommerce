@@ -88,8 +88,10 @@ final class AddToCartEvent extends AbstractEventPayloadBase implements Conversio
 	/**
 	 * Retrieves the total monetary value of the event.
 	 *
-	 * The value is calculated as the product’s price multiplied by the
-	 * quantity added. Returns `0.0` if the product instance is invalid.
+	 * The value is calculated as the product’s displayed unit price
+	 * multiplied by the quantity added, respecting the store’s frontend
+	 * tax-display configuration so it agrees with the Pixel event. Returns
+	 * `0.0` if the product instance is invalid.
 	 *
 	 * @since 0.1.0
 	 *
@@ -100,7 +102,7 @@ final class AddToCartEvent extends AbstractEventPayloadBase implements Conversio
 			return 0.0;
 		}
 
-		return floatval( $this->product->get_price() ) * $this->quantity;
+		return $this->get_unit_price() * $this->quantity;
 	}
 
 	/**
@@ -120,22 +122,25 @@ final class AddToCartEvent extends AbstractEventPayloadBase implements Conversio
 	/**
 	 * Retrieves metadata for the product added to the cart.
 	 *
-	 * Returns an array with product details including its ID and name.
-	 * If the product instance is invalid, an empty array is returned.
+	 * Returns an array with product details including its ID, name,
+	 * displayed unit price, and quantity added. If the product instance is
+	 * invalid, an empty array is returned.
 	 *
 	 * Example:
 	 * ```php
 	 * array(
 	 *     array(
-	 *         'id'   => '123',
-	 *         'name' => 'Sample Product',
+	 *         'id'         => '123',
+	 *         'name'       => 'Sample Product',
+	 *         'item_price' => 14.99,
+	 *         'quantity'   => 3,
 	 *     ),
 	 * )
 	 * ```
 	 *
 	 * @since 0.1.0
 	 *
-	 * @return array<int,array<string,string>> Product metadata array.
+	 * @return array<int,array<string,int|float|string>> Product metadata array.
 	 */
 	public function get_products(): array {
 		if ( ! $this->product instanceof \WC_Product ) {
@@ -144,10 +149,27 @@ final class AddToCartEvent extends AbstractEventPayloadBase implements Conversio
 
 		return array(
 			array(
-				'id'   => (string) $this->product->get_id(),
-				'name' => $this->product->get_name(),
+				'id'         => (string) $this->product->get_id(),
+				'name'       => $this->product->get_name(),
+				'item_price' => $this->get_unit_price(),
+				'quantity'   => (int) $this->quantity,
 			),
 		);
+	}
+
+	/**
+	 * Retrieves the product's displayed unit price, rounded to the store's
+	 * price precision.
+	 *
+	 * Shared by `get_value()` and `get_products()` so the event value always
+	 * agrees exactly with `item_price` × `quantity` in the payload.
+	 *
+	 * @since 1.0.7
+	 *
+	 * @return float Rounded unit price.
+	 */
+	private function get_unit_price(): float {
+		return self::round_price( (float) wc_get_price_to_display( $this->product ) );
 	}
 
 	/**
