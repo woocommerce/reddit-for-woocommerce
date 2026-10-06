@@ -90,8 +90,9 @@ final class AddToCartEvent extends AbstractEventPayloadBase implements Conversio
 	 *
 	 * The value is calculated as the product’s displayed unit price
 	 * multiplied by the quantity added, respecting the store’s frontend
-	 * tax-display configuration so it agrees with the Pixel event. Returns
-	 * `0.0` if the product instance is invalid.
+	 * tax-display configuration so it agrees with the Pixel event. The result
+	 * is rounded to the store's price precision to strip floating-point drift
+	 * from the multiplication. Returns `0.0` if the product instance is invalid.
 	 *
 	 * @since 0.1.0
 	 *
@@ -102,7 +103,7 @@ final class AddToCartEvent extends AbstractEventPayloadBase implements Conversio
 			return 0.0;
 		}
 
-		return $this->get_unit_price() * $this->quantity;
+		return self::round_price( $this->get_unit_price() * $this->quantity );
 	}
 
 	/**

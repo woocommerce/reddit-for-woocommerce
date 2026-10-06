@@ -95,4 +95,19 @@ final class AddToCartEventTest extends WP_UnitTestCase {
 			$metadata['products']
 		);
 	}
+
+	/**
+	 * Test that get_value() is rounded to the store's price precision, so
+	 * floating-point drift from price × quantity doesn't leak into the payload.
+	 */
+	public function test_get_value_is_rounded_to_price_precision(): void {
+		$product = new WC_Product_Simple();
+		$product->set_name( 'Product Two' );
+		$product->set_regular_price( '1.15' );
+		$product->save();
+
+		$event = new AddToCartEvent( $product->get_id(), 3 );
+
+		$this->assertSame( 3.45, $event->get_value() );
+	}
 }
