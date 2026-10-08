@@ -2,7 +2,7 @@
 Contributors: automattic, woocommerce
 Tags: woocommerce, woo, reddit, product feed, ads
 Tested up to: 7.1
-Stable tag: 1.0.6
+Stable tag: 1.0.7
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -55,6 +55,9 @@ Yes, it uses a [Jetpack](https://jetpack.com/) account to connect and communicat
 
 == Changelog ==
 
+= 1.0.7 - 2026-10-08 =
+* Tweak - Bump WooCommerce "tested up to" version to 11.2.
+
 = 1.0.6 - 2026-09-08 =
 * Fix - Set required `bid_type` of `CPM` when creating a Reddit ad group, fixing "Request failed" errors that blocked onboarding completion.
 * Fix - AddToCart CAPI events now carry a non-empty conversion ID for the `?add-to-cart=` flow.
@@ -68,12 +71,5 @@ Yes, it uses a [Jetpack](https://jetpack.com/) account to connect and communicat
 * Dev - Update WPCS to 3.4.1 to fix CVE-2026-45293, an arbitrary code execution vulnerability in WordPress Coding Standards.
 * Tweak - Bump WordPress "Tested up to" version to 7.1
 * Tweak - Bump WordPress "Requires at least" version to 6.9
-
-= 1.0.4 - 2026-07-20 =
-* Add - Include partner details in Reddit Pixel and CAPI requests.
-* Add - Include Pixel ID when creating new campaigns.
-* Add - Add RTL support.
-* Fix - Fix disconnect failure when the Catalog Manager role is removed after initial setup.
-* Dev - Scope Reddit JS bundle to load only on the Reddit admin page.
 
 [See changelog for all versions](https://raw.githubusercontent.com/woocommerce/reddit-for-woocommerce/trunk/changelog.txt).
