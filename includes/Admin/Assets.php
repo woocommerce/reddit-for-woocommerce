@@ -57,12 +57,23 @@ class Assets {
 	 * @return void
 	 */
 	public function enqueue_assets(): void {
+		// The localized data includes the admin nonce, feed URL and account details,
+		// so only users allowed to manage the plugin may receive it.
+		if ( ! Helper::current_user_can_manage() ) {
+			return;
+		}
+
+		// `page` and `path` are request-controlled, so also require the real wc-admin entry point.
+		if ( 'admin.php' !== ( $GLOBALS['pagenow'] ?? '' ) ) {
+			return;
+		}
+
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		$page = sanitize_text_field( wp_unslash( $_GET['page'] ?? '' ) );
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		$path = sanitize_text_field( wp_unslash( $_GET['path'] ?? '' ) );
 
-		if ( ! ( 'wc-admin' === $page && str_contains( $path, '/reddit' ) ) ) {
+		if ( ! ( 'wc-admin' === $page && str_starts_with( $path, '/reddit' ) ) ) {
 			return;
 		}
 
