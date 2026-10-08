@@ -4,6 +4,11 @@
 import domReady from '@wordpress/dom-ready';
 import { createRoot, lazy, Suspense } from '@wordpress/element';
 
+/**
+ * Internal dependencies
+ */
+import { insertAlphabetically } from './utils';
+
 const RedditAdsPromo = lazy( () =>
 	import(
 		/* webpackChunkName: "channel-visibility-reddit-ads-promo" */ './reddit-ads-promo'
@@ -28,7 +33,8 @@ domReady( () => {
 
 		mountEl = document.createElement( 'div' );
 		mountEl.id = 'reddit-channel-visibility-row';
-		inside.insertBefore( mountEl, inside.firstChild );
+		mountEl.dataset.service = 'reddit';
+		insertAlphabetically( inside, mountEl );
 	}
 
 	createRoot( mountEl ).render(

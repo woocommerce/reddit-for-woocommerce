@@ -107,7 +107,7 @@ class ChannelVisibilityMetaBox {
 	 * @return void
 	 */
 	public function render(): void {
-		echo '<div id="reddit-channel-visibility-box"></div>';
+		echo '<div id="reddit-channel-visibility-box" data-service="reddit"></div>';
 	}
 
 	/**
