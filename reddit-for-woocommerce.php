@@ -22,6 +22,9 @@
  * @package reddit-for-woocommerce
  */
 
+use Automattic\Jetpack\Config as JetpackConfig;
+use Automattic\Jetpack\Connection\Manager as JetpackConnectionManager;
+use RedditForWooCommerce\Config;
 use RedditForWooCommerce\Utils\Storage\Options;
 use RedditForWooCommerce\Utils\Storage\OptionDefaults;
 use RedditForWooCommerce\ServiceContainer;
@@ -78,6 +81,47 @@ register_deactivation_hook(
 	function () use ( $export_service ) {
 		// Unschedule all tasks related to product catalog export.
 		$export_service->maybe_unschedule_export_jobs();
+	}
+);
+
+/*
+ * Register as a Jetpack connection participant so the plugin is listed alongside other
+ * connected plugins in Jetpack's connection tooling. This must run before Jetpack applies
+ * registrations at `plugins_loaded` priority 2, so it can't live inside a service, which
+ * only boots on `woocommerce_loaded`. The Jetpack packages are provided by WooCommerce.
+ */
+add_action(
+	'plugins_loaded',
+	function () {
+		if ( ! class_exists( JetpackConfig::class ) ) {
+			return;
+		}
+
+		( new JetpackConfig() )->ensure(
+			'connection',
+			array(
+				'slug' => Config::PLUGIN_SLUG,
+				// Cannot use __() here, it would load translations too early.
+				'name' => 'Reddit for WooCommerce',
+			)
+		);
+	},
+	1
+);
+
+// Replace the hardcoded connection name with a translated one once translations can load.
+add_action(
+	'init',
+	function () {
+		if ( ! class_exists( JetpackConnectionManager::class ) ) {
+			return;
+		}
+
+		$plugin = ( new JetpackConnectionManager( Config::PLUGIN_SLUG ) )->get_plugin();
+
+		if ( $plugin ) {
+			$plugin->add( __( 'Reddit for WooCommerce', 'reddit-for-woocommerce' ) );
+		}
 	}
 );
 
