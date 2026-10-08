@@ -1,3 +1,15 @@
+// Full-width divider separating this plugin's block from other extensions
+// rendered after it in the channel visibility meta box. The negative inline
+// margin cancels the meta box `.inside` horizontal padding.
+#reddit-channel-visibility-row:not(:last-child)::after {
+	background-color: wpColors.$gray-200;
+	content: "";
+	display: block;
+	height: 1px;
+	margin-inline: -(wpVariables.$grid-unit-15);
+	width: calc(100% + #{wpVariables.$grid-unit-30});
+}
+
 .rfw-channel-visibility {
 	padding-block: wpVariables.$grid-unit-15;
 
@@ -30,11 +42,11 @@
 
 	.rfw-channel-visibility__sync-notice .components-notice__content {
 
-		& > p:first-child {
+		& > *:first-child {
 			margin-top: 0;
 		}
 
-		& > p:last-child {
+		& > *:last-child {
 			margin-bottom: 0;
 		}
 	}
