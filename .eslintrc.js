@@ -42,6 +42,7 @@ module.exports = {
 		jQuery: 'readonly',
 		ajaxurl: 'readonly',
 		redditAdsAdminData: 'readonly',
+		redditAdsMetaBoxData: 'readonly',
 	},
 	rules: {
 		'@wordpress/i18n-text-domain': [

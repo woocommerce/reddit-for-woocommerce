@@ -2,6 +2,7 @@
 	"phpVersion": null,
 	"core": null,
 	"plugins": [
+		"https://github.com/WP-API/Basic-Auth/archive/master.zip",
 		"https://downloads.wordpress.org/plugin/woocommerce.zip",
 		".",
 		"./tests/e2e/plugins/reddit-options.php"

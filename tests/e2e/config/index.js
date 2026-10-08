@@ -1,25 +1,24 @@
-const admin = {
-	username: 'admin',
-	password: 'password',
-};
+const config = require( './default.json' );
+const { billing } = config.addresses.customer;
+
+const admin = config.users.admin;
 
 const customer = {
-	username: 'customer',
-	password: 'password',
+	...config.users.customer,
 	billing: {
-		firstName: 'John',
-		lastName: 'Doe',
-		company: 'Automattic',
+		firstName: billing.firstname,
+		lastName: billing.lastname,
+		company: billing.company,
 		country: 'US',
 		countryName: 'United States',
-		address: 'addr 1',
-		addressSecondLine: 'addr 2',
-		city: 'San Francisco',
-		state: 'CA',
-		stateName: 'California',
-		zip: '94107',
-		phone: '123456789',
-		email: 'john.doe@example.com',
+		address: billing.addressfirstline,
+		addressSecondLine: billing.addresssecondline,
+		city: billing.city,
+		state: billing.state,
+		stateName: billing.statename,
+		zip: billing.postcode,
+		phone: billing.phone,
+		email: billing.email,
 	},
 };
 
