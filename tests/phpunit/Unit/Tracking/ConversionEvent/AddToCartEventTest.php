@@ -77,10 +77,37 @@ final class AddToCartEventTest extends WP_UnitTestCase {
 
 		$metadata = $payload['data']['events'][0]['metadata'];
 
+		$expected_price = wc_get_price_to_display( $product );
+
 		$this->assertSame( 'abc_123', $metadata['conversion_id'] );
 		$this->assertSame( $this->quantity, $metadata['item_count'] );
-		$this->assertSame( $this->quantity * floatval( $product->get_regular_price( 20 ) ), $metadata['value'] );
+		$this->assertSame( $this->quantity * $expected_price, $metadata['value'] );
 		$this->assertSame( 'USD', $metadata['currency'] );
-		$this->assertEquals( array( array( 'id' => $product->get_id(), 'name' => $product->get_name() ) ), $metadata['products'] );
+		$this->assertEquals(
+			array(
+				array(
+					'id'         => $product->get_id(),
+					'name'       => $product->get_name(),
+					'item_price' => $expected_price,
+					'quantity'   => $this->quantity,
+				),
+			),
+			$metadata['products']
+		);
+	}
+
+	/**
+	 * Test that get_value() is rounded to the store's price precision, so
+	 * floating-point drift from price × quantity doesn't leak into the payload.
+	 */
+	public function test_get_value_is_rounded_to_price_precision(): void {
+		$product = new WC_Product_Simple();
+		$product->set_name( 'Product Two' );
+		$product->set_regular_price( '1.15' );
+		$product->save();
+
+		$event = new AddToCartEvent( $product->get_id(), 3 );
+
+		$this->assertSame( 3.45, $event->get_value() );
 	}
 }
