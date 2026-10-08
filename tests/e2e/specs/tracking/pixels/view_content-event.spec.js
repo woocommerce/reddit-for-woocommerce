@@ -6,7 +6,12 @@ const { test, expect } = require( '@playwright/test' );
 /**
  * Internal dependencies
  */
-import { findRedditEvent, getThemes, switchTheme } from '../../../utils';
+import {
+	findRedditEvent,
+	getThemes,
+	switchTheme,
+	setConsent,
+} from '../../../utils';
 
 test.describe( 'ViewContent event', () => {
 	test.use( { storageState: process.env.ADMINSTATE } );
@@ -17,6 +22,7 @@ test.describe( 'ViewContent event', () => {
 		test( `[${ theme } theme] Direct access to Single Product Page sends events`, async ( {
 			page,
 		} ) => {
+			await setConsent( page, true );
 			await switchTheme( page, themes[ theme ] );
 			await page.goto( '/product/product-two' );
 			const events = await page.evaluate( () => window.rdt.queue );
@@ -36,6 +42,7 @@ test.describe( 'ViewContent event', () => {
 		test( `[${ theme } theme] Backward navigation sends event `, async ( {
 			page,
 		} ) => {
+			await setConsent( page, true );
 			await switchTheme( page, themes[ theme ] );
 			await page.goto( '/product/product-two' );
 			await page
@@ -61,6 +68,7 @@ test.describe( 'ViewContent event', () => {
 		test( `[${ theme } theme] Navigate to Single Product Page event sends event `, async ( {
 			page,
 		} ) => {
+			await setConsent( page, true );
 			await switchTheme( page, themes[ theme ] );
 			await page.goto( '/shop' );
 			await page
@@ -94,6 +102,7 @@ test.describe( 'ViewContent event', () => {
 		test( `[${ theme } theme] No event is sent on reload`, async ( {
 			page,
 		} ) => {
+			await setConsent( page, true );
 			await switchTheme( page, themes[ theme ] );
 			await page.goto( '/product/product-two' );
 			await page.reload();
