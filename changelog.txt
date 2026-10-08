@@ -1,5 +1,11 @@
 *** Reddit for WooCommerce Changelog ***
 
+= 1.0.7 - 2026-10-08 =
+* Fix - Bump WooCommerce "tested up to" version to 11.2.
+* Fix - Deploy Plugin workflow hanging on the "Deploy Product" step.
+* Fix - Doc - Add PR workflow guidelines to AGENTS.md.
+* Fix - REDTWOO-143 Workflow Dispatch Trigger.
+
 = 1.0.6 - 2026-09-08 =
 * Fix - Set required `bid_type` of `CPM` when creating a Reddit ad group, fixing "Request failed" errors that blocked onboarding completion.
 * Fix - AddToCart CAPI events now carry a non-empty conversion ID for the `?add-to-cart=` flow.
