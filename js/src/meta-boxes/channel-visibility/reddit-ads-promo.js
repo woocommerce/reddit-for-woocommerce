@@ -6,6 +6,7 @@ import { useDispatch } from '@wordpress/data';
 import { useEffect, useRef } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as preferencesStore } from '@wordpress/preferences';
+import classnames from 'classnames';
 
 /**
  * Internal dependencies
@@ -65,7 +66,9 @@ const RedditAdsPromo = () => {
 
 	return (
 		<Flex
-			className="rfw-channel-visibility"
+			className={ classnames( 'rfw-channel-visibility', {
+				'rfw-channel-visibility--dismissed': isDismissed,
+			} ) }
 			direction="column"
 			gap={ 5 }
 			justify="center"
