@@ -107,6 +107,8 @@ class ChannelVisibilityMetaBox {
 	 * @return void
 	 */
 	public function render(): void {
+		// `data-service` lets each extension sharing this meta box place its box alphabetically
+		// (see insertAlphabetically() in js/src/meta-boxes/channel-visibility/utils.js).
 		echo '<div id="reddit-channel-visibility-box" data-service="reddit"></div>';
 	}
 
