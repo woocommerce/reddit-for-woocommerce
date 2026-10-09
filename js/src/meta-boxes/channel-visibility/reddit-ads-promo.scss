@@ -11,7 +11,11 @@
 }
 
 .rfw-channel-visibility {
-	padding-block: wpVariables.$grid-unit-15;
+	padding-block: wpVariables.$grid-unit-20;
+
+	&.rfw-channel-visibility--dismissed {
+		padding-block: wpVariables.$grid-unit-15;
+	}
 
 	.rfw-channel-visibility__logo {
 		display: block;

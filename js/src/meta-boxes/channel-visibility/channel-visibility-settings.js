@@ -55,7 +55,11 @@ const ChannelVisibilitySettings = () => {
 	const hasIssues = issues.length > 0;
 
 	return (
-		<Flex direction="column" gap={ 4 } className="rfw-channel-visibility">
+		<Flex
+			className="rfw-channel-visibility rfw-channel-visibility--settings"
+			direction="column"
+			gap={ 4 }
+		>
 			<Flex direction="column" gap={ 4 }>
 				<FlexBlock>
 					<Flex gap={ 2 } align="center">
