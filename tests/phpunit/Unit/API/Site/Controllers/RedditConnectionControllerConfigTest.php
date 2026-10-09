@@ -134,7 +134,7 @@ class RedditConnectionControllerConfigTest extends WP_UnitTestCase {
 		$this->assertSame( '', Options::get( OptionDefaults::CATALOG_ERROR ) );
 	}
 
-	public function test_maps_reddit_currency_rejection_to_unsupported_currency() {
+	public function test_reddit_currency_rejection_falls_through_to_generic_error() {
 		update_option( 'woocommerce_currency', 'USD' );
 
 		$this->catalog_mock->method( 'create' )
@@ -148,7 +148,7 @@ class RedditConnectionControllerConfigTest extends WP_UnitTestCase {
 
 		$this->controller->do_config( $this->build_request() );
 
-		$this->assertSame( 'UNSUPPORTED_CURRENCY', Options::get( OptionDefaults::CATALOG_ERROR ) );
+		$this->assertSame( '', Options::get( OptionDefaults::CATALOG_ERROR ) );
 	}
 
 	public function test_permission_error_handling_is_not_regressed() {

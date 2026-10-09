@@ -483,11 +483,6 @@ class RedditConnectionController extends RESTBaseController {
 							$catalog_error = 'PERMISSION_ERROR';
 						} elseif ( 400 === $error_code && strpos( $error_message, 'pixels already attached to a catalog' ) !== false ) {
 							$catalog_error = 'CATALOG_ALREADY_EXISTS';
-						} elseif ( 400 === $error_code && false !== stripos( $error_message, 'currency' ) ) {
-							// Fail-safe for when the local supported-currency list is stale and Reddit rejects the request.
-							// NOTE: the exact message Reddit returns for this case is unconfirmed; this matches on the
-							// word "currency" in the error message and should be verified against a real API response.
-							$catalog_error = 'UNSUPPORTED_CURRENCY';
 						}
 						Options::set( OptionDefaults::CATALOG_ERROR, $catalog_error );
 					}
