@@ -3,7 +3,7 @@
  * Order edit screen and WooCommerce order attribution helpers.
  *
  * @package RedditForWooCommerce\Admin\MetaBox
- * @since 0.1.0
+ * @since 1.0.7
  */
 
 namespace RedditForWooCommerce\Admin\MetaBox;
@@ -14,7 +14,7 @@ use WC_Order;
 /**
  * WC Edit Order screen detection and Reddit order-attribution context.
  *
- * @since 0.1.0
+ * @since 1.0.7
  */
 final class OrderAttributionData {
 
@@ -25,7 +25,7 @@ final class OrderAttributionData {
 	 * PHPUnit coverage that calls {@see OrderUtil::is_order_edit_screen()} should define `WP_ADMIN` and
 	 * run after {@see set_current_screen()} (see {@see MetaBoxAssetsTest::ensure_admin_request_context_for_tests()}).
 	 *
-	 * @since 0.1.0
+	 * @since 1.0.7
 	 *
 	 * @return bool
 	 */
@@ -40,7 +40,7 @@ final class OrderAttributionData {
 	/**
 	 * Resolves the ID of the order being edited in admin, if any.
 	 *
-	 * @since 0.1.0
+	 * @since 1.0.7
 	 *
 	 * @return int|null
 	 */
@@ -77,7 +77,7 @@ final class OrderAttributionData {
 	/**
 	 * Reddit-specific order attribution source for the order currently being edited.
 	 *
-	 * @since 0.1.0
+	 * @since 1.0.7
 	 *
 	 * @return string|null 'reddit' when attribution matches Reddit traffic, null otherwise.
 	 */
@@ -98,7 +98,7 @@ final class OrderAttributionData {
 	/**
 	 * Reads WooCommerce order attribution meta and returns Reddit when it applies.
 	 *
-	 * @since 0.1.0
+	 * @since 1.0.7
 	 *
 	 * @param int $order_id Order ID.
 	 * @return string|null 'reddit' or null.

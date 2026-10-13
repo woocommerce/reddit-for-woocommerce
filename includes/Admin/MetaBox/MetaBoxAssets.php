@@ -3,7 +3,7 @@
  * Conditional admin assets for Reddit UI on WooCommerce Edit Order and Edit Product screens.
  *
  * @package RedditForWooCommerce\Admin\MetaBox
- * @since 0.1.0
+ * @since 1.0.7
  */
 
 namespace RedditForWooCommerce\Admin\MetaBox;
@@ -16,14 +16,14 @@ use RedditForWooCommerce\Utils\Storage\Options;
 /**
  * Enqueues meta box bundles only on matching WC admin screens and inlines mount data.
  *
- * @since 0.1.0
+ * @since 1.0.7
  */
 class MetaBoxAssets {
 
 	/**
 	 * Registers hooks.
 	 *
-	 * @since 0.1.0
+	 * @since 1.0.7
 	 *
 	 * @return void
 	 */
@@ -36,7 +36,7 @@ class MetaBoxAssets {
 	 *
 	 * At most one bundle is enqueued per request.
 	 *
-	 * @since 0.1.0
+	 * @since 1.0.7
 	 *
 	 * @return void
 	 */
@@ -56,7 +56,7 @@ class MetaBoxAssets {
 	/**
 	 * Gates the order-attribution bundle to the WooCommerce order edit screen.
 	 *
-	 * @since 0.1.0
+	 * @since 1.0.7
 	 *
 	 * @return bool
 	 */
@@ -67,7 +67,7 @@ class MetaBoxAssets {
 	/**
 	 * Enqueues the order-attribution bundle and passes localized data for the Edit Order screen.
 	 *
-	 * @since 0.1.0
+	 * @since 1.0.7
 	 *
 	 * @return void
 	 */
@@ -93,7 +93,7 @@ class MetaBoxAssets {
 	/**
 	 * Enqueues the channel-visibility bundle and passes localized data for the Edit Product screen.
 	 *
-	 * @since 0.1.0
+	 * @since 1.0.7
 	 *
 	 * @param array<string,mixed> $channel_visibility Inline data built by ProductChannelVisibilityData.
 	 *
@@ -137,7 +137,7 @@ class MetaBoxAssets {
 	/**
 	 * Keys shared between order-attribution and channel-visibility localized payloads.
 	 *
-	 * @since 0.1.0
+	 * @since 1.0.7
 	 *
 	 * @return array<string,mixed>
 	 */

@@ -3,7 +3,7 @@
  * Product edit screen detection and channel-visibility inline data for the meta box bundle.
  *
  * @package RedditForWooCommerce\Admin\MetaBox
- * @since 0.1.0
+ * @since 1.0.7
  */
 
 namespace RedditForWooCommerce\Admin\MetaBox;
@@ -16,14 +16,14 @@ use WC_Product;
  *
  * Does not read cohabit/mode from PHP; those are resolved client-side at mount.
  *
- * @since 0.1.0
+ * @since 1.0.7
  */
 final class ProductChannelVisibilityData {
 
 	/**
 	 * Builds the `channelVisibility` object for `redditAdsMetaBoxData`.
 	 *
-	 * @since 0.1.0
+	 * @since 1.0.7
 	 *
 	 * @return array<string,mixed>|null Null when not on a valid product edit context.
 	 */
