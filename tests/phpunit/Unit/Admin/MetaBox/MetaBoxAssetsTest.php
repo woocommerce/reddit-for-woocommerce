@@ -106,16 +106,10 @@ final class MetaBoxAssetsTest extends WP_UnitTestCase {
 
 		$decoded = $this->decode_registered_metabox_payload();
 
-		$this->assertSame( Config::PLUGIN_SLUG, $decoded['slug'] ?? null );
 		$this->assert_metabox_payload_bool( $decoded['onboardingComplete'] ?? null, true );
 		$this->assert_metabox_payload_bool( $decoded['hasCampaign'] ?? null, false );
 		$this->assertArrayHasKey( 'orderAttributionSource', $decoded );
 		$this->assertNull( $decoded['orderAttributionSource'] );
-
-		$this->assertIsArray( $decoded['urls'] ?? null );
-		$this->assert_wc_admin_url_has_reddit_path( $decoded['urls']['start'] ?? '', '/reddit/start' );
-		$this->assert_wc_admin_url_has_reddit_path( $decoded['urls']['campaignCreate'] ?? '', '/reddit/campaigns/create' );
-		$this->assert_wc_admin_url_has_reddit_path( $decoded['urls']['settings'] ?? '', '/reddit/settings' );
 	}
 
 	public function test_localized_data_when_not_connected_with_campaign_flag(): void {
@@ -131,20 +125,6 @@ final class MetaBoxAssetsTest extends WP_UnitTestCase {
 
 		$this->assert_metabox_payload_bool( $decoded['onboardingComplete'] ?? null, false );
 		$this->assert_metabox_payload_bool( $decoded['hasCampaign'] ?? null, true );
-	}
-
-	public function test_wc_admin_urls_match_helper_output(): void {
-		$asset = new MetaBoxAssetsTestDouble();
-		$asset->set_should_enqueue( true );
-
-		$asset->enqueue_assets();
-
-		$decoded = $this->decode_registered_metabox_payload();
-		$urls    = Helper::get_wc_admin_reddit_metabox_urls();
-
-		$this->assertSame( $urls['start'], $decoded['urls']['start'] ?? null );
-		$this->assertSame( $urls['campaignCreate'], $decoded['urls']['campaignCreate'] ?? null );
-		$this->assertSame( $urls['settings'], $decoded['urls']['settings'] ?? null );
 	}
 
 	public function test_real_metabox_not_enqueued_on_dashboard_screen(): void {
@@ -213,11 +193,9 @@ final class MetaBoxAssetsTest extends WP_UnitTestCase {
 			);
 
 			$decoded = $this->decode_registered_metabox_payload( self::SCRIPT_HANDLE_CHANNEL );
-			$this->assertSame( Config::PLUGIN_SLUG, $decoded['slug'] ?? null );
 			$this->assertArrayHasKey( 'channelVisibility', $decoded );
 			$this->assertArrayNotHasKey( 'hasCampaign', $decoded );
 			$this->assertArrayNotHasKey( 'orderAttributionSource', $decoded );
-			$this->assertArrayNotHasKey( 'urls', $decoded );
 
 			$cv = $decoded['channelVisibility'];
 			$this->assertIsArray( $cv );
@@ -626,26 +604,6 @@ final class MetaBoxAssetsTest extends WP_UnitTestCase {
 			$actual = (bool) $value;
 		}
 		$this->assertSame( $expected, $actual, 'Localized boolean field should match expected truthiness.' );
-	}
-
-	/**
-	 * Asserts a full admin URL is wc-admin with path= matching the expected Reddit route (encoded or not).
-	 *
-	 * @param string $url           Full URL from localized payload.
-	 * @param string $expected_path Expected path query value, e.g. `/reddit/start`.
-	 * @return void
-	 */
-	private function assert_wc_admin_url_has_reddit_path( string $url, string $expected_path ): void {
-		$this->assertStringContainsString( 'page=wc-admin', $url );
-
-		$query = wp_parse_url( $url, PHP_URL_QUERY );
-		$this->assertIsString( $query );
-
-		parse_str( $query, $parsed );
-		$this->assertArrayHasKey( 'path', $parsed );
-
-		$path = rawurldecode( (string) wp_unslash( $parsed['path'] ) );
-		$this->assertSame( $expected_path, $path, 'path= query param should resolve to the expected Reddit route.' );
 	}
 
 	/**

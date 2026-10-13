@@ -8,9 +8,7 @@
 
 namespace RedditForWooCommerce\Admin\MetaBox;
 
-use RedditForWooCommerce\Config;
 use RedditForWooCommerce\Utils\AssetLoader;
-use RedditForWooCommerce\Utils\Helper;
 use RedditForWooCommerce\Utils\OnboardingStatus;
 use RedditForWooCommerce\Utils\Storage\OptionDefaults;
 use RedditForWooCommerce\Utils\Storage\Options;
@@ -89,8 +87,6 @@ class MetaBoxAssets {
 			)
 		);
 
-		$urls = Helper::get_wc_admin_reddit_metabox_urls();
-
 		AssetLoader::localize_script(
 			'order-attribution',
 			'MetaBoxData',
@@ -99,11 +95,6 @@ class MetaBoxAssets {
 				array(
 					'hasCampaign'            => ! empty( Options::get( OptionDefaults::CAMPAIGN_IDS ) ),
 					'orderAttributionSource' => OrderAttributionData::get_order_attribution_source(),
-					'urls'                   => array(
-						'start'          => $urls['start'],
-						'campaignCreate' => $urls['campaignCreate'],
-						'settings'       => $urls['settings'],
-					),
 				)
 			)
 		);
@@ -155,7 +146,6 @@ class MetaBoxAssets {
 	 */
 	private function get_shared_metabox_bootstrap(): array {
 		return array(
-			'slug'               => Config::PLUGIN_SLUG,
 			'onboardingComplete' => OnboardingStatus::is_setup_completed(),
 		);
 	}
