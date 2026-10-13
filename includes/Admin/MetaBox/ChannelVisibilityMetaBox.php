@@ -3,12 +3,12 @@
  * Registers the Channel Visibility meta box on the Edit Product screen.
  *
  * Supports two modes:
- * - Cohabit: Google for WooCommerce is active and has already registered its own
- *   Channel visibility meta box; Reddit's settings are injected into that box via React.
+ * - Cohabit: another extension has already registered a `channel_visibility`
+ *   meta box; Reddit's settings are injected into that box via React.
  * - Standalone: Reddit registers its own Channel visibility sidebar meta box.
  *
  * @package RedditForWooCommerce\Admin\MetaBox
- * @since 0.1.0
+ * @since 1.0.7
  */
 
 namespace RedditForWooCommerce\Admin\MetaBox;
@@ -18,7 +18,7 @@ use RedditForWooCommerce\Utils\Helper;
 /**
  * Handles Channel visibility meta box registration and product meta persistence.
  *
- * @since 0.1.0
+ * @since 1.0.7
  */
 class ChannelVisibilityMetaBox {
 
@@ -28,14 +28,14 @@ class ChannelVisibilityMetaBox {
 	 * When set to '1' the product is included in catalog generation.
 	 * When set to '0' or absent the product is excluded.
 	 *
-	 * @since 0.1.0
+	 * @since 1.0.7
 	 */
 	public const CATALOG_ITEM = 'product_catalog_item';
 
 	/**
 	 * Registers WordPress hooks.
 	 *
-	 * @since 0.1.0
+	 * @since 1.0.7
 	 * @return void
 	 */
 	public function register_hooks(): void {
@@ -44,13 +44,13 @@ class ChannelVisibilityMetaBox {
 	}
 
 	/**
-	 * Registers the Channel visibility meta box only when GLA's box is absent.
+	 * Registers the Channel visibility meta box only when no shared `channel_visibility` box exists.
 	 *
-	 * Runs at priority 999 so GLA has already registered at its default priority.
-	 * In cohabit mode the React component injects Reddit's settings into GLA's box;
+	 * Runs at priority 999 so any extension registering at the default priority has already done so.
+	 * In cohabit mode the React component injects Reddit's settings into the shared box;
 	 * no second meta box should appear. In standalone mode Reddit owns the box.
 	 *
-	 * @since 0.1.0
+	 * @since 1.0.7
 	 *
 	 * @param string   $post_type Current post type.
 	 * @param \WP_Post $post      Current post object.
@@ -63,7 +63,7 @@ class ChannelVisibilityMetaBox {
 
 		global $wp_meta_boxes;
 
-		if ( $this->gla_box_registered( (array) $wp_meta_boxes ) ) {
+		if ( $this->shared_box_registered( (array) $wp_meta_boxes ) ) {
 			return;
 		}
 
@@ -77,14 +77,14 @@ class ChannelVisibilityMetaBox {
 	}
 
 	/**
-	 * Checks whether GLA's channel_visibility meta box is registered for the product screen.
+	 * Checks whether a `channel_visibility` meta box is registered for the product screen.
 	 *
-	 * @since 0.1.0
+	 * @since 1.0.7
 	 *
 	 * @param array $wp_meta_boxes Global meta boxes registry.
 	 * @return bool
 	 */
-	private function gla_box_registered( array $wp_meta_boxes ): bool {
+	private function shared_box_registered( array $wp_meta_boxes ): bool {
 		if ( empty( $wp_meta_boxes['product'] ) ) {
 			return false;
 		}
@@ -103,7 +103,7 @@ class ChannelVisibilityMetaBox {
 	/**
 	 * Renders the React mount point for the Channel visibility widget.
 	 *
-	 * @since 0.1.0
+	 * @since 1.0.7
 	 * @return void
 	 */
 	public function render(): void {
@@ -115,10 +115,10 @@ class ChannelVisibilityMetaBox {
 	/**
 	 * Saves the catalog item meta when a product is saved.
 	 *
-	 * Mode-agnostic: runs regardless of whether Reddit owns the meta box or GLA does,
+	 * Mode-agnostic: runs regardless of whether Reddit owns the meta box or shares another extension's,
 	 * because the form field lives in the same <form id="post"> either way.
 	 *
-	 * @since 0.1.0
+	 * @since 1.0.7
 	 *
 	 * @param int $post_id The product post ID.
 	 * @return void

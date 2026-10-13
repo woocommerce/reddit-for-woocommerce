@@ -86,7 +86,7 @@ class ChannelVisibilityMetaBoxTest extends WP_UnitTestCase {
 	// -------------------------------------------------------------------------
 
 	/**
-	 * In cohabit mode GLA's channel_visibility box is already present; no Reddit
+	 * In cohabit mode a shared `channel_visibility` box is already present; no Reddit
 	 * meta box should be registered.
 	 */
 	public function test_cohabit_mode_does_not_register_meta_box(): void {
