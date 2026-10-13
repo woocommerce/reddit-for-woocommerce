@@ -208,17 +208,17 @@ Reddit Ads Promo "Get started" button is clicked.
 - [`GetStartedCTA`](js/src/meta-boxes/channel-visibility/get-started-cta.js#L28) with `{ context: channel-visibility-meta-box, href: 'admin.php?page=wc-admin&path=%2Freddit%2Fstart' }`.
 - [`RedditAdsPromo`](js/src/meta-boxes/order-attribution/reddit-ads-promo.js#L58) with `{ context: 'order-attribution-meta-box', href: 'admin.php?page=wc-admin&path=%2Freddit%2Fstart' }`.
 
-### [`rfw_reddit_ads_promo_shown`](js/src/meta-boxes/channel-visibility/reddit-ads-promo.js#L26)
+### [`rfw_reddit_ads_promo_shown`](js/src/meta-boxes/channel-visibility/reddit-ads-promo.js#L27)
 Reddit Ads Promo banner is shown.
 
- Fires on every meta box load, including after onboarding when the settings
- panel is shown instead of the promo, and when the promo has been dismissed.
+ Fires only when the promo renders, i.e. before onboarding is complete,
+ including the compact layout shown after the promo is dismissed.
 #### Properties
 | name | type | description |
 | ---- | ---- | ----------- |
 `context` | `string` | Context of the Reddit Ads Promo.
 #### Emitters
-- [`RedditAdsPromo`](js/src/meta-boxes/channel-visibility/reddit-ads-promo.js#L43) with `{ context: channel-visibility-meta-box }`.
+- [`RedditAdsPromo`](js/src/meta-boxes/channel-visibility/reddit-ads-promo.js#L44) with `{ context: channel-visibility-meta-box }`.
 - [`RedditAdsPromo`](js/src/meta-boxes/order-attribution/reddit-ads-promo.js#L58) with `{ context: 'order-attribution-meta-box' }`.
 
 ### [`rfw_reddit_ads_promo_shown`](js/src/meta-boxes/order-attribution/reddit-ads-promo.js#L18)
@@ -231,7 +231,7 @@ Reddit Ads Promo banner is shown.
 | ---- | ---- | ----------- |
 `context` | `string` | Context of the Reddit Ads Promo.
 #### Emitters
-- [`RedditAdsPromo`](js/src/meta-boxes/channel-visibility/reddit-ads-promo.js#L43) with `{ context: channel-visibility-meta-box }`.
+- [`RedditAdsPromo`](js/src/meta-boxes/channel-visibility/reddit-ads-promo.js#L44) with `{ context: channel-visibility-meta-box }`.
 - [`RedditAdsPromo`](js/src/meta-boxes/order-attribution/reddit-ads-promo.js#L58) with `{ context: 'order-attribution-meta-box' }`.
 
 ### [`rfw_reddit_go_to_dashboard_button_click`](js/src/pages/settings/reddit-ads/index.js#L28)

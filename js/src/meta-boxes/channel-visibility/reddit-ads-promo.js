@@ -27,8 +27,8 @@ import './reddit-ads-promo.scss';
 /**
  * Reddit Ads Promo banner is shown.
  *
- * Fires on every meta box load, including after onboarding when the settings
- * panel is shown instead of the promo, and when the promo has been dismissed.
+ * Fires only when the promo renders, i.e. before onboarding is complete,
+ * including the compact layout shown after the promo is dismissed.
  *
  * @event rfw_reddit_ads_promo_shown
  * @property {string} context Context of the Reddit Ads Promo.
@@ -48,13 +48,13 @@ const RedditAdsPromo = () => {
 	const hasTrackedRef = useRef( false );
 
 	useEffect( () => {
-		if ( ! hasTrackedRef.current ) {
+		if ( ! hasTrackedRef.current && ! onboardingComplete ) {
 			recordRfwEvent( 'rfw_reddit_ads_promo_shown', {
 				context: CHANNEL_VISIBILITY_CONTEXT,
 			} );
 			hasTrackedRef.current = true;
 		}
-	}, [] );
+	}, [ onboardingComplete ] );
 
 	const handleDismiss = () => {
 		set( PREFERENCES_STORE_NAMESPACE, CHANNEL_VISIBILITY_PROMO_KEY, true );
