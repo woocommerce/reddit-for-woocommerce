@@ -20,6 +20,7 @@ use RedditForWooCommerce\ServiceKey;
 use RedditForWooCommerce\ServiceContainer;
 use RedditForWooCommerce\CsvExporter\ProductExportService;
 use RedditForWooCommerce\Utils\Helper;
+use RedditForWooCommerce\Utils\OnboardingStatus;
 
 /**
  * Handles admin script and style enqueues.
@@ -74,7 +75,7 @@ class Assets {
 			'index',
 			'AdminData',
 			array(
-				'setupComplete'      => boolval( Options::get( OptionDefaults::ONBOARDING_STATUS ) === 'connected' ),
+				'setupComplete'      => OnboardingStatus::is_setup_completed(),
 				'status'             => Options::get( OptionDefaults::ONBOARDING_STATUS ),
 				'step'               => Options::get( OptionDefaults::ONBOARDING_STEP ),
 				'adminNonce'         => wp_create_nonce( 'admin_nonce' ),
