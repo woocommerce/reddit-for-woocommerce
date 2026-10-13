@@ -12,7 +12,7 @@ use RedditForWooCommerce\Utils\Helper;
 use WC_Product;
 
 /**
- * Gates and payload for the Edit Product channel-visibility bundle (REDTWOO-126).
+ * Gates and payload for the Edit Product channel-visibility bundle.
  *
  * Does not read cohabit/mode from PHP; those are resolved client-side at mount.
  *
