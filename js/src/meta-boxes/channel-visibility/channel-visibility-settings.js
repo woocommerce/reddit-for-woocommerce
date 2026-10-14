@@ -19,8 +19,8 @@ import redditLogoURL from '~/images/logo/reddit.svg';
 /**
  * Channel Visibility Settings component.
  *
- * Renders an uncontrolled toggle that participates in the WC product form
- * submission via its `name` attribute. No REST endpoints are called.
+ * Renders a toggle whose state is submitted with the WC product form through
+ * a hidden input. No REST endpoints are called.
  *
  * @return {JSX.Element} The Channel Visibility Settings component.
  */
