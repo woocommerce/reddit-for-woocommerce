@@ -126,9 +126,9 @@ class ChannelVisibilityMetaBox {
 	public function save_meta( int $post_id ): void {
 		$meta_key = Helper::with_prefix( self::CATALOG_ITEM );
 
-		// The Channel Visibility control is absent from the submission whenever it
-		// never rendered — e.g. before onboarding completes, when only the promo
-		// banner shows and there is no select. In that case leave the existing
+		// The Channel Visibility field is absent from the submission before
+		// onboarding completes, when only the promo banner shows, and while the
+		// product is hidden from the store catalog. In that case leave the existing
 		// opt-in untouched rather than resetting it, so an unrelated product save
 		// (changing a price, say) doesn't silently flip the merchant's sync
 		// preference to "Don't sync and show".

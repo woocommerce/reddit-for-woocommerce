@@ -105,6 +105,18 @@ describe( 'ChannelVisibilitySettings', () => {
 		expect( toggle ).toBeDisabled();
 	} );
 
+	test( 'Disables the hidden input when the product is hidden from the catalog, so saving keeps the stored opt-in', () => {
+		setChannelVisibilityData( {
+			product_is_visible: false,
+			product_catalog_item: '1',
+		} );
+		const { container } = render( <ChannelVisibilitySettings /> );
+
+		expect(
+			container.querySelector( `input[name="${ FIELD_NAME }"]` )
+		).toBeDisabled();
+	} );
+
 	test( 'Shows the sync status notice when visible, synced on, and not yet synced', () => {
 		setChannelVisibilityData( { sync_status: 'not-synced' } );
 		render( <ChannelVisibilitySettings /> );

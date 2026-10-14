@@ -85,14 +85,16 @@ const ChannelVisibilitySettings = () => {
 
 						<FlexItem>
 							{ /*
-							 * Unchecked checkboxes are not sent via POST.
-							 * This hidden input submits the value whenever
-							 * the control is on the page, mirroring the toggle state.
+							 * Unchecked checkboxes are not sent via POST, so
+							 * this hidden input submits the toggle state. It is
+							 * disabled while the product is hidden from the store
+							 * catalog, so saving then keeps the stored opt-in.
 							 */ }
 							<input
 								type="hidden"
 								name={ fieldName }
 								value={ checked ? '1' : '0' }
+								disabled={ ! productIsVisible }
 							/>
 							<FormToggle
 								aria-label={ __(
