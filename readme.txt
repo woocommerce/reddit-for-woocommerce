@@ -56,6 +56,8 @@ Yes, it uses a [Jetpack](https://jetpack.com/) account to connect and communicat
 == Changelog ==
 
 = 1.0.7 - 2026-10-08 =
+* Add - "Channel visibility" meta box on the product edit screen to show or hide each product in the Reddit catalog.
+* Add - Reddit Ads promotion in the "Order attribution" meta box for orders from Reddit.
 * Tweak - Bump WooCommerce "tested up to" version to 11.2.
 
 = 1.0.6 - 2026-09-08 =
