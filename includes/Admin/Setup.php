@@ -4,7 +4,7 @@
  *
  * Coordinates registration of admin-facing services, including:
  * - Script and style enqueues
- * - Product meta fields
+ * - Channel visibility meta box (product editor)
  * - WooCommerce Admin page integration
  *
  * This class uses constructor-based dependency injection to allow
@@ -21,8 +21,8 @@ namespace RedditForWooCommerce\Admin;
  *
  * This class accepts any number of service objects that support the
  * `register_hooks()` method, and invokes them during admin bootstrap.
- * It allows granular registration of features such as product metadata,
- * script assets, and admin UI components without hardcoding dependencies.
+ * It allows granular registration of features such as script assets and
+ * admin UI components without hardcoding dependencies.
  *
  * @since 0.1.0
  */
