@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { __ } from '@wordpress/i18n';
-import { startCase } from 'lodash';
 import { useState } from '@wordpress/element';
 import {
 	Flex,
@@ -16,7 +15,6 @@ import {
  * Internal dependencies
  */
 import redditLogoURL from '~/images/logo/reddit.svg';
-import { SYNC_STATUS_HAS_ERRORS, SYNC_STATUS_SYNCED } from './constants';
 
 /**
  * Channel Visibility Settings component.
@@ -32,27 +30,12 @@ const ChannelVisibilitySettings = () => {
 			field_name: fieldName,
 			product_catalog_item: productCatalogItem,
 			product_is_visible: productIsVisible,
-			sync_status: syncStatus = null,
-			issues = [],
 		} = {},
 	} = window.redditAdsMetaBoxData || {};
 	const catalogValue = productCatalogItem || '1';
 	const defaultChecked = productIsVisible && catalogValue === '1';
 
 	const [ checked, setChecked ] = useState( defaultChecked );
-
-	let syncStatusText = null;
-
-	if ( syncStatus === SYNC_STATUS_HAS_ERRORS ) {
-		syncStatusText = __( 'Issues detected', 'reddit-for-woocommerce' );
-	} else if ( syncStatus ) {
-		// Convert the sync status to a human-readable string, e.g. "not-synced" -> "Not Synced"
-		syncStatusText = startCase( syncStatus );
-	}
-
-	const shouldDisplaySyncNotice =
-		productIsVisible && checked && syncStatus !== SYNC_STATUS_SYNCED;
-	const hasIssues = issues.length > 0;
 
 	return (
 		<Flex
@@ -115,7 +98,7 @@ const ChannelVisibilitySettings = () => {
 				{ ! productIsVisible && (
 					<FlexBlock>
 						<Notice
-							className="rfw-channel-visibility__sync-notice"
+							className="rfw-channel-visibility__notice"
 							status="info"
 							isDismissible={ false }
 						>
@@ -125,46 +108,6 @@ const ChannelVisibilitySettings = () => {
 									'reddit-for-woocommerce'
 								) }
 							</p>
-						</Notice>
-					</FlexBlock>
-				) }
-
-				{ shouldDisplaySyncNotice && syncStatusText && (
-					<FlexBlock>
-						<Notice
-							className="rfw-channel-visibility__sync-notice"
-							isDismissible={ false }
-							status={ hasIssues ? 'warning' : 'info' }
-						>
-							<p>
-								<strong>
-									{ __(
-										'Reddit sync status',
-										'reddit-for-woocommerce'
-									) }
-								</strong>
-							</p>
-							<p className="rfw-channel-visibility__sync-status">
-								{ syncStatusText }
-							</p>
-
-							{ hasIssues && (
-								<>
-									<p>
-										<strong>
-											{ __(
-												'Issues',
-												'reddit-for-woocommerce'
-											) }
-										</strong>
-									</p>
-									<ul>
-										{ issues.map( ( issue ) => (
-											<li key={ issue }>{ issue }</li>
-										) ) }
-									</ul>
-								</>
-							) }
 						</Notice>
 					</FlexBlock>
 				) }

@@ -23,8 +23,6 @@ function setChannelVisibilityData( overrides = {} ) {
 			field_name: FIELD_NAME,
 			product_catalog_item: '1',
 			product_is_visible: true,
-			sync_status: null,
-			issues: [],
 			...overrides,
 		},
 	};
@@ -117,35 +115,6 @@ describe( 'ChannelVisibilitySettings', () => {
 		).toBeDisabled();
 	} );
 
-	test( 'Shows the sync status notice when visible, synced on, and not yet synced', () => {
-		setChannelVisibilityData( { sync_status: 'not-synced' } );
-		render( <ChannelVisibilitySettings /> );
-
-		expect( screen.getByText( 'Reddit sync status' ) ).toBeInTheDocument();
-		expect( screen.getByText( 'Not Synced' ) ).toBeInTheDocument();
-	} );
-
-	test( 'Does not show the sync status notice once the product has synced', () => {
-		setChannelVisibilityData( { sync_status: 'synced' } );
-		render( <ChannelVisibilitySettings /> );
-
-		expect(
-			screen.queryByText( 'Reddit sync status' )
-		).not.toBeInTheDocument();
-	} );
-
-	test( 'Does not show the sync status notice when the toggle is off', () => {
-		setChannelVisibilityData( {
-			product_catalog_item: '0',
-			sync_status: 'not-synced',
-		} );
-		render( <ChannelVisibilitySettings /> );
-
-		expect(
-			screen.queryByText( 'Reddit sync status' )
-		).not.toBeInTheDocument();
-	} );
-
 	test( 'Hidden input value mirrors the toggle state', () => {
 		setChannelVisibilityData();
 		const { container } = render( <ChannelVisibilitySettings /> );
@@ -162,18 +131,5 @@ describe( 'ChannelVisibilitySettings', () => {
 
 		fireEvent.click( toggle );
 		expect( hiddenInput ).toHaveValue( '1' );
-	} );
-
-	test( 'Lists sync issues when the sync status has errors', () => {
-		setChannelVisibilityData( {
-			sync_status: 'has-errors',
-			issues: [ 'Missing product image' ],
-		} );
-		render( <ChannelVisibilitySettings /> );
-
-		expect( screen.getByText( 'Issues detected' ) ).toBeInTheDocument();
-		expect(
-			screen.getByText( 'Missing product image' )
-		).toBeInTheDocument();
 	} );
 } );
