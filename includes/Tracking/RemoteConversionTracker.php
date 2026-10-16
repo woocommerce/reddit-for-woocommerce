@@ -340,21 +340,19 @@ class RemoteConversionTracker implements ConversionTrackerInterface {
 
 		// Fire-and-forget dispatch returns no meaningful response, so there is
 		// nothing to inspect or log for it.
-		if ( $blocking && Helper::is_logging_enabled() ) {
+		if ( $blocking ) {
 			$event = $args['event'] ?? 'unknown_event';
 
 			if ( is_wp_error( $response ) ) {
-				$body       = json_decode( wp_remote_retrieve_body( $response->get_error_data() ), true );
 				$error_data = $response->get_error_data();
-				$status     = $error_data['response']['code'];
-				$message    = $response->get_error_message();
-				$body       = Helper::deep_replace_double_quotes( $body );
+				$status     = isset( $error_data['response']['code'] ) ? (int) $error_data['response']['code'] : 0;
+				$body       = Helper::deep_replace_double_quotes( json_decode( wp_remote_retrieve_body( $error_data ), true ) );
 
 				$info = array(
 					'context'    => 'tracking',
 					'payload'    => $event_payload,
 					'args'       => $args,
-					'error'      => $message,
+					'error'      => $response->get_error_message(),
 					'error_data' => $body,
 				);
 			} else {
@@ -366,11 +364,17 @@ class RemoteConversionTracker implements ConversionTrackerInterface {
 				);
 			}
 
-			$this->logger->log_event(
-				$event,
-				$status,
-				$info
-			);
+			$is_success = $status >= 200 && $status < 300;
+
+			// Always record failures so lost events are visible to support even when
+			// debug logging is off; verbose success logging stays behind debug mode.
+			if ( ! $is_success || Helper::is_logging_enabled() ) {
+				$this->logger->log_event(
+					$event,
+					$status,
+					$info
+				);
+			}
 		}
 
 		/**
