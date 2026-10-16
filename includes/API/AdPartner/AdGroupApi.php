@@ -97,7 +97,8 @@ class AdGroupApi extends BaseAdPartnerApi {
 		 */
 		$payload = array(
 			'data' => array(
-				'bid_type'                     => null,
+				// Reddit still requires `bid_type` under `BIDLESS`; CPM is the only type it accepts for this shopping ad group.
+				'bid_type'                     => 'CPM',
 				'campaign_id'                  => $campaign_id,
 				'configured_status'            => 'ACTIVE',
 				'conversion_pixel_id'          => $pixel_id,
