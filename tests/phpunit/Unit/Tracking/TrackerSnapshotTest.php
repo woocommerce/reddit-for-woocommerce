@@ -37,12 +37,15 @@ class TrackerSnapshotTest extends WP_UnitTestCase {
 	}
 
 	public function test_register_hooks_adds_tracker_data_filter(): void {
+		$callback = array( TrackerSnapshot::class, 'add_snapshot_data' );
+
+		// The plugin registers the filter on load, so remove it to prove register_hooks() adds it.
+		remove_filter( 'woocommerce_tracker_data', $callback );
+		$this->assertFalse( has_filter( 'woocommerce_tracker_data', $callback ) );
+
 		TrackerSnapshot::register_hooks();
 
-		$this->assertSame(
-			10,
-			has_filter( 'woocommerce_tracker_data', array( TrackerSnapshot::class, 'add_snapshot_data' ) )
-		);
+		$this->assertSame( 10, has_filter( 'woocommerce_tracker_data', $callback ) );
 	}
 
 	public function test_collect_pii_is_no_when_option_is_unset(): void {
