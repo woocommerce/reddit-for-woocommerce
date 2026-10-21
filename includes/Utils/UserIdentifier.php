@@ -426,8 +426,9 @@ final class UserIdentifier {
 			return true;
 		}
 
-		// Country code typed without its "+", e.g. "1 555…" for the US or "91 98765…" for India.
-		return 0 === strpos( ltrim( $digits, '0' ), ltrim( $calling_code, '+' ) );
+		// Country code typed without its "+", e.g. "1 555…" for the US or "91 98765…" for India. A number typed
+		// with its trunk "0" is followed by an area code, which may share digits with the country code (e.g. "041" in Switzerland).
+		return 0 !== strpos( $digits, '0' ) && 0 === strpos( $digits, ltrim( $calling_code, '+' ) );
 	}
 
 	/**

@@ -253,7 +253,7 @@ final class UserIdentifierTest extends WP_UnitTestCase {
 			'IN country code without +'        => array( '91 98765 43210', 'IN' ),
 			'IT landline with kept leading 0'  => array( '06 1234 5678', 'IT' ),
 			'RU trunk prefix 8'                => array( '8 912 345 6789', 'RU' ),
-			'00 dialing prefix with extension' => array( '0044 20 7946 0018 ext. 5', 'GB' ),
+			'GB 00 dialing prefix with extension' => array( '0044 20 7946 0018 ext. 5', 'GB' ),
 		);
 	}
 
@@ -293,6 +293,7 @@ final class UserIdentifierTest extends WP_UnitTestCase {
 			'US national with extension' => array( '555-867-5309 x12', 'US', '+15558675309' ),
 			'IT mobile'                  => array( '333 123 4567', 'IT', '+393331234567' ),
 			'RU without trunk prefix'    => array( '912 345 6789', 'RU', '+79123456789' ),
+			'CH area code matching country code' => array( '041 123 45 67', 'CH', '+41411234567' ),
 		);
 	}
 
