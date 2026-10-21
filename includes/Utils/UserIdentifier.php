@@ -27,6 +27,23 @@ use WC_Order;
 final class UserIdentifier {
 
 	/**
+	 * Countries whose national numbers keep their leading `0` in E.164, so it cannot be dropped.
+	 *
+	 * @since 1.0.7
+	 */
+	private const LEADING_ZERO_KEPT_COUNTRIES = array( 'IT', 'SM', 'VA' );
+
+	/**
+	 * National trunk prefixes other than `0`, keyed by country.
+	 *
+	 * @since 1.0.7
+	 */
+	private const NON_ZERO_TRUNK_PREFIXES = array(
+		'KZ' => '8',
+		'RU' => '8',
+	);
+
+	/**
 	 * Returns a user_data array for CAPI payloads.
 	 *
 	 * Always includes the device identifiers available on the request: IP address,
@@ -327,8 +344,14 @@ final class UserIdentifier {
 	 * A number already in international form (leading `+`) keeps its digits with any
 	 * extension and formatting removed. A national number is prefixed with the
 	 * calling code derived from the billing country after its leading zero is
-	 * dropped. When no calling code can be resolved for a national number, an empty
-	 * string is returned so a mis-canonicalized value is never hashed and sent.
+	 * dropped.
+	 *
+	 * An empty string is returned, so a mis-canonicalized value is never hashed and
+	 * sent, when no calling code can be resolved for a national number, or when the
+	 * number is typed in a form that cannot be converted with confidence: an
+	 * international number with a `(0)` trunk marker, or a national number carrying
+	 * an international dialing prefix, a repeated country code, or a country-specific
+	 * trunk prefix.
 	 *
 	 * @since 1.0.7
 	 *
@@ -347,6 +370,10 @@ final class UserIdentifier {
 		$phone = (string) preg_replace( '/\s*(?:ext|extension|x|#)\.?\s*\d+\s*$/i', '', $phone );
 
 		if ( 0 === strpos( $phone, '+' ) ) {
+			if ( preg_match( '/\(\s*0\s*\)/', $phone ) ) {
+				return '';
+			}
+
 			$digits = preg_replace( '/\D/', '', substr( $phone, 1 ) );
 
 			return '' === $digits ? '' : '+' . $digits;
@@ -358,13 +385,49 @@ final class UserIdentifier {
 			return '';
 		}
 
-		$digits = ltrim( (string) preg_replace( '/\D/', '', $phone ), '0' );
+		$raw_digits = (string) preg_replace( '/\D/', '', $phone );
+
+		if ( self::is_ambiguous_national_number( $raw_digits, strtoupper( $country ), $calling_code ) ) {
+			return '';
+		}
+
+		$digits = ltrim( $raw_digits, '0' );
 
 		if ( '' === $digits ) {
 			return '';
 		}
 
 		return $calling_code . $digits;
+	}
+
+	/**
+	 * Whether a national number is typed in a form that cannot be converted to E.164 with confidence.
+	 *
+	 * Dropping a valid but unusual number is preferred over sending one that can never match.
+	 *
+	 * @since 1.0.7
+	 *
+	 * @param string $digits       National number digits, with formatting removed.
+	 * @param string $country      Uppercase billing country code.
+	 * @param string $calling_code The country's `+`-prefixed calling code.
+	 * @return bool True when the number should be left out.
+	 */
+	private static function is_ambiguous_national_number( string $digits, string $country, string $calling_code ): bool {
+		// International dialing prefix: "00" almost everywhere, "011" in North America.
+		if ( 0 === strpos( $digits, '00' ) || ( 0 === strpos( $calling_code, '+1' ) && 0 === strpos( $digits, '011' ) ) ) {
+			return true;
+		}
+
+		if ( in_array( $country, self::LEADING_ZERO_KEPT_COUNTRIES, true ) && 0 === strpos( $digits, '0' ) ) {
+			return true;
+		}
+
+		if ( isset( self::NON_ZERO_TRUNK_PREFIXES[ $country ] ) && 0 === strpos( $digits, self::NON_ZERO_TRUNK_PREFIXES[ $country ] ) ) {
+			return true;
+		}
+
+		// Country code typed without its "+", e.g. "1 555…" for the US or "91 98765…" for India.
+		return 0 === strpos( ltrim( $digits, '0' ), ltrim( $calling_code, '+' ) );
 	}
 
 	/**
