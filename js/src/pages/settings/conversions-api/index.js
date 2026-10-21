@@ -138,7 +138,7 @@ const ConversionsAPI = () => {
 							'reddit-for-woocommerce'
 						) }
 						checked={ isPiiCollectionEnabled }
-						disabled={ isSavingPii }
+						disabled={ isSavingPii || ! isCapiEnabled }
 						onChange={ handlePiiStatusOnChange }
 					/>
 				</VStack>
