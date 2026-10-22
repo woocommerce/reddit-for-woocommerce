@@ -15,7 +15,7 @@ wp-env run cli wp option update storefront_nux_dismissed 1
 
 # Disable the block product editor so the classic editor is used in E2E tests.
 # The channel visibility meta box only renders in the classic editor.
-wp-env run tests-cli wp option update woocommerce_feature_product_block_editor_enabled no
+wp-env run cli wp option update woocommerce_feature_product_block_editor_enabled no
 
 # Activate and setup WooCommerce.
 wp-env run cli wp wc tool run install_pages --user=1
