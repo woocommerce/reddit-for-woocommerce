@@ -1,0 +1,39 @@
+{
+	"url": "http://localhost:8889/",
+	"users": {
+		"admin": {
+			"username": "admin",
+			"password": "password"
+		},
+		"customer": {
+			"username": "customer",
+			"password": "password"
+		}
+	},
+	"products": {
+		"simple": {
+			"name": "E2E Test Product",
+			"type": "simple",
+			"regular_price": "9.99",
+			"status": "publish"
+		}
+	},
+	"addresses": {
+		"customer": {
+			"billing": {
+				"firstname": "John",
+				"lastname": "Doe",
+				"company": "Automattic",
+				"country": "United States (US)",
+				"addressfirstline": "addr 1",
+				"addresssecondline": "addr 2",
+				"city": "San Francisco",
+				"state": "CA",
+				"statename": "California",
+				"postcode": "94107",
+				"phone": "123456789",
+				"email": "john.doe@example.com"
+			}
+		}
+	}
+}

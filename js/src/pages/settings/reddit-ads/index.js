@@ -48,11 +48,11 @@ const RedditAds = () => {
 			? __(
 					'Manage your campaigns and view performance reports.',
 					'reddit-for-woocommerce'
-			  )
+				)
 			: __(
 					'Create a Reddit campaign to promote your products.',
 					'reddit-for-woocommerce'
-			  );
+				);
 	};
 
 	const getIndicator = () => {
