@@ -52,6 +52,7 @@ module.exports = [
 				jQuery: 'readonly',
 				ajaxurl: 'readonly',
 				redditAdsAdminData: 'readonly',
+				redditAdsMetaBoxData: 'readonly',
 			},
 		},
 		settings: {
