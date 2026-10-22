@@ -17,8 +17,7 @@ use Automattic\WooCommerce\Admin\Marketing\MarketingCampaign;
 use Automattic\WooCommerce\Admin\Marketing\MarketingCampaignType;
 use Automattic\WooCommerce\Admin\Marketing\MarketingChannelInterface;
 use RedditForWooCommerce\Config;
-use RedditForWooCommerce\Utils\Storage\Options;
-use RedditForWooCommerce\Utils\Storage\OptionDefaults;
+use RedditForWooCommerce\Utils\OnboardingStatus;
 
 /**
  * Class RedditChannel
@@ -80,7 +79,7 @@ class RedditChannel implements MarketingChannelInterface {
 	 * @return bool
 	 */
 	public function is_setup_completed(): bool {
-		return 'connected' === Options::get( OptionDefaults::ONBOARDING_STATUS );
+		return OnboardingStatus::is_setup_completed();
 	}
 
 	/**
