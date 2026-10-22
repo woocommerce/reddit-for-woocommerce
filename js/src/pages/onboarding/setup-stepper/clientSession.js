@@ -24,6 +24,14 @@ const clientSession = {
 		const json = sessionStorage.getItem( KEY_PAID_ADS );
 		return json === null ? null : JSON.parse( json );
 	},
+
+	/**
+	 * Forgets the stored campaign data, so the next onboarding starts from the recommended budget
+	 * instead of pre-filling the budget of a campaign that has already been created.
+	 */
+	clearCampaign() {
+		sessionStorage.removeItem( KEY_PAID_ADS );
+	},
 };
 
 export default clientSession;
