@@ -3,6 +3,7 @@
  */
 import '@testing-library/jest-dom';
 import { screen, render } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 
 /**
  * Internal dependencies
@@ -12,8 +13,10 @@ import useSettings from '~/hooks/useSettings';
 
 jest.mock( '~/hooks/useSettings', () => jest.fn().mockName( 'useSettings' ) );
 
+const mockUpdateSettings = jest.fn();
+
 jest.mock( '~/data', () => ( {
-	useAppDispatch: () => ( { updateSettings: jest.fn() } ),
+	useAppDispatch: () => ( { updateSettings: mockUpdateSettings } ),
 } ) );
 
 jest.mock( '~/hooks/useDispatchCoreNotices', () => () => ( {
@@ -67,6 +70,23 @@ describe( 'ConversionsAPI', () => {
 		render( <ConversionsAPI /> );
 
 		expect( getPiiCheckbox() ).toBeEnabled();
+	} );
+
+	it( 'disables Collect Customer PII while the Conversions API tracking change is saving', async () => {
+		mockUpdateSettings.mockReturnValue( new Promise( () => {} ) );
+		mockSettings( {
+			isCapiEnabled: true,
+			isPiiCollectionEnabled: false,
+		} );
+		render( <ConversionsAPI /> );
+
+		await userEvent.click(
+			screen.getByRole( 'checkbox', {
+				name: 'Enable Conversions API tracking',
+			} )
+		);
+
+		expect( getPiiCheckbox() ).toBeDisabled();
 	} );
 
 	it.each( [
