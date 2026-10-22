@@ -1,27 +1,21 @@
 {
 	"phpVersion": null,
-	"port": 8888,
-	"testsPort": 8889,
+	"port": 8889,
+	"testsEnvironment": false,
 	"core": null,
 	"plugins": [
 		"https://downloads.wordpress.org/plugin/woocommerce.zip",
 		".",
 		"./tests/e2e/plugins/reddit-options.php"
 	],
-	"themes": [
-		"https://downloads.wordpress.org/theme/storefront.zip"
-	],
-	"env": {
-		"tests": {
-			"mappings": {
-				"wp-cli.yml": "./tests/e2e/bin/wp-cli.yml"
-			},
-			"config": {
-				"JETPACK_AUTOLOAD_DEV": true,
-				"WP_DEBUG": true,
-				"SCRIPT_DEBUG": true,
-				"E2E_CONTEXT": true
-			}
-		}
+	"themes": [ "https://downloads.wordpress.org/theme/storefront.zip" ],
+	"mappings": {
+		"wp-cli.yml": "./tests/e2e/bin/wp-cli.yml"
+	},
+	"config": {
+		"JETPACK_AUTOLOAD_DEV": true,
+		"WP_DEBUG": true,
+		"SCRIPT_DEBUG": true,
+		"E2E_CONTEXT": true
 	}
 }
