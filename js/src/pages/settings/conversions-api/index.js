@@ -59,7 +59,7 @@ const ConversionsAPI = () => {
 					'reddit-for-woocommerce'
 				)
 			);
-		} catch ( error ) {
+		} catch {
 			// Silently fail because the error is handled within `updateSettings` action.
 		} finally {
 			setIsSaving( false );
