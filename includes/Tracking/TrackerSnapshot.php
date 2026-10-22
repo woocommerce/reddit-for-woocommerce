@@ -8,8 +8,7 @@
 namespace RedditForWooCommerce\Tracking;
 
 use RedditForWooCommerce\Utils\Helper;
-use RedditForWooCommerce\Utils\Storage\Options;
-use RedditForWooCommerce\Utils\Storage\OptionDefaults;
+use RedditForWooCommerce\Utils\OnboardingStatus;
 
 /**
  * Reports the plugin's current settings in WooCommerce's usage tracker data.
@@ -74,7 +73,7 @@ class TrackerSnapshot {
 	private static function get_settings(): array {
 		return array(
 			'version'             => REDDIT_FOR_WOOCOMMERCE_VERSION,
-			'connected'           => 'connected' === Options::get( OptionDefaults::ONBOARDING_STATUS ) ? 'yes' : 'no',
+			'connected'           => OnboardingStatus::is_setup_completed() ? 'yes' : 'no',
 			'collect_pii'         => Helper::is_collect_pii_enabled() ? 'yes' : 'no',
 			'conversions_enabled' => ConversionTrackingService::is_enabled() ? 'yes' : 'no',
 			'pixel_enabled'       => PixelTrackingService::is_enabled() ? 'yes' : 'no',
