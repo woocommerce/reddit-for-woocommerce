@@ -16,6 +16,7 @@ namespace RedditForWooCommerce\API\Site\Controllers;
 use WP_REST_Response;
 use RedditForWooCommerce\Config;
 use RedditForWooCommerce\Utils\Helper;
+use RedditForWooCommerce\Utils\CurrencyValidator;
 use RedditForWooCommerce\Utils\Storage\Options;
 use RedditForWooCommerce\Utils\Storage\OptionDefaults;
 
@@ -77,8 +78,9 @@ class OnboardingController extends RESTBaseController {
 
 		return rest_ensure_response(
 			array(
-				'status' => $status,
-				'step'   => $step,
+				'status'              => $status,
+				'step'                => $step,
+				'isCurrencySupported' => CurrencyValidator::is_supported(),
 			)
 		);
 	}
@@ -127,16 +129,20 @@ class OnboardingController extends RESTBaseController {
 			'title'      => 'reddit_setup_state',
 			'type'       => 'object',
 			'properties' => array(
-				'status' => array(
+				'status'              => array(
 					'description' => 'The status of merchant onboarding.',
 					'type'        => 'string',
 				),
-				'step'   => array(
+				'step'                => array(
 					'description' => 'The current step of merchant onboarding process.',
 					'type'        => 'string',
 				),
+				'isCurrencySupported' => array(
+					'description' => 'Whether the store currency is supported by Reddit for WooCommerce.',
+					'type'        => 'boolean',
+				),
 			),
-			'required'   => array( 'status', 'step' ),
+			'required'   => array( 'status', 'step', 'isCurrencySupported' ),
 		);
 	}
 }

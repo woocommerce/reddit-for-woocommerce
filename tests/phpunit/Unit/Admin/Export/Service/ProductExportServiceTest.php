@@ -26,6 +26,7 @@ use RedditForWooCommerce\Utils\Storage\Options;
 use RedditForWooCommerce\Utils\Storage\OptionDefaults;
 use RedditForWooCommerce\Connection\WcsClient;
 use RedditForWooCommerce\API\AdPartner\AdPartnerApi;
+use RedditForWooCommerce\API\AdPartner\CatalogApi;
 
 /**
  * @covers \RedditForWooCommerce\Admin\Export\Service\ProductExportService
@@ -190,5 +191,45 @@ class ProductExportServiceTest extends WP_UnitTestCase {
 		Options::delete( OptionDefaults::EXPORT_FILE_PATH );
 		Options::delete( OptionDefaults::EXPORT_FILE_URL );
 		Options::delete( OptionDefaults::EXPORT_PRODUCT_IDS );
+	}
+
+	/**
+	 * Tests that maybe_create_catalog() skips the Catalog API when the store currency is unsupported.
+	 */
+	public function test_maybe_create_catalog_skips_request_for_unsupported_currency(): void {
+		$original_currency = get_woocommerce_currency();
+		update_option( 'woocommerce_currency', 'INR' );
+
+		$catalog = $this->createMock( CatalogApi::class );
+		$catalog->expects( $this->never() )->method( 'create' );
+		$this->api->catalog = $catalog;
+
+		$this->service->maybe_create_catalog();
+
+		$this->assertSame( 'UNSUPPORTED_CURRENCY', Options::get( OptionDefaults::CATALOG_ERROR ) );
+
+		update_option( 'woocommerce_currency', $original_currency );
+		Options::delete( OptionDefaults::CATALOG_ERROR );
+	}
+
+	/**
+	 * Tests that maybe_create_catalog() still creates the catalog when the store currency is supported.
+	 */
+	public function test_maybe_create_catalog_creates_catalog_for_supported_currency(): void {
+		$original_currency = get_woocommerce_currency();
+		update_option( 'woocommerce_currency', 'USD' );
+
+		$catalog = $this->createMock( CatalogApi::class );
+		$catalog->expects( $this->once() )
+			->method( 'create' )
+			->willReturn( new \WP_REST_Response( array( 'data' => array( 'id' => 'catalog-123' ) ) ) );
+		$this->api->catalog = $catalog;
+
+		$this->service->maybe_create_catalog();
+
+		$this->assertSame( 'catalog-123', Options::get( OptionDefaults::CATALOG_ID ) );
+
+		update_option( 'woocommerce_currency', $original_currency );
+		Options::delete( OptionDefaults::CATALOG_ID );
 	}
 }
