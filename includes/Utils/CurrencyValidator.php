@@ -3,7 +3,7 @@
  * Validates the store currency against Reddit's supported catalog currencies.
  *
  * @package RedditForWooCommerce\Utils
- * @since 1.0.7
+ * @since n.e.x.t
  */
 
 namespace RedditForWooCommerce\Utils;
@@ -11,7 +11,7 @@ namespace RedditForWooCommerce\Utils;
 /**
  * Single source of truth for which currencies Reddit's Catalog API accepts.
  *
- * @since 1.0.7
+ * @since n.e.x.t
  */
 final class CurrencyValidator {
 
@@ -20,7 +20,7 @@ final class CurrencyValidator {
 	 *
 	 * @see https://ads-api.reddit.com/docs/v3/api/create-product-catalog#request
 	 *
-	 * @since 1.0.7
+	 * @since n.e.x.t
 	 *
 	 * @var string[]
 	 */
@@ -40,7 +40,7 @@ final class CurrencyValidator {
 	/**
 	 * Checks whether a currency is supported by Reddit's Catalog API.
 	 *
-	 * @since 1.0.7
+	 * @since n.e.x.t
 	 *
 	 * @param string|null $currency Currency code to check. Defaults to the store's currency.
 	 * @return bool True if the currency is supported.
@@ -57,7 +57,7 @@ final class CurrencyValidator {
 	 * Falls back to {@see self::SUPPORTED_CURRENCIES} if a filter callback
 	 * returns anything other than a list of currency codes.
 	 *
-	 * @since 1.0.7
+	 * @since n.e.x.t
 	 *
 	 * @return string[] Uppercase currency codes.
 	 */
@@ -65,7 +65,7 @@ final class CurrencyValidator {
 		/**
 		 * Filters the currencies Reddit's Catalog API accepts.
 		 *
-		 * @since 1.0.7
+		 * @since n.e.x.t
 		 *
 		 * @param string[] $currencies Uppercase ISO 4217 currency codes.
 		 */

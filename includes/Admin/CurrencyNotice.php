@@ -3,7 +3,7 @@
  * Displays a site-wide admin notice when the store currency is unsupported.
  *
  * @package RedditForWooCommerce\Admin
- * @since 1.0.7
+ * @since n.e.x.t
  */
 
 namespace RedditForWooCommerce\Admin;
@@ -14,14 +14,14 @@ use RedditForWooCommerce\Utils\CurrencyValidator;
  * Warns merchants on every wp-admin screen when their store currency
  * isn't one Reddit's Catalog API accepts, before they reach onboarding.
  *
- * @since 1.0.7
+ * @since n.e.x.t
  */
 class CurrencyNotice {
 
 	/**
 	 * Hooks the notice rendering into `admin_notices`.
 	 *
-	 * @since 1.0.7
+	 * @since n.e.x.t
 	 *
 	 * @return void
 	 */
@@ -32,7 +32,7 @@ class CurrencyNotice {
 	/**
 	 * Renders the unsupported currency notice.
 	 *
-	 * @since 1.0.7
+	 * @since n.e.x.t
 	 *
 	 * @return void
 	 */
