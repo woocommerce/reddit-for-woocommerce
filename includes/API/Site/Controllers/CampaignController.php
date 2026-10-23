@@ -98,6 +98,26 @@ class CampaignController extends RESTBaseController {
 		$amount        = floatval( wp_unslash( $params['amount'] ) );
 		$ad_account_id = Options::get( OptionDefaults::AD_ACCOUNT_ID );
 
+		/*
+		 * A Reddit conversion pixel is required before we can create a campaign.
+		 *
+		 * As of 2026-07-13 Reddit requires `conversion_pixel_id` on every ad group
+		 * (and CBO campaign); the ad groups created below already send it from the
+		 * stored pixel. Validate it up front so we fail fast with actionable guidance
+		 * instead of creating a campaign and product set and only then hitting the
+		 * missing-pixel error at the ad-group step, which would leave those resources
+		 * orphaned on the ad account.
+		 */
+		if ( empty( Options::get( OptionDefaults::PIXEL_ID ) ) ) {
+			return new WP_REST_Response(
+				array(
+					'status'  => 'error',
+					'message' => __( 'A Reddit conversion pixel is required to create a campaign. Set up a pixel in Reddit Events Manager, then connect it in the Reddit for WooCommerce settings and try again.', 'reddit-for-woocommerce' ),
+				),
+				400
+			);
+		}
+
 		// Create a new campaign. If the campaign creation fails, return an error.
 		$campaign_id = $this->create_campaign();
 
