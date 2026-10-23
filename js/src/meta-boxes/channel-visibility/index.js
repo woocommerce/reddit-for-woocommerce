@@ -9,10 +9,11 @@ import { createRoot, lazy, Suspense } from '@wordpress/element';
  */
 import { insertAlphabetically } from './utils';
 
-const RedditAdsPromo = lazy( () =>
-	import(
-		/* webpackChunkName: "channel-visibility-reddit-ads-promo" */ './reddit-ads-promo'
-	)
+const RedditAdsPromo = lazy(
+	() =>
+		import(
+			/* webpackChunkName: "channel-visibility-reddit-ads-promo" */ './reddit-ads-promo'
+		)
 );
 
 domReady( () => {
