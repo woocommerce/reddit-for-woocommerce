@@ -45,7 +45,7 @@ describe( 'ConversionsAPI', () => {
 	// Expect it once here so it doesn't fail whichever test renders first.
 	beforeAll( () => {
 		mockSettings( {} );
-		// eslint-disable-next-line testing-library/no-render-in-setup
+		// eslint-disable-next-line testing-library/no-render-in-lifecycle
 		render( <ConversionsAPI /> ).unmount();
 
 		// eslint-disable-next-line jest/no-standalone-expect
