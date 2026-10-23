@@ -212,6 +212,109 @@ final class UserIdentifierTest extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Numbers typed in a form that cannot be converted to E.164 with confidence are
+	 * omitted, while the other match keys are still sent.
+	 *
+	 * @dataProvider ambiguous_phone_provider
+	 *
+	 * @param string $phone   Phone number as typed by the shopper.
+	 * @param string $country Billing country.
+	 */
+	public function test_phone_omitted_when_ambiguous( string $phone, string $country ): void {
+		Options::set( OptionDefaults::COLLECT_PII, 'yes' );
+
+		$order = wc_create_order( array( 'status' => 'pending', 'customer_id' => 7 ) );
+		$order->set_billing_email( 'jane@example.com' );
+		$order->set_billing_phone( $phone );
+		$order->set_billing_country( $country );
+		$order->save();
+
+		$data = UserIdentifier::get_user_data( $order );
+
+		$this->assertArrayNotHasKey( 'phone_number', $data['user'] );
+		$this->assertArrayHasKey( 'email', $data['user'] );
+		$this->assertArrayHasKey( 'external_id', $data['user'] );
+	}
+
+	/**
+	 * Phone numbers that cannot be converted with confidence.
+	 *
+	 * @return array<string,array{string,string}>
+	 */
+	public function ambiguous_phone_provider(): array {
+		return array(
+			'US country code without +'           => array( '1-555-867-5309', 'US' ),
+			'CA country code without +'           => array( '1 416 555 0199', 'CA' ),
+			'US 011 dialing prefix'               => array( '011 44 20 7946 0018', 'US' ),
+			'GB 00 dialing prefix'                => array( '0044 20 7946 0018', 'GB' ),
+			'DE 00 dialing prefix'                => array( '0049 30 1234567', 'DE' ),
+			'GB international with (0)'           => array( '+44 (0)20 7946 0018', 'GB' ),
+			'DE international with (0)'           => array( '+49 (0)30 1234567', 'DE' ),
+			'IN country code without +'           => array( '91 98765 43210', 'IN' ),
+			'IT landline with kept leading 0'     => array( '06 1234 5678', 'IT' ),
+			'RU trunk prefix 8'                   => array( '8 912 345 6789', 'RU' ),
+			'GB 00 dialing prefix with extension' => array( '0044 20 7946 0018 ext. 5', 'GB' ),
+			'GB international with trunk 0'       => array( '+44 020 7946 0018', 'GB' ),
+			'HU trunk prefix 06'                  => array( '06 1 234 5678', 'HU' ),
+			'BY trunk prefix 8'                   => array( '8 029 123 45 67', 'BY' ),
+			'KZ country code without +'           => array( '7 701 123 4567', 'KZ' ),
+			'JM country code without +'           => array( '1 876 555 1234', 'JM' ),
+			'JM area code of another country'     => array( '809-555-1234', 'JM' ),
+			'PR area code of another country'     => array( '876 555 1234', 'PR' ),
+			'PR local number without area code'   => array( '555-1234', 'PR' ),
+		);
+	}
+
+	/**
+	 * Numbers that convert with confidence keep their E.164 form.
+	 *
+	 * @dataProvider convertible_phone_provider
+	 *
+	 * @param string $phone    Phone number as typed by the shopper.
+	 * @param string $country  Billing country.
+	 * @param string $expected Expected E.164 number before hashing.
+	 */
+	public function test_phone_converted_when_unambiguous( string $phone, string $country, string $expected ): void {
+		Options::set( OptionDefaults::COLLECT_PII, 'yes' );
+
+		$order = wc_create_order( array( 'status' => 'pending', 'customer_id' => 7 ) );
+		$order->set_billing_phone( $phone );
+		$order->set_billing_country( $country );
+		$order->save();
+
+		$data = UserIdentifier::get_user_data( $order );
+
+		$this->assertSame( hash( 'sha256', $expected ), $data['user']['phone_number'] );
+	}
+
+	/**
+	 * Phone numbers that convert with confidence.
+	 *
+	 * @return array<string,array{string,string,string}>
+	 */
+	public function convertible_phone_provider(): array {
+		return array(
+			'international without (0)'          => array( '+44 20 7946 0018', 'GB', '+442079460018' ),
+			'GB national landline'               => array( '020 7946 0018', 'GB', '+442079460018' ),
+			'GB national 011 area code'          => array( '0113 496 0000', 'GB', '+441134960000' ),
+			'US national'                        => array( '(555) 867-5309', 'US', '+15558675309' ),
+			'US national with extension'         => array( '555-867-5309 x12', 'US', '+15558675309' ),
+			'IT mobile'                          => array( '333 123 4567', 'IT', '+393331234567' ),
+			'RU without trunk prefix'            => array( '912 345 6789', 'RU', '+79123456789' ),
+			'CH area code matching country code' => array( '041 123 45 67', 'CH', '+41411234567' ),
+			'US national with # extension'       => array( '555-867-5309 #12', 'US', '+15558675309' ),
+			'international with # extension'     => array( '+1 415 555 0100 #22', 'US', '+14155550100' ),
+			'IT international with kept 0'       => array( '+39 06 1234 5678', 'IT', '+390612345678' ),
+			'HU without trunk prefix'            => array( '1 234 5678', 'HU', '+3612345678' ),
+			'KZ local number'                    => array( '701 123 4567', 'KZ', '+77011234567' ),
+			'JM full number'                     => array( '876-555-1234', 'JM', '+18765551234' ),
+			'JM local number'                    => array( '555-1234', 'JM', '+18765551234' ),
+			'PR first area code'                 => array( '787 555 1234', 'PR', '+17875551234' ),
+			'PR second area code'                => array( '(939) 555-1234', 'PR', '+19395551234' ),
+		);
+	}
+
+	/**
 	 * A purchase by a registered customer uses the hashed customer ID as external ID.
 	 */
 	public function test_external_id_from_order_customer_id(): void {
