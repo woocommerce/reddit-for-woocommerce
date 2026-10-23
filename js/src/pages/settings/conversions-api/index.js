@@ -125,7 +125,7 @@ const ConversionsAPI = () => {
 							'reddit-for-woocommerce'
 						) }
 						checked={ isCapiEnabled }
-						disabled={ isSaving }
+						disabled={ isSaving || isSavingPii }
 						onChange={ handleCapiStatusOnChange }
 					/>
 					<CheckboxControl

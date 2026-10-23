@@ -89,6 +89,23 @@ describe( 'ConversionsAPI', () => {
 		expect( getPiiCheckbox() ).toBeDisabled();
 	} );
 
+	it( 'disables Conversions API tracking while the Collect Customer PII change is saving', async () => {
+		mockUpdateSettings.mockReturnValue( new Promise( () => {} ) );
+		mockSettings( {
+			isCapiEnabled: true,
+			isPiiCollectionEnabled: false,
+		} );
+		render( <ConversionsAPI /> );
+
+		await userEvent.click( getPiiCheckbox() );
+
+		expect(
+			screen.getByRole( 'checkbox', {
+				name: 'Enable Conversions API tracking',
+			} )
+		).toBeDisabled();
+	} );
+
 	it.each( [
 		[ 'on', true ],
 		[ 'off', false ],
