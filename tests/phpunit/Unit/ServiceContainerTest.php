@@ -32,7 +32,10 @@ class ServiceContainerTest extends WP_UnitTestCase {
 
 		$ref  = new \ReflectionClass( ServiceContainer::class );
 		$prop = $ref->getProperty( 'instances' );
-		$prop->setAccessible( true );
+		// Required before PHP 8.1; a deprecated no-op from PHP 8.5.
+		if ( PHP_VERSION_ID < 80100 ) {
+			$prop->setAccessible( true );
+		}
 		$prop->setValue( null, array() );
 	}
 
@@ -45,7 +48,10 @@ class ServiceContainerTest extends WP_UnitTestCase {
 	private function set_service( string $key, object $instance ): void {
 		$ref  = new \ReflectionClass( ServiceContainer::class );
 		$prop = $ref->getProperty( 'instances' );
-		$prop->setAccessible( true );
+		// Required before PHP 8.1; a deprecated no-op from PHP 8.5.
+		if ( PHP_VERSION_ID < 80100 ) {
+			$prop->setAccessible( true );
+		}
 
 		$instances         = $prop->getValue();
 		$instances[ $key ] = $instance;

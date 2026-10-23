@@ -180,7 +180,7 @@ const useApiFetchCallback = ( options, initialState = defaultState ) => {
 					error = responseClone.json
 						? await responseClone.json()
 						: new Error( 'No content body in fetch response.' );
-				} catch ( exception ) {
+				} catch {
 					error = new Error( 'Error parsing response.' );
 				}
 

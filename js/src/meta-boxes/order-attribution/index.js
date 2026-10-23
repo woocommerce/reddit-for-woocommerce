@@ -4,10 +4,11 @@
 import domReady from '@wordpress/dom-ready';
 import { createRoot, lazy, Suspense } from '@wordpress/element';
 
-const RedditAdsPromo = lazy( () =>
-	import(
-		/* webpackChunkName: "order-attribution-reddit-ads-promo" */ './reddit-ads-promo'
-	)
+const RedditAdsPromo = lazy(
+	() =>
+		import(
+			/* webpackChunkName: "order-attribution-reddit-ads-promo" */ './reddit-ads-promo'
+		)
 );
 
 domReady( () => {
