@@ -254,6 +254,14 @@ final class UserIdentifierTest extends WP_UnitTestCase {
 			'IT landline with kept leading 0'  => array( '06 1234 5678', 'IT' ),
 			'RU trunk prefix 8'                => array( '8 912 345 6789', 'RU' ),
 			'GB 00 dialing prefix with extension' => array( '0044 20 7946 0018 ext. 5', 'GB' ),
+			'GB international with trunk 0'    => array( '+44 020 7946 0018', 'GB' ),
+			'HU trunk prefix 06'               => array( '06 1 234 5678', 'HU' ),
+			'BY trunk prefix 8'                => array( '8 029 123 45 67', 'BY' ),
+			'KZ country code without +'        => array( '7 701 123 4567', 'KZ' ),
+			'JM country code without +'        => array( '1 876 555 1234', 'JM' ),
+			'JM area code of another country'  => array( '809-555-1234', 'JM' ),
+			'PR area code of another country'  => array( '876 555 1234', 'PR' ),
+			'PR local number without area code' => array( '555-1234', 'PR' ),
 		);
 	}
 
@@ -294,6 +302,15 @@ final class UserIdentifierTest extends WP_UnitTestCase {
 			'IT mobile'                  => array( '333 123 4567', 'IT', '+393331234567' ),
 			'RU without trunk prefix'    => array( '912 345 6789', 'RU', '+79123456789' ),
 			'CH area code matching country code' => array( '041 123 45 67', 'CH', '+41411234567' ),
+			'US national with # extension' => array( '555-867-5309 #12', 'US', '+15558675309' ),
+			'international with # extension' => array( '+1 415 555 0100 #22', 'US', '+14155550100' ),
+			'IT international with kept 0' => array( '+39 06 1234 5678', 'IT', '+390612345678' ),
+			'HU without trunk prefix'      => array( '1 234 5678', 'HU', '+3612345678' ),
+			'KZ local number'              => array( '701 123 4567', 'KZ', '+77011234567' ),
+			'JM full number'               => array( '876-555-1234', 'JM', '+18765551234' ),
+			'JM local number'              => array( '555-1234', 'JM', '+18765551234' ),
+			'PR first area code'           => array( '787 555 1234', 'PR', '+17875551234' ),
+			'PR second area code'          => array( '(939) 555-1234', 'PR', '+19395551234' ),
 		);
 	}
 
