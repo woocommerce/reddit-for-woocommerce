@@ -113,10 +113,15 @@ export default function SetupPaidAds() {
 
 	const handleSubmit = async ( values ) => {
 		const { level, dailyBudget } = values;
+
+		const onCampaignCreated = () => {
+			clientSession.clearCampaign();
+		};
+
 		const onBeforeFinish = handleSetupComplete.bind(
 			null,
 			dailyBudget,
-			clientSession.clearCampaign
+			onCampaignCreated
 		);
 
 		setCompleting( ACTION_COMPLETE );
