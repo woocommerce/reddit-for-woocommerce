@@ -31,7 +31,7 @@ final class UserIdentifier {
 	 *
 	 * @since n.e.x.t
 	 */
-	private const LEADING_ZERO_KEPT_COUNTRIES = array( 'IT', 'SM', 'VA' );
+	private const LEADING_ZERO_KEPT_COUNTRIES = array( 'BJ', 'CG', 'CI', 'GA', 'IT', 'SM', 'VA' );
 
 	/**
 	 * National trunk prefixes other than a single `0`, keyed by country.
@@ -367,7 +367,7 @@ final class UserIdentifier {
 	 * A number already in international form (leading `+`) keeps its digits with any
 	 * extension and formatting removed. A national number is prefixed with the
 	 * calling code derived from the billing country after its leading zero is
-	 * dropped.
+	 * dropped, unless the country keeps that zero in E.164.
 	 *
 	 * A national number in a `+1` country other than the US and Canada is converted
 	 * only when its area code is one of the country's, or when it is a 7-digit local
@@ -428,7 +428,9 @@ final class UserIdentifier {
 			return '';
 		}
 
-		$digits = ltrim( $raw_digits, '0' );
+		$digits = in_array( $country, self::LEADING_ZERO_KEPT_COUNTRIES, true )
+			? $raw_digits
+			: ltrim( $raw_digits, '0' );
 
 		if ( '' === $digits ) {
 			return '';
@@ -515,7 +517,8 @@ final class UserIdentifier {
 			return true;
 		}
 
-		if ( in_array( $country, self::LEADING_ZERO_KEPT_COUNTRIES, true ) && 0 === strpos( $digits, '0' ) ) {
+		// WooCommerce returns "+379" for Vatican City, but its numbers use "+39 06 698…".
+		if ( 'VA' === $country && 0 === strpos( $digits, '0' ) ) {
 			return true;
 		}
 

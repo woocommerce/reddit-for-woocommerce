@@ -251,7 +251,7 @@ final class UserIdentifierTest extends WP_UnitTestCase {
 			'GB international with (0)'           => array( '+44 (0)20 7946 0018', 'GB' ),
 			'DE international with (0)'           => array( '+49 (0)30 1234567', 'DE' ),
 			'IN country code without +'           => array( '91 98765 43210', 'IN' ),
-			'IT landline with kept leading 0'     => array( '06 1234 5678', 'IT' ),
+			'VA national with leading 0'          => array( '06 698 12345', 'VA' ),
 			'RU trunk prefix 8'                   => array( '8 912 345 6789', 'RU' ),
 			'GB 00 dialing prefix with extension' => array( '0044 20 7946 0018 ext. 5', 'GB' ),
 			'GB international with trunk 0'       => array( '+44 020 7946 0018', 'GB' ),
@@ -311,6 +311,13 @@ final class UserIdentifierTest extends WP_UnitTestCase {
 			'JM local number'                    => array( '555-1234', 'JM', '+18765551234' ),
 			'PR first area code'                 => array( '787 555 1234', 'PR', '+17875551234' ),
 			'PR second area code'                => array( '(939) 555-1234', 'PR', '+19395551234' ),
+			'CI international with kept 0'       => array( '+225 07 07 12 34 56', 'CI', '+2250707123456' ),
+			'BJ international with kept 0'       => array( '+229 01 97 12 34 56', 'BJ', '+2290197123456' ),
+			'CG international with kept 0'       => array( '+242 06 123 4567', 'CG', '+242061234567' ),
+			'GA international with kept 0'       => array( '+241 06 03 12 34', 'GA', '+24106031234' ),
+			'CI national with kept 0'            => array( '07 07 12 34 56', 'CI', '+2250707123456' ),
+			'BJ national with kept 0'            => array( '01 97 12 34 56', 'BJ', '+2290197123456' ),
+			'IT national landline'               => array( '06 1234 5678', 'IT', '+390612345678' ),
 		);
 	}
 
