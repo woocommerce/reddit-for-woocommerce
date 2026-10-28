@@ -29,14 +29,18 @@ final class UserIdentifier {
 	/**
 	 * Countries whose national numbers keep their leading `0` in E.164, so it cannot be dropped.
 	 *
-	 * @since n.e.x.t
+	 * @since 1.0.8
 	 */
-	private const LEADING_ZERO_KEPT_COUNTRIES = array( 'BJ', 'CG', 'CI', 'GA', 'IT', 'SM', 'VA' );
+	private const LEADING_ZERO_KEPT_COUNTRIES = array( 'BJ', 'CG', 'CI', 'GA', 'IT', 'SM' );
 
 	/**
 	 * National trunk prefixes other than a single `0`, keyed by country.
 	 *
-	 * @since n.e.x.t
+	 * Where the country has a fixed national number length, the prefix is only
+	 * treated as a trunk prefix at the length that includes it, since national
+	 * numbers can start with the same digits (e.g. `812…` in St Petersburg).
+	 *
+	 * @since 1.0.8
 	 */
 	private const OTHER_TRUNK_PREFIXES = array(
 		'BY' => '8',
@@ -46,12 +50,19 @@ final class UserIdentifier {
 	);
 
 	/**
-	 * Fixed national number lengths for countries whose local numbers can start with their own country code digits.
+	 * National number lengths at which a number starting with a country's country code or trunk prefix digits is a national number.
 	 *
-	 * @since n.e.x.t
+	 * @since 1.0.8
 	 */
 	private const NATIONAL_NUMBER_LENGTHS = array(
+		'BY' => 9,
+		'DK' => 8,
+		'IT' => 10,
 		'KZ' => 10,
+		'NO' => 8,
+		'PL' => 9,
+		'RU' => 10,
+		'SG' => 8,
 	);
 
 	/**
@@ -59,7 +70,7 @@ final class UserIdentifier {
 	 *
 	 * WooCommerce only returns the first calling code for these countries.
 	 *
-	 * @since n.e.x.t
+	 * @since 1.0.8
 	 */
 	private const NANP_AREA_CODES = array(
 		'DO' => array( '809', '829', '849' ),
@@ -367,7 +378,9 @@ final class UserIdentifier {
 	 * A number already in international form (leading `+`) keeps its digits with any
 	 * extension and formatting removed. A national number is prefixed with the
 	 * calling code derived from the billing country after its leading zero is
-	 * dropped, unless the country keeps that zero in E.164.
+	 * dropped, unless the country keeps that zero in E.164. A trunk prefix other than
+	 * a single `0`, such as `8` in Russia, is removed where the number's length shows
+	 * it was typed. Vatican City numbers use Italy's `+39`.
 	 *
 	 * A national number in a `+1` country other than the US and Canada is converted
 	 * only when its area code is one of the country's, or when it is a 7-digit local
@@ -378,8 +391,9 @@ final class UserIdentifier {
 	 * number is typed in a form that cannot be converted with confidence: an
 	 * international number with a `(0)` trunk marker or a `0` after the country code,
 	 * a national number carrying an international dialing prefix, a repeated country
-	 * code, or a country-specific trunk prefix, or a `+1` country number whose area
-	 * code does not match the country.
+	 * code, or a country-specific trunk prefix at an unexpected length, a Vatican City
+	 * number without its leading `0`, or a `+1` country number whose area code does
+	 * not match the country.
 	 *
 	 * @since 1.0.7
 	 *
@@ -404,7 +418,8 @@ final class UserIdentifier {
 
 			$digits = (string) preg_replace( '/\D/', '', substr( $phone, 1 ) );
 
-			if ( '' === $digits || self::has_trunk_zero_after_country_code( $digits ) ) {
+			// "+379" is reserved for Vatican City but unused, since its numbers are part of Italy's "+39" range.
+			if ( '' === $digits || 0 === strpos( $digits, '379' ) || self::has_trunk_zero_after_country_code( $digits ) ) {
 				return '';
 			}
 
@@ -424,8 +439,15 @@ final class UserIdentifier {
 			return self::normalize_nanp_number( $raw_digits, $country, $calling_code );
 		}
 
-		if ( self::is_ambiguous_national_number( $raw_digits, $country, $calling_code ) ) {
+		$raw_digits = self::strip_other_trunk_prefix( $raw_digits, $country );
+
+		if ( '' === $raw_digits || self::is_ambiguous_national_number( $raw_digits, $country, $calling_code ) ) {
 			return '';
+		}
+
+		// WooCommerce returns "+379" for Vatican City, but its numbers are part of Italy's "+39 06 698…" range and keep the "0".
+		if ( 'VA' === $country ) {
+			return 0 === strpos( $raw_digits, '0' ) ? '+39' . $raw_digits : '';
 		}
 
 		$digits = in_array( $country, self::LEADING_ZERO_KEPT_COUNTRIES, true )
@@ -445,7 +467,7 @@ final class UserIdentifier {
 	 * WooCommerce returns these countries' calling code with the area code included
 	 * (e.g. `+1876` for Jamaica), while shoppers usually type the full 10-digit number.
 	 *
-	 * @since n.e.x.t
+	 * @since 1.0.8
 	 *
 	 * @param string $digits       National number digits, with formatting removed.
 	 * @param string $country      Uppercase billing country code.
@@ -472,7 +494,7 @@ final class UserIdentifier {
 	 * Countries that keep the leading `0` in E.164 are not affected. A number whose
 	 * country code is not recognized is left as typed.
 	 *
-	 * @since n.e.x.t
+	 * @since 1.0.8
 	 *
 	 * @param string $digits International number digits, without the `+` and formatting.
 	 * @return bool True when the number should be left out.
@@ -504,7 +526,7 @@ final class UserIdentifier {
 	 *
 	 * Dropping a valid but unusual number is preferred over sending one that can never match.
 	 *
-	 * @since n.e.x.t
+	 * @since 1.0.8
 	 *
 	 * @param string $digits       National number digits, with formatting removed.
 	 * @param string $country      Uppercase billing country code.
@@ -517,23 +539,64 @@ final class UserIdentifier {
 			return true;
 		}
 
-		// WooCommerce returns "+379" for Vatican City, but its numbers use "+39 06 698…".
-		if ( 'VA' === $country && 0 === strpos( $digits, '0' ) ) {
-			return true;
-		}
-
-		if ( isset( self::OTHER_TRUNK_PREFIXES[ $country ] ) && 0 === strpos( $digits, self::OTHER_TRUNK_PREFIXES[ $country ] ) ) {
-			return true;
-		}
-
 		// Country code typed without its "+", e.g. "1 555…" for the US or "91 98765…" for India. A number typed
 		// with its trunk "0" is followed by an area code, which may share digits with the country code (e.g. "041" in Switzerland).
-		if ( 0 === strpos( $digits, '0' ) || 0 !== strpos( $digits, ltrim( $calling_code, '+' ) ) ) {
+		$country_code = ltrim( $calling_code, '+' );
+
+		if ( 0 === strpos( $digits, '0' ) || 0 !== strpos( $digits, $country_code ) ) {
 			return false;
+		}
+
+		// Where national numbers keep their leading "0", "39 0…" in Italy can be a landline typed with its country code.
+		if ( in_array( $country, self::LEADING_ZERO_KEPT_COUNTRIES, true ) && '0' === substr( $digits, strlen( $country_code ), 1 ) ) {
+			return true;
 		}
 
 		// Where local numbers can start with the country code digits (e.g. "701…" in Kazakhstan), only a longer number has it typed.
 		return ! isset( self::NATIONAL_NUMBER_LENGTHS[ $country ] ) || strlen( $digits ) !== self::NATIONAL_NUMBER_LENGTHS[ $country ];
+	}
+
+	/**
+	 * Removes a national trunk prefix other than a single `0`, e.g. `8` in Russia or `06` in Hungary.
+	 *
+	 * In a country with a fixed national number length, a number of that length is
+	 * returned as typed, since it starts with its own area code. A number that is
+	 * the length of the prefix plus a national number has the prefix removed, and
+	 * any other number starting with the prefix cannot be resolved.
+	 *
+	 * @since 1.0.8
+	 *
+	 * @param string $digits  National number digits, with formatting removed.
+	 * @param string $country Uppercase billing country code.
+	 * @return string The digits without the trunk prefix, or an empty string when the number should be left out.
+	 */
+	private static function strip_other_trunk_prefix( string $digits, string $country ): string {
+		$prefix = self::OTHER_TRUNK_PREFIXES[ $country ] ?? '';
+
+		if ( '' === $prefix || 0 !== strpos( $digits, $prefix ) ) {
+			return $digits;
+		}
+
+		// Where "8" is the trunk prefix, "8 10" is the international dialing prefix.
+		if ( '8' === $prefix && 0 === strpos( $digits, '810' ) ) {
+			return '';
+		}
+
+		// No national number starts with "0", so a prefix like Hungary's "06" is always the trunk prefix.
+		if ( ! isset( self::NATIONAL_NUMBER_LENGTHS[ $country ] ) ) {
+			return substr( $digits, strlen( $prefix ) );
+		}
+
+		$length = self::NATIONAL_NUMBER_LENGTHS[ $country ];
+
+		if ( strlen( $digits ) === $length ) {
+			return $digits;
+		}
+
+		// Belarus numbers are typed with "8 0" before the area code, e.g. "8 029…".
+		$national = ltrim( substr( $digits, strlen( $prefix ) ), '0' );
+
+		return strlen( $national ) === $length ? $national : '';
 	}
 
 	/**
@@ -564,7 +627,7 @@ final class UserIdentifier {
 	 *
 	 * The `+1` countries are listed as `1`, since their calling codes include an area code.
 	 *
-	 * @since n.e.x.t
+	 * @since 1.0.8
 	 *
 	 * @return string[] Unique calling codes.
 	 */
