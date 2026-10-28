@@ -389,7 +389,7 @@ final class UserIdentifier {
 	 * An empty string is returned, so a mis-canonicalized value is never hashed and
 	 * sent, when no calling code can be resolved for a national number, or when the
 	 * number is typed in a form that cannot be converted with confidence: an
-	 * international number with a `(0)` trunk marker or a `0` after the country code,
+	 * international number with a `(0)` trunk marker or a trunk prefix after the country code,
 	 * a national number carrying an international dialing prefix, a repeated country
 	 * code, or a country-specific trunk prefix at an unexpected length, a Vatican City
 	 * number without its leading `0`, or a `+1` country number whose area code does
@@ -419,7 +419,12 @@ final class UserIdentifier {
 			$digits = (string) preg_replace( '/\D/', '', substr( $phone, 1 ) );
 
 			// "+379" is reserved for Vatican City but unused, since its numbers are part of Italy's "+39" range.
-			if ( '' === $digits || 0 === strpos( $digits, '379' ) || self::has_trunk_zero_after_country_code( $digits ) ) {
+			if (
+				'' === $digits
+				|| 0 === strpos( $digits, '379' )
+				|| self::has_trunk_zero_after_country_code( $digits )
+				|| self::has_other_trunk_prefix_after_country_code( $digits )
+			) {
 				return '';
 			}
 
@@ -519,6 +524,35 @@ final class UserIdentifier {
 		}
 
 		return true;
+	}
+
+	/**
+	 * Whether an international number has a trunk prefix other than `0` typed after its country code, e.g. `+7 8 812…`.
+	 *
+	 * A number whose national part merely starts with the prefix digits at the
+	 * country's national number length, e.g. `+7 812…`, is left as typed.
+	 *
+	 * @since 1.0.8
+	 *
+	 * @param string $digits International number digits, without the `+` and formatting.
+	 * @return bool True when the number should be left out.
+	 */
+	private static function has_other_trunk_prefix_after_country_code( string $digits ): bool {
+		foreach ( array_keys( self::OTHER_TRUNK_PREFIXES ) as $country ) {
+			$country_code = ltrim( self::get_country_calling_code( $country ), '+' );
+
+			if ( '' === $country_code || 0 !== strpos( $digits, $country_code ) ) {
+				continue;
+			}
+
+			$national = (string) substr( $digits, strlen( $country_code ) );
+
+			if ( self::strip_other_trunk_prefix( $national, $country ) !== $national ) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	/**
