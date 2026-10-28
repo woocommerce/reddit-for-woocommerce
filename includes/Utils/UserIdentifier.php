@@ -29,7 +29,7 @@ final class UserIdentifier {
 	/**
 	 * Countries whose national numbers keep their leading `0` in E.164, so it cannot be dropped.
 	 *
-	 * @since 1.0.8
+	 * @since n.e.x.t
 	 */
 	private const LEADING_ZERO_KEPT_COUNTRIES = array( 'BJ', 'CG', 'CI', 'GA', 'IT', 'SM' );
 
@@ -40,7 +40,7 @@ final class UserIdentifier {
 	 * treated as a trunk prefix at the length that includes it, since national
 	 * numbers can start with the same digits (e.g. `812…` in St Petersburg).
 	 *
-	 * @since 1.0.8
+	 * @since n.e.x.t
 	 */
 	private const OTHER_TRUNK_PREFIXES = array(
 		'BY' => '8',
@@ -52,7 +52,7 @@ final class UserIdentifier {
 	/**
 	 * National number lengths at which a number starting with a country's country code or trunk prefix digits is a national number.
 	 *
-	 * @since 1.0.8
+	 * @since n.e.x.t
 	 */
 	private const NATIONAL_NUMBER_LENGTHS = array(
 		'BY' => 9,
@@ -70,7 +70,7 @@ final class UserIdentifier {
 	 *
 	 * WooCommerce only returns the first calling code for these countries.
 	 *
-	 * @since 1.0.8
+	 * @since n.e.x.t
 	 */
 	private const NANP_AREA_CODES = array(
 		'DO' => array( '809', '829', '849' ),
@@ -472,7 +472,7 @@ final class UserIdentifier {
 	 * WooCommerce returns these countries' calling code with the area code included
 	 * (e.g. `+1876` for Jamaica), while shoppers usually type the full 10-digit number.
 	 *
-	 * @since 1.0.8
+	 * @since n.e.x.t
 	 *
 	 * @param string $digits       National number digits, with formatting removed.
 	 * @param string $country      Uppercase billing country code.
@@ -499,7 +499,7 @@ final class UserIdentifier {
 	 * Countries that keep the leading `0` in E.164 are not affected. A number whose
 	 * country code is not recognized is left as typed.
 	 *
-	 * @since 1.0.8
+	 * @since n.e.x.t
 	 *
 	 * @param string $digits International number digits, without the `+` and formatting.
 	 * @return bool True when the number should be left out.
@@ -532,7 +532,7 @@ final class UserIdentifier {
 	 * A number whose national part merely starts with the prefix digits at the
 	 * country's national number length, e.g. `+7 812…`, is left as typed.
 	 *
-	 * @since 1.0.8
+	 * @since n.e.x.t
 	 *
 	 * @param string $digits International number digits, without the `+` and formatting.
 	 * @return bool True when the number should be left out.
@@ -560,7 +560,7 @@ final class UserIdentifier {
 	 *
 	 * Dropping a valid but unusual number is preferred over sending one that can never match.
 	 *
-	 * @since 1.0.8
+	 * @since n.e.x.t
 	 *
 	 * @param string $digits       National number digits, with formatting removed.
 	 * @param string $country      Uppercase billing country code.
@@ -598,7 +598,7 @@ final class UserIdentifier {
 	 * the length of the prefix plus a national number has the prefix removed, and
 	 * any other number starting with the prefix cannot be resolved.
 	 *
-	 * @since 1.0.8
+	 * @since n.e.x.t
 	 *
 	 * @param string $digits  National number digits, with formatting removed.
 	 * @param string $country Uppercase billing country code.
@@ -661,7 +661,7 @@ final class UserIdentifier {
 	 *
 	 * The `+1` countries are listed as `1`, since their calling codes include an area code.
 	 *
-	 * @since 1.0.8
+	 * @since n.e.x.t
 	 *
 	 * @return string[] Unique calling codes.
 	 */
