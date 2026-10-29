@@ -399,11 +399,7 @@ final class UserIdentifier {
 	 * dropped, unless the country keeps that zero in E.164. A trunk prefix other than
 	 * a single `0`, such as `8` in Russia, is removed where the number's length shows
 	 * it was typed. A national number in a `+1` country other than the US and Canada
-	 * is matched against the country's area codes. Åland, Guernsey, the Isle of Man
-	 * and Jersey use their parent country's calling code.
-	 *
-	 * WooCommerce returns `+379` for Vatican City, but that code is unused: its
-	 * numbers are part of Italy's `+39 06 698…` range and keep the `0`.
+	 * is matched against the country's area codes.
 	 *
 	 * An empty string is returned, so a mis-canonicalized value is never hashed and
 	 * sent, when the number:
@@ -411,7 +407,7 @@ final class UserIdentifier {
 	 * - is national and no calling code can be resolved for the billing country
 	 * - is international with a `(0)` trunk marker, or a trunk prefix after the country code
 	 * - is international with the unused `+379` code
-	 * - is national and starts with an international dialing prefix or a repeated country code
+	 * - is national and starts with an international dialing prefix, or its own country code typed without a `+`
 	 * - is national with a country-specific trunk prefix at an unexpected length
 	 * - is a Vatican City national number without its leading `0`
 	 * - is a `+1` country national number whose area code does not match the country
@@ -698,6 +694,7 @@ final class UserIdentifier {
 		$codes     = array();
 		$countries = new WC_Countries();
 
+		// A country removed through the `woocommerce_countries` filter is missing here, so its numbers are sent as typed.
 		foreach ( array_keys( $countries->get_countries() ) as $country ) {
 			$code = ltrim( self::get_country_calling_code( (string) $country ), '+' );
 
