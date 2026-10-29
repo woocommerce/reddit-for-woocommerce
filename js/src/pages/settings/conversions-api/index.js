@@ -98,7 +98,7 @@ const ConversionsAPI = () => {
 					'reddit-for-woocommerce'
 				)
 			);
-		} catch ( error ) {
+		} catch {
 			// Silently fail because the error is handled within `updateSettings` action.
 		} finally {
 			setIsSavingPii( false );
@@ -125,7 +125,7 @@ const ConversionsAPI = () => {
 							'reddit-for-woocommerce'
 						) }
 						checked={ isCapiEnabled }
-						disabled={ isSaving }
+						disabled={ isSaving || isSavingPii }
 						onChange={ handleCapiStatusOnChange }
 					/>
 					<CheckboxControl
@@ -134,11 +134,11 @@ const ConversionsAPI = () => {
 							'reddit-for-woocommerce'
 						) }
 						help={ __(
-							'Share additional customer data (PII) with Conversions API events to improve ads measurement.',
+							'Send hashed customer email, phone number, and customer ID with Conversions API events to help Reddit match conversions to your ads. Customer details are hashed before they leave your store.',
 							'reddit-for-woocommerce'
 						) }
 						checked={ isPiiCollectionEnabled }
-						disabled={ isSavingPii }
+						disabled={ isSaving || isSavingPii || ! isCapiEnabled }
 						onChange={ handlePiiStatusOnChange }
 					/>
 				</VStack>
