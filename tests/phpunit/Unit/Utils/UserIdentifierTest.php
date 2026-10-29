@@ -272,6 +272,7 @@ final class UserIdentifierTest extends WP_UnitTestCase {
 			'JM area code of another country'     => array( '809-555-1234', 'JM' ),
 			'PR area code of another country'     => array( '876 555 1234', 'PR' ),
 			'PR local number without area code'   => array( '555-1234', 'PR' ),
+			'JE country code without +'           => array( '44 1534 123456', 'JE' ),
 		);
 	}
 
@@ -344,6 +345,14 @@ final class UserIdentifierTest extends WP_UnitTestCase {
 			'DK number starting with 45'         => array( '45 12 34 56', 'DK', '+4545123456' ),
 			'PL number starting with 48'         => array( '48 123 45 67', 'PL', '+48481234567' ),
 			'IT mobile starting with 39'         => array( '391 123 4567', 'IT', '+393911234567' ),
+			'JE national landline'               => array( '01534 123456', 'JE', '+441534123456' ),
+			'JE national mobile'                 => array( '07797 123456', 'JE', '+447797123456' ),
+			'JE landline without trunk 0'        => array( '1534 123456', 'JE', '+441534123456' ),
+			'GG national landline'               => array( '01481 123456', 'GG', '+441481123456' ),
+			'IM national landline'               => array( '01624 123456', 'IM', '+441624123456' ),
+			'AX national landline'               => array( '018 12345', 'AX', '+3581812345' ),
+			'AX national mobile'                 => array( '040 123 4567', 'AX', '+358401234567' ),
+			'JE international'                   => array( '+44 1534 123456', 'JE', '+441534123456' ),
 		);
 	}
 

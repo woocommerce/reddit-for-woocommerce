@@ -34,6 +34,21 @@ final class UserIdentifier {
 	private const LEADING_ZERO_KEPT_COUNTRIES = array( 'BJ', 'CG', 'CI', 'GA', 'IT', 'SM' );
 
 	/**
+	 * Calling codes of countries that share their parent country's numbering plan, keyed by country.
+	 *
+	 * WooCommerce returns these countries' calling code with an area code included
+	 * (e.g. `+441534` for Jersey), while shoppers type the full national number.
+	 *
+	 * @since n.e.x.t
+	 */
+	private const PARENT_CALLING_CODES = array(
+		'AX' => '+358',
+		'GG' => '+44',
+		'IM' => '+44',
+		'JE' => '+44',
+	);
+
+	/**
 	 * National trunk prefixes other than a single `0`, keyed by country.
 	 *
 	 * Where the country has a fixed national number length, the prefix is only
@@ -381,7 +396,8 @@ final class UserIdentifier {
 	 * dropped, unless the country keeps that zero in E.164. A trunk prefix other than
 	 * a single `0`, such as `8` in Russia, is removed where the number's length shows
 	 * it was typed. A national number in a `+1` country other than the US and Canada
-	 * is matched against the country's area codes.
+	 * is matched against the country's area codes. Åland, Guernsey, the Isle of Man
+	 * and Jersey use their parent country's calling code.
 	 *
 	 * WooCommerce returns `+379` for Vatican City, but that code is unused: its
 	 * numbers are part of Italy's `+39 06 698…` range and keep the `0`.
@@ -432,14 +448,14 @@ final class UserIdentifier {
 			return '+' . $digits;
 		}
 
-		$calling_code = self::get_country_calling_code( $country );
+		$country      = strtoupper( $country );
+		$calling_code = self::PARENT_CALLING_CODES[ $country ] ?? self::get_country_calling_code( $country );
 
 		if ( '' === $calling_code ) {
 			return '';
 		}
 
 		$raw_digits = (string) preg_replace( '/\D/', '', $phone );
-		$country    = strtoupper( $country );
 
 		if ( 0 === strpos( $calling_code, '+1' ) && '+1' !== $calling_code ) {
 			return self::normalize_nanp_number( $raw_digits, $country, $calling_code );
