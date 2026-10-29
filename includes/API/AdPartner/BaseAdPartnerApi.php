@@ -13,7 +13,7 @@
  * @package RedditForWooCommerce\API\AdPartner
  */
 
-namespace RedditForWooCommerce\Api\AdPartner;
+namespace RedditForWooCommerce\API\AdPartner;
 
 use RedditForWooCommerce\Connection\WcsClient;
 
