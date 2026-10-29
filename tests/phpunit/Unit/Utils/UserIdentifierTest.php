@@ -273,6 +273,9 @@ final class UserIdentifierTest extends WP_UnitTestCase {
 			'PR area code of another country'     => array( '876 555 1234', 'PR' ),
 			'PR local number without area code'   => array( '555-1234', 'PR' ),
 			'JE country code without +'           => array( '44 1534 123456', 'JE' ),
+			'JM local number without area code'   => array( '555-1234', 'JM' ),
+			'BR country code then mobile'         => array( '55 11 99123 4567', 'BR' ),
+			'BR country code then landline'       => array( '55 11 3123 4567', 'BR' ),
 		);
 	}
 
@@ -319,7 +322,10 @@ final class UserIdentifierTest extends WP_UnitTestCase {
 			'HU without trunk prefix'            => array( '1 234 5678', 'HU', '+3612345678' ),
 			'KZ local number'                    => array( '701 123 4567', 'KZ', '+77011234567' ),
 			'JM full number'                     => array( '876-555-1234', 'JM', '+18765551234' ),
-			'JM local number'                    => array( '555-1234', 'JM', '+18765551234' ),
+			'JM overlay area code'               => array( '658-555-1234', 'JM', '+16585551234' ),
+			'IN mobile starting with 91'         => array( '91234 56789', 'IN', '+919123456789' ),
+			'BR mobile starting with 55'         => array( '55 99123 4567', 'BR', '+5555991234567' ),
+			'BR landline starting with 55'       => array( '55 3123 4567', 'BR', '+555531234567' ),
 			'PR first area code'                 => array( '787 555 1234', 'PR', '+17875551234' ),
 			'PR second area code'                => array( '(939) 555-1234', 'PR', '+19395551234' ),
 			'CI international with kept 0'       => array( '+225 07 07 12 34 56', 'CI', '+2250707123456' ),

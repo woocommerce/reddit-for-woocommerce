@@ -70,25 +70,28 @@ final class UserIdentifier {
 	 * @since n.e.x.t
 	 */
 	private const NATIONAL_NUMBER_LENGTHS = array(
-		'BY' => 9,
-		'DK' => 8,
-		'IT' => 10,
-		'KZ' => 10,
-		'NO' => 8,
-		'PL' => 9,
-		'RU' => 10,
-		'SG' => 8,
+		'BR' => array( 10, 11 ),
+		'BY' => array( 9 ),
+		'DK' => array( 8 ),
+		'IN' => array( 10 ),
+		'IT' => array( 10 ),
+		'KZ' => array( 10 ),
+		'NO' => array( 8 ),
+		'PL' => array( 9 ),
+		'RU' => array( 10 ),
+		'SG' => array( 8 ),
 	);
 
 	/**
 	 * Area codes of the `+1` countries that have more than one, keyed by country.
 	 *
-	 * WooCommerce only returns the first calling code for these countries.
+	 * WooCommerce returns only one calling code for these countries.
 	 *
 	 * @since n.e.x.t
 	 */
 	private const NANP_AREA_CODES = array(
 		'DO' => array( '809', '829', '849' ),
+		'JM' => array( '876', '658' ),
 		'PR' => array( '787', '939' ),
 	);
 
@@ -603,7 +606,7 @@ final class UserIdentifier {
 		}
 
 		// Where local numbers can start with the country code digits (e.g. "701…" in Kazakhstan), only a longer number has it typed.
-		return ! isset( self::NATIONAL_NUMBER_LENGTHS[ $country ] ) || strlen( $digits ) !== self::NATIONAL_NUMBER_LENGTHS[ $country ];
+		return ! in_array( strlen( $digits ), self::NATIONAL_NUMBER_LENGTHS[ $country ] ?? array(), true );
 	}
 
 	/**
@@ -637,16 +640,16 @@ final class UserIdentifier {
 			return substr( $digits, strlen( $prefix ) );
 		}
 
-		$length = self::NATIONAL_NUMBER_LENGTHS[ $country ];
+		$lengths = self::NATIONAL_NUMBER_LENGTHS[ $country ];
 
-		if ( strlen( $digits ) === $length ) {
+		if ( in_array( strlen( $digits ), $lengths, true ) ) {
 			return $digits;
 		}
 
 		// Belarus numbers are typed with "8 0" before the area code, e.g. "8 029…".
 		$national = ltrim( substr( $digits, strlen( $prefix ) ), '0' );
 
-		return strlen( $national ) === $length ? $national : '';
+		return in_array( strlen( $national ), $lengths, true ) ? $national : '';
 	}
 
 	/**
