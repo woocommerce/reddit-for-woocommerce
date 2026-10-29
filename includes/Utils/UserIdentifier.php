@@ -380,20 +380,22 @@ final class UserIdentifier {
 	 * calling code derived from the billing country after its leading zero is
 	 * dropped, unless the country keeps that zero in E.164. A trunk prefix other than
 	 * a single `0`, such as `8` in Russia, is removed where the number's length shows
-	 * it was typed. Vatican City numbers use Italy's `+39`.
+	 * it was typed. A national number in a `+1` country other than the US and Canada
+	 * is matched against the country's area codes.
 	 *
-	 * A national number in a `+1` country other than the US and Canada is converted
-	 * only when its area code is one of the country's, or when it is a 7-digit local
-	 * number in a country with a single area code.
+	 * WooCommerce returns `+379` for Vatican City, but that code is unused: its
+	 * numbers are part of Italy's `+39 06 698…` range and keep the `0`.
 	 *
 	 * An empty string is returned, so a mis-canonicalized value is never hashed and
-	 * sent, when no calling code can be resolved for a national number, or when the
-	 * number is typed in a form that cannot be converted with confidence: an
-	 * international number with a `(0)` trunk marker or a trunk prefix after the country code,
-	 * a national number carrying an international dialing prefix, a repeated country
-	 * code, or a country-specific trunk prefix at an unexpected length, a Vatican City
-	 * number without its leading `0`, or a `+1` country number whose area code does
-	 * not match the country.
+	 * sent, when the number:
+	 *
+	 * - is national and no calling code can be resolved for the billing country
+	 * - is international with a `(0)` trunk marker, or a trunk prefix after the country code
+	 * - is international with the unused `+379` code
+	 * - is national and starts with an international dialing prefix or a repeated country code
+	 * - is national with a country-specific trunk prefix at an unexpected length
+	 * - is a Vatican City national number without its leading `0`
+	 * - is a `+1` country national number whose area code does not match the country
 	 *
 	 * @since 1.0.7
 	 *
@@ -418,7 +420,6 @@ final class UserIdentifier {
 
 			$digits = (string) preg_replace( '/\D/', '', substr( $phone, 1 ) );
 
-			// "+379" is reserved for Vatican City but unused, since its numbers are part of Italy's "+39" range.
 			if (
 				'' === $digits
 				|| 0 === strpos( $digits, '379' )
@@ -450,7 +451,6 @@ final class UserIdentifier {
 			return '';
 		}
 
-		// WooCommerce returns "+379" for Vatican City, but its numbers are part of Italy's "+39 06 698…" range and keep the "0".
 		if ( 'VA' === $country ) {
 			return 0 === strpos( $raw_digits, '0' ) ? '+39' . $raw_digits : '';
 		}
