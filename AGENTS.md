@@ -6,7 +6,7 @@ Guidelines for AI coding agents working in this repository. This file contains i
 
 Reddit for WooCommerce is a WooCommerce extension that integrates a store with Reddit's advertising platform — enabling pixel tracking, server-side conversion events (CAPI), product catalog export, and campaign creation through Reddit Ads.
 
-- **Tech stack:** PHP 7.4+, WordPress 6.7+, WooCommerce 10.2+, Node 20, React, SCSS
+- **Tech stack:** PHP 7.4+, WordPress 6.9+, WooCommerce 10.9+, Node 24 (npm 11), React, SCSS
 - **Repository:** `woocommerce/reddit-for-woocommerce`, text domain: `reddit-for-woocommerce`
 - **External dependencies:** Jetpack (auth/connection), WooCommerce Connect Server (proxy to Reddit APIs)
 
@@ -17,6 +17,7 @@ Reddit for WooCommerce is a WooCommerce extension that integrates a store with R
 | `includes/` | Core PHP — PSR-4 root (`RedditForWooCommerce\`) |
 | `includes/Admin/` | Admin UI: menu, onboarding wizard, assets, product meta |
 | `includes/Admin/Export/` | Batch product catalog CSV export pipeline |
+| `includes/Admin/MetaBox/` | Edit Order / Edit Product meta boxes: registration, conditional asset enqueue, inline mount data |
 | `includes/API/Site/Controllers/` | REST API controllers (settings, onboarding, Reddit connection, Jetpack, campaigns) |
 | `includes/API/AdPartner/` | Reddit Ads API wrappers (catalog, feed, pixels, campaigns, ad groups, etc.) |
 | `includes/Connection/` | WCS and Jetpack HTTP clients and authentication |
@@ -25,6 +26,7 @@ Reddit for WooCommerce is a WooCommerce extension that integrates a store with R
 | `includes/Tracking/` | Pixel injection, server-side conversion tracking, event classes |
 | `includes/Utils/` | Helpers, asset loader, user identifier, option/transient storage |
 | `js/src/` | React admin app and frontend tracking source |
+| `js/src/meta-boxes/` | React roots mounted into WC meta boxes (order attribution, channel visibility) |
 | `js/build/` | **Generated** webpack output — never edit directly |
 | `tests/phpunit/` | PHPUnit unit tests |
 | `tests/e2e/` | Playwright E2E tests |
@@ -106,11 +108,20 @@ npm run lint:css        # Stylelint
 
 ### Unit Tests
 
+**First-time setup:**
+
+1. Install Node and Composer dependencies: `npm install && composer install`
+2. Start the containers: `npm run env:start`
+3. Run the one-time PHPUnit setup: `npm run test:unit:wp-env:setup`
+4. Run the tests: `npm run test:unit:wp-env`
+
+**Subsequent runs** (containers already up):
+
 ```bash
-npm run env:start                   # Start wp-env containers
-npm run test:unit:wp-env:setup      # One-time setup after containers start
-npm run test:unit:wp-env            # Run PHPUnit via wp-env (latest WP, nightly WC)
+npm run test:unit:wp-env
 ```
+
+> **Note:** `npm run build` strips dev dependencies (`composer install --no-dev`). Run `composer install` again before running tests after a production build.
 
 Tests are in `tests/phpunit/Unit/` and follow the namespace structure of `includes/`.
 
@@ -126,6 +137,23 @@ npm run env:destroy     # Tear down containers
 - E2E tests use **Playwright** (not Codeception).
 - Test specs are in `tests/e2e/specs/`.
 - A test helper mu-plugin (`tests/e2e/plugins/reddit-options.php`) pre-configures plugin options for the test environment.
+
+**First-time setup:**
+
+```bash
+npx playwright install chromium   # Install browser (once)
+npm run env:start                 # Start containers and run initialize.sh
+npm run test:e2e                  # Run all E2E tests
+```
+
+**Subsequent runs** (containers already up):
+
+```bash
+npm run test:e2e                             # All tests
+npm run test:e2e -- --grep "Channel Visibility"  # Single suite
+```
+
+> **Note:** `npm run env:start` re-runs `initialize.sh` on every start, creating duplicate seed products if run more than once. If the shop ends up with duplicates, run `npm run env:destroy && npm run env:start` to reset.
 
 ### Other
 
@@ -163,6 +191,29 @@ npm run doc:tracking    # Generate tracking documentation
 ### GitHub Actions
 
 - **Pin every third-party action to a full commit SHA, not a version tag.** Use `owner/repo@<40-char-sha> # vX.Y.Z` instead of `owner/repo@v6`. A mutable tag can be repointed to a compromised or breaking release without any change in this repo; pinning to a SHA prevents that. Resolve the SHA for a tag with `gh api repos/{owner}/{repo}/commits/{tag} --jq '.sha'`, and find the matching version comment with `gh api repos/{owner}/{repo}/tags --jq '.[] | select(.commit.sha=="<sha>") | .name'`. This applies to every `uses:` line under `.github/workflows/` except references to files inside this repo (`./.github/actions/...`, `./.github/workflows/...`), which aren't third-party actions. See [WPCS: unpinned uses](https://developer.wordpress.org/coding-standards/wordpress-coding-standards/github-actions/#unpinned-uses).
+
+## PR Workflow
+
+Applies to every PR opened against this repository.
+
+### Branches
+
+- Prefix branches by intent: `add/` for new work, `update/` for changes to existing behavior, `fix/` for bug fixes.
+- Reserve `feature/` for major features only.
+
+### Requesting review
+
+- Keep the PR template's `Closes #` line and fill it with a markdown link to the tracking issue so it auto-links the PR to the issue, e.g. `Closes [REDTWOO-176](https://linear.app/a8c/issue/REDTWOO-176).`
+- All GitHub Actions checks must pass (CI green) before requesting review, so review time is not spent on issues that CI would have caught.
+- Run E2E tests (`npm run test:e2e`) before requesting review only when the change could introduce regressions. They are not required on every PR.
+- Include a changelog entry describing the change when the PR targets `develop`. Leave it blank when targeting a feature branch. Each line starts with a change-type prefix (`Break`, `Add`, `Update`, `Fix`, `Tweak`, `Dev`, `Doc`), e.g. `Fix - Correct pixel event deduplication`.
+
+### Code and comments are open source
+
+The plugin is public. A contributor without access to internal tooling must be able to read the code on its own.
+
+- Never put ticket IDs (e.g. `REDTWOO-202`) or internal ticket URLs in code or comments.
+- Comments explain *why* for a human reader. Do not restate what the code already says, and do not add comments that only narrate the code for AI or code-generation tooling.
 
 ## Backward Compatibility
 
@@ -246,6 +297,9 @@ The build extends `@wordpress/scripts` webpack config with `WooCommerceDependenc
 ## Common Pitfalls
 
 - **Never edit files in `js/build/`.** These are generated by webpack. Edit source files in `js/src/` and run `npm run build` or `npm run start`.
+- **Never edit `Tracking.md` below the `<woocommerce-grow-tracking-jsdoc>` marker.** It is generated from JSDoc `@event` / `@fires` annotations by `npm run doc:tracking`. Edit the annotations, then regenerate.
+- **Declare each tracking `@event` on the component that actually fires it.** `woocommerce-grow-tracking-jsdoc` renders one section per `@event` *declaration*, not per event name. Never add a separate doc-only module just to hold declarations. If a single reusable component fires the event and other files merely render it (e.g. `js/src/components/app-documentation-link/index.js` for `rfw_documentation_link_click`), declare it once there and reference it from callers with `@fires` only — cross-file `@fires` references require the event name to be added to `definedTypes` in `.eslintrc.js`, otherwise `jsdoc/no-undefined-types` flags it. If the same event name is independently fired by more than one component (e.g. the Reddit Ads promo's `rfw_reddit_ads_promo_shown`, fired separately by the order-attribution and channel-visibility meta boxes), declare `@event` on each of them — this renders one `Tracking.md` section per component, which is expected, and avoids `definedTypes` entries entirely.
+- **Write a bare `|` in `@property` descriptions.** The generator escapes it to `\|` for the Markdown table. Writing `\|` yourself renders `\\|`, which breaks the table cell.
 - **Always run linting before committing.** Run `npm run lint` to catch PHP, JS, and CSS issues early.
 - **Don't call Reddit APIs directly.** All external calls must go through `WcsClient` → WCS. Direct HTTP requests to Reddit will bypass auth and break in production.
 - **Don't store Reddit credentials locally.** Authentication is handled entirely by Jetpack tokens. The plugin holds no OAuth tokens directly.
