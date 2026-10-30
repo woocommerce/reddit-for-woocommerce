@@ -114,7 +114,7 @@ const ConversionsAPI = () => {
 				'reddit-for-woocommerce'
 			) }
 			actions={
-				<Flex direction="column" spacing={ 4 }>
+				<Flex direction="column" gap={ 4 }>
 					<CheckboxControl
 						label={ __(
 							'Enable Conversions API tracking',
