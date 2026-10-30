@@ -2,8 +2,8 @@
  * External dependencies
  */
 import { __ } from '@wordpress/i18n';
-import { CheckboxControl } from '@wordpress/components';
 import { useState, useCallback } from '@wordpress/element';
+import { Flex, CheckboxControl } from '@wordpress/components';
 
 /**
  * Internal dependencies
@@ -13,7 +13,6 @@ import useSettings from '~/hooks/useSettings';
 import useDispatchCoreNotices from '~/hooks/useDispatchCoreNotices';
 import AccountCard from '~/components/account-card';
 import SpinnerCard from '~/components/spinner-card';
-import './index.scss';
 import { recordRfwEvent } from '~/utils/tracks';
 
 /**
@@ -24,6 +23,13 @@ import { recordRfwEvent } from '~/utils/tracks';
  */
 
 /**
+ * Toggle the Collect Customer PII setting.
+ *
+ * @event rfw_collect_pii_toggle
+ * @property {string} status (`on`|`off`) - indicates the status of the Collect Customer PII setting.
+ */
+
+/**
  * ConversionsAPI component for managing the tracking setting.
  *
  * Renders a card UI allowing users to enable or disable server-side conversion event tracking.
@@ -31,12 +37,15 @@ import { recordRfwEvent } from '~/utils/tracks';
  * Shows a loading spinner while the current tracking status is being resolved.
  *
  * @fires rfw_conversion_tracking_toggle When the user toggles the Conversions API tracking.
+ * @fires rfw_collect_pii_toggle When the user toggles the Collect Customer PII setting.
  *
  * @return {JSX.Element} The rendered ConversionsAPI settings card.
  */
 const ConversionsAPI = () => {
-	const { isCapiEnabled, hasFinishedResolution } = useSettings();
+	const { isCapiEnabled, isPiiCollectionEnabled, hasFinishedResolution } =
+		useSettings();
 	const [ isSaving, setIsSaving ] = useState( false );
+	const [ isSavingPii, setIsSavingPii ] = useState( false );
 	const { createNotice } = useDispatchCoreNotices();
 	const { updateSettings } = useAppDispatch();
 
@@ -66,6 +75,32 @@ const ConversionsAPI = () => {
 		}
 	};
 
+	const togglePiiCollection = useCallback( async () => {
+		await updateSettings( { collectPii: ! isPiiCollectionEnabled } );
+		recordRfwEvent( 'rfw_collect_pii_toggle', {
+			status: ! isPiiCollectionEnabled ? 'on' : 'off',
+		} );
+	}, [ updateSettings, isPiiCollectionEnabled ] );
+
+	const handlePiiStatusOnChange = async () => {
+		try {
+			setIsSavingPii( true );
+			await togglePiiCollection();
+
+			createNotice(
+				'success',
+				__(
+					'Collect PII status updated successfully.',
+					'reddit-for-woocommerce'
+				)
+			);
+		} catch {
+			// Silently fail because the error is handled within `updateSettings` action.
+		} finally {
+			setIsSavingPii( false );
+		}
+	};
+
 	if ( ! hasFinishedResolution ) {
 		return <SpinnerCard />;
 	}
@@ -79,17 +114,30 @@ const ConversionsAPI = () => {
 				'reddit-for-woocommerce'
 			) }
 			actions={
-				<div className="rfw-settings-track-conversions__actions">
+				<Flex direction="column" gap={ 4 }>
 					<CheckboxControl
 						label={ __(
 							'Enable Conversions API tracking',
 							'reddit-for-woocommerce'
 						) }
 						checked={ isCapiEnabled }
-						disabled={ isSaving }
+						disabled={ isSaving || isSavingPii }
 						onChange={ handleCapiStatusOnChange }
 					/>
-				</div>
+					<CheckboxControl
+						label={ __(
+							'Collect Customer PII',
+							'reddit-for-woocommerce'
+						) }
+						help={ __(
+							'Send hashed customer email, phone number, and customer ID with Conversions API events to help Reddit match conversions to your ads. Customer details are hashed before they leave your store.',
+							'reddit-for-woocommerce'
+						) }
+						checked={ isPiiCollectionEnabled }
+						disabled={ isSaving || isSavingPii || ! isCapiEnabled }
+						onChange={ handlePiiStatusOnChange }
+					/>
+				</Flex>
 			}
 		/>
 	);
