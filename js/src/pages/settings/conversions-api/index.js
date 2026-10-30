@@ -3,10 +3,7 @@
  */
 import { __ } from '@wordpress/i18n';
 import { useState, useCallback } from '@wordpress/element';
-import {
-	__experimentalVStack as VStack, // eslint-disable-line @wordpress/no-unsafe-wp-apis
-	CheckboxControl,
-} from '@wordpress/components';
+import { Flex, CheckboxControl } from '@wordpress/components';
 
 /**
  * Internal dependencies
@@ -16,7 +13,6 @@ import useSettings from '~/hooks/useSettings';
 import useDispatchCoreNotices from '~/hooks/useDispatchCoreNotices';
 import AccountCard from '~/components/account-card';
 import SpinnerCard from '~/components/spinner-card';
-import './index.scss';
 import { recordRfwEvent } from '~/utils/tracks';
 
 /**
@@ -118,7 +114,7 @@ const ConversionsAPI = () => {
 				'reddit-for-woocommerce'
 			) }
 			actions={
-				<VStack spacing={ 4 }>
+				<Flex direction="column" spacing={ 4 }>
 					<CheckboxControl
 						label={ __(
 							'Enable Conversions API tracking',
@@ -141,7 +137,7 @@ const ConversionsAPI = () => {
 						disabled={ isSaving || isSavingPii || ! isCapiEnabled }
 						onChange={ handlePiiStatusOnChange }
 					/>
-				</VStack>
+				</Flex>
 			}
 		/>
 	);
