@@ -143,4 +143,21 @@ abstract class AbstractEventPayloadBase implements ConversionCommonPayloadInterf
 
 		return $event;
 	}
+
+	/**
+	 * Rounds a monetary amount to the store's configured price precision.
+	 *
+	 * Applied consistently to every item-level and event-level monetary field
+	 * across product-bearing events, so unit-price and division math (e.g.
+	 * AddToCart's price × quantity, Purchase's per-line tax-inclusive unit
+	 * price) doesn't emit floating-point tails in the payload.
+	 *
+	 * @since 1.0.7
+	 *
+	 * @param float $amount Monetary amount to round.
+	 * @return float Rounded amount.
+	 */
+	protected static function round_price( float $amount ): float {
+		return round( $amount, wc_get_price_decimals() );
+	}
 }

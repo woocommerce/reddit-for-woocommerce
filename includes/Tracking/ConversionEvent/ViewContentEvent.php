@@ -79,7 +79,8 @@ final class ViewContentEvent extends AbstractEventPayloadBase implements Convers
 	/**
 	 * Retrieves the monetary value associated with the event.
 	 *
-	 * For a VIEW_CONTENT event, this corresponds to the product’s price.
+	 * For a VIEW_CONTENT event, this corresponds to the product’s displayed
+	 * price, respecting the store’s frontend tax-display configuration.
 	 * Returns `0.0` if the product instance is invalid or unavailable.
 	 *
 	 * @since 0.1.0
@@ -88,7 +89,7 @@ final class ViewContentEvent extends AbstractEventPayloadBase implements Convers
 	 */
 	public function get_value(): float {
 		if ( $this->product instanceof \WC_Product ) {
-			return (float) $this->product->get_price();
+			return self::round_price( (float) wc_get_price_to_display( $this->product ) );
 		}
 
 		return 0.0;
@@ -111,22 +112,25 @@ final class ViewContentEvent extends AbstractEventPayloadBase implements Convers
 	/**
 	 * Retrieves metadata for the viewed product.
 	 *
-	 * Returns an array with product details including its ID and name.
-	 * If the product instance is invalid, an empty array is returned.
+	 * Returns an array with product details including its ID, name, displayed
+	 * unit price, and a fixed quantity of `1`. If the product instance is
+	 * invalid, an empty array is returned.
 	 *
 	 * Example:
 	 * ```php
 	 * array(
 	 *     array(
-	 *         'id'   => '123',
-	 *         'name' => 'Sample Product',
+	 *         'id'         => '123',
+	 *         'name'       => 'Sample Product',
+	 *         'item_price' => 14.99,
+	 *         'quantity'   => 1,
 	 *     ),
 	 * )
 	 * ```
 	 *
 	 * @since 0.1.0
 	 *
-	 * @return array<int,array<string,string>> Product metadata array.
+	 * @return array<int,array<string,int|float|string>> Product metadata array.
 	 */
 	public function get_products(): array {
 		if ( ! $this->product instanceof \WC_Product ) {
@@ -135,8 +139,10 @@ final class ViewContentEvent extends AbstractEventPayloadBase implements Convers
 
 		return array(
 			array(
-				'id'   => (string) $this->product->get_id(),
-				'name' => $this->product->get_name(),
+				'id'         => (string) $this->product->get_id(),
+				'name'       => $this->product->get_name(),
+				'item_price' => self::round_price( (float) wc_get_price_to_display( $this->product ) ),
+				'quantity'   => 1,
 			),
 		);
 	}
@@ -153,6 +159,9 @@ final class ViewContentEvent extends AbstractEventPayloadBase implements Convers
 	public function build_payload( array $args ): array {
 		$meta_data = array(
 			'conversion_id' => $args['conversion_id'] ?? '',
+			'currency'      => $this->get_currency(),
+			'value'         => $this->get_value(),
+			'item_count'    => $this->get_item_count(),
 			'products'      => $this->get_products(),
 		);
 
