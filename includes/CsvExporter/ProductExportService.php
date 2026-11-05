@@ -127,10 +127,9 @@ class ProductExportService {
 			array( $this, 'trigger_export_callback' )
 		);
 
-		add_filter(
+		add_action(
 			'wp_ajax_' . Helper::with_prefix( 'export_status' ),
-			array( $this, 'check_export_status' ),
-			10
+			array( $this, 'check_export_status' )
 		);
 
 		add_action(
@@ -348,10 +347,32 @@ class ProductExportService {
 	}
 
 	/**
+	 * Ends the AJAX request with HTTP 403 unless the current user can manage the plugin.
+	 *
+	 * The admin nonce only protects against CSRF, so every admin AJAX callback must
+	 * call this before reading data, changing options, scheduling jobs or calling
+	 * the Ad Partner API.
+	 *
+	 * @since 1.0.7
+	 *
+	 * @return void
+	 */
+	private function ensure_user_can_manage(): void {
+		if ( ! Helper::current_user_can_manage() ) {
+			wp_send_json_error(
+				array(
+					'message' => __( 'You do not have permission to perform this action.', 'reddit-for-woocommerce' ),
+				),
+				403
+			);
+		}
+	}
+
+	/**
 	 * Handles the AJAX request to initiate the product catalog export.
 	 *
 	 * This method:
-	 * - Verifies the security nonce.
+	 * - Verifies the security nonce and the user's capability.
 	 * - Attempts to start the export process.
 	 * - Sends a JSON success or error response.
 	 *
@@ -359,6 +380,7 @@ class ProductExportService {
 	 */
 	public function trigger_export_callback(): void {
 		check_ajax_referer( 'admin_nonce', 'security' );
+		$this->ensure_user_can_manage();
 
 		if ( ! Helper::has_products() ) {
 			wp_send_json_error( array( 'code' => Helper::with_prefix( 'no_products_found' ) ) );
@@ -385,6 +407,7 @@ class ProductExportService {
 	 */
 	public function check_export_status() {
 		check_ajax_referer( 'admin_nonce', 'security' );
+		$this->ensure_user_can_manage();
 
 		$is_job_in_progress = $this->job->is_job_in_progress( self::ACTION_HOOK );
 		$file_url           = Options::get( OptionDefaults::EXPORT_FILE_URL );
@@ -500,6 +523,7 @@ class ProductExportService {
 	 */
 	public function create_catalog_manually(): void {
 		check_ajax_referer( 'admin_nonce', 'security' );
+		$this->ensure_user_can_manage();
 
 		// Bail early if the catalog already exists.
 		$catalog_id = Options::get( OptionDefaults::CATALOG_ID );
