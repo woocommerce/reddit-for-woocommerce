@@ -89,7 +89,7 @@ final class AssetsTest extends WP_UnitTestCase {
 			function ( $data ) {
 				$this->assertTrue( $data['is_pixel_enabled'] );
 				$this->assertTrue( $data['is_conversion_enabled'] );
-				$this->assertIsString( $data['capi_nonce'] );
+				$this->assertArrayNotHasKey( 'capi_nonce', $data );
 				return $data;
 			}
 		);

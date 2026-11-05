@@ -30,7 +30,6 @@ export function sendCapiEvent( event, payload = {} ) {
 		body: new URLSearchParams( {
 			action: with_prefix( event ),
 			payload: JSON.stringify( payload ),
-			security: TRACKING_DATA_VAR.capi_nonce,
 		} ),
 	} );
 }
