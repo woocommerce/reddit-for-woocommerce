@@ -44,6 +44,7 @@ const store = createReduxStore( STORE_KEY, {
 			campaignCreated: false,
 			trackConversions: false,
 			triggerExport: false,
+			collectPii: false,
 		},
 	},
 } );

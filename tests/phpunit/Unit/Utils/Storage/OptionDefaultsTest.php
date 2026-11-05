@@ -43,4 +43,20 @@ class OptionDefaultsTest extends TestCase {
 	public function test_get_all_returns_array(): void {
 		$this->assertIsArray( OptionDefaults::get_all() );
 	}
+
+	/**
+	 * Ensure the Collect PII key resolves to the expected option key.
+	 */
+	public function test_collect_pii_key(): void {
+		$this->assertSame( 'collect_pii', OptionDefaults::COLLECT_PII );
+	}
+
+	/**
+	 * Ensure the Collect PII default is disabled so upgraded stores keep current behaviour.
+	 */
+	public function test_collect_pii_defaults_to_no(): void {
+		$defaults = OptionDefaults::get_all();
+
+		$this->assertSame( 'no', $defaults[ OptionDefaults::COLLECT_PII ] );
+	}
 }
