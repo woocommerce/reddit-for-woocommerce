@@ -184,7 +184,7 @@ Reddit Ads Promo "Dismiss" button is clicked.
 | ---- | ---- | ----------- |
 `context` | `string` | Context of the Reddit Ads Promo.
 #### Emitters
-- [`PromoCTA`](js/src/meta-boxes/channel-visibility/promo-cta.js#L29) with `{ context: channel-visibility-meta-box }`.
+- [`PromoCTA`](js/src/meta-boxes/channel-visibility/promo-cta.js#L29) with `{ context: 'channel-visibility-meta-box' }`.
 
 ### [`rfw_reddit_ads_promo_get_started_click`](js/src/meta-boxes/channel-visibility/get-started-cta.js#L13)
 Reddit Ads Promo "Get started" button is clicked.
@@ -194,7 +194,7 @@ Reddit Ads Promo "Get started" button is clicked.
 `context` | `string` | Context of the Reddit Ads Promo.
 `href` | `string` | URL of the "Get started" button.
 #### Emitters
-- [`GetStartedCTA`](js/src/meta-boxes/channel-visibility/get-started-cta.js#L28) with `{ context: channel-visibility-meta-box, href: 'admin.php?page=wc-admin&path=%2Freddit%2Fstart' }`.
+- [`GetStartedCTA`](js/src/meta-boxes/channel-visibility/get-started-cta.js#L28) with `{ context: 'channel-visibility-meta-box', href: 'admin.php?page=wc-admin&path=%2Freddit%2Fstart' }`.
 - [`RedditAdsPromo`](js/src/meta-boxes/order-attribution/reddit-ads-promo.js#L59) with `{ context: 'order-attribution-meta-box', href: 'admin.php?page=wc-admin&path=%2Freddit%2Fstart' }`.
 
 ### [`rfw_reddit_ads_promo_get_started_click`](js/src/meta-boxes/order-attribution/reddit-ads-promo.js#L29)
@@ -205,7 +205,7 @@ Reddit Ads Promo "Get started" button is clicked.
 `context` | `string` | Context of the Reddit Ads Promo.
 `href` | `string` | URL of the "Get started" button.
 #### Emitters
-- [`GetStartedCTA`](js/src/meta-boxes/channel-visibility/get-started-cta.js#L28) with `{ context: channel-visibility-meta-box, href: 'admin.php?page=wc-admin&path=%2Freddit%2Fstart' }`.
+- [`GetStartedCTA`](js/src/meta-boxes/channel-visibility/get-started-cta.js#L28) with `{ context: 'channel-visibility-meta-box', href: 'admin.php?page=wc-admin&path=%2Freddit%2Fstart' }`.
 - [`RedditAdsPromo`](js/src/meta-boxes/order-attribution/reddit-ads-promo.js#L59) with `{ context: 'order-attribution-meta-box', href: 'admin.php?page=wc-admin&path=%2Freddit%2Fstart' }`.
 
 ### [`rfw_reddit_ads_promo_shown`](js/src/meta-boxes/channel-visibility/reddit-ads-promo.js#L27)
