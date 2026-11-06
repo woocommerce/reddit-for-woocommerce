@@ -11,6 +11,7 @@
 namespace RedditForWooCommerce\Connection;
 
 use Automattic\Jetpack\Connection\Manager;
+use RedditForWooCommerce\Config;
 use RedditForWooCommerce\Utils\Helper;
 use Jetpack_Options;
 use WP_Error;
@@ -35,7 +36,7 @@ class JetpackAuthenticator {
 	 * Initializes the Jetpack connection manager used to retrieve access tokens.
 	 */
 	public function __construct() {
-		$this->manager = new Manager();
+		$this->manager = new Manager( Config::PLUGIN_SLUG );
 	}
 
 	/**
