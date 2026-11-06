@@ -21,7 +21,7 @@ import GetStartedCTA from './get-started-cta';
 /**
  * Reddit Ads Promo CTA component.
  *
- * @fires rfw_reddit_ads_promo_dismiss_click with `{ context: channel-visibility-meta-box }`.
+ * @fires rfw_reddit_ads_promo_dismiss_click with `{ context: 'channel-visibility-meta-box' }`.
  * @param {Function} onDismiss The function to call when the dismiss button is clicked.
  *
  * @return {JSX.Element} The Reddit Ads Promo CTA component.

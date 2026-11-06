@@ -32,12 +32,13 @@ import './reddit-ads-promo.scss';
  *
  * @event rfw_reddit_ads_promo_shown
  * @property {string} context Context of the Reddit Ads Promo.
+ * @property {boolean} has_onboarded Whether Reddit onboarding is complete. On the order screen, `false` means the "Get started" promo was shown and `true` the "Create campaign" promo. Always `false` on the product screen, where the promo only shows before onboarding.
  */
 
 /**
  * Reddit Ads Promo component.
  *
- * @fires rfw_reddit_ads_promo_shown with `{ context: channel-visibility-meta-box }`.
+ * @fires rfw_reddit_ads_promo_shown with `{ context: 'channel-visibility-meta-box', has_onboarded: false }`.
  *
  * @return {JSX.Element} The Reddit Ads Promo component.
  */
@@ -51,6 +52,7 @@ const RedditAdsPromo = () => {
 		if ( ! hasTrackedRef.current && ! onboardingComplete ) {
 			recordRfwEvent( 'rfw_reddit_ads_promo_shown', {
 				context: CHANNEL_VISIBILITY_CONTEXT,
+				has_onboarded: Boolean( onboardingComplete ),
 			} );
 			hasTrackedRef.current = true;
 		}
