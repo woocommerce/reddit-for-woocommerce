@@ -23,6 +23,8 @@ import './reddit-ads-promo.scss';
  *
  * @event rfw_reddit_ads_promo_shown
  * @property {string} context Context of the Reddit Ads Promo.
+ * @property {boolean} has_onboarded Whether Reddit onboarding is complete. On the order screen, `false` means the "Get started" promo was shown and `true` the "Create campaign" promo. Always `false` on the product screen, where the promo only shows before onboarding.
+ * @property {boolean} [is_dismissed] Product screen only. Whether the merchant had dismissed the promo, so the compact layout with a small "Get started" button was shown instead of the full promo.
  */
 
 /**
@@ -49,7 +51,7 @@ import './reddit-ads-promo.scss';
  *  - Onboarded, no campaign: nudge to create a campaign.
  *  - Onboarded with campaign: returns null (no banner).
  *
- * @fires rfw_reddit_ads_promo_shown with `{ context: 'order-attribution-meta-box' }`.
+ * @fires rfw_reddit_ads_promo_shown with `{ context: 'order-attribution-meta-box', has_onboarded: false }` for the "Get started" promo, or `{ context: 'order-attribution-meta-box', has_onboarded: true }` for the "Create campaign" promo.
  * @fires rfw_reddit_ads_promo_get_started_click with `{ context: 'order-attribution-meta-box', href: 'admin.php?page=wc-admin&path=%2Freddit%2Fstart' }`.
  * @fires rfw_reddit_ads_promo_create_campaign_click with `{ context: 'order-attribution-meta-box', href: 'https://ads.reddit.com/create' }`.
  *
@@ -66,10 +68,11 @@ const RedditAdsPromo = () => {
 		if ( ! hasTrackedRef.current && shouldShowPromo ) {
 			recordRfwEvent( 'rfw_reddit_ads_promo_shown', {
 				context: ORDER_ATTRIBUTION_CONTEXT,
+				has_onboarded: Boolean( onboardingComplete ),
 			} );
 			hasTrackedRef.current = true;
 		}
-	}, [ shouldShowPromo ] );
+	}, [ shouldShowPromo, onboardingComplete ] );
 
 	if ( ! shouldShowPromo ) {
 		return null;
