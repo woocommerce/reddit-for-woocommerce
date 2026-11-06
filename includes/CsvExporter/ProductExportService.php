@@ -16,6 +16,7 @@ namespace RedditForWooCommerce\CsvExporter;
 
 use RedditForWooCommerce\Config;
 use RedditForWooCommerce\Utils\Helper;
+use RedditForWooCommerce\Utils\CurrencyValidator;
 use RedditForWooCommerce\Admin\Export\BatchExportJob;
 use RedditForWooCommerce\Utils\Storage\Options;
 use RedditForWooCommerce\Utils\Storage\OptionDefaults;
@@ -428,6 +429,12 @@ class ProductExportService {
 			}
 		}
 
+		// Store currency isn't one Reddit's Catalog API accepts, skip the request entirely.
+		if ( ! CurrencyValidator::is_supported() ) {
+			Options::set( OptionDefaults::CATALOG_ERROR, 'UNSUPPORTED_CURRENCY' );
+			return;
+		}
+
 		// The catalog not exists on Reddit, create it.
 		$logger = wc_get_logger();
 		$logger->info( 'Catalog not exists on Reddit, creating it.' );
@@ -447,6 +454,7 @@ class ProductExportService {
 
 			if ( ! empty( $catalog_data ) && ! empty( $catalog_data['id'] ) ) {
 				Options::set( OptionDefaults::CATALOG_ID, sanitize_text_field( $catalog_data['id'] ) );
+				Options::delete( OptionDefaults::CATALOG_ERROR );
 				// Delete the feed status to create a new feed.
 				Options::delete( OptionDefaults::FEED_STATUS );
 				$logger->info( 'Catalog created successfully.' );
@@ -508,6 +516,18 @@ class ProductExportService {
 			wp_send_json_error(
 				array(
 					'message' => __( 'Catalog already exists.', 'reddit-for-woocommerce' ),
+				)
+			);
+		}
+
+		// Store currency isn't one Reddit's Catalog API accepts, bail before deleting or creating a catalog.
+		if ( ! CurrencyValidator::is_supported() ) {
+			Options::set( OptionDefaults::CATALOG_ERROR, 'UNSUPPORTED_CURRENCY' );
+
+			wp_send_json_error(
+				array(
+					'error_code' => 'UNSUPPORTED_CURRENCY',
+					'message'    => __( 'Store currency is not supported by Reddit for WooCommerce.', 'reddit-for-woocommerce' ),
 				)
 			);
 		}
