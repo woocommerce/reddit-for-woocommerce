@@ -33,13 +33,12 @@ import './reddit-ads-promo.scss';
  * @event rfw_reddit_ads_promo_shown
  * @property {string} context Context of the Reddit Ads Promo.
  * @property {boolean} has_onboarded Whether Reddit onboarding is complete. On the order screen, `false` means the "Get started" promo was shown and `true` the "Create campaign" promo. Always `false` on the product screen, where the promo only shows before onboarding.
- * @property {boolean} [is_dismissed] Product screen only. Whether the merchant had dismissed the promo, so the compact layout with a small "Get started" button was shown instead of the full promo.
  */
 
 /**
  * Reddit Ads Promo component.
  *
- * @fires rfw_reddit_ads_promo_shown with `{ context: 'channel-visibility-meta-box', has_onboarded: false, is_dismissed: false }` for the full promo, or `{ context: 'channel-visibility-meta-box', has_onboarded: false, is_dismissed: true }` for the compact layout after a dismiss.
+ * @fires rfw_reddit_ads_promo_shown with `{ context: 'channel-visibility-meta-box', has_onboarded: false }`.
  *
  * @return {JSX.Element} The Reddit Ads Promo component.
  */
@@ -51,16 +50,13 @@ const RedditAdsPromo = () => {
 
 	useEffect( () => {
 		if ( ! hasTrackedRef.current && ! onboardingComplete ) {
-			// Fired once per page load. Dismissing during this load doesn't
-			// send a second event, but the next load reports `is_dismissed`.
 			recordRfwEvent( 'rfw_reddit_ads_promo_shown', {
 				context: CHANNEL_VISIBILITY_CONTEXT,
 				has_onboarded: Boolean( onboardingComplete ),
-				is_dismissed: Boolean( isDismissed ),
 			} );
 			hasTrackedRef.current = true;
 		}
-	}, [ onboardingComplete, isDismissed ] );
+	}, [ onboardingComplete ] );
 
 	const handleDismiss = () => {
 		set( PREFERENCES_STORE_NAMESPACE, CHANNEL_VISIBILITY_PROMO_KEY, true );
