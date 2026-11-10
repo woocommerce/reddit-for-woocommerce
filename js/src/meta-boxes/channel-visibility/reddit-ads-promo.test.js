@@ -25,7 +25,7 @@ describe( 'Channel visibility RedditAdsPromo', () => {
 		jest.clearAllMocks();
 	} );
 
-	test( 'Records has_onboarded false for the full promo', () => {
+	test( 'Records has_onboarded false and is_dismissed false for the full promo', () => {
 		window.redditAdsMetaBoxData = { onboardingComplete: '' };
 		usePreference.mockReturnValue( undefined );
 
@@ -37,11 +37,12 @@ describe( 'Channel visibility RedditAdsPromo', () => {
 			{
 				context: 'channel-visibility-meta-box',
 				has_onboarded: false,
+				is_dismissed: false,
 			}
 		);
 	} );
 
-	test( 'Records has_onboarded false for the compact layout when dismissed on an earlier visit', () => {
+	test( 'Records is_dismissed true from the first event when dismissed on an earlier visit', () => {
 		window.redditAdsMetaBoxData = { onboardingComplete: '' };
 		usePreference.mockReturnValue( true );
 
@@ -53,6 +54,7 @@ describe( 'Channel visibility RedditAdsPromo', () => {
 			{
 				context: 'channel-visibility-meta-box',
 				has_onboarded: false,
+				is_dismissed: true,
 			}
 		);
 	} );
@@ -72,6 +74,7 @@ describe( 'Channel visibility RedditAdsPromo', () => {
 			{
 				context: 'channel-visibility-meta-box',
 				has_onboarded: false,
+				is_dismissed: false,
 			}
 		);
 	} );
