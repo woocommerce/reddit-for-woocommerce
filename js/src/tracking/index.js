@@ -11,12 +11,9 @@ import {
 	setRedditClickId,
 	onSingleProductPageVisit,
 	onPageVisit,
+	onFoundVariation,
 } from './utils';
-import {
-	singleAddToCartClick,
-	addToCartClick,
-	retrievedVariation,
-} from './pixel/utils';
+import { singleAddToCartClick, addToCartClick } from './pixel/utils';
 import { sendCapiEvent } from './conversions/utils';
 import { RedditEvent } from './pixel/events';
 
@@ -93,14 +90,14 @@ document.addEventListener( 'wp_listen_for_consent_change', ( e ) => {
  * a variation on the product page. This provides the full variation object,
  * including updated price, SKU, and availability data.
  *
- * This implementation forwards the variation data to `retrievedVariation()`.
+ * This implementation forwards the form and variation data to `onFoundVariation()`.
  */
 if ( typeof jQuery === 'function' ) {
 	jQuery( document ).on(
 		'found_variation',
 		'form.cart',
 		function ( event, variation ) {
-			retrievedVariation( variation );
+			onFoundVariation( this, variation );
 		}
 	);
 }
