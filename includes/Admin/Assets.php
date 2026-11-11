@@ -21,6 +21,7 @@ use RedditForWooCommerce\ServiceContainer;
 use RedditForWooCommerce\CsvExporter\ProductExportService;
 use RedditForWooCommerce\Utils\Helper;
 use RedditForWooCommerce\Utils\OnboardingStatus;
+use RedditForWooCommerce\Utils\CurrencyValidator;
 
 /**
  * Handles admin script and style enqueues.
@@ -75,18 +76,20 @@ class Assets {
 			'index',
 			'AdminData',
 			array(
-				'setupComplete'      => OnboardingStatus::is_setup_completed(),
-				'status'             => Options::get( OptionDefaults::ONBOARDING_STATUS ),
-				'step'               => Options::get( OptionDefaults::ONBOARDING_STEP ),
-				'adminNonce'         => wp_create_nonce( 'admin_nonce' ),
-				'isExportInProgress' => ServiceContainer::get( ServiceKey::PRODUCT_EXPORT_SERVICE )->job->is_job_in_progress( ProductExportService::ACTION_HOOK ),
-				'exportFileUrl'      => file_exists( $csv_path ) ? Options::get( OptionDefaults::EXPORT_FILE_URL ) : '',
-				'lastTimestamp'      => Helper::get_formatted_timestamp( Options::get( OptionDefaults::LAST_EXPORT_TIMESTAMP ) ),
-				'slug'               => 'rfw',
-				'trackingSlug'       => REDDIT_FOR_WOOCOMMERCE_TRACKING_SLUG,
-				'pluginVersion'      => REDDIT_FOR_WOOCOMMERCE_VERSION,
-				'adsAccountId'       => Options::get( OptionDefaults::AD_ACCOUNT_ID ),
-				'prefix'             => Helper::with_prefix( '' ),
+				'setupComplete'       => OnboardingStatus::is_setup_completed(),
+				'status'              => Options::get( OptionDefaults::ONBOARDING_STATUS ),
+				'step'                => Options::get( OptionDefaults::ONBOARDING_STEP ),
+				'adminNonce'          => wp_create_nonce( 'admin_nonce' ),
+				'isExportInProgress'  => ServiceContainer::get( ServiceKey::PRODUCT_EXPORT_SERVICE )->job->is_job_in_progress( ProductExportService::ACTION_HOOK ),
+				'exportFileUrl'       => file_exists( $csv_path ) ? Options::get( OptionDefaults::EXPORT_FILE_URL ) : '',
+				'lastTimestamp'       => Helper::get_formatted_timestamp( Options::get( OptionDefaults::LAST_EXPORT_TIMESTAMP ) ),
+				'slug'                => 'rfw',
+				'trackingSlug'        => REDDIT_FOR_WOOCOMMERCE_TRACKING_SLUG,
+				'pluginVersion'       => REDDIT_FOR_WOOCOMMERCE_VERSION,
+				'adsAccountId'        => Options::get( OptionDefaults::AD_ACCOUNT_ID ),
+				'prefix'              => Helper::with_prefix( '' ),
+				'isCurrencySupported' => CurrencyValidator::is_supported(),
+				'supportedCurrencies' => CurrencyValidator::get_supported_currencies(),
 			)
 		);
 	}
