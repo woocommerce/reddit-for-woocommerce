@@ -39,23 +39,25 @@ interface ConversionProductsPayloadInterface {
 	 * Retrieves product metadata included in the Conversion Event.
 	 *
 	 * Each product must be represented as an associative array containing at
-	 * minimum its ID and name. Implementations may extend this to include
-	 * additional attributes (e.g., category, variant, SKU) depending on the
-	 * Ad Partner’s requirements.
+	 * minimum its ID, name, unit price, and quantity. Implementations may
+	 * extend this to include additional attributes (e.g., category, variant,
+	 * SKU) depending on the Ad Partner’s requirements.
 	 *
 	 * Example:
 	 * ```php
 	 * array(
 	 *     array(
-	 *         'id'   => '123',
-	 *         'name' => 'Sample Product',
+	 *         'id'         => '123',
+	 *         'name'       => 'Sample Product',
+	 *         'item_price' => 14.99,
+	 *         'quantity'   => 1,
 	 *     ),
 	 * )
 	 * ```
 	 *
 	 * @since 0.1.0
 	 *
-	 * @return array<int,array<string,string>> List of product metadata.
+	 * @return array<int,array<string,int|float|string>> List of product metadata.
 	 */
 	public function get_products(): array;
 
