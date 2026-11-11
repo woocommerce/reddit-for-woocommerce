@@ -100,6 +100,10 @@ describe( 'retrievedVariation', () => {
 describe( 'Add to cart clicks without pixel data', () => {
 	beforeEach( () => {
 		setTrackingData( { currency: 'EUR' } );
+		window.rdt = jest.fn();
+	} );
+
+	afterEach( () => {
 		delete window.rdt;
 	} );
 
@@ -109,6 +113,7 @@ describe( 'Add to cart clicks without pixel data', () => {
 		expect( () =>
 			singleAddToCartClick( { target: button }, 'event-id' )
 		).not.toThrow();
+		expect( window.rdt ).not.toHaveBeenCalled();
 	} );
 
 	test( 'addToCartClick does not throw or send an event', () => {
@@ -117,6 +122,7 @@ describe( 'Add to cart clicks without pixel data', () => {
 		};
 
 		expect( () => addToCartClick( event, 'event-id' ) ).not.toThrow();
+		expect( window.rdt ).not.toHaveBeenCalled();
 	} );
 } );
 
