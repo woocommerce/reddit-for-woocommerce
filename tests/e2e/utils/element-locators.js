@@ -251,14 +251,14 @@ export default class ElementLocators {
 	}
 
 	/**
-	 * Get the checkbox for enabling Conversions API tracking.
+	 * Get the "Share data with Reddit" toggle.
 	 *
-	 * @return {import('@playwright/test').Locator} The checkbox locator.
+	 * @return {import('@playwright/test').Locator} The toggle locator.
 	 */
-	getCapiCheckbox() {
-		return this.getCard( 'Conversions API' ).getByLabel(
-			'Enable Conversions API tracking'
-		);
+	getShareDataToggle() {
+		return this.page
+			.locator( '.rfw-data-sharing' )
+			.getByLabel( 'Share data with Reddit' );
 	}
 
 	/**

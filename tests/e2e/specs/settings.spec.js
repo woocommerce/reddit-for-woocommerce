@@ -101,7 +101,7 @@ test.describe( 'Reddit Settings', () => {
 		).toBeVisible();
 		await expect(
 			page.locator( '.rfw-section__header', {
-				hasText: 'Track Conversions',
+				hasText: 'Data sharing',
 			} )
 		).toBeVisible();
 		await expect(
@@ -111,25 +111,21 @@ test.describe( 'Reddit Settings', () => {
 		).toBeVisible();
 	} );
 
-	test( 'Toggle conversion tracking', async () => {
+	test( 'Toggle data sharing', async () => {
 		settingPage.goto();
 
-		await locator.getCapiCheckbox().click();
-		await expect( locator.getCapiCheckbox() ).toBeEnabled();
+		await locator.getShareDataToggle().click();
+		await expect( locator.getShareDataToggle() ).toBeEnabled();
 		await expect(
 			page
-				.getByText(
-					'Conversions API Tracking status updated successfully.'
-				)
+				.getByText( 'Data sharing status updated successfully.' )
 				.first()
 		).toBeVisible();
 
-		await locator.getCapiCheckbox().click();
+		await locator.getShareDataToggle().click();
 		await expect(
 			page
-				.getByText(
-					'Conversions API Tracking status updated successfully.'
-				)
+				.getByText( 'Data sharing status updated successfully.' )
 				.first()
 		).toBeVisible();
 	} );
