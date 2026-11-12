@@ -12,7 +12,7 @@ import useMenuEffect from '~/hooks/useMenuEffect';
 import LinkedAccounts from './linked-accounts';
 import Section from '~/components/section';
 import ProductCatalog from './product-catalog';
-import ConversionsAPI from './conversions-api';
+import DataSharing from './data-sharing';
 import RedditAds from './reddit-ads';
 import useRedditAccount from '~/hooks/useRedditAccount';
 import OnboardingSuccessModal from '~/components/onboarding-success-modal';
@@ -52,13 +52,13 @@ const Settings = () => {
 			</Section>
 
 			<Section
-				title={ __( 'Track Conversions', 'reddit-for-woocommerce' ) }
+				title={ __( 'Data sharing', 'reddit-for-woocommerce' ) }
 				description={ __(
-					'Manage how conversions are tracked on your site.',
+					'Manage what customer data is shared with Reddit to measure conversions.',
 					'reddit-for-woocommerce'
 				) }
 			>
-				<ConversionsAPI />
+				<DataSharing />
 			</Section>
 
 			<Section
