@@ -20,6 +20,11 @@ use WP_UnitTestCase;
 final class UserIdentifierTest extends WP_UnitTestCase {
 
 	/**
+	 * Option holding the per-site secret that keys external IDs.
+	 */
+	private const EXTERNAL_ID_SECRET_OPTION = 'reddit_external_id_secret';
+
+	/**
 	 * Set up superglobals shared by the request-derived identifiers.
 	 */
 	public function set_up(): void {
@@ -42,6 +47,7 @@ final class UserIdentifierTest extends WP_UnitTestCase {
 			$_COOKIE['rdtCid']
 		);
 		Options::set( OptionDefaults::COLLECT_PII, 'no' );
+		delete_option( self::EXTERNAL_ID_SECRET_OPTION );
 		parent::tear_down();
 	}
 
@@ -363,7 +369,8 @@ final class UserIdentifierTest extends WP_UnitTestCase {
 	}
 
 	/**
-	 * A purchase by a registered customer uses the hashed customer ID as external ID.
+	 * A purchase by a registered customer keys the customer ID as external ID, so
+	 * the plain SHA-256 of the ID is never sent.
 	 */
 	public function test_external_id_from_order_customer_id(): void {
 		Options::set( OptionDefaults::COLLECT_PII, 'yes' );
@@ -373,11 +380,13 @@ final class UserIdentifierTest extends WP_UnitTestCase {
 
 		$data = UserIdentifier::get_user_data( $order );
 
-		$this->assertSame( hash( 'sha256', '42' ), $data['user']['external_id'] );
+		$this->assertSame( $this->expected_external_id( 'user', '42' ), $data['user']['external_id'] );
+		$this->assertNotSame( hash( 'sha256', '42' ), $data['user']['external_id'] );
 	}
 
 	/**
-	 * A guest purchase uses the hashed normalised billing email as external ID.
+	 * A guest purchase keys the normalised billing email as external ID, so it is
+	 * not a copy of the email match key.
 	 */
 	public function test_external_id_from_guest_billing_email(): void {
 		Options::set( OptionDefaults::COLLECT_PII, 'yes' );
@@ -388,7 +397,126 @@ final class UserIdentifierTest extends WP_UnitTestCase {
 
 		$data = UserIdentifier::get_user_data( $order );
 
-		$this->assertSame( hash( 'sha256', 'guestbuyer@example.com' ), $data['user']['external_id'] );
+		$this->assertSame( $this->expected_external_id( 'email', 'guestbuyer@example.com' ), $data['user']['external_id'] );
+		$this->assertNotSame( $data['user']['email'], $data['user']['external_id'] );
+	}
+
+	/**
+	 * A customer's browsing events and purchases carry the same external ID, so
+	 * Reddit can link them.
+	 */
+	public function test_external_id_matches_between_browsing_and_purchase(): void {
+		Options::set( OptionDefaults::COLLECT_PII, 'yes' );
+
+		$user_id = self::factory()->user->create();
+		wp_set_current_user( $user_id );
+		$browsing = UserIdentifier::get_user_data();
+
+		$order = wc_create_order( array( 'status' => 'pending', 'customer_id' => $user_id ) );
+		$order->save();
+		$purchase = UserIdentifier::get_user_data( $order );
+
+		$this->assertSame( $browsing['user']['external_id'], $purchase['user']['external_id'] );
+	}
+
+	/**
+	 * The secret is created on first use and reused, so the external ID stays stable.
+	 */
+	public function test_external_id_secret_is_created_once_and_reused(): void {
+		Options::set( OptionDefaults::COLLECT_PII, 'yes' );
+
+		$order = wc_create_order( array( 'status' => 'pending', 'customer_id' => 42 ) );
+		$order->save();
+
+		$first  = UserIdentifier::get_user_data( $order );
+		$secret = get_option( self::EXTERNAL_ID_SECRET_OPTION );
+		$second = UserIdentifier::get_user_data( $order );
+
+		$this->assertIsString( $secret );
+		$this->assertSame( 64, strlen( $secret ) );
+		$this->assertSame( $secret, get_option( self::EXTERNAL_ID_SECRET_OPTION ) );
+		$this->assertSame( $first['user']['external_id'], $second['user']['external_id'] );
+	}
+
+	/**
+	 * The secret is not autoloaded on every request.
+	 */
+	public function test_external_id_secret_is_not_autoloaded(): void {
+		UserIdentifier::ensure_external_id_secret();
+		wp_cache_delete( 'alloptions', 'options' );
+
+		$this->assertNotEmpty( get_option( self::EXTERNAL_ID_SECRET_OPTION ) );
+		$this->assertArrayNotHasKey( self::EXTERNAL_ID_SECRET_OPTION, wp_load_alloptions() );
+	}
+
+	/**
+	 * A stored value too short to be a safe key is replaced rather than used.
+	 */
+	public function test_short_external_id_secret_is_replaced(): void {
+		update_option( self::EXTERNAL_ID_SECRET_OPTION, '', false );
+		UserIdentifier::ensure_external_id_secret();
+		$this->assertSame( 64, strlen( get_option( self::EXTERNAL_ID_SECRET_OPTION ) ) );
+
+		update_option( self::EXTERNAL_ID_SECRET_OPTION, 'short', false );
+		UserIdentifier::ensure_external_id_secret();
+		$this->assertSame( 64, strlen( get_option( self::EXTERNAL_ID_SECRET_OPTION ) ) );
+	}
+
+	/**
+	 * When the secret cannot be stored, the external ID is left out instead of being
+	 * keyed with a value no later event will reproduce.
+	 */
+	public function test_external_id_is_omitted_when_secret_cannot_be_stored(): void {
+		Options::set( OptionDefaults::COLLECT_PII, 'yes' );
+
+		$block_write = static function ( $value, $old_value ) {
+			return $old_value;
+		};
+		add_filter( 'pre_update_option_' . self::EXTERNAL_ID_SECRET_OPTION, $block_write, 10, 2 );
+
+		$order = wc_create_order( array( 'status' => 'pending', 'customer_id' => 42 ) );
+		$order->save();
+
+		$data = UserIdentifier::get_user_data( $order );
+
+		remove_filter( 'pre_update_option_' . self::EXTERNAL_ID_SECRET_OPTION, $block_write, 10 );
+
+		$this->assertArrayNotHasKey( 'external_id', $data['user'] );
+	}
+
+	/**
+	 * Pins the external ID formula against a precomputed value, so a change to the
+	 * `user:` / `email:` prefixes or the hash cannot pass by changing the test helper too.
+	 */
+	public function test_external_id_matches_known_answer(): void {
+		Options::set( OptionDefaults::COLLECT_PII, 'yes' );
+		update_option( self::EXTERNAL_ID_SECRET_OPTION, str_repeat( 'k', 64 ), false );
+
+		$order = wc_create_order( array( 'status' => 'pending', 'customer_id' => 42 ) );
+		$order->save();
+
+		$data = UserIdentifier::get_user_data( $order );
+
+		$this->assertSame( 'a9c86ed89d425e74a757ab695c0cef7fa8a9b6f2ca9b0cdd3afbd20135b7092b', $data['user']['external_id'] );
+	}
+
+	/**
+	 * Two stores with different secrets send different external IDs for the same
+	 * customer ID.
+	 */
+	public function test_external_id_differs_between_stores(): void {
+		Options::set( OptionDefaults::COLLECT_PII, 'yes' );
+
+		$order = wc_create_order( array( 'status' => 'pending', 'customer_id' => 1 ) );
+		$order->save();
+
+		update_option( self::EXTERNAL_ID_SECRET_OPTION, 'store-a-secret', false );
+		$store_a = UserIdentifier::get_user_data( $order );
+
+		update_option( self::EXTERNAL_ID_SECRET_OPTION, 'store-b-secret', false );
+		$store_b = UserIdentifier::get_user_data( $order );
+
+		$this->assertNotSame( $store_a['user']['external_id'], $store_b['user']['external_id'] );
 	}
 
 	/**
@@ -408,7 +536,7 @@ final class UserIdentifierTest extends WP_UnitTestCase {
 
 		$this->assertSame( hash( 'sha256', 'member@example.com' ), $data['user']['email'] );
 		$this->assertSame( hash( 'sha256', '+14155550111' ), $data['user']['phone_number'] );
-		$this->assertSame( hash( 'sha256', (string) $user_id ), $data['user']['external_id'] );
+		$this->assertSame( $this->expected_external_id( 'user', (string) $user_id ), $data['user']['external_id'] );
 	}
 
 	/**
@@ -424,5 +552,16 @@ final class UserIdentifierTest extends WP_UnitTestCase {
 		$data = UserIdentifier::get_user_data();
 
 		$this->assertSame( hash( 'sha256', 'account@example.com' ), $data['user']['email'] );
+	}
+
+	/**
+	 * Builds the external ID the identifier is expected to send, using the stored secret.
+	 *
+	 * @param string $type  Identifier type, `user` or `email`.
+	 * @param string $value Customer ID or normalised email.
+	 * @return string Expected external ID.
+	 */
+	private function expected_external_id( string $type, string $value ): string {
+		return hash_hmac( 'sha256', $type . ':' . $value, (string) get_option( self::EXTERNAL_ID_SECRET_OPTION ) );
 	}
 }
