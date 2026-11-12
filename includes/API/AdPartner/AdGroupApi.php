@@ -57,7 +57,7 @@ class AdGroupApi extends BaseAdPartnerApi {
 		if ( ! $pixel_id ) {
 			return new WP_Error(
 				'pixel_id_not_set',
-				__( 'Pixel ID not found.', 'reddit-for-woocommerce' ),
+				__( 'A Reddit conversion pixel is required. Set up a pixel in Reddit Events Manager and connect it in the Reddit for WooCommerce settings.', 'reddit-for-woocommerce' ),
 			);
 		}
 
