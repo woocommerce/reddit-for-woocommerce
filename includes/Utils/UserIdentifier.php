@@ -38,6 +38,13 @@ final class UserIdentifier {
 	private const EXTERNAL_ID_SECRET_OPTION = 'external_id_secret';
 
 	/**
+	 * Minimum length of a stored secret before it is trusted as a key.
+	 *
+	 * @since n.e.x.t
+	 */
+	private const EXTERNAL_ID_SECRET_MIN_LENGTH = 32;
+
+	/**
 	 * Countries whose national numbers keep their leading `0` in E.164, so it cannot be dropped.
 	 *
 	 * @since n.e.x.t
@@ -746,10 +753,30 @@ final class UserIdentifier {
 	 *
 	 * @param string $type  Identifier type, `user` or `email`, so the two kinds can never produce the same ID.
 	 * @param string $value Customer ID or normalized email.
-	 * @return string Lowercase hexadecimal HMAC-SHA256 digest.
+	 * @return string Lowercase hexadecimal HMAC-SHA256 digest, or an empty string when no secret is available.
 	 */
 	private static function hash_external_id( string $type, string $value ): string {
-		return hash_hmac( 'sha256', $type . ':' . $value, self::get_external_id_secret() );
+		$secret = self::get_external_id_secret();
+
+		// Without a stored key the ID would not match any later event, so leave it out.
+		if ( '' === $secret ) {
+			return '';
+		}
+
+		return hash_hmac( 'sha256', $type . ':' . $value, $secret );
+	}
+
+	/**
+	 * Creates the per-site secret that keys external IDs, if it does not exist yet.
+	 *
+	 * Called when Collect Customer PII is switched on, so the secret is written by
+	 * a single settings request rather than by concurrent storefront requests that
+	 * could each store a different one.
+	 *
+	 * @since n.e.x.t
+	 */
+	public static function ensure_external_id_secret(): void {
+		self::get_external_id_secret();
 	}
 
 	/**
@@ -760,15 +787,23 @@ final class UserIdentifier {
 	 *
 	 * @since n.e.x.t
 	 *
-	 * @return string The secret.
+	 * @return string The secret, or an empty string when it could not be stored.
 	 */
 	private static function get_external_id_secret(): string {
 		$option = Config::STORE_PREFIX . self::EXTERNAL_ID_SECRET_OPTION;
-		$secret = (string) get_option( $option, '' );
+		$secret = get_option( $option, '' );
 
-		if ( '' === $secret ) {
-			$secret = wp_generate_password( 64, true, true );
-			update_option( $option, $secret, false );
+		// A short or non-string value is treated as missing: a weak key would make the ID recomputable.
+		if ( is_string( $secret ) && strlen( $secret ) >= self::EXTERNAL_ID_SECRET_MIN_LENGTH ) {
+			return $secret;
+		}
+
+		// Not `wp_generate_password()`: it is pluggable and filterable, so it could return a weak key.
+		$secret = bin2hex( random_bytes( 32 ) );
+
+		if ( ! update_option( $option, $secret, false ) ) {
+			wc_get_logger()->error( 'Could not store the external ID secret. external_id is left out of conversion events until it can be stored.' );
+			return '';
 		}
 
 		return $secret;

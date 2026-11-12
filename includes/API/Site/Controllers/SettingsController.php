@@ -13,6 +13,7 @@ use RedditForWooCommerce\Config;
 use RedditForWooCommerce\Utils\Storage\Options;
 use RedditForWooCommerce\Utils\Storage\OptionDefaults;
 use RedditForWooCommerce\Utils\Helper;
+use RedditForWooCommerce\Utils\UserIdentifier;
 
 /**
  * Controller for the `/settings` endpoint.
@@ -107,6 +108,10 @@ class SettingsController extends RESTBaseController {
 		if ( isset( $request['collect_pii'] ) ) {
 			$collect_pii_status = rest_sanitize_boolean( $request['collect_pii'] );
 			Options::set( OptionDefaults::COLLECT_PII, $collect_pii_status ? 'yes' : 'no' );
+
+			if ( $collect_pii_status ) {
+				UserIdentifier::ensure_external_id_secret();
+			}
 		}
 
 		return rest_ensure_response(

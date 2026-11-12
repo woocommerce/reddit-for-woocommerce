@@ -420,12 +420,10 @@ final class UserIdentifierTest extends WP_UnitTestCase {
 	}
 
 	/**
-	 * The secret is created on first use, kept out of autoload, and reused so the
-	 * external ID stays stable.
+	 * The secret is created on first use and reused, so the external ID stays stable.
 	 */
 	public function test_external_id_secret_is_created_once_and_reused(): void {
 		Options::set( OptionDefaults::COLLECT_PII, 'yes' );
-		delete_option( self::EXTERNAL_ID_SECRET_OPTION );
 
 		$order = wc_create_order( array( 'status' => 'pending', 'customer_id' => 42 ) );
 		$order->save();
@@ -438,9 +436,68 @@ final class UserIdentifierTest extends WP_UnitTestCase {
 		$this->assertSame( 64, strlen( $secret ) );
 		$this->assertSame( $secret, get_option( self::EXTERNAL_ID_SECRET_OPTION ) );
 		$this->assertSame( $first['user']['external_id'], $second['user']['external_id'] );
+	}
 
-		$autoload = wp_load_alloptions();
-		$this->assertArrayNotHasKey( self::EXTERNAL_ID_SECRET_OPTION, $autoload );
+	/**
+	 * The secret is not autoloaded on every request.
+	 */
+	public function test_external_id_secret_is_not_autoloaded(): void {
+		UserIdentifier::ensure_external_id_secret();
+		wp_cache_delete( 'alloptions', 'options' );
+
+		$this->assertNotEmpty( get_option( self::EXTERNAL_ID_SECRET_OPTION ) );
+		$this->assertArrayNotHasKey( self::EXTERNAL_ID_SECRET_OPTION, wp_load_alloptions() );
+	}
+
+	/**
+	 * A stored value too short to be a safe key is replaced rather than used.
+	 */
+	public function test_short_external_id_secret_is_replaced(): void {
+		update_option( self::EXTERNAL_ID_SECRET_OPTION, '', false );
+		UserIdentifier::ensure_external_id_secret();
+		$this->assertSame( 64, strlen( get_option( self::EXTERNAL_ID_SECRET_OPTION ) ) );
+
+		update_option( self::EXTERNAL_ID_SECRET_OPTION, 'short', false );
+		UserIdentifier::ensure_external_id_secret();
+		$this->assertSame( 64, strlen( get_option( self::EXTERNAL_ID_SECRET_OPTION ) ) );
+	}
+
+	/**
+	 * When the secret cannot be stored, the external ID is left out instead of being
+	 * keyed with a value no later event will reproduce.
+	 */
+	public function test_external_id_is_omitted_when_secret_cannot_be_stored(): void {
+		Options::set( OptionDefaults::COLLECT_PII, 'yes' );
+
+		$block_write = static function ( $value, $old_value ) {
+			return $old_value;
+		};
+		add_filter( 'pre_update_option_' . self::EXTERNAL_ID_SECRET_OPTION, $block_write, 10, 2 );
+
+		$order = wc_create_order( array( 'status' => 'pending', 'customer_id' => 42 ) );
+		$order->save();
+
+		$data = UserIdentifier::get_user_data( $order );
+
+		remove_filter( 'pre_update_option_' . self::EXTERNAL_ID_SECRET_OPTION, $block_write, 10 );
+
+		$this->assertArrayNotHasKey( 'external_id', $data['user'] );
+	}
+
+	/**
+	 * Pins the external ID formula against a precomputed value, so a change to the
+	 * `user:` / `email:` prefixes or the hash cannot pass by changing the test helper too.
+	 */
+	public function test_external_id_matches_known_answer(): void {
+		Options::set( OptionDefaults::COLLECT_PII, 'yes' );
+		update_option( self::EXTERNAL_ID_SECRET_OPTION, str_repeat( 'k', 64 ), false );
+
+		$order = wc_create_order( array( 'status' => 'pending', 'customer_id' => 42 ) );
+		$order->save();
+
+		$data = UserIdentifier::get_user_data( $order );
+
+		$this->assertSame( 'a9c86ed89d425e74a757ab695c0cef7fa8a9b6f2ca9b0cdd3afbd20135b7092b', $data['user']['external_id'] );
 	}
 
 	/**
