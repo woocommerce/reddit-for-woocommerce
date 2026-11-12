@@ -114,7 +114,7 @@ final class UserIdentifier {
 	 * with no order carry no match keys.
 	 *
 	 * @since 0.1.0
-	 * @since 1.0.7 Added the $order and $include_match_keys parameters for hashed customer match keys.
+	 * @since n.e.x.t Added the $order and $include_match_keys parameters for hashed customer match keys.
 	 *
 	 * @param WC_Order|null $order              Order to source purchase match keys from, when available.
 	 * @param bool          $include_match_keys Whether to add the hashed customer match keys. Pass false for
@@ -160,7 +160,7 @@ final class UserIdentifier {
 	 * hashes each value before it is written into the array. Logged-out requests
 	 * with no order add no keys.
 	 *
-	 * @since 1.0.7
+	 * @since n.e.x.t
 	 *
 	 * @param array<string,mixed> $data  The user_data array to extend.
 	 * @param WC_Order|null       $order Order to source purchase match keys from, when available.
@@ -320,7 +320,7 @@ final class UserIdentifier {
 	/**
 	 * Normalizes and SHA-256 hashes an email address for Advanced Matching.
 	 *
-	 * @since 1.0.7
+	 * @since n.e.x.t
 	 *
 	 * @param string $email Raw email address.
 	 * @return string SHA-256 hash of the normalized email, or an empty string when the email is invalid.
@@ -341,7 +341,7 @@ final class UserIdentifier {
 	 * Lowercases the address, removes any `+alias` from the local part, and removes
 	 * dots from the local part while preserving dots in the domain.
 	 *
-	 * @since 1.0.7
+	 * @since n.e.x.t
 	 *
 	 * @param string $email Raw email address.
 	 * @return string The normalized email, or an empty string when the input is not a valid address.
@@ -374,7 +374,7 @@ final class UserIdentifier {
 	/**
 	 * Canonicalizes a phone number to E.164 and SHA-256 hashes it for Advanced Matching.
 	 *
-	 * @since 1.0.7
+	 * @since n.e.x.t
 	 *
 	 * @param string $phone   Raw phone number.
 	 * @param string $country Billing country code used to derive the calling code.
@@ -412,7 +412,7 @@ final class UserIdentifier {
 	 * - is a Vatican City national number without its leading `0`
 	 * - is a `+1` country national number whose area code does not match the country
 	 *
-	 * @since 1.0.7
+	 * @since n.e.x.t
 	 *
 	 * @param string $phone   Raw phone number.
 	 * @param string $country Billing country code used to derive the calling code.
@@ -651,7 +651,7 @@ final class UserIdentifier {
 	/**
 	 * Resolves the E.164 calling code for a country, including the leading `+`.
 	 *
-	 * @since 1.0.7
+	 * @since n.e.x.t
 	 *
 	 * @param string $country Two-letter country code.
 	 * @return string The calling code (e.g. `+44`), or an empty string when it cannot be resolved.
@@ -711,7 +711,7 @@ final class UserIdentifier {
 	/**
 	 * SHA-256 hashes a value.
 	 *
-	 * @since 1.0.7
+	 * @since n.e.x.t
 	 *
 	 * @param string $value Value to hash.
 	 * @return string Lowercase hexadecimal SHA-256 digest.
