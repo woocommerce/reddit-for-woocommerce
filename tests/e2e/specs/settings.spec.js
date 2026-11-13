@@ -130,6 +130,34 @@ test.describe( 'Reddit Settings', () => {
 		).toBeVisible();
 	} );
 
+	test( 'Choose what to share persists after reload', async () => {
+		const chooseSharingOption = async ( name ) => {
+			const saved = page.waitForResponse(
+				( response ) =>
+					decodeURIComponent( response.url() ).includes(
+						'/wc/rfw/reddit/settings'
+					) && response.request().method() === 'POST'
+			);
+			await locator.getSharingOption( name ).click();
+			await saved;
+		};
+
+		await settingPage.goto();
+		await expect( locator.getShareDataToggle() ).toBeChecked();
+
+		await chooseSharingOption( 'Advanced Sharing' );
+		await page.reload();
+		await expect(
+			locator.getSharingOption( 'Advanced Sharing' )
+		).toBeChecked();
+
+		await chooseSharingOption( 'Standard Sharing' );
+		await page.reload();
+		await expect(
+			locator.getSharingOption( 'Standard Sharing' )
+		).toBeChecked();
+	} );
+
 	test( 'Reddit card details', async () => {
 		await settingPage.mockRedditAccount( connectedConfigPayload );
 		settingPage.goto();

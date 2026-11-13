@@ -262,6 +262,18 @@ export default class ElementLocators {
 	}
 
 	/**
+	 * Get a "Choose what to share" radio option.
+	 *
+	 * @param {string} name The option label, e.g. "Advanced Sharing".
+	 * @return {import('@playwright/test').Locator} The radio locator.
+	 */
+	getSharingOption( name ) {
+		return this.page
+			.locator( '.rfw-data-sharing' )
+			.getByRole( 'radio', { name } );
+	}
+
+	/**
 	 * Get the Create Business Account button.
 	 *
 	 * @return {import('@playwright/test').Locator} The Create Business Account button.
