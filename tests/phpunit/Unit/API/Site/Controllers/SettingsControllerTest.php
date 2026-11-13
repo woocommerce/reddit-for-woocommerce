@@ -32,6 +32,7 @@ class SettingsControllerTest extends WP_UnitTestCase {
 	public function tear_down(): void {
 		Options::delete( OptionDefaults::COLLECT_PII );
 		Options::delete( OptionDefaults::CONVERSIONS_ENABLED );
+		delete_option( 'reddit_external_id_secret' );
 
 		parent::tear_down();
 	}
@@ -63,6 +64,30 @@ class SettingsControllerTest extends WP_UnitTestCase {
 
 		$this->assertSame( 'yes', Options::get( OptionDefaults::COLLECT_PII ) );
 		$this->assertTrue( $response->get_data()['collect_pii'] );
+	}
+
+	public function test_post_enabling_collect_pii_creates_external_id_secret(): void {
+		Options::set( OptionDefaults::CONVERSIONS_ENABLED, 'yes' );
+		delete_option( 'reddit_external_id_secret' );
+
+		$request = new WP_REST_Request( 'POST', '/wc/rfw/reddit/settings' );
+		$request->set_param( 'collect_pii', true );
+
+		$this->controller->set_settings( $request );
+
+		$this->assertSame( 64, strlen( get_option( 'reddit_external_id_secret', '' ) ) );
+	}
+
+	public function test_post_disabling_collect_pii_does_not_create_external_id_secret(): void {
+		Options::set( OptionDefaults::CONVERSIONS_ENABLED, 'yes' );
+		delete_option( 'reddit_external_id_secret' );
+
+		$request = new WP_REST_Request( 'POST', '/wc/rfw/reddit/settings' );
+		$request->set_param( 'collect_pii', false );
+
+		$this->controller->set_settings( $request );
+
+		$this->assertFalse( get_option( 'reddit_external_id_secret' ) );
 	}
 
 	public function test_post_persists_collect_pii_disabled(): void {
