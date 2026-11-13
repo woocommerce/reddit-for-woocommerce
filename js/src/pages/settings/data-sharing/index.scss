@@ -1,13 +1,5 @@
 .rfw-data-sharing {
 	&__divider {
-		margin-block: var(--large-gap);
-	}
-
-	// Match the design, which shows the group label as a heading rather than the default uppercase control label.
-	&__options legend {
-		font-size: variables.$rfw-font-small;
-		font-weight: 600;
-		text-transform: none;
-		margin-block-end: wpVariables.$grid-unit-20;
+		margin-block: wpVariables.$grid-unit-30;
 	}
 }

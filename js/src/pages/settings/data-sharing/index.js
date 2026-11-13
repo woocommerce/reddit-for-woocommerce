@@ -123,12 +123,21 @@ const DataSharing = () => {
 				{ isCapiEnabled && (
 					<>
 						<CardDivider className="rfw-data-sharing__divider" />
+
+						{ /* Hidden since the radio control already announces this text. */ }
+						<Section.Card.Title aria-hidden="true">
+							{ __(
+								'Choose what to share',
+								'reddit-for-woocommerce'
+							) }
+						</Section.Card.Title>
+
 						<RadioControl
-							className="rfw-data-sharing__options"
 							label={ __(
 								'Choose what to share',
 								'reddit-for-woocommerce'
 							) }
+							hideLabelFromVision
 							selected={
 								isPiiCollectionEnabled
 									? SHARING_ADVANCED
