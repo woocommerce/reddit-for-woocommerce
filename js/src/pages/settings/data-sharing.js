@@ -19,8 +19,10 @@ import Section from '~/components/section';
 import SpinnerCard from '~/components/spinner-card';
 import { recordRfwEvent } from '~/utils/tracks';
 
-const SHARING_ADVANCED = 'advanced';
-const SHARING_STANDARD = 'standard';
+const SHARING_LEVEL = {
+	ADVANCED: 'advanced',
+	STANDARD: 'standard',
+};
 
 /**
  * Toggle the Conversions API tracking with the "Share data with Reddit" toggle.
@@ -86,7 +88,7 @@ const DataSharing = () => {
 	};
 
 	const handleSharingLevelChange = async ( value ) => {
-		const collectPii = value === SHARING_ADVANCED;
+		const collectPii = value === SHARING_LEVEL.ADVANCED;
 
 		if ( ! ( await saveSettings( { collectPii } ) ) ) {
 			return;
@@ -105,7 +107,6 @@ const DataSharing = () => {
 		<Section.Card className="rfw-data-sharing">
 			<Section.Card.Body>
 				<ToggleControl
-					__nextHasNoMarginBottom
 					label={ __(
 						'Share data with Reddit',
 						'reddit-for-woocommerce'
@@ -117,6 +118,7 @@ const DataSharing = () => {
 					checked={ isCapiEnabled }
 					disabled={ isSaving }
 					onChange={ handleShareDataChange }
+					__nextHasNoMarginBottom
 				/>
 
 				{ isCapiEnabled && (
@@ -136,15 +138,14 @@ const DataSharing = () => {
 								'Choose what to share',
 								'reddit-for-woocommerce'
 							) }
-							hideLabelFromVision
 							selected={
 								isPiiCollectionEnabled
-									? SHARING_ADVANCED
-									: SHARING_STANDARD
+									? SHARING_LEVEL.ADVANCED
+									: SHARING_LEVEL.STANDARD
 							}
 							options={ [
 								{
-									value: SHARING_ADVANCED,
+									value: SHARING_LEVEL.ADVANCED,
 									label: __(
 										'Advanced Sharing',
 										'reddit-for-woocommerce'
@@ -155,7 +156,7 @@ const DataSharing = () => {
 									),
 								},
 								{
-									value: SHARING_STANDARD,
+									value: SHARING_LEVEL.STANDARD,
 									label: __(
 										'Standard Sharing',
 										'reddit-for-woocommerce'
@@ -168,6 +169,7 @@ const DataSharing = () => {
 							] }
 							disabled={ isSaving }
 							onChange={ handleSharingLevelChange }
+							hideLabelFromVision
 						/>
 					</>
 				) }

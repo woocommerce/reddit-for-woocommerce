@@ -8,7 +8,7 @@ import userEvent from '@testing-library/user-event';
 /**
  * Internal dependencies
  */
-import DataSharing from './';
+import DataSharing from './data-sharing';
 import useSettings from '~/hooks/useSettings';
 
 jest.mock( '~/hooks/useSettings', () => jest.fn().mockName( 'useSettings' ) );

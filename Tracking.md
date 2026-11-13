@@ -50,23 +50,23 @@ Clicking on the button to disconnect the Business  account.
 #### Emitters
 - [`DisconnectAccountButton`](js/src/components/reddit-combo-account-card/connect-business/disconnect-account-button.js#L30) When the user clicks on the button to disconnect the Business account.
 
-### [`rfw_collect_pii_toggle`](js/src/pages/settings/data-sharing/index.js#L33)
+### [`rfw_collect_pii_toggle`](js/src/pages/settings/data-sharing.js#L34)
 Toggle the Collect Customer PII setting by choosing Advanced Sharing (`on`) or Standard Sharing (`off`).
 #### Properties
 | name | type | description |
 | ---- | ---- | ----------- |
 `status` | `string` | (`on`\|`off`) - indicates the status of the Collect Customer PII setting.
 #### Emitters
-- [`DataSharing`](js/src/pages/settings/data-sharing/index.js#L51) When the user picks Advanced Sharing or Standard Sharing.
+- [`DataSharing`](js/src/pages/settings/data-sharing.js#L52) When the user picks Advanced Sharing or Standard Sharing.
 
-### [`rfw_conversion_tracking_toggle`](js/src/pages/settings/data-sharing/index.js#L26)
+### [`rfw_conversion_tracking_toggle`](js/src/pages/settings/data-sharing.js#L27)
 Toggle the Conversions API tracking with the "Share data with Reddit" toggle.
 #### Properties
 | name | type | description |
 | ---- | ---- | ----------- |
 `status` | `string` | (`on`\|`off`) - indicates the status of the Conversions API tracking.
 #### Emitters
-- [`DataSharing`](js/src/pages/settings/data-sharing/index.js#L51) When the user toggles "Share data with Reddit".
+- [`DataSharing`](js/src/pages/settings/data-sharing.js#L52) When the user toggles "Share data with Reddit".
 
 ### [`rfw_disconnect_reddit_account_button_click`](js/src/pages/settings/linked-accounts.js#L17)
 Clicking on the button to disconnect the Reddit account.
