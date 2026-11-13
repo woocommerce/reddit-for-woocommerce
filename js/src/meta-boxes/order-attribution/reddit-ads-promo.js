@@ -23,8 +23,7 @@ import './reddit-ads-promo.scss';
  *
  * @event rfw_reddit_ads_promo_shown
  * @property {string} context Context of the Reddit Ads Promo.
- * @property {boolean} has_onboarded Whether Reddit onboarding is complete. On the order screen, `false` means the "Get started" promo was shown and `true` the "Create campaign" promo. Always `false` on the product screen, where the promo only shows before onboarding.
- * @property {boolean} [is_dismissed] Product screen only. Whether the merchant had dismissed the promo, so the compact layout with a small "Get started" button was shown instead of the full promo.
+ * @property {boolean} has_onboarded Whether Reddit onboarding is complete. `false` for the "Get started" promo, `true` for the "Create campaign" promo.
  */
 
 /**
