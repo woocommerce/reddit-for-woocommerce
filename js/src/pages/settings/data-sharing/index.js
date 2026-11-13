@@ -18,7 +18,6 @@ import useDispatchCoreNotices from '~/hooks/useDispatchCoreNotices';
 import Section from '~/components/section';
 import SpinnerCard from '~/components/spinner-card';
 import { recordRfwEvent } from '~/utils/tracks';
-import './index.scss';
 
 const SHARING_ADVANCED = 'advanced';
 const SHARING_STANDARD = 'standard';
@@ -122,7 +121,7 @@ const DataSharing = () => {
 
 				{ isCapiEnabled && (
 					<>
-						<CardDivider className="rfw-data-sharing__divider" />
+						<CardDivider margin={ 6 } />
 
 						{ /* Hidden since the radio control already announces this text. */ }
 						<Section.Card.Title aria-hidden="true">
