@@ -101,7 +101,7 @@ test.describe( 'Reddit Settings', () => {
 		).toBeVisible();
 		await expect(
 			page.locator( '.rfw-section__header', {
-				hasText: 'Track Conversions',
+				hasText: 'Data sharing',
 			} )
 		).toBeVisible();
 		await expect(
@@ -111,27 +111,51 @@ test.describe( 'Reddit Settings', () => {
 		).toBeVisible();
 	} );
 
-	test( 'Toggle conversion tracking', async () => {
+	test( 'Toggle data sharing', async () => {
 		settingPage.goto();
 
-		await locator.getCapiCheckbox().click();
-		await expect( locator.getCapiCheckbox() ).toBeEnabled();
+		await locator.getShareDataToggle().click();
+		await expect( locator.getShareDataToggle() ).toBeEnabled();
 		await expect(
 			page
-				.getByText(
-					'Conversions API Tracking status updated successfully.'
-				)
+				.getByText( 'Data sharing status updated successfully.' )
 				.first()
 		).toBeVisible();
 
-		await locator.getCapiCheckbox().click();
+		await locator.getShareDataToggle().click();
 		await expect(
 			page
-				.getByText(
-					'Conversions API Tracking status updated successfully.'
-				)
+				.getByText( 'Data sharing status updated successfully.' )
 				.first()
 		).toBeVisible();
+	} );
+
+	test( 'Choose what to share persists after reload', async () => {
+		const chooseSharingOption = async ( name ) => {
+			const saved = page.waitForResponse(
+				( response ) =>
+					decodeURIComponent( response.url() ).includes(
+						'/wc/rfw/reddit/settings'
+					) && response.request().method() === 'POST'
+			);
+			await locator.getSharingOption( name ).click();
+			await saved;
+		};
+
+		await settingPage.goto();
+		await expect( locator.getShareDataToggle() ).toBeChecked();
+
+		await chooseSharingOption( 'Advanced Sharing' );
+		await page.reload();
+		await expect(
+			locator.getSharingOption( 'Advanced Sharing' )
+		).toBeChecked();
+
+		await chooseSharingOption( 'Standard Sharing' );
+		await page.reload();
+		await expect(
+			locator.getSharingOption( 'Standard Sharing' )
+		).toBeChecked();
 	} );
 
 	test( 'Reddit card details', async () => {

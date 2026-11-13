@@ -50,23 +50,23 @@ Clicking on the button to disconnect the Business  account.
 #### Emitters
 - [`DisconnectAccountButton`](js/src/components/reddit-combo-account-card/connect-business/disconnect-account-button.js#L30) When the user clicks on the button to disconnect the Business account.
 
-### [`rfw_collect_pii_toggle`](js/src/pages/settings/conversions-api/index.js#L29)
-Toggle the Collect Customer PII setting.
+### [`rfw_collect_pii_toggle`](js/src/pages/settings/data-sharing.js#L34)
+Toggle the Collect Customer PII setting by choosing Advanced Sharing (`on`) or Standard Sharing (`off`).
 #### Properties
 | name | type | description |
 | ---- | ---- | ----------- |
 `status` | `string` | (`on`\|`off`) - indicates the status of the Collect Customer PII setting.
 #### Emitters
-- [`ConversionsAPI`](js/src/pages/settings/conversions-api/index.js#L48) When the user toggles the Collect Customer PII setting.
+- [`DataSharing`](js/src/pages/settings/data-sharing.js#L52) When the user picks Advanced Sharing or Standard Sharing.
 
-### [`rfw_conversion_tracking_toggle`](js/src/pages/settings/conversions-api/index.js#L22)
-Toggle the Conversions API tracking.
+### [`rfw_conversion_tracking_toggle`](js/src/pages/settings/data-sharing.js#L27)
+Toggle the Conversions API tracking with the "Share data with Reddit" toggle.
 #### Properties
 | name | type | description |
 | ---- | ---- | ----------- |
-`status` | `string` | (`on`\\|`off`) - indicates the status of the Conversions API tracking.
+`status` | `string` | (`on`\|`off`) - indicates the status of the Conversions API tracking.
 #### Emitters
-- [`ConversionsAPI`](js/src/pages/settings/conversions-api/index.js#L48) When the user toggles the Conversions API tracking.
+- [`DataSharing`](js/src/pages/settings/data-sharing.js#L52) When the user toggles "Share data with Reddit".
 
 ### [`rfw_disconnect_reddit_account_button_click`](js/src/pages/settings/linked-accounts.js#L17)
 Clicking on the button to disconnect the Reddit account.
@@ -253,7 +253,7 @@ Clicking on the button to regenerate the product catalog CSV file.
 #### Emitters
 - [`ProductCatalog`](js/src/pages/settings/product-catalog/index.js#L48) When the user clicks on the button to regenerate the product catalog CSV file.
 
-### [`rfw_setup_ads_faq`](js/src/components/paid-ads/ads-campaign/faqs.js#L90)
+### [`rfw_setup_ads_faq`](js/src/components/paid-ads/ads-campaign/faqs.js#L92)
 Clicking on faq items to collapse or expand it in the Onboarding Flow or creating/editing a campaign
 #### Properties
 | name | type | description |
@@ -261,7 +261,7 @@ Clicking on faq items to collapse or expand it in the Onboarding Flow or creatin
 `id` | `string` | FAQ identifier
 `action` | `string` | (`expand`\|`collapse`)
 #### Emitters
-- [`Faqs`](js/src/components/paid-ads/ads-campaign/faqs.js#L103)
+- [`Faqs`](js/src/components/paid-ads/ads-campaign/faqs.js#L105)
 
 ### [`rfw_skip_campaign_creation_survey`](js/src/pages/onboarding/setup-stepper/skip-paid-ads-confirmation-modal/survey-modal.js#L21)
 Send survey responses when the user skips the paid ads setup.
