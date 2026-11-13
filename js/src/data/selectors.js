@@ -112,7 +112,7 @@ export const getTrackConversions = ( state ) => {
  * Retrieves the settings state.
  *
  * @param {Object} state - The Redux state.
- * @return {{ trackConversions: boolean, triggerExport: boolean }} The settings object.
+ * @return {{ trackConversions: boolean, triggerExport: boolean, collectPii: boolean }} The settings object.
  */
 export const getSettings = ( state ) => {
 	return state.settings;

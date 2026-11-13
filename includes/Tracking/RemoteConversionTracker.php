@@ -106,7 +106,7 @@ class RemoteConversionTracker implements ConversionTrackerInterface {
 		$payload = $event->build_payload(
 			array(
 				'conversion_id'    => $order->get_order_key(),
-				'user_data'        => UserIdentifier::get_user_data(),
+				'user_data'        => UserIdentifier::get_user_data( $order ),
 				'event_source_url' => Helper::get_event_source_url(),
 			)
 		);
@@ -282,7 +282,7 @@ class RemoteConversionTracker implements ConversionTrackerInterface {
 		$payload      = $event->build_payload(
 			array(
 				'conversion_id'    => $latest_order ? $latest_order->get_order_key() : wp_generate_uuid4(),
-				'user_data'        => UserIdentifier::get_user_data(),
+				'user_data'        => UserIdentifier::get_user_data( null, false ),
 				// Synthetic onboarding event fired from an admin request; use the
 				// store root so the payload carries the store domain rather than an
 				// admin URL.

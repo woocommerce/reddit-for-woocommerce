@@ -12,6 +12,7 @@ namespace RedditForWooCommerce;
 use RedditForWooCommerce\Compatibility;
 use RedditForWooCommerce\API;
 use RedditForWooCommerce\MultichannelMarketing\Marketing;
+use RedditForWooCommerce\Tracking\TrackerSnapshot;
 
 /**
  * Initializes and wires up core components of the Ad Partner for WooCommerce plugin.
@@ -76,6 +77,7 @@ final class Plugin {
 		ServiceContainer::get( ServiceKey::PRODUCT_EXPORT_SERVICE )->register_hooks();
 		Marketing::register_hooks();
 		Compatibility::register_hooks();
+		TrackerSnapshot::register_hooks();
 	}
 
 	/**
