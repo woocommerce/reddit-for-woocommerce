@@ -56,16 +56,12 @@ Yes, it uses a [Jetpack](https://jetpack.com/) account to connect and communicat
 == Changelog ==
 
 = 1.0.8 - 2026-11-16 =
-* Fix - Bump WooCommerce "tested up to" version to 11.3.
-* Fix - CI: support Ubuntu 26.04 runners.
+* Dev - Tested with PHP 8.5.
+* Dev - Updates to local development files and dependencies to support Node 24.
 * Fix - Correct the Ad Partner base class namespace so optimized builds can load it.
-* Fix - Doc - Add the Automattic security policy and public security contact.
-* Fix - Doc - Add the canonical GPL-3.0 license text.
-* Fix - None.
-* Fix - Tested with PHP 8.5.
-* Fix - Update the WordPress.com logo on the account connection card.
-* Fix - Updates to local development files and dependencies to support Node 24.
 * Fix - Variation forms no longer stay stuck loading when Reddit tracking data is missing from the page.
+* Tweak - Bump WooCommerce "tested up to" version to 11.3.
+* Tweak - Update the WordPress.com logo on the account connection card.
 
 = 1.0.7 - 2026-10-08 =
 * Add - "Channel visibility" meta box on the product edit screen to show or hide each product in the Reddit catalog.
