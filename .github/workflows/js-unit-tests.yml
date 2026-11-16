@@ -16,6 +16,7 @@ on:
       - package.json
       - package-lock.json
       - .github/workflows/js-unit-tests.yml
+  workflow_dispatch:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}

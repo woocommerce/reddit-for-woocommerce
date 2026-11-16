@@ -6,7 +6,7 @@ Guidelines for AI coding agents working in this repository. This file contains i
 
 Reddit for WooCommerce is a WooCommerce extension that integrates a store with Reddit's advertising platform — enabling pixel tracking, server-side conversion events (CAPI), product catalog export, and campaign creation through Reddit Ads.
 
-- **Tech stack:** PHP 7.4+, WordPress 6.7+, WooCommerce 10.2+, Node 20, React, SCSS
+- **Tech stack:** PHP 7.4+, WordPress 6.9+, WooCommerce 10.9+, Node 24 (npm 11), React, SCSS
 - **Repository:** `woocommerce/reddit-for-woocommerce`, text domain: `reddit-for-woocommerce`
 - **External dependencies:** Jetpack (auth/connection), WooCommerce Connect Server (proxy to Reddit APIs)
 
