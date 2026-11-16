@@ -55,6 +55,18 @@ Yes, it uses a [Jetpack](https://jetpack.com/) account to connect and communicat
 
 == Changelog ==
 
+= 1.0.8 - 2026-11-16 =
+* Fix - Bump WooCommerce "tested up to" version to 11.3.
+* Fix - CI: support Ubuntu 26.04 runners.
+* Fix - Correct the Ad Partner base class namespace so optimized builds can load it.
+* Fix - Doc - Add the Automattic security policy and public security contact.
+* Fix - Doc - Add the canonical GPL-3.0 license text.
+* Fix - None.
+* Fix - Tested with PHP 8.5.
+* Fix - Update the WordPress.com logo on the account connection card.
+* Fix - Updates to local development files and dependencies to support Node 24.
+* Fix - Variation forms no longer stay stuck loading when Reddit tracking data is missing from the page.
+
 = 1.0.7 - 2026-10-08 =
 * Add - "Channel visibility" meta box on the product edit screen to show or hide each product in the Reddit catalog.
 * Add - Reddit Ads promotion in the "Order attribution" meta box for orders from Reddit.
@@ -67,11 +79,5 @@ Yes, it uses a [Jetpack](https://jetpack.com/) account to connect and communicat
 * Fix - Send PageVisit and ViewContent Conversions API events asynchronously so they no longer block the visitor's page load.
 * Tweak - Bump WooCommerce "tested up to" version to 11.1.
 * Tweak - Include pixel ID query parameter in the Reddit Pixel script URL.
-
-= 1.0.5 - 2026-08-19 =
-* Fix - Validate the order key before firing the Reddit purchase pixel on the order-received page, preventing order details from being exposed to unauthenticated visitors.
-* Dev - Update WPCS to 3.4.1 to fix CVE-2026-45293, an arbitrary code execution vulnerability in WordPress Coding Standards.
-* Tweak - Bump WordPress "Tested up to" version to 7.1
-* Tweak - Bump WordPress "Requires at least" version to 6.9
 
 [See changelog for all versions](https://raw.githubusercontent.com/woocommerce/reddit-for-woocommerce/trunk/changelog.txt).
