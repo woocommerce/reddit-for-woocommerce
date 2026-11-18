@@ -54,6 +54,13 @@ class ConversionTrackingServiceTest extends WP_UnitTestCase {
 	private $service;
 
 	/**
+	 * `$_SERVER` entries the rate-limit tests change, as they were before the test.
+	 *
+	 * @var array
+	 */
+	private $original_server = array();
+
+	/**
 	 * Sets up the test environment.
 	 */
 	public function set_up(): void {
@@ -61,6 +68,10 @@ class ConversionTrackingServiceTest extends WP_UnitTestCase {
 
 		$this->tracker_mock = $this->createMock( ConversionTrackerInterface::class );
 		$this->service      = $this->create_service( $this->tracker_mock );
+
+		foreach ( array( 'REMOTE_ADDR', 'HTTP_X_FORWARDED_FOR', 'HTTP_X_REAL_IP' ) as $key ) {
+			$this->original_server[ $key ] = $_SERVER[ $key ] ?? null;
+		}
 
 		Options::set( OptionDefaults::PIXEL_ID, 'pixel-id' );
 		$_REQUEST['security'] = wp_create_nonce( 'capi_nonce' );
@@ -72,6 +83,14 @@ class ConversionTrackingServiceTest extends WP_UnitTestCase {
 	public function tear_down(): void {
 		unset( $_POST[ Helper::with_prefix( 'event_id' ) ], $_POST['payload'], $_REQUEST['security'] );
 		Options::delete( OptionDefaults::PIXEL_ID );
+
+		foreach ( $this->original_server as $key => $value ) {
+			if ( null === $value ) {
+				unset( $_SERVER[ $key ] );
+			} else {
+				$_SERVER[ $key ] = $value;
+			}
+		}
 
 		parent::tear_down();
 	}
@@ -223,6 +242,137 @@ class ConversionTrackingServiceTest extends WP_UnitTestCase {
 	}
 
 	/**
+	 * One client can make at most 30 requests per window, after which it gets a 429.
+	 */
+	public function test_client_is_rate_limited_after_30_requests() {
+		$this->tracker_mock->expects( $this->exactly( 30 ) )->method( 'track_page_view' );
+
+		for ( $i = 0; $i < 30; $i++ ) {
+			$this->assertSame( 0, $this->send_page_view( '203.0.113.1' ) );
+		}
+
+		$this->assertSame( 429, $this->send_page_view( '203.0.113.1' ) );
+	}
+
+	/**
+	 * Changing forwarding headers on each request doesn't give the client a new allowance.
+	 */
+	public function test_forwarding_headers_do_not_bypass_client_limit() {
+		$this->tracker_mock->expects( $this->exactly( 30 ) )->method( 'track_page_view' );
+
+		for ( $i = 0; $i < 31; $i++ ) {
+			$_SERVER['HTTP_X_FORWARDED_FOR'] = "198.51.100.{$i}";
+			$_SERVER['HTTP_X_REAL_IP']       = "198.51.100.{$i}";
+
+			$status = $this->send_page_view( '203.0.113.1' );
+		}
+
+		$this->assertSame( 429, $status );
+	}
+
+	/**
+	 * Requests without a valid `REMOTE_ADDR` share one client allowance.
+	 */
+	public function test_requests_without_valid_remote_addr_share_one_allowance() {
+		$this->tracker_mock->expects( $this->exactly( 30 ) )->method( 'track_page_view' );
+
+		for ( $i = 0; $i < 30; $i++ ) {
+			$this->assertSame( 0, $this->send_page_view( 0 === $i % 2 ? null : 'not-an-ip' ) );
+		}
+
+		$this->assertSame( 429, $this->send_page_view( null ) );
+	}
+
+	/**
+	 * The whole store accepts at most 300 requests per window, across all clients.
+	 */
+	public function test_store_is_rate_limited_after_300_requests() {
+		$this->tracker_mock->expects( $this->exactly( 300 ) )->method( 'track_page_view' );
+
+		for ( $i = 0; $i < 300; $i++ ) {
+			$this->assertSame( 0, $this->send_page_view( '203.0.113.' . intdiv( $i, 30 ) ) );
+		}
+
+		$this->assertSame( 429, $this->send_page_view( '203.0.113.200' ) );
+	}
+
+	/**
+	 * Requests a client makes over its own limit don't use up the store-wide allowance.
+	 */
+	public function test_client_over_its_limit_does_not_use_store_allowance() {
+		$this->tracker_mock->expects( $this->exactly( 300 ) )->method( 'track_page_view' );
+
+		for ( $i = 0; $i < 100; $i++ ) {
+			$this->send_page_view( '203.0.113.1' );
+		}
+
+		for ( $i = 0; $i < 270; $i++ ) {
+			$this->assertSame( 0, $this->send_page_view( '198.51.100.' . intdiv( $i, 30 ) ) );
+		}
+	}
+
+	/**
+	 * Requests rejected as invalid don't count toward the rate limits.
+	 */
+	public function test_invalid_requests_do_not_count_toward_rate_limits() {
+		$this->tracker_mock->expects( $this->once() )->method( 'track_page_view' );
+		$_SERVER['REMOTE_ADDR'] = '203.0.113.1';
+
+		for ( $i = 0; $i < 30; $i++ ) {
+			$this->set_payload( array( 'conversionId' => 'not-a-uuid' ) );
+
+			try {
+				$this->service->handle_async_page_view();
+			} catch ( RuntimeException $e ) {
+				$this->assertSame( 400, $e->getCode() );
+			}
+		}
+
+		$this->assertSame( 0, $this->send_page_view( '203.0.113.1' ) );
+	}
+
+	/**
+	 * A client that hit its limit gets a new allowance in the next window.
+	 */
+	public function test_rate_limit_resets_in_next_window() {
+		$this->tracker_mock->expects( $this->exactly( 31 ) )->method( 'track_page_view' );
+
+		for ( $i = 0; $i < 30; $i++ ) {
+			$this->send_page_view( '203.0.113.1' );
+		}
+
+		$this->assertSame( 429, $this->send_page_view( '203.0.113.1' ) );
+
+		++$this->service->window;
+
+		$this->assertSame( 0, $this->send_page_view( '203.0.113.1' ) );
+	}
+
+	/**
+	 * Sends a valid PageVisit request from the given `REMOTE_ADDR`.
+	 *
+	 * @param string|null $remote_addr Client address, or null to leave it unset.
+	 * @return int 0 when the request was accepted, otherwise the rejection status code.
+	 */
+	private function send_page_view( ?string $remote_addr ): int {
+		if ( null === $remote_addr ) {
+			unset( $_SERVER['REMOTE_ADDR'] );
+		} else {
+			$_SERVER['REMOTE_ADDR'] = $remote_addr;
+		}
+
+		$this->set_payload( array( 'conversionId' => self::CONVERSION_ID ) );
+
+		try {
+			$this->service->handle_async_page_view();
+		} catch ( RuntimeException $e ) {
+			return $e->getCode();
+		}
+
+		return 0;
+	}
+
+	/**
 	 * Asserts that every public AJAX handler rejects the current request with the
 	 * given status code and never calls the tracker.
 	 *
@@ -244,15 +394,27 @@ class ConversionTrackingServiceTest extends WP_UnitTestCase {
 
 	/**
 	 * Creates the service under test, with rejected requests surfaced as an
-	 * exception carrying the status code instead of ending the PHP process.
+	 * exception carrying the status code instead of ending the PHP process, and
+	 * the rate-limit window fixed so tests don't depend on the clock.
 	 *
 	 * @param ConversionTrackerInterface $tracker Tracker the service delegates to.
 	 * @return ConversionTrackingService
 	 */
 	private function create_service( ConversionTrackerInterface $tracker ): ConversionTrackingService {
 		return new class( $tracker ) extends ConversionTrackingService {
+			/**
+			 * Current rate-limit window.
+			 *
+			 * @var int
+			 */
+			public $window = 1;
+
 			protected function reject_request( int $status_code ): void {
 				throw new RuntimeException( 'Request rejected.', $status_code );
+			}
+
+			protected function get_rate_limit_window(): int {
+				return $this->window;
 			}
 		};
 	}

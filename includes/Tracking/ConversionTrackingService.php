@@ -42,6 +42,33 @@ class ConversionTrackingService implements ServiceStatusInterface {
 	protected const MAX_PAYLOAD_BYTES = 4096;
 
 	/**
+	 * Length of a rate-limit window for the public AJAX tracking endpoints, in seconds.
+	 *
+	 * @since n.e.x.t
+	 *
+	 * @var int
+	 */
+	protected const RATE_LIMIT_WINDOW = 60;
+
+	/**
+	 * Requests one client can make to the public AJAX tracking endpoints per window.
+	 *
+	 * @since n.e.x.t
+	 *
+	 * @var int
+	 */
+	protected const RATE_LIMIT_PER_CLIENT = 30;
+
+	/**
+	 * Requests the whole store accepts on the public AJAX tracking endpoints per window.
+	 *
+	 * @since n.e.x.t
+	 *
+	 * @var int
+	 */
+	protected const RATE_LIMIT_PER_STORE = 300;
+
+	/**
 	 * Instance of a class implementing conversion tracking logic.
 	 *
 	 * @var ConversionTrackerInterface
@@ -264,8 +291,9 @@ class ConversionTrackingService implements ServiceStatusInterface {
 	 * Validates a public AJAX tracking request and returns its decoded payload.
 	 *
 	 * The tracking endpoints are open to anonymous visitors, so a request is
-	 * rejected before any tracking work when the integration isn't configured
-	 * or the payload doesn't match what the plugin's tracking script sends.
+	 * rejected before any tracking work when the integration isn't configured,
+	 * the payload doesn't match what the plugin's tracking script sends, or the
+	 * client or store is over its rate limit.
 	 *
 	 * @since n.e.x.t
 	 *
@@ -292,7 +320,80 @@ class ConversionTrackingService implements ServiceStatusInterface {
 			return null;
 		}
 
+		if ( ! $this->consume_rate_limit() ) {
+			$this->reject_request( 429 );
+			return null;
+		}
+
 		return $data;
+	}
+
+	/**
+	 * Counts the current request toward the per-client and store-wide rate limits.
+	 *
+	 * The per-client limit is checked first, and a request it rejects isn't
+	 * counted toward the store-wide limit. Otherwise a single client could use
+	 * up the store-wide allowance and block tracking for every other visitor.
+	 *
+	 * Counters are keyed by window, so writing a new count doesn't extend the
+	 * current window. Counts can race between simultaneous requests, which is
+	 * acceptable because the limits are approximate.
+	 *
+	 * @since n.e.x.t
+	 *
+	 * @return bool True when the request is within both limits; false otherwise.
+	 */
+	protected function consume_rate_limit(): bool {
+		$window     = $this->get_rate_limit_window();
+		$client_key = Helper::with_prefix( 'capi_rl_' . wp_hash( $this->get_client_ip() ) . '_' . $window );
+		$store_key  = Helper::with_prefix( 'capi_rl_store_' . $window );
+
+		$client_count = (int) get_transient( $client_key );
+
+		if ( $client_count >= self::RATE_LIMIT_PER_CLIENT ) {
+			return false;
+		}
+
+		$store_count = (int) get_transient( $store_key );
+
+		if ( $store_count >= self::RATE_LIMIT_PER_STORE ) {
+			return false;
+		}
+
+		set_transient( $client_key, $client_count + 1, self::RATE_LIMIT_WINDOW );
+		set_transient( $store_key, $store_count + 1, self::RATE_LIMIT_WINDOW );
+
+		return true;
+	}
+
+	/**
+	 * Returns the number of the current fixed rate-limit window.
+	 *
+	 * @since n.e.x.t
+	 *
+	 * @return int
+	 */
+	protected function get_rate_limit_window(): int {
+		return (int) floor( time() / self::RATE_LIMIT_WINDOW );
+	}
+
+	/**
+	 * Returns the IP address that identifies the client for rate limiting.
+	 *
+	 * Only `REMOTE_ADDR` is used. Forwarding headers such as `X-Forwarded-For`
+	 * can be set by any client, so trusting them would give an attacker a fresh
+	 * allowance on every request. Requests without a valid `REMOTE_ADDR` share
+	 * one allowance rather than being rejected, and still count toward the
+	 * store-wide limit.
+	 *
+	 * @since n.e.x.t
+	 *
+	 * @return string
+	 */
+	protected function get_client_ip(): string {
+		$ip = isset( $_SERVER['REMOTE_ADDR'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ) ) : '';
+
+		return rest_is_ip_address( $ip ) ? $ip : 'unknown';
 	}
 
 	/**
