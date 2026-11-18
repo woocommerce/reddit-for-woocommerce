@@ -31,6 +31,17 @@ use RedditForWooCommerce\Utils\Helper;
 class ConversionTrackingService implements ServiceStatusInterface {
 
 	/**
+	 * Largest `payload` accepted by the public AJAX tracking endpoints, in bytes.
+	 *
+	 * Payloads sent by the plugin's own tracking script are well under this.
+	 *
+	 * @since n.e.x.t
+	 *
+	 * @var int
+	 */
+	protected const MAX_PAYLOAD_BYTES = 4096;
+
+	/**
 	 * Instance of a class implementing conversion tracking logic.
 	 *
 	 * @var ConversionTrackerInterface
@@ -180,8 +191,12 @@ class ConversionTrackingService implements ServiceStatusInterface {
 	public function handle_async_add_to_cart(): void {
 		check_ajax_referer( 'capi_nonce', 'security' );
 
-		$payload    = wp_unslash( $_POST['payload'] ?? '{}' ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
-		$data       = json_decode( $payload, true );
+		$data = $this->get_validated_payload();
+
+		if ( null === $data ) {
+			return;
+		}
+
 		$product_id = absint( $data['productId'] ?? 0 );
 		$quantity   = absint( $data['quantity'] ?? 0 );
 		$event_id   = sanitize_text_field( $data['conversionId'] ?? '' );
@@ -203,8 +218,12 @@ class ConversionTrackingService implements ServiceStatusInterface {
 	public function handle_async_view_content(): void {
 		check_ajax_referer( 'capi_nonce', 'security' );
 
-		$payload    = wp_unslash( $_POST['payload'] ?? '{}' ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
-		$data       = json_decode( $payload, true );
+		$data = $this->get_validated_payload();
+
+		if ( null === $data ) {
+			return;
+		}
+
 		$products   = $data['products'] ?? array();
 		$product_id = absint( $products['id'] ?? 0 );
 		$event_id   = sanitize_text_field( $data['conversionId'] ?? '' );
@@ -230,11 +249,62 @@ class ConversionTrackingService implements ServiceStatusInterface {
 	public function handle_async_page_view(): void {
 		check_ajax_referer( 'capi_nonce', 'security' );
 
-		$payload  = wp_unslash( $_POST['payload'] ?? '{}' ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
-		$data     = json_decode( $payload, true );
+		$data = $this->get_validated_payload();
+
+		if ( null === $data ) {
+			return;
+		}
+
 		$event_id = sanitize_text_field( $data['conversionId'] ?? '' );
 
 		$this->tracker->track_page_view( $event_id );
+	}
+
+	/**
+	 * Validates a public AJAX tracking request and returns its decoded payload.
+	 *
+	 * The tracking endpoints are open to anonymous visitors, so a request is
+	 * rejected before any tracking work when the integration isn't configured
+	 * or the payload doesn't match what the plugin's tracking script sends.
+	 *
+	 * @since n.e.x.t
+	 *
+	 * @return array|null The decoded payload, or null when the request was rejected.
+	 */
+	protected function get_validated_payload(): ?array {
+		if ( empty( Options::get( OptionDefaults::PIXEL_ID ) ) ) {
+			$this->reject_request( 400 );
+			return null;
+		}
+
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- The caller verifies the nonce, and each field is sanitized where it's read.
+		$payload = wp_unslash( $_POST['payload'] ?? '' );
+
+		if ( ! is_string( $payload ) || strlen( $payload ) > self::MAX_PAYLOAD_BYTES ) {
+			$this->reject_request( 400 );
+			return null;
+		}
+
+		$data = json_decode( $payload, true );
+
+		if ( ! is_array( $data ) || ! wp_is_uuid( $data['conversionId'] ?? null ) ) {
+			$this->reject_request( 400 );
+			return null;
+		}
+
+		return $data;
+	}
+
+	/**
+	 * Ends a rejected public AJAX tracking request with a JSON error response.
+	 *
+	 * @since n.e.x.t
+	 *
+	 * @param int $status_code HTTP status code to send.
+	 * @return void
+	 */
+	protected function reject_request( int $status_code ): void {
+		wp_send_json_error( null, $status_code );
 	}
 
 	/**
