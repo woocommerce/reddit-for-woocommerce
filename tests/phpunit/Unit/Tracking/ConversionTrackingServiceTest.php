@@ -499,6 +499,28 @@ class ConversionTrackingServiceTest extends WP_UnitTestCase {
 	}
 
 	/**
+	 * A client keeps one counter across windows rather than adding one per window,
+	 * so stores without an object cache don't collect a transient per client per minute.
+	 */
+	public function test_rate_limit_counters_are_reused_across_windows() {
+		global $wpdb;
+
+		for ( $i = 0; $i < 3; $i++ ) {
+			$this->assertSame( 0, $this->send_page_view( '203.0.113.1' ) );
+			++$this->service->window;
+		}
+
+		$counters = (int) $wpdb->get_var(
+			$wpdb->prepare(
+				"SELECT COUNT(*) FROM {$wpdb->options} WHERE option_name LIKE %s",
+				$wpdb->esc_like( '_transient_' . Helper::with_prefix( 'capi_rl_' ) ) . '%'
+			)
+		);
+
+		$this->assertSame( 2, $counters, 'Expected one client counter and one store counter.' );
+	}
+
+	/**
 	 * Sends an AddToCart request for the given product and quantity.
 	 *
 	 * @param int   $product_id Product ID.

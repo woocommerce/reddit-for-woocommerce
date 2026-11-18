@@ -40,7 +40,7 @@ class ConversionTrackingService implements ServiceStatusInterface {
 	 *
 	 * @var int
 	 */
-	protected const MAX_PAYLOAD_BYTES = 4096;
+	private const MAX_PAYLOAD_BYTES = 4096;
 
 	/**
 	 * Length of a rate-limit window for the public AJAX tracking endpoints, in seconds.
@@ -49,7 +49,7 @@ class ConversionTrackingService implements ServiceStatusInterface {
 	 *
 	 * @var int
 	 */
-	protected const RATE_LIMIT_WINDOW = 60;
+	private const RATE_LIMIT_WINDOW = 60;
 
 	/**
 	 * Requests one client can make to the public AJAX tracking endpoints per window.
@@ -58,7 +58,7 @@ class ConversionTrackingService implements ServiceStatusInterface {
 	 *
 	 * @var int
 	 */
-	protected const RATE_LIMIT_PER_CLIENT = 30;
+	private const RATE_LIMIT_PER_CLIENT = 30;
 
 	/**
 	 * Requests the whole store accepts on the public AJAX tracking endpoints per window.
@@ -67,7 +67,7 @@ class ConversionTrackingService implements ServiceStatusInterface {
 	 *
 	 * @var int
 	 */
-	protected const RATE_LIMIT_PER_STORE = 300;
+	private const RATE_LIMIT_PER_STORE = 300;
 
 	/**
 	 * Largest quantity accepted by the public AJAX AddToCart endpoint.
@@ -76,7 +76,7 @@ class ConversionTrackingService implements ServiceStatusInterface {
 	 *
 	 * @var int
 	 */
-	protected const MAX_ADD_TO_CART_QUANTITY = 100;
+	private const MAX_ADD_TO_CART_QUANTITY = 100;
 
 	/**
 	 * Instance of a class implementing conversion tracking logic.
@@ -341,7 +341,7 @@ class ConversionTrackingService implements ServiceStatusInterface {
 	 *                                      rate limiting, so a request it rejects isn't counted.
 	 * @return array|null The decoded payload, or null when the request was rejected.
 	 */
-	protected function get_validated_payload( ?callable $is_valid_event = null ): ?array {
+	private function get_validated_payload( ?callable $is_valid_event = null ): ?array {
 		if ( empty( Options::get( OptionDefaults::PIXEL_ID ) ) ) {
 			$this->reject_request( 400 );
 			return null;
@@ -382,35 +382,70 @@ class ConversionTrackingService implements ServiceStatusInterface {
 	 * counted toward the store-wide limit. Otherwise a single client could use
 	 * up the store-wide allowance and block tracking for every other visitor.
 	 *
-	 * Counters are keyed by window, so writing a new count doesn't extend the
-	 * current window. Counts can race between simultaneous requests, which is
-	 * acceptable because the limits are approximate.
+	 * Each counter records the window it belongs to and restarts from zero in a
+	 * new window, so writing a new count doesn't extend the current window and
+	 * each client reuses one transient rather than adding one per window. Counts
+	 * can race between simultaneous requests, which is acceptable because the
+	 * limits are approximate.
 	 *
 	 * @since n.e.x.t
 	 *
 	 * @return bool True when the request is within both limits; false otherwise.
 	 */
-	protected function consume_rate_limit(): bool {
+	private function consume_rate_limit(): bool {
 		$window     = $this->get_rate_limit_window();
-		$client_key = Helper::with_prefix( 'capi_rl_' . wp_hash( $this->get_client_ip() ) . '_' . $window );
-		$store_key  = Helper::with_prefix( 'capi_rl_store_' . $window );
+		$client_key = Helper::with_prefix( 'capi_rl_' . wp_hash( $this->get_client_ip() ) );
+		$store_key  = Helper::with_prefix( 'capi_rl_store' );
 
-		$client_count = (int) get_transient( $client_key );
+		$client_count = $this->get_rate_limit_count( $client_key, $window );
 
 		if ( $client_count >= self::RATE_LIMIT_PER_CLIENT ) {
 			return false;
 		}
 
-		$store_count = (int) get_transient( $store_key );
+		$store_count = $this->get_rate_limit_count( $store_key, $window );
 
 		if ( $store_count >= self::RATE_LIMIT_PER_STORE ) {
 			return false;
 		}
 
-		set_transient( $client_key, $client_count + 1, self::RATE_LIMIT_WINDOW );
-		set_transient( $store_key, $store_count + 1, self::RATE_LIMIT_WINDOW );
+		set_transient(
+			$client_key,
+			array(
+				'window' => $window,
+				'count'  => $client_count + 1,
+			),
+			self::RATE_LIMIT_WINDOW
+		);
+		set_transient(
+			$store_key,
+			array(
+				'window' => $window,
+				'count'  => $store_count + 1,
+			),
+			self::RATE_LIMIT_WINDOW
+		);
 
 		return true;
+	}
+
+	/**
+	 * Returns a rate-limit counter's count for the given window.
+	 *
+	 * @since n.e.x.t
+	 *
+	 * @param string $key    Transient name of the counter.
+	 * @param int    $window Current rate-limit window.
+	 * @return int The count, or 0 when the counter is missing or from an earlier window.
+	 */
+	private function get_rate_limit_count( string $key, int $window ): int {
+		$counter = get_transient( $key );
+
+		if ( ! is_array( $counter ) || ( $counter['window'] ?? null ) !== $window ) {
+			return 0;
+		}
+
+		return (int) ( $counter['count'] ?? 0 );
 	}
 
 	/**
@@ -437,7 +472,7 @@ class ConversionTrackingService implements ServiceStatusInterface {
 	 *
 	 * @return string
 	 */
-	protected function get_client_ip(): string {
+	private function get_client_ip(): string {
 		$ip = isset( $_SERVER['REMOTE_ADDR'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ) ) : '';
 
 		return rest_is_ip_address( $ip ) ? $ip : 'unknown';
