@@ -154,22 +154,25 @@ class ConversionTrackingServiceTest extends WP_UnitTestCase {
 	 * product, quantity and conversion ID they carry.
 	 */
 	public function test_valid_async_requests_are_tracked() {
+		$product_id = \WC_Helper_Product::create_simple_product()->get_id();
+
 		$this->tracker_mock
 			->expects( $this->once() )
 			->method( 'track_add_to_cart' )
-			->with( $this->identicalTo( 145 ), $this->identicalTo( 1 ), $this->identicalTo( self::CONVERSION_ID ) );
+			->with( $this->identicalTo( $product_id ), $this->identicalTo( 1 ), $this->identicalTo( self::CONVERSION_ID ) );
 		$this->tracker_mock
 			->expects( $this->once() )
 			->method( 'track_view_content' )
-			->with( $this->identicalTo( 145 ), $this->identicalTo( self::CONVERSION_ID ) );
+			->with( $this->identicalTo( $product_id ), $this->identicalTo( self::CONVERSION_ID ) );
 		$this->tracker_mock
 			->expects( $this->once() )
 			->method( 'track_page_view' )
 			->with( $this->identicalTo( self::CONVERSION_ID ) );
 
+		// The tracking script sends the loop product ID as a string, read from a data attribute.
 		$this->set_payload(
 			array(
-				'productId'    => 145,
+				'productId'    => (string) $product_id,
 				'quantity'     => 1,
 				'conversionId' => self::CONVERSION_ID,
 			)
@@ -178,7 +181,7 @@ class ConversionTrackingServiceTest extends WP_UnitTestCase {
 
 		$this->set_payload(
 			array(
-				'products'     => array( 'id' => 145 ),
+				'products'     => array( 'id' => $product_id ),
 				'conversionId' => self::CONVERSION_ID,
 			)
 		);
@@ -238,6 +241,153 @@ class ConversionTrackingServiceTest extends WP_UnitTestCase {
 			'missing conversion ID' => array( '{"productId":145}' ),
 			'non-UUID conversion ID' => array( '{"conversionId":"not-a-uuid"}' ),
 			'non-string conversion ID' => array( '{"conversionId":123}' ),
+		);
+	}
+
+	/**
+	 * AddToCart rejects a quantity outside 1 to 100, and accepts the bounds.
+	 *
+	 * @dataProvider add_to_cart_quantity_provider
+	 *
+	 * @param mixed $quantity        `quantity` payload field.
+	 * @param int   $expected_status 0 when the request is accepted, otherwise the rejection status code.
+	 */
+	public function test_add_to_cart_quantity_is_bounded( $quantity, int $expected_status ) {
+		$product_id = \WC_Helper_Product::create_simple_product()->get_id();
+
+		$this->tracker_mock->expects( $this->exactly( 0 === $expected_status ? 1 : 0 ) )->method( 'track_add_to_cart' );
+
+		$this->assertSame( $expected_status, $this->send_add_to_cart( $product_id, $quantity ) );
+	}
+
+	/**
+	 * AddToCart quantities.
+	 *
+	 * @return array
+	 */
+	public function add_to_cart_quantity_provider(): array {
+		return array(
+			'missing'      => array( null, 400 ),
+			'zero'         => array( 0, 400 ),
+			'negative'     => array( -1, 400 ),
+			'decimal'      => array( 1.5, 400 ),
+			'not a number' => array( 'abc', 400 ),
+			'over 100'     => array( 101, 400 ),
+			'one'          => array( 1, 0 ),
+			'one hundred'  => array( 100, 0 ),
+		);
+	}
+
+	/**
+	 * AddToCart requests with an out-of-range quantity don't count toward the rate limits.
+	 */
+	public function test_invalid_quantities_do_not_count_toward_rate_limits() {
+		$product_id = \WC_Helper_Product::create_simple_product()->get_id();
+
+		$this->tracker_mock->expects( $this->once() )->method( 'track_add_to_cart' );
+
+		for ( $i = 0; $i < 30; $i++ ) {
+			$this->assertSame( 400, $this->send_add_to_cart( $product_id, 0 ) );
+		}
+
+		$this->assertSame( 0, $this->send_add_to_cart( $product_id, 1 ) );
+	}
+
+	/**
+	 * AddToCart rejects products that don't exist, aren't published or can't be bought.
+	 *
+	 * @dataProvider invalid_add_to_cart_product_provider
+	 *
+	 * @param callable $create_product Returns the product ID to send.
+	 */
+	public function test_add_to_cart_rejects_invalid_products( callable $create_product ) {
+		$this->tracker_mock->expects( $this->never() )->method( 'track_add_to_cart' );
+
+		$this->assertSame( 400, $this->send_add_to_cart( $create_product(), 1 ) );
+	}
+
+	/**
+	 * AddToCart rejects a draft product even for a user who can edit it, for whom
+	 * WooCommerce still treats the draft as purchasable.
+	 */
+	public function test_add_to_cart_rejects_draft_product_for_editor() {
+		wp_set_current_user( self::factory()->user->create( array( 'role' => 'administrator' ) ) );
+		$_REQUEST['security'] = wp_create_nonce( 'capi_nonce' );
+		$product = \WC_Helper_Product::create_simple_product( true, array( 'status' => 'draft' ) );
+
+		$this->assertTrue( $product->is_purchasable() );
+		$this->tracker_mock->expects( $this->never() )->method( 'track_add_to_cart' );
+
+		$this->assertSame( 400, $this->send_add_to_cart( $product->get_id(), 1 ) );
+	}
+
+	/**
+	 * Products AddToCart must reject.
+	 *
+	 * @return array
+	 */
+	public function invalid_add_to_cart_product_provider(): array {
+		return array(
+			'missing product'      => array(
+				function () {
+					return PHP_INT_MAX;
+				},
+			),
+			'draft product'        => array(
+				function () {
+					return \WC_Helper_Product::create_simple_product( true, array( 'status' => 'draft' ) )->get_id();
+				},
+			),
+			'unpurchasable product' => array(
+				function () {
+					return \WC_Helper_Product::create_simple_product( true, array( 'regular_price' => '' ) )->get_id();
+				},
+			),
+		);
+	}
+
+	/**
+	 * ViewContent rejects products that don't exist or aren't published.
+	 *
+	 * @dataProvider invalid_view_content_product_provider
+	 *
+	 * @param callable $create_product Returns the product ID to send.
+	 */
+	public function test_view_content_rejects_invalid_products( callable $create_product ) {
+		$this->tracker_mock->expects( $this->never() )->method( 'track_view_content' );
+
+		$this->set_payload(
+			array(
+				'products'     => array( 'id' => $create_product() ),
+				'conversionId' => self::CONVERSION_ID,
+			)
+		);
+
+		try {
+			$this->service->handle_async_view_content();
+			$this->fail( 'handle_async_view_content() did not reject the request.' );
+		} catch ( RuntimeException $e ) {
+			$this->assertSame( 400, $e->getCode() );
+		}
+	}
+
+	/**
+	 * Products ViewContent must reject.
+	 *
+	 * @return array
+	 */
+	public function invalid_view_content_product_provider(): array {
+		return array(
+			'missing product' => array(
+				function () {
+					return PHP_INT_MAX;
+				},
+			),
+			'draft product'   => array(
+				function () {
+					return \WC_Helper_Product::create_simple_product( true, array( 'status' => 'draft' ) )->get_id();
+				},
+			),
 		);
 	}
 
@@ -346,6 +496,34 @@ class ConversionTrackingServiceTest extends WP_UnitTestCase {
 		++$this->service->window;
 
 		$this->assertSame( 0, $this->send_page_view( '203.0.113.1' ) );
+	}
+
+	/**
+	 * Sends an AddToCart request for the given product and quantity.
+	 *
+	 * @param int   $product_id Product ID.
+	 * @param mixed $quantity   `quantity` payload field, or null to leave it out.
+	 * @return int 0 when the request was accepted, otherwise the rejection status code.
+	 */
+	private function send_add_to_cart( int $product_id, $quantity ): int {
+		$data = array(
+			'productId'    => $product_id,
+			'conversionId' => self::CONVERSION_ID,
+		);
+
+		if ( null !== $quantity ) {
+			$data['quantity'] = $quantity;
+		}
+
+		$this->set_payload( $data );
+
+		try {
+			$this->service->handle_async_add_to_cart();
+		} catch ( RuntimeException $e ) {
+			return $e->getCode();
+		}
+
+		return 0;
 	}
 
 	/**

@@ -15,6 +15,7 @@ namespace RedditForWooCommerce\Tracking;
 use RedditForWooCommerce\Utils\Storage\OptionDefaults;
 use RedditForWooCommerce\Utils\Storage\Options;
 use RedditForWooCommerce\Utils\Helper;
+use WC_Product;
 
 /**
  * Service class for registering WooCommerce conversion tracking hooks.
@@ -67,6 +68,15 @@ class ConversionTrackingService implements ServiceStatusInterface {
 	 * @var int
 	 */
 	protected const RATE_LIMIT_PER_STORE = 300;
+
+	/**
+	 * Largest quantity accepted by the public AJAX AddToCart endpoint.
+	 *
+	 * @since n.e.x.t
+	 *
+	 * @var int
+	 */
+	protected const MAX_ADD_TO_CART_QUANTITY = 100;
 
 	/**
 	 * Instance of a class implementing conversion tracking logic.
@@ -218,15 +228,37 @@ class ConversionTrackingService implements ServiceStatusInterface {
 	public function handle_async_add_to_cart(): void {
 		check_ajax_referer( 'capi_nonce', 'security' );
 
-		$data = $this->get_validated_payload();
+		$data = $this->get_validated_payload(
+			function ( array $payload ): bool {
+				$quantity = filter_var(
+					$payload['quantity'] ?? null,
+					FILTER_VALIDATE_INT,
+					array(
+						'options' => array(
+							'min_range' => 1,
+							'max_range' => self::MAX_ADD_TO_CART_QUANTITY,
+						),
+					)
+				);
+
+				return false !== $quantity;
+			}
+		);
 
 		if ( null === $data ) {
 			return;
 		}
 
 		$product_id = absint( $data['productId'] ?? 0 );
-		$quantity   = absint( $data['quantity'] ?? 0 );
-		$event_id   = sanitize_text_field( $data['conversionId'] ?? '' );
+		$product    = wc_get_product( $product_id );
+
+		if ( ! $product instanceof WC_Product || 'publish' !== $product->get_status() || ! $product->is_purchasable() ) {
+			$this->reject_request( 400 );
+			return;
+		}
+
+		$quantity = (int) $data['quantity'];
+		$event_id = sanitize_text_field( $data['conversionId'] );
 
 		$this->tracker->track_add_to_cart( $product_id, $quantity, $event_id );
 	}
@@ -253,7 +285,14 @@ class ConversionTrackingService implements ServiceStatusInterface {
 
 		$products   = $data['products'] ?? array();
 		$product_id = absint( $products['id'] ?? 0 );
-		$event_id   = sanitize_text_field( $data['conversionId'] ?? '' );
+		$product    = wc_get_product( $product_id );
+
+		if ( ! $product instanceof WC_Product || 'publish' !== $product->get_status() ) {
+			$this->reject_request( 400 );
+			return;
+		}
+
+		$event_id = sanitize_text_field( $data['conversionId'] );
 
 		$this->tracker->track_view_content( $product_id, $event_id );
 	}
@@ -297,9 +336,12 @@ class ConversionTrackingService implements ServiceStatusInterface {
 	 *
 	 * @since n.e.x.t
 	 *
+	 * @param callable|null $is_valid_event Optional check of event-specific fields. It
+	 *                                      receives the decoded payload and runs before
+	 *                                      rate limiting, so a request it rejects isn't counted.
 	 * @return array|null The decoded payload, or null when the request was rejected.
 	 */
-	protected function get_validated_payload(): ?array {
+	protected function get_validated_payload( ?callable $is_valid_event = null ): ?array {
 		if ( empty( Options::get( OptionDefaults::PIXEL_ID ) ) ) {
 			$this->reject_request( 400 );
 			return null;
@@ -316,6 +358,11 @@ class ConversionTrackingService implements ServiceStatusInterface {
 		$data = json_decode( $payload, true );
 
 		if ( ! is_array( $data ) || ! wp_is_uuid( $data['conversionId'] ?? null ) ) {
+			$this->reject_request( 400 );
+			return null;
+		}
+
+		if ( null !== $is_valid_event && ! $is_valid_event( $data ) ) {
 			$this->reject_request( 400 );
 			return null;
 		}
