@@ -181,6 +181,20 @@ class ProductExportServiceTest extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Tests that allow_only_physical_products() still filters rows and flags the deprecation.
+	 */
+	public function test_allow_only_physical_products_is_deprecated_but_still_filters_rows(): void {
+		$this->setExpectedDeprecated( ProductExportService::class . '::allow_only_physical_products' );
+
+		$physical = new \WC_Product_Simple();
+		$virtual  = new \WC_Product_Simple();
+		$virtual->set_virtual( true );
+
+		$this->assertSame( array( 'id' => 1 ), $this->service->allow_only_physical_products( array( 'id' => 1 ), $physical ) );
+		$this->assertNull( $this->service->allow_only_physical_products( array( 'id' => 2 ), $virtual ) );
+	}
+
+	/**
 	 * Tests that handle_batch() creates the file, writes a product row, stores the file path,
 	 * and schedules the next batch if not complete.
 	 */
