@@ -82,7 +82,9 @@ class PurchaseEventTest extends WP_UnitTestCase {
 
 		$this->assertArrayHasKey( 'data', $payload );
 		$this->assertArrayHasKey( 'partner', $payload['data'] );
+		$this->assertArrayHasKey( 'partner_version', $payload['data'] );
 		$this->assertArrayHasKey( 'events', $payload['data'] );
+		$this->assertSame( REDDIT_FOR_WOOCOMMERCE_VERSION, $payload['data']['partner_version'] );
 
 		$events = $payload['data']['events'][0];
 
@@ -101,5 +103,44 @@ class PurchaseEventTest extends WP_UnitTestCase {
 			array( 'id' => $product_one->get_id(), 'name' => $product_one->get_name() ),
 			array( 'id' => $product_two->get_id(), 'name' => $product_two->get_name() ),
 		), $metadata['products'] );
+	}
+
+	/**
+	 * The event_source_url, when supplied, is added at the event level (alongside
+	 * click_id and user), not inside metadata.
+	 */
+	public function test_build_payload_includes_event_source_url_when_provided(): void {
+		$order = wc_create_order( array( 'status' => 'pending' ) );
+
+		$event   = new PurchaseEvent( $order->get_id() );
+		$payload = $event->build_payload( array(
+			'conversion_id'    => $order->get_order_key(),
+			'user_data'        => UserIdentifier::get_user_data(),
+			'event_source_url' => 'https://example.com/checkout/order-received/42/?rdt_cid=abc',
+		) );
+
+		$events = $payload['data']['events'][0];
+
+		$this->assertSame(
+			'https://example.com/checkout/order-received/42/?rdt_cid=abc',
+			$events['event_source_url']
+		);
+		$this->assertArrayNotHasKey( 'event_source_url', $events['metadata'] );
+	}
+
+	/**
+	 * The event_source_url key is omitted entirely when no URL is supplied, so an
+	 * empty value is never sent to Reddit.
+	 */
+	public function test_build_payload_omits_event_source_url_when_absent(): void {
+		$order = wc_create_order( array( 'status' => 'pending' ) );
+
+		$event   = new PurchaseEvent( $order->get_id() );
+		$payload = $event->build_payload( array(
+			'conversion_id' => $order->get_order_key(),
+			'user_data'     => UserIdentifier::get_user_data(),
+		) );
+
+		$this->assertArrayNotHasKey( 'event_source_url', $payload['data']['events'][0] );
 	}
 }

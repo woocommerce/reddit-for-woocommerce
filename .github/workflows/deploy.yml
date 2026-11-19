@@ -26,11 +26,12 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
 
     steps:
       # Checkout the private action repository
       - name: Checkout woo-product-deploy action
-        uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # 4.3.0
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           repository: woocommerce/woo-product-deploy
           ref: trunk
@@ -44,8 +45,8 @@ jobs:
           repo_url: https://github.com/woocommerce/reddit-for-woocommerce
           branch: ${{ github.ref_name }}
           version: ${{ github.event.inputs.version }}
-          node_version: '20'
-          npm_version: '10'
+          node_version: '24'
+          npm_version: '11'
           simulate: ${{ github.event.inputs.simulate }}
           github_release: ${{ github.event.inputs.deploy_github }}
           wporg_release: ${{ github.event.inputs.deploy_wporg }}
@@ -57,10 +58,9 @@ jobs:
 
       - name: Copy build zip and preview changes
         run: |
-          TEMP_DIR=$(php -r 'echo sys_get_temp_dir();')
           SIMULATE=${{ github.event.inputs.simulate }}
 
-          cd "$TEMP_DIR/reddit-for-woocommerce"
+          cd "${{ github.workspace }}/target-repo"
           cp reddit-for-woocommerce.zip ${{ github.workspace }}
 
           # Show git diff if it's a dry run
@@ -69,7 +69,7 @@ jobs:
           fi
 
       - name: Upload build artifact
-        uses: actions/upload-artifact@4cec3d8aa04e39d1a68397de0c4cd6fb9dce8ec1 # v4.6.1
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: reddit-for-woocommerce.zip
           path: ${{ github.workspace }}/reddit-for-woocommerce.zip

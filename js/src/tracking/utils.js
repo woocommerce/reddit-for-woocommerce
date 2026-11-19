@@ -3,7 +3,7 @@
  */
 import { TRACKING_DATA_VAR } from './constants';
 import { RedditEvent } from './pixel/events';
-import { sendPixelEvent } from './pixel/utils';
+import { retrievedVariation, sendPixelEvent } from './pixel/utils';
 import { sendCapiEvent } from './conversions/utils';
 
 /**
@@ -85,6 +85,34 @@ export function hasUserConsent() {
 	return (
 		typeof wp_has_consent !== 'function' || wp_has_consent( 'marketing' )
 	);
+}
+
+/**
+ * Handles WooCommerce's `found_variation` event for a variation form.
+ *
+ * WooCommerce triggers this event from inside its variation AJAX callback, and
+ * the form stays blocked until that callback finishes. Nothing in here may
+ * throw, or the shopper is left unable to add the product to the cart.
+ *
+ * @since n.e.x.t
+ *
+ * @param {HTMLFormElement} form      The variation form that found the variation.
+ * @param {Object}          variation Variation data supplied by WooCommerce.
+ */
+export function onFoundVariation( form, variation ) {
+	try {
+		if ( ! TRACKING_DATA_VAR.is_pixel_enabled || ! hasUserConsent() ) {
+			return;
+		}
+
+		retrievedVariation( variation, Number( form?.dataset?.product_id ) );
+	} catch ( error ) {
+		// eslint-disable-next-line no-console
+		console.error(
+			'[Reddit] Could not track the selected variation.',
+			error
+		);
+	}
 }
 
 /**

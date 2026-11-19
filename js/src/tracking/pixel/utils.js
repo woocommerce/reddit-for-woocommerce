@@ -123,6 +123,12 @@ const trackAddToCartEvent = ( product, quantity = 1, eventId = null ) => {
  * @param {string} [eventId=''] Optional unique event ID.
  */
 export const singleAddToCartClick = function ( event, eventId = '' ) {
+	// The server omits pixel data on the same pages where it skips the pixel
+	// script, so there is nothing to send.
+	if ( ! TRACKING_DATA_VAR.pixel_data ) {
+		return;
+	}
+
 	const cartForm = event.target.closest( 'form.cart' );
 
 	if ( ! cartForm ) {
@@ -157,6 +163,10 @@ export const singleAddToCartClick = function ( event, eventId = '' ) {
  * @param {string} [eventId=''] Optional unique event ID.
  */
 export const addToCartClick = function ( event, eventId = '' ) {
+	if ( ! TRACKING_DATA_VAR.pixel_data ) {
+		return;
+	}
+
 	const data = event.currentTarget.dataset;
 	const product = getProductObject( { id: data.product_id } );
 
@@ -166,17 +176,25 @@ export const addToCartClick = function ( event, eventId = '' ) {
 /**
  * Updates the global product data with pricing from a variation.
  *
+ * The name comes from the parent product, which `PixelTrackingService` records
+ * wherever the variation form renders. `VIEW_CONTENT` is not used as a
+ * fallback because it describes the page's own product, which may not be the
+ * product this form belongs to.
+ *
  * @since 0.1.0
  *
- * @param {Object} variation Variation object containing a `variation_id` and `display_price`.
+ * @param {Object} variation       Variation object containing a `variation_id` and `display_price`.
+ * @param {number} parentProductId ID of the variable product the variation belongs to.
  */
-export const retrievedVariation = ( variation ) => {
-	if ( ! variation?.variation_id ) {
+export const retrievedVariation = ( variation, parentProductId ) => {
+	const products = TRACKING_DATA_VAR.pixel_data?.products;
+
+	if ( ! variation?.variation_id || ! products ) {
 		return;
 	}
 
-	TRACKING_DATA_VAR.pixel_data.products[ variation.variation_id ] = {
+	products[ variation.variation_id ] = {
 		price: variation.display_price,
-		name: TRACKING_DATA_VAR.VIEW_CONTENT.products.name,
+		name: products[ parentProductId ]?.name,
 	};
 };

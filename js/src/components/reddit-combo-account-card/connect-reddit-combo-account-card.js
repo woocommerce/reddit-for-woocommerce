@@ -37,7 +37,7 @@ const ConnectRedditComboAccountCard = ( { disabled } ) => {
 		try {
 			const d = await fetchRedditConnect();
 			window.location.href = d.url;
-		} catch ( error ) {
+		} catch {
 			createNotice(
 				'error',
 				__(

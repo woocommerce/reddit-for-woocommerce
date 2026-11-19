@@ -45,11 +45,19 @@ class AdGroupApi extends BaseAdPartnerApi {
 	 */
 	public function create( $campaign_data ) {
 		$ad_account_id = Options::get( OptionDefaults::AD_ACCOUNT_ID );
+		$pixel_id      = Options::get( OptionDefaults::PIXEL_ID );
 
 		if ( ! $ad_account_id ) {
 			return new WP_Error(
 				'ad_account_id_not_set',
 				__( 'Ad Account ID not found.', 'reddit-for-woocommerce' ),
+			);
+		}
+
+		if ( ! $pixel_id ) {
+			return new WP_Error(
+				'pixel_id_not_set',
+				__( 'Pixel ID not found.', 'reddit-for-woocommerce' ),
 			);
 		}
 
@@ -89,9 +97,11 @@ class AdGroupApi extends BaseAdPartnerApi {
 		 */
 		$payload = array(
 			'data' => array(
-				'bid_type'                     => null,
+				// Reddit still requires `bid_type` under `BIDLESS`; CPM is the only type it accepts for this shopping ad group.
+				'bid_type'                     => 'CPM',
 				'campaign_id'                  => $campaign_id,
 				'configured_status'            => 'ACTIVE',
+				'conversion_pixel_id'          => $pixel_id,
 				'goal_type'                    => 'DAILY_SPEND',
 				'goal_value'                   => Helper::amount_to_microcurrency( (float) $daily_budget ),
 				'name'                         => Helper::get_store_name( 'ad_group_' . $targeting_type ),
