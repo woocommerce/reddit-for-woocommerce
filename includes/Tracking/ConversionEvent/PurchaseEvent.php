@@ -123,24 +123,30 @@ final class PurchaseEvent extends AbstractEventPayloadBase implements Conversion
 	/**
 	 * Retrieves metadata for the products included in the order.
 	 *
-	 * Iterates through order line items and extracts basic product
-	 * details (ID and name) for each valid product. Returns an
-	 * empty array if the order object is unavailable or no valid
-	 * products are found.
+	 * Iterates through order line items and extracts product details (ID,
+	 * name, purchased quantity, and post-discount tax-inclusive unit price)
+	 * for each valid product. Returns an empty array if the order object is
+	 * unavailable or no valid products are found.
+	 *
+	 * The unit price is derived from the order line itself — rather than the
+	 * product's current catalog price — so later price changes don't affect
+	 * historical conversion data.
 	 *
 	 * Example:
 	 * ```php
 	 * array(
 	 *     array(
-	 *         'id'   => '123',
-	 *         'name' => 'Sample Product',
+	 *         'id'         => '123',
+	 *         'name'       => 'Sample Product',
+	 *         'item_price' => 14.99,
+	 *         'quantity'   => 1,
 	 *     ),
 	 * )
 	 * ```
 	 *
 	 * @since 0.1.0
 	 *
-	 * @return array<int,array<string,string>> List of product metadata.
+	 * @return array<int,array<string,int|float|string>> List of product metadata.
 	 */
 	public function get_products(): array {
 		$products = array();
@@ -161,9 +167,17 @@ final class PurchaseEvent extends AbstractEventPayloadBase implements Conversion
 				continue;
 			}
 
+			$quantity = (int) $item->get_quantity();
+
+			$item_price = 0 === $quantity
+				? 0.0
+				: self::round_price( ( $item->get_total() + $item->get_total_tax() ) / $quantity );
+
 			$products[] = array(
-				'id'   => (string) $product->get_id(),
-				'name' => (string) $product->get_name(),
+				'id'         => (string) $product->get_id(),
+				'name'       => (string) $product->get_name(),
+				'item_price' => $item_price,
+				'quantity'   => $quantity,
 			);
 		}
 
