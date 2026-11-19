@@ -445,7 +445,7 @@ class ProductExportService {
 	/**
 	 * Whether the store has at least one product the export would include.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.9
 	 *
 	 * @return bool
 	 */
@@ -462,9 +462,9 @@ class ProductExportService {
 	 *
 	 * This method checks if the catalog exists on Reddit and if not, it creates it.
 	 *
-	 * This method is hooked to {@see Helper::with_prefix( 'batch_export_job_complete' )}.
-	 * It is triggered automatically after the final export batch has finished and the
-	 * CSV feed file has been successfully written.
+	 * This method is hooked to {@see Helper::with_prefix( 'batch_export_job_complete' )}, so it
+	 * runs after the final export batch has written the CSV feed file. It is also called by
+	 * start_writing() when there are no products to export, so the catalog still exists.
 	 *
 	 * @since 1.0.3
 	 */
