@@ -125,18 +125,21 @@ class ProductExportServiceTest extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Tests that start_writing() does not enqueue a batch and calls maybe_create_catalog()
-	 * when the product ID cache is empty.
+	 * Tests that start_writing() does not enqueue a batch, creates the catalog, and doesn't
+	 * create a CSV when the product ID cache is empty and no feed exists yet.
 	 */
 	public function test_start_writing_returns_early_on_empty_cache(): void {
 		as_unschedule_all_actions( Helper::with_prefix( ProductExportService::ACTION_HOOK ) );
 
 		Options::set( OptionDefaults::EXPORT_PRODUCT_IDS, array() );
+		Options::set( OptionDefaults::FEED_STATUS, 'empty' );
 
 		$catalog_mock = $this->createMock( CatalogApi::class );
 		$catalog_mock->method( 'get' )->willReturn( new \WP_Error( 'not_found', 'Not found' ) );
-		$catalog_mock->method( 'create' )->willReturn( new \WP_Error( 'test', 'Test' ) );
+		$catalog_mock->expects( $this->once() )->method( 'create' )->willReturn( new \WP_Error( 'test', 'Test' ) );
 		$this->api->catalog = $catalog_mock;
+
+		$this->writer->expects( $this->never() )->method( 'create_file' );
 
 		$this->service->start_writing();
 
@@ -149,6 +152,32 @@ class ProductExportServiceTest extends WP_UnitTestCase {
 		);
 
 		Options::delete( OptionDefaults::EXPORT_PRODUCT_IDS );
+		Options::delete( OptionDefaults::FEED_STATUS );
+	}
+
+	/**
+	 * Tests that start_writing() empties the CSV a Reddit feed already pulls from when the
+	 * product ID cache is empty, so products that can't be exported drop out of the catalog.
+	 */
+	public function test_start_writing_clears_feed_file_on_empty_cache_when_feed_exists(): void {
+		as_unschedule_all_actions( Helper::with_prefix( ProductExportService::ACTION_HOOK ) );
+
+		Options::set( OptionDefaults::EXPORT_PRODUCT_IDS, array() );
+		Options::set( OptionDefaults::FEED_STATUS, 'created' );
+		Options::set( OptionDefaults::CATALOG_ID, 'catalog-1' );
+
+		$catalog_mock = $this->createMock( CatalogApi::class );
+		$catalog_mock->method( 'get' )->willReturn( new \WP_REST_Response( array() ) );
+		$catalog_mock->expects( $this->never() )->method( 'create' );
+		$this->api->catalog = $catalog_mock;
+
+		$this->writer->expects( $this->once() )->method( 'create_file' );
+
+		$this->service->start_writing();
+
+		Options::delete( OptionDefaults::EXPORT_PRODUCT_IDS );
+		Options::delete( OptionDefaults::FEED_STATUS );
+		Options::delete( OptionDefaults::CATALOG_ID );
 	}
 
 	/**

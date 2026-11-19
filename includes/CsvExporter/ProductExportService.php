@@ -289,8 +289,8 @@ class ProductExportService {
 	 *
 	 * This method is hooked to run after exportable product IDs have been fully cached.
 	 * If the cache is empty (e.g. all products are virtual/downloadable), it ensures the
-	 * catalog is created and returns without generating a CSV or scheduling batches.
-	 * Otherwise it schedules the first export batch asynchronously.
+	 * catalog is created, empties any CSV a Reddit feed already pulls from, and returns
+	 * without scheduling batches. Otherwise it schedules the first export batch asynchronously.
 	 *
 	 * @since 0.1.0
 	 *
@@ -301,6 +301,7 @@ class ProductExportService {
 
 		if ( empty( $product_ids ) ) {
 			$this->maybe_create_catalog();
+			$this->clear_feed_file();
 			return;
 		}
 
@@ -309,6 +310,27 @@ class ProductExportService {
 			array( 'offset' => 0 ),
 			Config::PLUGIN_SLUG
 		);
+	}
+
+	/**
+	 * Empties the CSV file once a Reddit feed pulls from it, so products that can no
+	 * longer be exported drop out of the catalog instead of staying listed from the last export.
+	 *
+	 * @since 1.0.9
+	 *
+	 * @return void
+	 */
+	private function clear_feed_file(): void {
+		if ( 'created' !== Options::get( OptionDefaults::FEED_STATUS ) ) {
+			return;
+		}
+
+		try {
+			// The file name is fixed, so creating it again truncates the file the feed URL serves.
+			$this->job->writer->create_file();
+		} catch ( \RuntimeException $e ) {
+			wc_get_logger()->alert( 'Failed to clear the product catalog CSV: ' . $e->getMessage() );
+		}
 	}
 
 	/**
