@@ -41,6 +41,21 @@ class Helper {
 	}
 
 	/**
+	 * Checks whether the current user can manage the plugin.
+	 *
+	 * Single source of truth for the capability that gates the plugin's admin
+	 * screens, admin data, AJAX actions and REST endpoints. Nonces only protect
+	 * against CSRF and must never be treated as authorization.
+	 *
+	 * @since 1.0.7
+	 *
+	 * @return bool True if the current user has the `manage_woocommerce` capability.
+	 */
+	public static function current_user_can_manage(): bool {
+		return current_user_can( 'manage_woocommerce' );
+	}
+
+	/**
 	 * Check if the current request is asynchronous.
 	 *
 	 * Determines whether the current request is being made via AJAX or through a
