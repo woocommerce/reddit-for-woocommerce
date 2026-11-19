@@ -50,6 +50,7 @@ const ProductCatalog = () => {
 		shouldTriggerExport,
 		lastExportTimeStamp,
 		exportFileUrl,
+		hasExportableProducts,
 		hasFinishedResolution,
 	} = useSettings();
 	// Guards the post-onboarding export so it's requested once per page load. generateCsv
@@ -114,6 +115,13 @@ const ProductCatalog = () => {
 		if ( exportInProgress ) {
 			return __(
 				'We’re generating your CSV file… This may take a few seconds.',
+				'reddit-for-woocommerce'
+			);
+		}
+
+		if ( ! hasExport && ! hasExportableProducts ) {
+			return __(
+				'Only physical products can be exported to Reddit. Publish a physical product to generate a CSV.',
 				'reddit-for-woocommerce'
 			);
 		}
