@@ -131,6 +131,9 @@ export function getSettings() {
 					trackConversions: Boolean( response.capi_enabled ),
 					campaignCreated: Boolean( response.campaign_created ),
 					triggerExport: Boolean( response.trigger_export ),
+					hasExportableProducts: Boolean(
+						response.has_exportable_products
+					),
 				} )
 			);
 		} catch ( error ) {

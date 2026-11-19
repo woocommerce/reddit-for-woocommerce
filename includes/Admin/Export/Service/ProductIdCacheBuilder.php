@@ -183,6 +183,31 @@ class ProductIdCacheBuilder implements CacheBuilderInterface {
 	}
 
 	/**
+	 * Whether at least one published product would be exported.
+	 *
+	 * Uses the same rules as handle_batch(): the product must be visible in the Reddit
+	 * catalog and physical (not virtual and not downloadable).
+	 *
+	 * @since x.x.x
+	 *
+	 * @return bool
+	 */
+	public function has_exportable_products(): bool {
+		$query = new \WC_Product_Query(
+			array(
+				'limit'           => 1,
+				'status'          => 'publish',
+				'return'          => 'ids',
+				'virtual'         => false,
+				'downloadable'    => false,
+				'reddit_meta_key' => Helper::with_prefix( ChannelVisibilityMetaBox::CATALOG_ITEM ),
+			)
+		);
+
+		return ! empty( $query->get_products() );
+	}
+
+	/**
 	 * Filters product query to only return the product if they
 	 * don't contain the `product_catalog_item` meta key OR
 	 * if they contain the meta key `product_catalog_item` with

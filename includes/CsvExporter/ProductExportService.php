@@ -420,6 +420,21 @@ class ProductExportService {
 	}
 
 	/**
+	 * Whether the store has at least one product the export would include.
+	 *
+	 * @since x.x.x
+	 *
+	 * @return bool
+	 */
+	public function has_exportable_products(): bool {
+		$cache_builder = $this->job->cache_builder;
+
+		return method_exists( $cache_builder, 'has_exportable_products' )
+			? $cache_builder->has_exportable_products()
+			: Helper::has_products();
+	}
+
+	/**
 	 * Creates the product catalog if it not exists on Reddit.
 	 *
 	 * This method checks if the catalog exists on Reddit and if not, it creates it.

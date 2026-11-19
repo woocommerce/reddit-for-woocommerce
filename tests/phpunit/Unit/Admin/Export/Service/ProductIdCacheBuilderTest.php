@@ -13,6 +13,7 @@ namespace RedditForWooCommerce\Tests\Unit\Admin\Export\Service;
 
 use WP_UnitTestCase;
 use RedditForWooCommerce\Admin\Export\Service\ProductIdCacheBuilder;
+use RedditForWooCommerce\Admin\MetaBox\ChannelVisibilityMetaBox;
 use RedditForWooCommerce\Utils\Helper;
 use RedditForWooCommerce\Utils\Storage\Options;
 use RedditForWooCommerce\Utils\Storage\OptionDefaults;
@@ -149,5 +150,74 @@ class ProductIdCacheBuilderTest extends WP_UnitTestCase {
 			as_has_scheduled_action( Helper::with_prefix( ProductIdCacheBuilder::ACTION_HOOK ), array( 'page' => 3 ) ),
 			'No next page should be enqueued when results are empty.'
 		);
+	}
+
+	/**
+	 * Creates a simple product.
+	 *
+	 * @param bool   $is_virtual      Whether the product is virtual.
+	 * @param bool   $is_downloadable Whether the product is downloadable.
+	 * @param string $status          Product status.
+	 *
+	 * @return \WC_Product_Simple
+	 */
+	private function create_product( bool $is_virtual = false, bool $is_downloadable = false, string $status = 'publish' ): \WC_Product_Simple {
+		$product = new \WC_Product_Simple();
+		$product->set_name( 'Product' );
+		$product->set_status( $status );
+		$product->set_virtual( $is_virtual );
+		$product->set_downloadable( $is_downloadable );
+		$product->save();
+
+		return $product;
+	}
+
+	/**
+	 * Tests that has_exportable_products() is false when the store has no products.
+	 */
+	public function test_has_exportable_products_is_false_without_products(): void {
+		$this->assertFalse( $this->builder->has_exportable_products() );
+	}
+
+	/**
+	 * Tests that has_exportable_products() is false when only virtual or downloadable
+	 * products are published.
+	 */
+	public function test_has_exportable_products_is_false_with_only_virtual_and_downloadable_products(): void {
+		$this->create_product( true );
+		$this->create_product( false, true );
+
+		$this->assertFalse( $this->builder->has_exportable_products() );
+	}
+
+	/**
+	 * Tests that has_exportable_products() is false when the only physical product
+	 * is not published.
+	 */
+	public function test_has_exportable_products_is_false_with_only_unpublished_physical_products(): void {
+		$this->create_product( false, false, 'draft' );
+
+		$this->assertFalse( $this->builder->has_exportable_products() );
+	}
+
+	/**
+	 * Tests that has_exportable_products() is false when the only physical product
+	 * is excluded from the Reddit catalog.
+	 */
+	public function test_has_exportable_products_is_false_when_physical_product_is_excluded_from_catalog(): void {
+		$product = $this->create_product();
+		update_post_meta( $product->get_id(), Helper::with_prefix( ChannelVisibilityMetaBox::CATALOG_ITEM ), '0' );
+
+		$this->assertFalse( $this->builder->has_exportable_products() );
+	}
+
+	/**
+	 * Tests that has_exportable_products() is true when a published physical product exists.
+	 */
+	public function test_has_exportable_products_is_true_with_a_physical_product(): void {
+		$this->create_product( true );
+		$this->create_product();
+
+		$this->assertTrue( $this->builder->has_exportable_products() );
 	}
 }
