@@ -145,17 +145,19 @@ test.describe( 'Reddit Settings', () => {
 		await settingPage.goto();
 		await expect( locator.getShareDataToggle() ).toBeChecked();
 
-		await chooseSharingOption( 'Advanced Sharing' );
-		await page.reload();
-		await expect(
-			locator.getSharingOption( 'Advanced Sharing' )
-		).toBeChecked();
+		// A fresh install outside GDPR regions starts with Advanced Sharing, so switch away from
+		// whichever option is selected first. Clicking the selected option doesn't save anything.
+		const options = ( await locator
+			.getSharingOption( 'Advanced Sharing' )
+			.isChecked() )
+			? [ 'Standard Sharing', 'Advanced Sharing' ]
+			: [ 'Advanced Sharing', 'Standard Sharing' ];
 
-		await chooseSharingOption( 'Standard Sharing' );
-		await page.reload();
-		await expect(
-			locator.getSharingOption( 'Standard Sharing' )
-		).toBeChecked();
+		for ( const name of options ) {
+			await chooseSharingOption( name );
+			await page.reload();
+			await expect( locator.getSharingOption( name ) ).toBeChecked();
+		}
 	} );
 
 	test( 'Reddit card details', async () => {
