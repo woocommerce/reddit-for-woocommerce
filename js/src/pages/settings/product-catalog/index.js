@@ -3,7 +3,7 @@
  */
 import { __, sprintf } from '@wordpress/i18n';
 import { Flex } from '@wordpress/components';
-import { useState, useEffect, useCallback } from '@wordpress/element';
+import { useState, useEffect, useCallback, useRef } from '@wordpress/element';
 
 /**
  * Internal dependencies
@@ -52,6 +52,9 @@ const ProductCatalog = () => {
 		exportFileUrl,
 		hasFinishedResolution,
 	} = useSettings();
+	// Guards the post-onboarding export so it's requested once per page load. generateCsv
+	// changes on every render, so without this the effect would restart the export each time.
+	const hasTriggeredExport = useRef( false );
 	// Whether we want to connect the heartbeat immediately as soon as the Heartbeat component mounts.
 	const [ exportInProgress, setExportInProgress ] = useState(
 		rfwData.isExportInProgress === '1'
@@ -175,9 +178,16 @@ const ProductCatalog = () => {
 		 * Trigger catalog CSV generation as soon as the
 		 * merchant has successfully onboarded.
 		 */
-		if ( shouldTriggerExport && hasFinishedResolution ) {
-			generateCsv();
+		if (
+			hasTriggeredExport.current ||
+			! shouldTriggerExport ||
+			! hasFinishedResolution
+		) {
+			return;
 		}
+
+		hasTriggeredExport.current = true;
+		generateCsv();
 	}, [ shouldTriggerExport, hasFinishedResolution, generateCsv ] );
 
 	useEffect( () => {
