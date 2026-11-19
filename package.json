@@ -92,7 +92,10 @@
 		"uuid@<11.1.1": "^11.1.1",
 		"katex": "^0.18.2",
 		"postcss-selector-parser@<7.1.6": "^7.1.6",
-		"smol-toml": "^1.9.0"
+		"smol-toml": "^1.9.0",
+		"@wp-playground/storage": {
+			"isomorphic-git": "1.38.10"
+		}
 	},
 	"scripts": {
 		"prebuild": "composer install --no-dev",
