@@ -50,8 +50,17 @@ class ProductExportServiceTest extends WP_UnitTestCase {
 	 */
 	private $service;
 
+	/**
+	 * Store currency before the test, restored in tear_down().
+	 *
+	 * @var string
+	 */
+	private $original_currency;
+
 	public function set_up(): void {
 		parent::set_up();
+
+		$this->original_currency = get_woocommerce_currency();
 
 		$this->cache_builder   = new ProductIdCacheBuilder();
 		$this->entity_provider = $this->createMock( ExportableEntityProviderInterface::class );
@@ -66,6 +75,10 @@ class ProductExportServiceTest extends WP_UnitTestCase {
 	public function tear_down(): void {
 		remove_all_actions( Helper::with_prefix( 'export_products_cache_completed' ) );
 		remove_all_actions( Helper::with_prefix( 'export_product_catalog' ) );
+
+		update_option( 'woocommerce_currency', $this->original_currency );
+		Options::delete( OptionDefaults::CATALOG_ID );
+		Options::delete( OptionDefaults::CATALOG_ERROR );
 
 		parent::tear_down();
 	}
@@ -197,7 +210,6 @@ class ProductExportServiceTest extends WP_UnitTestCase {
 	 * Tests that maybe_create_catalog() skips the Catalog API when the store currency is unsupported.
 	 */
 	public function test_maybe_create_catalog_skips_request_for_unsupported_currency(): void {
-		$original_currency = get_woocommerce_currency();
 		update_option( 'woocommerce_currency', 'INR' );
 
 		$catalog = $this->createMock( CatalogApi::class );
@@ -207,16 +219,12 @@ class ProductExportServiceTest extends WP_UnitTestCase {
 		$this->service->maybe_create_catalog();
 
 		$this->assertSame( 'UNSUPPORTED_CURRENCY', Options::get( OptionDefaults::CATALOG_ERROR ) );
-
-		update_option( 'woocommerce_currency', $original_currency );
-		Options::delete( OptionDefaults::CATALOG_ERROR );
 	}
 
 	/**
 	 * Tests that maybe_create_catalog() still creates the catalog when the store currency is supported.
 	 */
 	public function test_maybe_create_catalog_creates_catalog_for_supported_currency(): void {
-		$original_currency = get_woocommerce_currency();
 		update_option( 'woocommerce_currency', 'USD' );
 
 		$catalog = $this->createMock( CatalogApi::class );
@@ -228,8 +236,23 @@ class ProductExportServiceTest extends WP_UnitTestCase {
 		$this->service->maybe_create_catalog();
 
 		$this->assertSame( 'catalog-123', Options::get( OptionDefaults::CATALOG_ID ) );
+	}
 
-		update_option( 'woocommerce_currency', $original_currency );
-		Options::delete( OptionDefaults::CATALOG_ID );
+	/**
+	 * Tests that maybe_create_catalog() clears a stale unsupported currency error before a failed creation.
+	 */
+	public function test_maybe_create_catalog_clears_stale_unsupported_currency_error(): void {
+		update_option( 'woocommerce_currency', 'USD' );
+		Options::set( OptionDefaults::CATALOG_ERROR, 'UNSUPPORTED_CURRENCY' );
+
+		$catalog = $this->createMock( CatalogApi::class );
+		$catalog->expects( $this->once() )
+			->method( 'create' )
+			->willReturn( new \WP_Error( 'http_request_failed', 'Network error' ) );
+		$this->api->catalog = $catalog;
+
+		$this->service->maybe_create_catalog();
+
+		$this->assertSame( '', Options::get( OptionDefaults::CATALOG_ERROR ) );
 	}
 }
