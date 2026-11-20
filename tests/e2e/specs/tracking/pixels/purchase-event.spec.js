@@ -11,6 +11,7 @@ import {
 	findRedditEvent,
 	getThemes,
 	switchTheme,
+	setConsent,
 	singleAddToCart,
 	clearCart,
 } from '../../../utils';
@@ -30,6 +31,8 @@ test.beforeAll( 'Setup contexts', async ( { browser } ) => {
 	admin.on( 'dialog', async ( dialog ) => {
 		await dialog.accept();
 	} );
+
+	await setConsent( admin, true );
 } );
 
 test.describe( 'PURCHASE event', () => {
