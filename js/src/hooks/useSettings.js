@@ -31,6 +31,7 @@ const useSettings = () => {
 			isCapiEnabled: settings.trackConversions,
 			isCampaignCreated: settings.campaignCreated,
 			shouldTriggerExport: settings.triggerExport,
+			hasExportableProducts: settings.hasExportableProducts,
 			lastExportTimeStamp: settings.lastExportTimeStamp,
 			exportFileUrl: settings.exportFileUrl,
 			hasFinishedResolution: selector.hasFinishedResolution(

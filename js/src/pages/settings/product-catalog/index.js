@@ -3,7 +3,7 @@
  */
 import { __, sprintf } from '@wordpress/i18n';
 import { Flex } from '@wordpress/components';
-import { useState, useEffect, useCallback } from '@wordpress/element';
+import { useState, useEffect, useCallback, useRef } from '@wordpress/element';
 
 /**
  * Internal dependencies
@@ -50,8 +50,12 @@ const ProductCatalog = () => {
 		shouldTriggerExport,
 		lastExportTimeStamp,
 		exportFileUrl,
+		hasExportableProducts,
 		hasFinishedResolution,
 	} = useSettings();
+	// Guards the post-onboarding export so it's requested once per page load. generateCsv
+	// changes on every render, so without this the effect would restart the export each time.
+	const hasTriggeredExport = useRef( false );
 	// Whether we want to connect the heartbeat immediately as soon as the Heartbeat component mounts.
 	const [ exportInProgress, setExportInProgress ] = useState(
 		rfwData.isExportInProgress === '1'
@@ -111,6 +115,13 @@ const ProductCatalog = () => {
 		if ( exportInProgress ) {
 			return __(
 				'We’re generating your CSV file… This may take a few seconds.',
+				'reddit-for-woocommerce'
+			);
+		}
+
+		if ( ! hasExport && ! hasExportableProducts ) {
+			return __(
+				'Only physical products can be exported to Reddit. Publish a physical product to generate a CSV.',
 				'reddit-for-woocommerce'
 			);
 		}
@@ -175,9 +186,16 @@ const ProductCatalog = () => {
 		 * Trigger catalog CSV generation as soon as the
 		 * merchant has successfully onboarded.
 		 */
-		if ( shouldTriggerExport && hasFinishedResolution ) {
-			generateCsv();
+		if (
+			hasTriggeredExport.current ||
+			! shouldTriggerExport ||
+			! hasFinishedResolution
+		) {
+			return;
 		}
+
+		hasTriggeredExport.current = true;
+		generateCsv();
 	}, [ shouldTriggerExport, hasFinishedResolution, generateCsv ] );
 
 	useEffect( () => {
