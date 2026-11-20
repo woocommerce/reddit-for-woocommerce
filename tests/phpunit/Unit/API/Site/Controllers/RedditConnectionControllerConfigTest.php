@@ -151,6 +151,18 @@ class RedditConnectionControllerConfigTest extends WP_UnitTestCase {
 		$this->assertSame( '', Options::get( OptionDefaults::CATALOG_ERROR ) );
 	}
 
+	public function test_clears_stale_unsupported_currency_error_when_creation_fails_without_error_code() {
+		update_option( 'woocommerce_currency', 'USD' );
+		Options::set( OptionDefaults::CATALOG_ERROR, 'UNSUPPORTED_CURRENCY' );
+
+		$this->catalog_mock->method( 'create' )
+			->willReturn( new WP_Error( 'http_request_failed', 'Network error' ) );
+
+		$this->controller->do_config( $this->build_request() );
+
+		$this->assertSame( '', Options::get( OptionDefaults::CATALOG_ERROR ) );
+	}
+
 	public function test_permission_error_handling_is_not_regressed() {
 		update_option( 'woocommerce_currency', 'USD' );
 

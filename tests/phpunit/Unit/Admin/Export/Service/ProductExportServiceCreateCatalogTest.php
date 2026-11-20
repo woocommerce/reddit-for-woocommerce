@@ -135,4 +135,19 @@ class ProductExportServiceCreateCatalogTest extends WP_Ajax_UnitTestCase {
 		$this->assertFalse( $response['success'] );
 		$this->assertNotSame( 'UNSUPPORTED_CURRENCY', $response['data']['error_code'] );
 	}
+
+	/**
+	 * Tests that a stale unsupported currency error is cleared once the currency is supported.
+	 */
+	public function test_supported_currency_clears_stale_unsupported_currency_error(): void {
+		update_option( 'woocommerce_currency', 'USD' );
+		Options::set( OptionDefaults::CATALOG_ERROR, 'UNSUPPORTED_CURRENCY' );
+
+		$this->catalog->method( 'create' )
+			->willReturn( new \WP_Error( 'http_request_failed', 'Network error' ) );
+
+		$this->call();
+
+		$this->assertSame( '', Options::get( OptionDefaults::CATALOG_ERROR ) );
+	}
 }

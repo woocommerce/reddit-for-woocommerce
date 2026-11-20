@@ -463,6 +463,11 @@ class RedditConnectionController extends RESTBaseController {
 				// Store currency isn't one Reddit's Catalog API accepts, skip the request entirely.
 				Options::set( OptionDefaults::CATALOG_ERROR, 'UNSUPPORTED_CURRENCY' );
 			} else {
+				// Clear an error left from a previous unsupported currency, so a failure below isn't hidden behind it.
+				if ( 'UNSUPPORTED_CURRENCY' === Options::get( OptionDefaults::CATALOG_ERROR ) ) {
+					Options::delete( OptionDefaults::CATALOG_ERROR );
+				}
+
 				// Create a new catalog for the business.
 				$response = $this->ad_partner_api->catalog->create();
 

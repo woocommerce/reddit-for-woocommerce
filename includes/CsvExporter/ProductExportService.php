@@ -435,6 +435,11 @@ class ProductExportService {
 			return;
 		}
 
+		// Clear an error left from a previous unsupported currency, so a failure below isn't hidden behind it.
+		if ( 'UNSUPPORTED_CURRENCY' === Options::get( OptionDefaults::CATALOG_ERROR ) ) {
+			Options::delete( OptionDefaults::CATALOG_ERROR );
+		}
+
 		// The catalog not exists on Reddit, create it.
 		$logger = wc_get_logger();
 		$logger->info( 'Catalog not exists on Reddit, creating it.' );
@@ -532,6 +537,11 @@ class ProductExportService {
 			);
 		}
 
+		// Clear an error left from a previous unsupported currency, so a failure below isn't hidden behind it.
+		if ( 'UNSUPPORTED_CURRENCY' === Options::get( OptionDefaults::CATALOG_ERROR ) ) {
+			Options::delete( OptionDefaults::CATALOG_ERROR );
+		}
+
 		// Delete the existing catalog to allow the creation of a new catalog if the delete_existing_catalog parameter is set to true.
 		$delete_existing_catalog = isset( $_POST['delete_existing_catalog'] ) ? 'true' === sanitize_text_field( wp_unslash( $_POST['delete_existing_catalog'] ) ) : false;
 		$pixel_id                = Options::get( OptionDefaults::PIXEL_ID );
@@ -583,7 +593,7 @@ class ProductExportService {
 
 			wp_send_json_error(
 				array(
-					'code'       => (string) $error_body['error']['code'] ?? '',
+					'code'       => (string) ( $error_body['error']['code'] ?? '' ),
 					'error_code' => $catalog_error,
 					'message'    => $error_message,
 				)

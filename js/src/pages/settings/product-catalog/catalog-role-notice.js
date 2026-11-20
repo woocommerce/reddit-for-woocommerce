@@ -116,13 +116,10 @@ const CatalogRoleNotice = () => {
 	// Use the live store currency rather than the stored error, so the notice clears
 	// and the button re-enables as soon as the merchant switches to a supported currency.
 	const isUnsupportedCurrency = rfwData?.isCurrencySupported === false;
-	// A stored UNSUPPORTED_CURRENCY error is stale once the currency is supported again,
-	// so don't treat it as an unknown error that points the merchant at the logs.
 	const isOtherError =
 		! isPermissionError &&
 		! isCatalogAlreadyExists &&
-		! isUnsupportedCurrency &&
-		catalogCreationError !== 'UNSUPPORTED_CURRENCY';
+		! isUnsupportedCurrency;
 
 	return (
 		<AppNotice

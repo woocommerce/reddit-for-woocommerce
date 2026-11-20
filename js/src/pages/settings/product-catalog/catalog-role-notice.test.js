@@ -90,7 +90,7 @@ describe( 'CatalogRoleNotice', () => {
 		expect( within( container ).getByRole( 'button' ) ).toBeDisabled();
 	} );
 
-	it( 'enables the create catalog button and hides stale currency errors once the currency is supported', () => {
+	it( 'enables the create catalog button and hides the currency message once the currency is supported', () => {
 		useRedditAccountConfig.mockReturnValue( {
 			...baseAccountConfig,
 			catalog_error: 'UNSUPPORTED_CURRENCY',
@@ -102,11 +102,6 @@ describe( 'CatalogRoleNotice', () => {
 		expect(
 			within( container ).queryByText(
 				/Store currency is not supported/i
-			)
-		).not.toBeInTheDocument();
-		expect(
-			within( container ).queryByText(
-				/some error creating the Catalog/i
 			)
 		).not.toBeInTheDocument();
 	} );
