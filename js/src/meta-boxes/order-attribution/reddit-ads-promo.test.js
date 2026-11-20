@@ -68,11 +68,36 @@ describe( 'RedditAdsPromo', () => {
 	} );
 
 	describe( 'Tracking events', () => {
-		test( 'Fires rfw_reddit_ads_promo_shown when component renders', () => {
+		test( 'Fires rfw_reddit_ads_promo_shown with has_onboarded false for the Get started promo', () => {
 			render( <RedditAdsPromo /> );
 			expect( recordRfwEvent ).toHaveBeenCalledWith(
 				'rfw_reddit_ads_promo_shown',
-				{ context: 'order-attribution-meta-box' }
+				{ context: 'order-attribution-meta-box', has_onboarded: false }
+			);
+			expect( recordRfwEvent ).toHaveBeenCalledTimes( 1 );
+		} );
+
+		test( 'Fires rfw_reddit_ads_promo_shown with has_onboarded false when onboarding data is a localized empty string', () => {
+			window.redditAdsMetaBoxData.onboardingComplete = '';
+			window.redditAdsMetaBoxData.hasCampaign = '';
+			render( <RedditAdsPromo /> );
+			expect( recordRfwEvent ).toHaveBeenCalledWith(
+				'rfw_reddit_ads_promo_shown',
+				{ context: 'order-attribution-meta-box', has_onboarded: false }
+			);
+			expect( recordRfwEvent ).toHaveBeenCalledTimes( 1 );
+		} );
+
+		test( 'Fires rfw_reddit_ads_promo_shown with has_onboarded true for the Create campaign promo', () => {
+			window.redditAdsMetaBoxData.onboardingComplete = '1';
+			window.redditAdsMetaBoxData.hasCampaign = '';
+			render( <RedditAdsPromo /> );
+			expect(
+				screen.getByRole( 'link', { name: 'Create campaign' } )
+			).toBeInTheDocument();
+			expect( recordRfwEvent ).toHaveBeenCalledWith(
+				'rfw_reddit_ads_promo_shown',
+				{ context: 'order-attribution-meta-box', has_onboarded: true }
 			);
 			expect( recordRfwEvent ).toHaveBeenCalledTimes( 1 );
 		} );
