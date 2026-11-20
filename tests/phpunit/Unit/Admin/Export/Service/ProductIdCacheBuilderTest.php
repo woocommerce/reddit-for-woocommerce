@@ -27,9 +27,6 @@ class ProductIdCacheBuilderTest extends WP_UnitTestCase {
 	 */
 	private $builder;
 
-	/**
-	 * Sets up the test environment.
-	 */
 	public function set_up(): void {
 		parent::set_up();
 
@@ -37,20 +34,11 @@ class ProductIdCacheBuilderTest extends WP_UnitTestCase {
 		Options::delete( OptionDefaults::EXPORT_PRODUCT_IDS );
 	}
 
-	/**
-	 * Tears down the test environment.
-	 */
 	public function tear_down(): void {
 		Options::delete( OptionDefaults::EXPORT_PRODUCT_IDS );
 		parent::tear_down();
 	}
 
-	/**
-	 * Creates and saves a published simple product.
-	 *
-	 * @param array $props Product props to set before saving.
-	 * @return int Product ID.
-	 */
 	private function create_product( array $props = array() ): int {
 		$product = new WC_Product_Simple();
 		$product->set_props(
@@ -67,11 +55,6 @@ class ProductIdCacheBuilderTest extends WP_UnitTestCase {
 		return $product->save();
 	}
 
-	/**
-	 * Scans the first page and returns the cached product IDs.
-	 *
-	 * @return array<int>
-	 */
 	private function scan_first_page(): array {
 		$this->builder->handle_batch( 1 );
 

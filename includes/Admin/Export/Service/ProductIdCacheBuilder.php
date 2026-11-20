@@ -233,7 +233,10 @@ class ProductIdCacheBuilder implements CacheBuilderInterface {
 		}
 
 		$query['has_password'] = false;
-		$query['tax_query'][]  = array(
+
+		// Match by slug: wc_get_product_visibility_term_ids() caches term IDs for the
+		// request, and those go stale when the terms are recreated.
+		$query['tax_query'][] = array(
 			'relation' => 'OR',
 			array(
 				'taxonomy' => 'product_visibility',
