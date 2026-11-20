@@ -32,8 +32,8 @@ class CurrencyNoticeTest extends WP_UnitTestCase {
 	/**
 	 * Set up the instance under test.
 	 */
-	public function setUp(): void {
-		parent::setUp();
+	public function set_up(): void {
+		parent::set_up();
 		$this->notice            = new CurrencyNotice();
 		$this->original_currency = get_woocommerce_currency();
 
@@ -43,9 +43,9 @@ class CurrencyNoticeTest extends WP_UnitTestCase {
 	/**
 	 * Restore the store currency.
 	 */
-	public function tearDown(): void {
+	public function tear_down(): void {
 		update_option( 'woocommerce_currency', $this->original_currency );
-		parent::tearDown();
+		parent::tear_down();
 	}
 
 	/**

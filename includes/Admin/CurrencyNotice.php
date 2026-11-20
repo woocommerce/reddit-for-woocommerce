@@ -49,7 +49,7 @@ class CurrencyNotice {
 				<?php
 				printf(
 					/* translators: 1: opening link tag to WooCommerce currency settings, 2: closing link tag, 3: comma-separated list of supported currency codes */
-					esc_html__( 'Store currency is not supported by Reddit for WooCommerce. Please %1$schange your store currency%2$s to one of the supported options: %3$s', 'reddit-for-woocommerce' ),
+					esc_html__( 'Store currency is not supported by Reddit for WooCommerce. Please %1$schange your store currency%2$s to one of the supported options: %3$s.', 'reddit-for-woocommerce' ),
 					'<a href="' . esc_url( $settings_url ) . '">',
 					'</a>',
 					esc_html( implode( ', ', CurrencyValidator::get_supported_currencies() ) )

@@ -117,7 +117,7 @@ class ProductExportServiceCreateCatalogTest extends WP_Ajax_UnitTestCase {
 	/**
 	 * Tests that a supported currency still reaches the Catalog API.
 	 */
-	public function test_supported_currency_creates_catalog(): void {
+	public function test_supported_currency_reaches_catalog_api(): void {
 		update_option( 'woocommerce_currency', 'USD' );
 
 		$this->catalog->expects( $this->once() )
