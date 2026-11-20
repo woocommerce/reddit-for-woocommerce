@@ -86,4 +86,50 @@ class ProductEntityProviderTest extends WP_UnitTestCase {
 			$this->assertInstanceOf( WC_Product_Simple::class, $product );
 		}
 	}
+
+	/**
+	 * A product can leave the published state after its ID was cached
+	 * but before its row is written.
+	 *
+	 * @dataProvider unpublished_status_provider
+	 *
+	 * @param string $status Status the product moves to after its ID was cached.
+	 */
+	public function test_get_entities_skips_products_unpublished_after_ids_were_cached( string $status ) {
+		$published = new WC_Product_Simple();
+		$published->set_name( 'Still published' );
+		$published->save();
+
+		$unpublished = new WC_Product_Simple();
+		$unpublished->set_name( 'Unpublished later' );
+		$unpublished->save();
+
+		$product_ids = array( $published->get_id(), $unpublished->get_id() );
+		Options::set( OptionDefaults::EXPORT_PRODUCT_IDS, $product_ids );
+
+		$unpublished->set_status( $status );
+		$unpublished->save();
+
+		$resolved_ids = array_map(
+			function ( $product ) {
+				return $product->get_id();
+			},
+			$this->provider->get_entities( $product_ids )
+		);
+
+		$this->assertSame( array( $published->get_id() ), $resolved_ids );
+	}
+
+	/**
+	 * Statuses WooCommerce returns by default that must not be exported.
+	 *
+	 * @return array<string, array{string}>
+	 */
+	public function unpublished_status_provider(): array {
+		return array(
+			'draft'   => array( 'draft' ),
+			'pending' => array( 'pending' ),
+			'private' => array( 'private' ),
+		);
+	}
 }

@@ -70,6 +70,13 @@ class ProductIdCacheBuilder implements CacheBuilderInterface {
 			10,
 			2
 		);
+
+		add_action(
+			'woocommerce_product_data_store_cpt_get_products_query',
+			array( $this, 'exclude_hidden_and_protected_products' ),
+			10,
+			2
+		);
 	}
 
 	/**
@@ -130,11 +137,12 @@ class ProductIdCacheBuilder implements CacheBuilderInterface {
 		$page = $page > 1 ? $page : 1;
 
 		$query_args = array(
-			'limit'           => self::BATCH_SIZE,
-			'page'            => $page,
-			'status'          => 'publish',
-			'return'          => 'ids',
-			'reddit_meta_key' => Helper::with_prefix( ChannelVisibilityMetaBox::CATALOG_ITEM ),
+			'limit'                               => self::BATCH_SIZE,
+			'page'                                => $page,
+			'status'                              => 'publish',
+			'return'                              => 'ids',
+			'reddit_meta_key'                     => Helper::with_prefix( ChannelVisibilityMetaBox::CATALOG_ITEM ),
+			'reddit_exclude_hidden_and_protected' => true,
 		);
 
 		$query   = new \WC_Product_Query( $query_args );
@@ -198,6 +206,51 @@ class ProductIdCacheBuilder implements CacheBuilderInterface {
 				),
 			);
 		}
+
+		return $query;
+	}
+
+	/**
+	 * Filters the product query to drop products the merchant keeps off the storefront.
+	 *
+	 * Password-protected products are dropped, because the export would otherwise
+	 * publish the description the password protects. Products with catalog visibility
+	 * "Hidden" are dropped too. WooCommerce stores "Hidden" as both the
+	 * `exclude-from-catalog` and `exclude-from-search` terms, so a product is dropped
+	 * only when it has both. "Shop only" and "Search results only" products have one
+	 * of the terms and are still listed publicly, so they stay in.
+	 *
+	 * @since n.e.x.t
+	 *
+	 * @param array $query      WP_Query args built by the WooCommerce product data store.
+	 * @param array $query_vars WooCommerce product query vars.
+	 *
+	 * @return array
+	 */
+	public function exclude_hidden_and_protected_products( $query, $query_vars ) {
+		if ( ! is_array( $query ) || empty( $query_vars['reddit_exclude_hidden_and_protected'] ) ) {
+			return $query;
+		}
+
+		$query['has_password'] = false;
+
+		// Match by slug: wc_get_product_visibility_term_ids() caches term IDs for the
+		// request, and those go stale when the terms are recreated.
+		$query['tax_query'][] = array(
+			'relation' => 'OR',
+			array(
+				'taxonomy' => 'product_visibility',
+				'field'    => 'slug',
+				'terms'    => array( 'exclude-from-catalog' ),
+				'operator' => 'NOT IN',
+			),
+			array(
+				'taxonomy' => 'product_visibility',
+				'field'    => 'slug',
+				'terms'    => array( 'exclude-from-search' ),
+				'operator' => 'NOT IN',
+			),
+		);
 
 		return $query;
 	}
