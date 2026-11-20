@@ -15,6 +15,7 @@ namespace RedditForWooCommerce\Tracking;
 use RedditForWooCommerce\Utils\Storage\OptionDefaults;
 use RedditForWooCommerce\Utils\Storage\Options;
 use RedditForWooCommerce\Utils\Helper;
+use WC_Product;
 
 /**
  * Service class for registering WooCommerce conversion tracking hooks.
@@ -29,6 +30,53 @@ use RedditForWooCommerce\Utils\Helper;
  * @since 0.1.0
  */
 class ConversionTrackingService implements ServiceStatusInterface {
+
+	/**
+	 * Largest `payload` accepted by the public AJAX tracking endpoints, in bytes.
+	 *
+	 * Payloads sent by the plugin's own tracking script are well under this.
+	 *
+	 * @since n.e.x.t
+	 *
+	 * @var int
+	 */
+	private const MAX_PAYLOAD_BYTES = 4096;
+
+	/**
+	 * Length of a rate-limit window for the public AJAX tracking endpoints, in seconds.
+	 *
+	 * @since n.e.x.t
+	 *
+	 * @var int
+	 */
+	private const RATE_LIMIT_WINDOW = 60;
+
+	/**
+	 * Requests one client can make to the public AJAX tracking endpoints per window.
+	 *
+	 * @since n.e.x.t
+	 *
+	 * @var int
+	 */
+	private const RATE_LIMIT_PER_CLIENT = 30;
+
+	/**
+	 * Requests the whole store accepts on the public AJAX tracking endpoints per window.
+	 *
+	 * @since n.e.x.t
+	 *
+	 * @var int
+	 */
+	private const RATE_LIMIT_PER_STORE = 300;
+
+	/**
+	 * Largest quantity accepted by the public AJAX AddToCart endpoint.
+	 *
+	 * @since n.e.x.t
+	 *
+	 * @var int
+	 */
+	private const MAX_ADD_TO_CART_QUANTITY = 100;
 
 	/**
 	 * Instance of a class implementing conversion tracking logic.
@@ -180,11 +228,37 @@ class ConversionTrackingService implements ServiceStatusInterface {
 	public function handle_async_add_to_cart(): void {
 		check_ajax_referer( 'capi_nonce', 'security' );
 
-		$payload    = wp_unslash( $_POST['payload'] ?? '{}' ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
-		$data       = json_decode( $payload, true );
+		$data = $this->get_validated_payload(
+			function ( array $payload ): bool {
+				$quantity = filter_var(
+					$payload['quantity'] ?? null,
+					FILTER_VALIDATE_INT,
+					array(
+						'options' => array(
+							'min_range' => 1,
+							'max_range' => self::MAX_ADD_TO_CART_QUANTITY,
+						),
+					)
+				);
+
+				return false !== $quantity;
+			}
+		);
+
+		if ( null === $data ) {
+			return;
+		}
+
 		$product_id = absint( $data['productId'] ?? 0 );
-		$quantity   = absint( $data['quantity'] ?? 0 );
-		$event_id   = sanitize_text_field( $data['conversionId'] ?? '' );
+		$product    = wc_get_product( $product_id );
+
+		if ( ! $product instanceof WC_Product || 'publish' !== $product->get_status() || ! $product->is_purchasable() ) {
+			$this->reject_request( 400 );
+			return;
+		}
+
+		$quantity = (int) $data['quantity'];
+		$event_id = sanitize_text_field( $data['conversionId'] );
 
 		$this->tracker->track_add_to_cart( $product_id, $quantity, $event_id );
 	}
@@ -203,11 +277,22 @@ class ConversionTrackingService implements ServiceStatusInterface {
 	public function handle_async_view_content(): void {
 		check_ajax_referer( 'capi_nonce', 'security' );
 
-		$payload    = wp_unslash( $_POST['payload'] ?? '{}' ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
-		$data       = json_decode( $payload, true );
+		$data = $this->get_validated_payload();
+
+		if ( null === $data ) {
+			return;
+		}
+
 		$products   = $data['products'] ?? array();
 		$product_id = absint( $products['id'] ?? 0 );
-		$event_id   = sanitize_text_field( $data['conversionId'] ?? '' );
+		$product    = wc_get_product( $product_id );
+
+		if ( ! $product instanceof WC_Product || 'publish' !== $product->get_status() ) {
+			$this->reject_request( 400 );
+			return;
+		}
+
+		$event_id = sanitize_text_field( $data['conversionId'] );
 
 		$this->tracker->track_view_content( $product_id, $event_id );
 	}
@@ -230,11 +315,179 @@ class ConversionTrackingService implements ServiceStatusInterface {
 	public function handle_async_page_view(): void {
 		check_ajax_referer( 'capi_nonce', 'security' );
 
-		$payload  = wp_unslash( $_POST['payload'] ?? '{}' ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
-		$data     = json_decode( $payload, true );
+		$data = $this->get_validated_payload();
+
+		if ( null === $data ) {
+			return;
+		}
+
 		$event_id = sanitize_text_field( $data['conversionId'] ?? '' );
 
 		$this->tracker->track_page_view( $event_id );
+	}
+
+	/**
+	 * Validates a public AJAX tracking request and returns its decoded payload.
+	 *
+	 * The tracking endpoints are open to anonymous visitors, so a request is
+	 * rejected before any tracking work when the integration isn't configured,
+	 * the payload doesn't match what the plugin's tracking script sends, or the
+	 * client or store is over its rate limit.
+	 *
+	 * @since n.e.x.t
+	 *
+	 * @param callable|null $is_valid_event Optional check of event-specific fields. It
+	 *                                      receives the decoded payload and runs before
+	 *                                      rate limiting, so a request it rejects isn't counted.
+	 * @return array|null The decoded payload, or null when the request was rejected.
+	 */
+	private function get_validated_payload( ?callable $is_valid_event = null ): ?array {
+		if ( empty( Options::get( OptionDefaults::PIXEL_ID ) ) ) {
+			$this->reject_request( 400 );
+			return null;
+		}
+
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- The caller verifies the nonce, and each field is sanitized where it's read.
+		$payload = wp_unslash( $_POST['payload'] ?? '' );
+
+		if ( ! is_string( $payload ) || strlen( $payload ) > self::MAX_PAYLOAD_BYTES ) {
+			$this->reject_request( 400 );
+			return null;
+		}
+
+		$data = json_decode( $payload, true );
+
+		if ( ! is_array( $data ) || ! wp_is_uuid( $data['conversionId'] ?? null ) ) {
+			$this->reject_request( 400 );
+			return null;
+		}
+
+		if ( null !== $is_valid_event && ! $is_valid_event( $data ) ) {
+			$this->reject_request( 400 );
+			return null;
+		}
+
+		if ( ! $this->consume_rate_limit() ) {
+			$this->reject_request( 429 );
+			return null;
+		}
+
+		return $data;
+	}
+
+	/**
+	 * Counts the current request toward the per-client and store-wide rate limits.
+	 *
+	 * The per-client limit is checked first, and a request it rejects isn't
+	 * counted toward the store-wide limit. Otherwise a single client could use
+	 * up the store-wide allowance and block tracking for every other visitor.
+	 *
+	 * Each counter records the window it belongs to and restarts from zero in a
+	 * new window, so writing a new count doesn't extend the current window and
+	 * each client reuses one transient rather than adding one per window. Counts
+	 * can race between simultaneous requests, which is acceptable because the
+	 * limits are approximate.
+	 *
+	 * @since n.e.x.t
+	 *
+	 * @return bool True when the request is within both limits; false otherwise.
+	 */
+	private function consume_rate_limit(): bool {
+		$window     = $this->get_rate_limit_window();
+		$client_key = Helper::with_prefix( 'capi_rl_' . wp_hash( $this->get_client_ip() ) );
+		$store_key  = Helper::with_prefix( 'capi_rl_store' );
+
+		$client_count = $this->get_rate_limit_count( $client_key, $window );
+
+		if ( $client_count >= self::RATE_LIMIT_PER_CLIENT ) {
+			return false;
+		}
+
+		$store_count = $this->get_rate_limit_count( $store_key, $window );
+
+		if ( $store_count >= self::RATE_LIMIT_PER_STORE ) {
+			return false;
+		}
+
+		set_transient(
+			$client_key,
+			array(
+				'window' => $window,
+				'count'  => $client_count + 1,
+			),
+			self::RATE_LIMIT_WINDOW
+		);
+		set_transient(
+			$store_key,
+			array(
+				'window' => $window,
+				'count'  => $store_count + 1,
+			),
+			self::RATE_LIMIT_WINDOW
+		);
+
+		return true;
+	}
+
+	/**
+	 * Returns a rate-limit counter's count for the given window.
+	 *
+	 * @since n.e.x.t
+	 *
+	 * @param string $key    Transient name of the counter.
+	 * @param int    $window Current rate-limit window.
+	 * @return int The count, or 0 when the counter is missing or from an earlier window.
+	 */
+	private function get_rate_limit_count( string $key, int $window ): int {
+		$counter = get_transient( $key );
+
+		if ( ! is_array( $counter ) || ( $counter['window'] ?? null ) !== $window ) {
+			return 0;
+		}
+
+		return (int) ( $counter['count'] ?? 0 );
+	}
+
+	/**
+	 * Returns the number of the current fixed rate-limit window.
+	 *
+	 * @since n.e.x.t
+	 *
+	 * @return int
+	 */
+	protected function get_rate_limit_window(): int {
+		return (int) floor( time() / self::RATE_LIMIT_WINDOW );
+	}
+
+	/**
+	 * Returns the IP address that identifies the client for rate limiting.
+	 *
+	 * Only `REMOTE_ADDR` is used. Forwarding headers such as `X-Forwarded-For`
+	 * can be set by any client, so trusting them would give an attacker a fresh
+	 * allowance on every request. Requests without a valid `REMOTE_ADDR` share
+	 * one allowance rather than being rejected, and still count toward the
+	 * store-wide limit.
+	 *
+	 * @since n.e.x.t
+	 *
+	 * @return string
+	 */
+	private function get_client_ip(): string {
+		$ip = isset( $_SERVER['REMOTE_ADDR'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ) ) : '';
+
+		return rest_is_ip_address( $ip ) ? $ip : 'unknown';
+	}
+
+	/**
+	 * Ends a rejected public AJAX tracking request with a JSON error response.
+	 *
+	 * @since n.e.x.t
+	 *
+	 * @param int $status_code HTTP status code to send.
+	 * @return void
+	 */
+	protected function reject_request( int $status_code ): void {
+		wp_send_json_error( null, $status_code );
 	}
 
 	/**
