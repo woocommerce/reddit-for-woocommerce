@@ -24,12 +24,16 @@
 		]
 	},
 	"config": {
+		"platform": {
+			"php": "7.4"
+		},
 		"allow-plugins": {
 			"dealerdirect/phpcodesniffer-composer-installer": true,
 			"automattic/jetpack-autoloader": true
 		}
 	},
 	"require": {
+		"php": ">=7.4",
 		"automattic/jetpack-autoloader": "^5.0"
 	}
 }
