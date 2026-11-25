@@ -94,7 +94,7 @@ export function hasUserConsent() {
  * the form stays blocked until that callback finishes. Nothing in here may
  * throw, or the shopper is left unable to add the product to the cart.
  *
- * @since n.e.x.t
+ * @since 1.1.0
  *
  * @param {HTMLFormElement} form      The variation form that found the variation.
  * @param {Object}          variation Variation data supplied by WooCommerce.
