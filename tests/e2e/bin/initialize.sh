@@ -3,58 +3,62 @@
 echo "Initializing Reddit for WooCommerce"
 
 # Enable pretty permalinks.
-wp-env run tests-wordpress chmod -c ugo+w /var/www/html
-wp-env run tests-cli wp rewrite structure '/%postname%/' --hard
+wp-env run wordpress chmod -c ugo+w /var/www/html
+wp-env run cli wp rewrite structure '/%postname%/' --hard
 
 # Log plugins
-wp-env run tests-cli wp plugin list
+wp-env run cli wp plugin list
 
 # Use storefront theme.
-wp-env run tests-cli wp theme activate storefront
-wp-env run tests-cli wp option update storefront_nux_dismissed 1
+wp-env run cli wp theme activate storefront
+wp-env run cli wp option update storefront_nux_dismissed 1
+
+# Disable the block product editor so the classic editor is used in E2E tests.
+# The channel visibility meta box only renders in the classic editor.
+wp-env run cli wp option update woocommerce_feature_product_block_editor_enabled no
 
 # Activate and setup WooCommerce.
-wp-env run tests-cli wp wc tool run install_pages --user=1
+wp-env run cli wp wc tool run install_pages --user=1
 
-wp-env run tests-cli wp option update woocommerce_currency "USD"
-wp-env run tests-cli wp option update woocommerce_default_country "US:CA"
-wp-env run tests-cli wp option set woocommerce_allow_tracking "no"
-wp-env run tests-cli wp option set woocommerce_coming_soon "no"
-wp-env run tests-cli wp wc payment_gateway update cod --enabled=1 --user=1
+wp-env run cli wp option update woocommerce_currency "USD"
+wp-env run cli wp option update woocommerce_default_country "US:CA"
+wp-env run cli wp option set woocommerce_allow_tracking "no"
+wp-env run cli wp option set woocommerce_coming_soon "no"
+wp-env run cli wp wc payment_gateway update cod --enabled=1 --user=1
 
-wp-env run tests-cli wp user create customer customer@reddittestsuite.com --user_pass=password --role=customer
+wp-env run cli wp user create customer customer@reddittestsuite.com --user_pass=password --role=customer
 
-wp-env run tests-cli wp wc product create --user=1 \
+wp-env run cli wp wc product create --user=1 \
   --name="Product One" \
   --slug="product-one" \
   --type="simple" \
   --regular_price="10"
 
-wp-env run tests-cli wp wc product create --user=1 \
+wp-env run cli wp wc product create --user=1 \
   --name="Product Two" \
   --slug="product-two" \
   --type="simple" \
   --regular_price="15"
 
-wp-env run tests-cli wp wc product create --user=1 \
+wp-env run cli wp wc product create --user=1 \
   --name="Product Three" \
   --slug="product-three" \
   --type="simple" \
   --regular_price="10"
 
-wp-env run tests-cli wp wc product create --user=1 \
+wp-env run cli wp wc product create --user=1 \
   --name="Product Four" \
   --slug="product-four" \
   --type="simple" \
   --regular_price="10"
 
-wp-env run tests-cli wp wc product create --user=1 \
+wp-env run cli wp wc product create --user=1 \
   --name="Product Five" \
   --slug="product-five" \
   --type="simple" \
   --regular_price="10"
 
-PRODUCT_ID=$(wp-env run tests-cli wp wc product create --user=1 \
+PRODUCT_ID=$(wp-env run cli wp wc product create --user=1 \
   --type=variable \
   --name="Variable Product One" \
   --slug="variable-product-one" \
@@ -69,7 +73,7 @@ PRODUCT_ID=$(wp-env run tests-cli wp wc product create --user=1 \
   ]' \
   --porcelain)
 
-wp-env run tests-cli wp wc product_variation create $PRODUCT_ID --user=1 \
+wp-env run cli wp wc product_variation create $PRODUCT_ID --user=1 \
   --regular_price=12 \
   --attributes='[
     {
@@ -79,7 +83,7 @@ wp-env run tests-cli wp wc product_variation create $PRODUCT_ID --user=1 \
   ]' \
   --porcelain
 
-wp-env run tests-cli wp wc product_variation create $PRODUCT_ID --user=1 \
+wp-env run cli wp wc product_variation create $PRODUCT_ID --user=1 \
   --regular_price=13 \
   --attributes='[
     {
@@ -89,7 +93,7 @@ wp-env run tests-cli wp wc product_variation create $PRODUCT_ID --user=1 \
   ]' \
   --porcelain
 
-wp-env run tests-cli wp wc product_variation create $PRODUCT_ID --user=1 \
+wp-env run cli wp wc product_variation create $PRODUCT_ID --user=1 \
   --regular_price=13 \
   --attributes='[
     {

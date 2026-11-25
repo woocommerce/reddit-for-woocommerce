@@ -17,7 +17,7 @@ namespace RedditForWooCommerce\Admin\Export\Service;
 
 use RedditForWooCommerce\Admin\Export\Contract\CacheBuilderInterface;
 use RedditForWooCommerce\Config;
-use RedditForWooCommerce\Admin\ProductMeta\ProductMetaFields;
+use RedditForWooCommerce\Admin\MetaBox\ChannelVisibilityMetaBox;
 use RedditForWooCommerce\Utils\Helper;
 use RedditForWooCommerce\Utils\Storage\Options;
 use RedditForWooCommerce\Utils\Storage\OptionDefaults;
@@ -134,7 +134,7 @@ class ProductIdCacheBuilder implements CacheBuilderInterface {
 			'page'            => $page,
 			'status'          => 'publish',
 			'return'          => 'ids',
-			'reddit_meta_key' => Helper::with_prefix( ProductMetaFields::CATALOG_ITEM ),
+			'reddit_meta_key' => Helper::with_prefix( ChannelVisibilityMetaBox::CATALOG_ITEM ),
 		);
 
 		$query   = new \WC_Product_Query( $query_args );
