@@ -1,5 +1,22 @@
 *** Reddit for WooCommerce Changelog ***
 
+= 1.1.0 - 2026-11-25 =
+* Add - Send hashed customer match keys (email, phone number, external ID) with Reddit conversion events when Collect Customer PII is enabled.
+* Dev - Update dompurify to 3.4.18 to resolve Dependabot security alerts.
+* Fix - adds tracking to customer PII state toggle in settings.
+* Fix - Collect Customer PII can no longer be changed while Conversions API tracking is off, and its help text now explains that customer details are hashed before they are sent.
+* Fix - Collect Customer PII checkbox to Reddit settings.
+* Fix - Collect Customer PII setting: new stores enable customer match by default, GDPR-region stores start disabled so the merchant opts in, and existing stores keep their current setting.
+* Fix - Feature: Collect PII.
+* Fix - Include the Collect Customer PII setting state in WooCommerce usage tracking data.
+* Fix - None. The 1.0.8 changelog already covers PHP 8.5 testing.
+* Fix - Phone numbers that can't be reliably converted to international format are no longer sent to Reddit in the wrong form when Collect Customer PII is on.
+* Fix - Pin Composer platform to PHP 7.4 so locked dependencies stay installable on all supported PHP versions, and bump PHPUnit to 9.6.39.
+* Fix - REDTWOO-216: Fix the data sharing option E2E test.
+* Fix - REDTWOO-216: Rework Conversions API settings to match the data sharing designs.
+* Fix - Targets a feature branch, so no entry.
+* Fix - Targets a feature branch, so no entry.
+
 = 1.0.8 - 2026-11-16 =
 * Dev - Tested with PHP 8.5.
 * Dev - Updates to local development files and dependencies to support Node 24.
