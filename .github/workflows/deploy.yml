@@ -34,7 +34,9 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           repository: woocommerce/woo-product-deploy
-          ref: trunk
+          # Temporarily pinned to the woo-product-deploy fix that stops QIT activation tests
+          # from hanging until the job times out. Switch back to `trunk` once that fix merges.
+          ref: 411463b8ca40c2c67812cead018f57e0e5f36d66
           path: ./.github/actions/woo-product-deploy
           token: ${{ secrets.ORG_DEPLOY_SECRET }}  # Need PAT with access to the action repository
 
