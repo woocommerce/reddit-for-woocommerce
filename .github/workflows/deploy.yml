@@ -34,7 +34,9 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           repository: woocommerce/woo-product-deploy
-          ref: trunk
+          # Temporarily pinned to the woo-product-deploy fix that stops QIT activation tests
+          # from hanging until the job times out. Switch back to `trunk` once that fix merges.
+          ref: 411463b8ca40c2c67812cead018f57e0e5f36d66
           path: ./.github/actions/woo-product-deploy
           token: ${{ secrets.ORG_DEPLOY_SECRET }}  # Need PAT with access to the action repository
 
@@ -69,7 +71,7 @@ jobs:
           fi
 
       - name: Upload build artifact
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: reddit-for-woocommerce.zip
           path: ${{ github.workspace }}/reddit-for-woocommerce.zip
