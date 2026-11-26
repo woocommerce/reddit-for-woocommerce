@@ -47,6 +47,8 @@ export function resolveErrorMessage( error, leadingMessage, fallbackMessage ) {
 	}
 
 	return messages.join(
+		// The separator is whitespace by design, so the translation is too.
+		// eslint-disable-next-line @wordpress/i18n-no-flanking-whitespace
 		_x(
 			' ',
 			`The spacing between sentences. It's a space in English. Please use an empty string if no spacing is needed in that language.`,

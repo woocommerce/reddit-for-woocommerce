@@ -20,6 +20,7 @@ use RedditForWooCommerce\ServiceKey;
 use RedditForWooCommerce\ServiceContainer;
 use RedditForWooCommerce\CsvExporter\ProductExportService;
 use RedditForWooCommerce\Utils\Helper;
+use RedditForWooCommerce\Utils\OnboardingStatus;
 
 /**
  * Handles admin script and style enqueues.
@@ -57,12 +58,23 @@ class Assets {
 	 * @return void
 	 */
 	public function enqueue_assets(): void {
+		// The localized data includes the admin nonce, feed URL and account details,
+		// so only users allowed to manage the plugin may receive it.
+		if ( ! Helper::current_user_can_manage() ) {
+			return;
+		}
+
+		// `page` and `path` are request-controlled, so also require the real wc-admin entry point.
+		if ( 'admin.php' !== ( $GLOBALS['pagenow'] ?? '' ) ) {
+			return;
+		}
+
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		$page = sanitize_text_field( wp_unslash( $_GET['page'] ?? '' ) );
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		$path = sanitize_text_field( wp_unslash( $_GET['path'] ?? '' ) );
 
-		if ( ! ( 'wc-admin' === $page && str_contains( $path, '/reddit' ) ) ) {
+		if ( ! ( 'wc-admin' === $page && str_starts_with( $path, '/reddit' ) ) ) {
 			return;
 		}
 
@@ -74,7 +86,7 @@ class Assets {
 			'index',
 			'AdminData',
 			array(
-				'setupComplete'      => boolval( Options::get( OptionDefaults::ONBOARDING_STATUS ) === 'connected' ),
+				'setupComplete'      => OnboardingStatus::is_setup_completed(),
 				'status'             => Options::get( OptionDefaults::ONBOARDING_STATUS ),
 				'step'               => Options::get( OptionDefaults::ONBOARDING_STEP ),
 				'adminNonce'         => wp_create_nonce( 'admin_nonce' ),
@@ -82,7 +94,7 @@ class Assets {
 				'exportFileUrl'      => file_exists( $csv_path ) ? Options::get( OptionDefaults::EXPORT_FILE_URL ) : '',
 				'lastTimestamp'      => Helper::get_formatted_timestamp( Options::get( OptionDefaults::LAST_EXPORT_TIMESTAMP ) ),
 				'slug'               => 'rfw',
-				'trackingSlug'       => 'redtwoo',
+				'trackingSlug'       => REDDIT_FOR_WOOCOMMERCE_TRACKING_SLUG,
 				'pluginVersion'      => REDDIT_FOR_WOOCOMMERCE_VERSION,
 				'adsAccountId'       => Options::get( OptionDefaults::AD_ACCOUNT_ID ),
 				'prefix'             => Helper::with_prefix( '' ),

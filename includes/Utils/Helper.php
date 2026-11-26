@@ -9,6 +9,8 @@
 namespace RedditForWooCommerce\Utils;
 
 use RedditForWooCommerce\Config;
+use RedditForWooCommerce\Utils\Storage\Options;
+use RedditForWooCommerce\Utils\Storage\OptionDefaults;
 use DateTime;
 use DateTimeZone;
 
@@ -38,6 +40,21 @@ class Helper {
 	 */
 	public static function with_prefix( string $suffix ): string {
 		return Config::PLUGIN_SLUG . '_' . ltrim( $suffix, '_' );
+	}
+
+	/**
+	 * Checks whether the current user can manage the plugin.
+	 *
+	 * Single source of truth for the capability that gates the plugin's admin
+	 * screens, admin data, AJAX actions and REST endpoints. Nonces only protect
+	 * against CSRF and must never be treated as authorization.
+	 *
+	 * @since 1.0.7
+	 *
+	 * @return bool True if the current user has the `manage_woocommerce` capability.
+	 */
+	public static function current_user_can_manage(): bool {
+		return current_user_can( 'manage_woocommerce' );
 	}
 
 	/**
@@ -225,6 +242,43 @@ class Helper {
 	}
 
 	/**
+	 * Returns the URL of the page where the current tracking event originated.
+	 *
+	 * Reddit recommends `event_source_url` on server-side WEBSITE events: it lets
+	 * Reddit detect the event's domain and, as a fallback, extract the click ID
+	 * from the URL's query string when it isn't supplied separately.
+	 *
+	 * The value is resolved from the current request:
+	 * - Asynchronous events (AJAX/REST) are dispatched from a background endpoint
+	 *   (e.g. `admin-ajax.php`), so the originating page is taken from the request
+	 *   referer — the front-end page that fired the event, which also carries any
+	 *   `rdt_cid` query parameter from the ad click.
+	 * - Synchronous events (e.g. the order-received page, a product-form add to
+	 *   cart) run in the context of the page itself, so the current request URL is
+	 *   used.
+	 *
+	 * `wp_get_referer()` only returns same-host URLs, so the value cannot be
+	 * spoofed to a foreign domain via the referer header.
+	 *
+	 * @since 1.0.4
+	 *
+	 * @return string Event source URL, or an empty string if it cannot be determined.
+	 */
+	public static function get_event_source_url(): string {
+		if ( self::is_request_async() ) {
+			$referer = wp_get_referer();
+
+			return $referer ? esc_url_raw( $referer ) : '';
+		}
+
+		$request_uri = isset( $_SERVER['REQUEST_URI'] )
+			? sanitize_text_field( wp_unslash( $_SERVER['REQUEST_URI'] ) )
+			: '';
+
+		return '' !== $request_uri ? esc_url_raw( home_url( $request_uri ) ) : '';
+	}
+
+	/**
 	 * Recursively replaces double quotes with single quotes in strings within an array or object.
 	 *
 	 * Sometimes Reddit API responses contain JSON strings that contain encoded double quotes,
@@ -271,5 +325,45 @@ class Helper {
 	public static function amount_to_microcurrency( float $amount ): int {
 		// Convert to float, multiply by 1,000,000, and round to nearest integer.
 		return (int) round( $amount * 1_000_000 );
+	}
+
+	/**
+	 * Determines whether collecting customer PII for conversion matching is enabled.
+	 *
+	 * @since 1.1.0
+	 *
+	 * @return bool True if the setting is enabled, false otherwise.
+	 */
+	public static function is_collect_pii_enabled(): bool {
+		return 'yes' === Options::get( OptionDefaults::COLLECT_PII );
+	}
+
+	/**
+	 * Determines whether the store's base country falls under GDPR or UK GDPR.
+	 *
+	 * When the base country cannot be resolved, the store is treated as GDPR so
+	 * consent-first defaults apply.
+	 *
+	 * @since 1.1.0
+	 *
+	 * @return bool True if the base country is in the EU, EEA, or the UK.
+	 */
+	public static function is_gdpr_region(): bool {
+		if ( ! function_exists( 'wc_get_base_location' ) || ! function_exists( 'WC' ) ) {
+			return true;
+		}
+
+		$base_location = wc_get_base_location();
+		$country       = $base_location['country'] ?? '';
+
+		if ( '' === $country ) {
+			return true;
+		}
+
+		// EU member states, plus the remaining EEA states and the UK, which apply GDPR-equivalent rules.
+		$eu_countries   = WC()->countries->get_european_union_countries();
+		$gdpr_countries = array_merge( $eu_countries, array( 'IS', 'LI', 'NO', 'GB' ) );
+
+		return in_array( $country, $gdpr_countries, true );
 	}
 }

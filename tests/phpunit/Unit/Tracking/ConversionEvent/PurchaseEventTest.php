@@ -104,4 +104,76 @@ class PurchaseEventTest extends WP_UnitTestCase {
 			array( 'id' => $product_two->get_id(), 'name' => $product_two->get_name() ),
 		), $metadata['products'] );
 	}
+
+	/**
+	 * The event_source_url, when supplied, is added at the event level (alongside
+	 * click_id and user), not inside metadata.
+	 */
+	public function test_build_payload_includes_event_source_url_when_provided(): void {
+		$order = wc_create_order( array( 'status' => 'pending' ) );
+
+		$event   = new PurchaseEvent( $order->get_id() );
+		$payload = $event->build_payload( array(
+			'conversion_id'    => $order->get_order_key(),
+			'user_data'        => UserIdentifier::get_user_data(),
+			'event_source_url' => 'https://example.com/checkout/order-received/42/?rdt_cid=abc',
+		) );
+
+		$events = $payload['data']['events'][0];
+
+		$this->assertSame(
+			'https://example.com/checkout/order-received/42/?rdt_cid=abc',
+			$events['event_source_url']
+		);
+		$this->assertArrayNotHasKey( 'event_source_url', $events['metadata'] );
+	}
+
+	/**
+	 * The event_source_url key is omitted entirely when no URL is supplied, so an
+	 * empty value is never sent to Reddit.
+	 */
+	public function test_build_payload_omits_event_source_url_when_absent(): void {
+		$order = wc_create_order( array( 'status' => 'pending' ) );
+
+		$event   = new PurchaseEvent( $order->get_id() );
+		$payload = $event->build_payload( array(
+			'conversion_id' => $order->get_order_key(),
+			'user_data'     => UserIdentifier::get_user_data(),
+		) );
+
+		$this->assertArrayNotHasKey( 'event_source_url', $payload['data']['events'][0] );
+	}
+
+	/**
+	 * The hashed customer match keys flow through to events[].user alongside the
+	 * existing device identifiers, and the click ID stays at the event level.
+	 */
+	public function test_build_payload_passes_match_keys_to_event_user(): void {
+		$order = wc_create_order( array( 'status' => 'pending' ) );
+
+		$user_data = array(
+			'user'     => array(
+				'ip_address'   => '203.0.113.10',
+				'user_agent'   => 'UA',
+				'uuid'         => 'pixel-uuid',
+				'email'        => hash( 'sha256', 'buyer@example.com' ),
+				'phone_number' => hash( 'sha256', '+14155550100' ),
+				'external_id'  => hash( 'sha256', '42' ),
+			),
+			'click_id' => 'click-id',
+		);
+
+		$event   = new PurchaseEvent( $order->get_id() );
+		$payload = $event->build_payload(
+			array(
+				'conversion_id' => $order->get_order_key(),
+				'user_data'     => $user_data,
+			)
+		);
+
+		$events = $payload['data']['events'][0];
+
+		$this->assertSame( $user_data['user'], $events['user'] );
+		$this->assertSame( 'click-id', $events['click_id'] );
+	}
 }

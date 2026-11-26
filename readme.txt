@@ -1,8 +1,8 @@
 === Reddit for WooCommerce ===
 Contributors: automattic, woocommerce
 Tags: woocommerce, woo, reddit, product feed, ads
-Tested up to: 7.0
-Stable tag: 1.0.3
+Tested up to: 7.1
+Stable tag: 1.1.0
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -37,7 +37,7 @@ Getting started with the Reddit for WooCommerce plugin is quick and easy! Just f
 
 == Instructions to build the plugin ==
 
-- Requires node v20 and NPM v10.
+- Requires node v24 and NPM v11.
 - Requires PHP composer v2.
 - Run `npm ci && npm run build` in the plugin's root.
 - Use the generated `reddit-for-woocommerce.zip` file.
@@ -55,24 +55,21 @@ Yes, it uses a [Jetpack](https://jetpack.com/) account to connect and communicat
 
 == Changelog ==
 
-= 1.0.3 - 2026-01-22 =
-* Update - Replace the billing card with an informational note to prevent potential confusion.
-* Update - UX improvements for the Reddit Ads card.
-* Fix - Ensure that the catalog is recreated after product export if the user deletes the auto-generated catalog.
-* Fix - Ensure that the created campaign is archived when disconnecting the Reddit account.
-* Fix - Strip HTML tags from the product description for the CSV export.
-* Fix - UX improvements for catalog creation failure handling.
-* Fix – Ensure that switching businesses during onboarding connects the correct ad account.
-* Dev – Fix flaky PHPUnit test in `ProductExportServiceTest`.
+= 1.1.0 - 2026-11-25 =
+* Add - Send hashed customer match keys (email, phone number, external ID) with Reddit conversion events when Advanced Sharing is enabled.
+* Dev - Update dompurify to 3.4.18 to resolve Dependabot security alerts.
 
-= 1.0.2 - 2026-01-07 =
-* Update - Average daily budget suggestions.
-* Tweak - WooCommerce 10.4 compatibility.
-* Dev - Set up woorelease GH workflows.
+= 1.0.8 - 2026-11-16 =
+* Dev - Tested with PHP 8.5.
+* Dev - Updates to local development files and dependencies to support Node 24.
+* Fix - Correct the Ad Partner base class namespace so optimized builds can load it.
+* Fix - Variation forms no longer stay stuck loading when Reddit tracking data is missing from the page.
+* Tweak - Bump WooCommerce "tested up to" version to 11.3.
+* Tweak - Update the WordPress.com logo on the account connection card.
 
-= 1.0.1 - 2025-12-09 =
-* Add - Implement Create Campaign during onboarding.
-* Improved - create campaign defaults and UI improvements.
-* Tweak - WordPress 6.9 compatibility.
+= 1.0.7 - 2026-10-08 =
+* Add - "Channel visibility" meta box on the product edit screen to show or hide each product in the Reddit catalog.
+* Add - Reddit Ads promotion in the "Order attribution" meta box for orders from Reddit.
+* Tweak - Bump WooCommerce "tested up to" version to 11.2.
 
 [See changelog for all versions](https://raw.githubusercontent.com/woocommerce/reddit-for-woocommerce/trunk/changelog.txt).

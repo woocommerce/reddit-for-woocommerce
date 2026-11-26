@@ -2,18 +2,18 @@
 /**
  * Plugin Name: Reddit for WooCommerce
  * Description: Seamlessly integrates your WooCommerce store with Reddit's powerful advertising platform, enabling you to reach millions of potential customers through engaging visual ads.
- * Version: 1.0.3
+ * Version: 1.1.0
  * Author: WooCommerce
  * Author URI: https://woocommerce.com/
  * Text Domain: reddit-for-woocommerce
  * Domain Path: /languages
  * Requires Plugins: woocommerce
  * Requires PHP: 7.4
- * PHP tested up to: 8.4
- * Requires at least: 6.9
- * Tested up to: 7.0
- * WC requires at least: 10.8
- * WC tested up to: 11.0
+ * PHP tested up to: 8.5
+ * Requires at least: 7.0
+ * Tested up to: 7.1
+ * WC requires at least: 11.1
+ * WC tested up to: 11.3
  * Woo:
  *
  * License: GNU General Public License v3.0
@@ -24,13 +24,14 @@
 
 use RedditForWooCommerce\Utils\Storage\Options;
 use RedditForWooCommerce\Utils\Storage\OptionDefaults;
+use RedditForWooCommerce\Utils\Helper;
 use RedditForWooCommerce\ServiceContainer;
 use RedditForWooCommerce\ServiceKey;
 
 defined( 'ABSPATH' ) || exit;
 
 if ( ! defined( 'REDDIT_FOR_WOOCOMMERCE_VERSION' ) ) {
-	define( 'REDDIT_FOR_WOOCOMMERCE_VERSION', '1.0.3' ); // WRCS: DEFINED_VERSION.
+	define( 'REDDIT_FOR_WOOCOMMERCE_VERSION', '1.1.0' ); // WRCS: DEFINED_VERSION.
 }
 
 if ( ! defined( 'REDDIT_FOR_WOOCOMMERCE_FILE' ) ) {
@@ -57,6 +58,10 @@ if ( ! defined( 'REDDIT_FOR_WOOCOMMERCE_DEBUG' ) ) {
 	define( 'REDDIT_FOR_WOOCOMMERCE_DEBUG', false );
 }
 
+if ( ! defined( 'REDDIT_FOR_WOOCOMMERCE_TRACKING_SLUG' ) ) {
+	define( 'REDDIT_FOR_WOOCOMMERCE_TRACKING_SLUG', 'redtwoo' );
+}
+
 require_once plugin_dir_path( __FILE__ ) . '/vendor/autoload_packages.php';
 
 $export_service = ServiceContainer::get( ServiceKey::PRODUCT_EXPORT_SERVICE );
@@ -64,7 +69,14 @@ $export_service = ServiceContainer::get( ServiceKey::PRODUCT_EXPORT_SERVICE );
 register_activation_hook(
 	__FILE__,
 	function () use ( $export_service ) {
+		$is_fresh_install = get_option( Options::get_key( OptionDefaults::ONBOARDING_STATUS ), null ) === null;
+
 		Options::preload_defaults();
+
+		// New installs enable PII collection by default, except in GDPR regions where the merchant must opt in.
+		if ( $is_fresh_install && ! Helper::is_gdpr_region() ) {
+			Options::set( OptionDefaults::COLLECT_PII, 'yes' );
+		}
 
 		// Schedule recurring CSV export task when the plugin is activated.
 		if ( 'connected' === Options::get( OptionDefaults::ONBOARDING_STATUS ) ) {
