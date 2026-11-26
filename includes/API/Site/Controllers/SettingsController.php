@@ -74,7 +74,7 @@ class SettingsController extends RESTBaseController {
 	 * Conversions API tracking is off, so no setting is saved.
 	 *
 	 * @since 0.1.0
-	 * @since n.e.x.t Returns a WP_Error when `collect_pii` is sent while Conversions API tracking is off.
+	 * @since 1.1.0 Returns a WP_Error when `collect_pii` is sent while Conversions API tracking is off.
 	 *
 	 * @param WP_REST_Request $request REST request object.
 	 *

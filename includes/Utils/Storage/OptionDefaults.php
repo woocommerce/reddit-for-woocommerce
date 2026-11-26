@@ -198,7 +198,7 @@ final class OptionDefaults {
 	 * Option key that toggles whether customer PII is collected and shared
 	 * with Conversions API events to improve ads measurement.
 	 *
-	 * @since n.e.x.t
+	 * @since 1.1.0
 	 */
 	public const COLLECT_PII = 'collect_pii';
 

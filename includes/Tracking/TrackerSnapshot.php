@@ -17,20 +17,20 @@ use RedditForWooCommerce\Utils\OnboardingStatus;
  * settings would otherwise never report its state. The snapshot holds
  * settings flags only, never customer data.
  *
- * @since n.e.x.t
+ * @since 1.1.0
  */
 class TrackerSnapshot {
 	/**
 	 * Key for the plugin's entry in the tracker's `extensions` list.
 	 *
-	 * @since n.e.x.t
+	 * @since 1.1.0
 	 */
 	private const EXTENSION_KEY = 'reddit-for-woocommerce';
 
 	/**
 	 * Registers the tracker data filter.
 	 *
-	 * @since n.e.x.t
+	 * @since 1.1.0
 	 *
 	 * @return void
 	 */
@@ -41,7 +41,7 @@ class TrackerSnapshot {
 	/**
 	 * Adds the plugin's settings to the tracker data.
 	 *
-	 * @since n.e.x.t
+	 * @since 1.1.0
 	 *
 	 * @param mixed $data Tracker data collected so far.
 	 *
@@ -66,7 +66,7 @@ class TrackerSnapshot {
 	/**
 	 * Returns the settings reported in the snapshot.
 	 *
-	 * @since n.e.x.t
+	 * @since 1.1.0
 	 *
 	 * @return array<string,string> Plugin version and `yes`/`no` setting flags.
 	 */

@@ -2,7 +2,7 @@
 Contributors: automattic, woocommerce
 Tags: woocommerce, woo, reddit, product feed, ads
 Tested up to: 7.1
-Stable tag: 1.0.8
+Stable tag: 1.1.0
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -55,6 +55,10 @@ Yes, it uses a [Jetpack](https://jetpack.com/) account to connect and communicat
 
 == Changelog ==
 
+= 1.1.0 - 2026-11-25 =
+* Add - Send hashed customer match keys (email, phone number, external ID) with Reddit conversion events when Advanced Sharing is enabled.
+* Dev - Update dompurify to 3.4.18 to resolve Dependabot security alerts.
+
 = 1.0.8 - 2026-11-16 =
 * Dev - Tested with PHP 8.5.
 * Dev - Updates to local development files and dependencies to support Node 24.
@@ -67,13 +71,5 @@ Yes, it uses a [Jetpack](https://jetpack.com/) account to connect and communicat
 * Add - "Channel visibility" meta box on the product edit screen to show or hide each product in the Reddit catalog.
 * Add - Reddit Ads promotion in the "Order attribution" meta box for orders from Reddit.
 * Tweak - Bump WooCommerce "tested up to" version to 11.2.
-
-= 1.0.6 - 2026-09-08 =
-* Fix - Set required `bid_type` of `CPM` when creating a Reddit ad group, fixing "Request failed" errors that blocked onboarding completion.
-* Fix - AddToCart CAPI events now carry a non-empty conversion ID for the `?add-to-cart=` flow.
-* Fix - Include the event source URL in Reddit Conversions API payloads, improving domain detection and click ID fallback matching.
-* Fix - Send PageVisit and ViewContent Conversions API events asynchronously so they no longer block the visitor's page load.
-* Tweak - Bump WooCommerce "tested up to" version to 11.1.
-* Tweak - Include pixel ID query parameter in the Reddit Pixel script URL.
 
 [See changelog for all versions](https://raw.githubusercontent.com/woocommerce/reddit-for-woocommerce/trunk/changelog.txt).

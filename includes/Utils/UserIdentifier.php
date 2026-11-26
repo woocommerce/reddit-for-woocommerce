@@ -33,21 +33,21 @@ final class UserIdentifier {
 	 * Not `wp_salt()`: hosts and security plugins rotate salts, which would silently
 	 * give every customer a new external ID.
 	 *
-	 * @since n.e.x.t
+	 * @since 1.1.0
 	 */
 	private const EXTERNAL_ID_SECRET_OPTION = 'external_id_secret';
 
 	/**
 	 * Minimum length of a stored secret before it is trusted as a key.
 	 *
-	 * @since n.e.x.t
+	 * @since 1.1.0
 	 */
 	private const EXTERNAL_ID_SECRET_MIN_LENGTH = 32;
 
 	/**
 	 * Countries whose national numbers keep their leading `0` in E.164, so it cannot be dropped.
 	 *
-	 * @since n.e.x.t
+	 * @since 1.1.0
 	 */
 	private const LEADING_ZERO_KEPT_COUNTRIES = array( 'BJ', 'CG', 'CI', 'GA', 'IT', 'SM' );
 
@@ -57,7 +57,7 @@ final class UserIdentifier {
 	 * WooCommerce returns these countries' calling code with an area code included
 	 * (e.g. `+441534` for Jersey), while shoppers type the full national number.
 	 *
-	 * @since n.e.x.t
+	 * @since 1.1.0
 	 */
 	private const PARENT_CALLING_CODES = array(
 		'AX' => '+358',
@@ -73,7 +73,7 @@ final class UserIdentifier {
 	 * treated as a trunk prefix at the length that includes it, since national
 	 * numbers can start with the same digits (e.g. `812…` in St Petersburg).
 	 *
-	 * @since n.e.x.t
+	 * @since 1.1.0
 	 */
 	private const OTHER_TRUNK_PREFIXES = array(
 		'BY' => '8',
@@ -85,7 +85,7 @@ final class UserIdentifier {
 	/**
 	 * National number lengths at which a number starting with a country's country code or trunk prefix digits is a national number.
 	 *
-	 * @since n.e.x.t
+	 * @since 1.1.0
 	 */
 	private const NATIONAL_NUMBER_LENGTHS = array(
 		'BR' => array( 10, 11 ),
@@ -105,7 +105,7 @@ final class UserIdentifier {
 	 *
 	 * WooCommerce returns only one calling code for these countries.
 	 *
-	 * @since n.e.x.t
+	 * @since 1.1.0
 	 */
 	private const NANP_AREA_CODES = array(
 		'DO' => array( '809', '829', '849' ),
@@ -133,7 +133,7 @@ final class UserIdentifier {
 	 * with no order carry no match keys.
 	 *
 	 * @since 0.1.0
-	 * @since n.e.x.t Added the $order and $include_match_keys parameters for hashed customer match keys.
+	 * @since 1.1.0 Added the $order and $include_match_keys parameters for hashed customer match keys.
 	 *
 	 * @param WC_Order|null $order              Order to source purchase match keys from, when available.
 	 * @param bool          $include_match_keys Whether to add the hashed customer match keys. Pass false for
@@ -179,7 +179,7 @@ final class UserIdentifier {
 	 * hashes each value before it is written into the array. Logged-out requests
 	 * with no order add no keys.
 	 *
-	 * @since n.e.x.t
+	 * @since 1.1.0
 	 *
 	 * @param array<string,mixed> $data  The user_data array to extend.
 	 * @param WC_Order|null       $order Order to source purchase match keys from, when available.
@@ -339,7 +339,7 @@ final class UserIdentifier {
 	/**
 	 * Normalizes and SHA-256 hashes an email address for Advanced Matching.
 	 *
-	 * @since n.e.x.t
+	 * @since 1.1.0
 	 *
 	 * @param string $email Raw email address.
 	 * @return string SHA-256 hash of the normalized email, or an empty string when the email is invalid.
@@ -360,7 +360,7 @@ final class UserIdentifier {
 	 * Lowercases the address, removes any `+alias` from the local part, and removes
 	 * dots from the local part while preserving dots in the domain.
 	 *
-	 * @since n.e.x.t
+	 * @since 1.1.0
 	 *
 	 * @param string $email Raw email address.
 	 * @return string The normalized email, or an empty string when the input is not a valid address.
@@ -393,7 +393,7 @@ final class UserIdentifier {
 	/**
 	 * Canonicalizes a phone number to E.164 and SHA-256 hashes it for Advanced Matching.
 	 *
-	 * @since n.e.x.t
+	 * @since 1.1.0
 	 *
 	 * @param string $phone   Raw phone number.
 	 * @param string $country Billing country code used to derive the calling code.
@@ -431,7 +431,7 @@ final class UserIdentifier {
 	 * - is a Vatican City national number without its leading `0`
 	 * - is a `+1` country national number whose area code does not match the country
 	 *
-	 * @since n.e.x.t
+	 * @since 1.1.0
 	 *
 	 * @param string $phone   Raw phone number.
 	 * @param string $country Billing country code used to derive the calling code.
@@ -506,7 +506,7 @@ final class UserIdentifier {
 	 * WooCommerce returns these countries' calling code with the area code included
 	 * (e.g. `+1876` for Jamaica), while shoppers usually type the full 10-digit number.
 	 *
-	 * @since n.e.x.t
+	 * @since 1.1.0
 	 *
 	 * @param string $digits       National number digits, with formatting removed.
 	 * @param string $country      Uppercase billing country code.
@@ -533,7 +533,7 @@ final class UserIdentifier {
 	 * Countries that keep the leading `0` in E.164 are not affected. A number whose
 	 * country code is not recognized is left as typed.
 	 *
-	 * @since n.e.x.t
+	 * @since 1.1.0
 	 *
 	 * @param string $digits International number digits, without the `+` and formatting.
 	 * @return bool True when the number should be left out.
@@ -566,7 +566,7 @@ final class UserIdentifier {
 	 * A number whose national part merely starts with the prefix digits at the
 	 * country's national number length, e.g. `+7 812…`, is left as typed.
 	 *
-	 * @since n.e.x.t
+	 * @since 1.1.0
 	 *
 	 * @param string $digits International number digits, without the `+` and formatting.
 	 * @return bool True when the number should be left out.
@@ -594,7 +594,7 @@ final class UserIdentifier {
 	 *
 	 * Dropping a valid but unusual number is preferred over sending one that can never match.
 	 *
-	 * @since n.e.x.t
+	 * @since 1.1.0
 	 *
 	 * @param string $digits       National number digits, with formatting removed.
 	 * @param string $country      Uppercase billing country code.
@@ -632,7 +632,7 @@ final class UserIdentifier {
 	 * the length of the prefix plus a national number has the prefix removed, and
 	 * any other number starting with the prefix cannot be resolved.
 	 *
-	 * @since n.e.x.t
+	 * @since 1.1.0
 	 *
 	 * @param string $digits  National number digits, with formatting removed.
 	 * @param string $country Uppercase billing country code.
@@ -670,7 +670,7 @@ final class UserIdentifier {
 	/**
 	 * Resolves the E.164 calling code for a country, including the leading `+`.
 	 *
-	 * @since n.e.x.t
+	 * @since 1.1.0
 	 *
 	 * @param string $country Two-letter country code.
 	 * @return string The calling code (e.g. `+44`), or an empty string when it cannot be resolved.
@@ -695,7 +695,7 @@ final class UserIdentifier {
 	 *
 	 * The `+1` countries are listed as `1`, since their calling codes include an area code.
 	 *
-	 * @since n.e.x.t
+	 * @since 1.1.0
 	 *
 	 * @return string[] Unique calling codes.
 	 */
@@ -730,7 +730,7 @@ final class UserIdentifier {
 	/**
 	 * SHA-256 hashes a value.
 	 *
-	 * @since n.e.x.t
+	 * @since 1.1.0
 	 *
 	 * @param string $value Value to hash.
 	 * @return string Lowercase hexadecimal SHA-256 digest.
@@ -749,7 +749,7 @@ final class UserIdentifier {
 	 * from the payload. Reddit treats the external ID as an advertiser-assigned
 	 * identifier, so it does not need to reproduce the value.
 	 *
-	 * @since n.e.x.t
+	 * @since 1.1.0
 	 *
 	 * @param string $type  Identifier type, `user` or `email`, so the two kinds can never produce the same ID.
 	 * @param string $value Customer ID or normalized email.
@@ -773,7 +773,7 @@ final class UserIdentifier {
 	 * a single settings request rather than by concurrent storefront requests that
 	 * could each store a different one.
 	 *
-	 * @since n.e.x.t
+	 * @since 1.1.0
 	 */
 	public static function ensure_external_id_secret(): void {
 		self::get_external_id_secret();
@@ -785,7 +785,7 @@ final class UserIdentifier {
 	 * The secret is stored outside the plugin's option defaults so it is generated
 	 * once, never reset by disconnecting Reddit, and not autoloaded.
 	 *
-	 * @since n.e.x.t
+	 * @since 1.1.0
 	 *
 	 * @return string The secret, or an empty string when it could not be stored.
 	 */

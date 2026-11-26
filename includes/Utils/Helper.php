@@ -330,7 +330,7 @@ class Helper {
 	/**
 	 * Determines whether collecting customer PII for conversion matching is enabled.
 	 *
-	 * @since n.e.x.t
+	 * @since 1.1.0
 	 *
 	 * @return bool True if the setting is enabled, false otherwise.
 	 */
@@ -344,7 +344,7 @@ class Helper {
 	 * When the base country cannot be resolved, the store is treated as GDPR so
 	 * consent-first defaults apply.
 	 *
-	 * @since n.e.x.t
+	 * @since 1.1.0
 	 *
 	 * @return bool True if the base country is in the EU, EEA, or the UK.
 	 */
