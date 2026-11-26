@@ -29,6 +29,7 @@ const useSettings = () => {
 		return {
 			productsToken: settings.productsToken,
 			isCapiEnabled: settings.trackConversions,
+			isPiiCollectionEnabled: settings.collectPii,
 			isCampaignCreated: settings.campaignCreated,
 			shouldTriggerExport: settings.triggerExport,
 			lastExportTimeStamp: settings.lastExportTimeStamp,
