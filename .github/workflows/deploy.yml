@@ -34,9 +34,7 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           repository: woocommerce/woo-product-deploy
-          # Pinned to a reviewed woo-product-deploy commit because this job runs it with deploy secrets.
-          # Bump the SHA in a reviewed PR to pick up upstream changes.
-          ref: 742e2f7e92b387608510ccdb3f0ba0d9a7f41e46 # trunk, includes qit-action v2
+          ref: trunk
           path: ./.github/actions/woo-product-deploy
           token: ${{ secrets.ORG_DEPLOY_SECRET }}  # Need PAT with access to the action repository
 
