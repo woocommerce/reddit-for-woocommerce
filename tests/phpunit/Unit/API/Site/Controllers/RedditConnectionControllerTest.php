@@ -18,6 +18,7 @@ use RedditForWooCommerce\Connection\WcsClient;
 use RedditForWooCommerce\Utils\Storage\Options;
 use RedditForWooCommerce\Utils\Storage\OptionDefaults;
 use RedditForWooCommerce\Utils\Helper;
+use RedditForWooCommerce\Utils\UserIdentifier;
 
 /**
  * @covers \RedditForWooCommerce\API\Site\Controllers\RedditConnectionController::delete_connection
@@ -77,6 +78,8 @@ class RedditConnectionControllerTest extends WP_UnitTestCase {
 		Options::delete( OptionDefaults::ONBOARDING_STATUS );
 		Options::delete( OptionDefaults::ONBOARDING_STEP );
 		Options::delete( OptionDefaults::CAMPAIGN_IDS );
+		Options::delete( OptionDefaults::COLLECT_PII );
+		delete_option( 'reddit_external_id_secret' );
 
 		parent::tear_down();
 	}
@@ -245,5 +248,23 @@ class RedditConnectionControllerTest extends WP_UnitTestCase {
 		$this->controller->delete_connection();
 
 		$this->assertTrue( $action_fired );
+	}
+
+	public function test_disconnect_keeps_external_id_secret() {
+		$this->set_up_connected_state( '' );
+		$this->mock_successful_stop_connection();
+		Options::set( OptionDefaults::COLLECT_PII, 'yes' );
+
+		$order = wc_create_order( array( 'status' => 'pending', 'customer_id' => 42 ) );
+		$order->save();
+
+		$before = UserIdentifier::get_user_data( $order );
+		$secret = get_option( 'reddit_external_id_secret' );
+
+		$this->controller->delete_connection();
+
+		$this->assertSame( $secret, get_option( 'reddit_external_id_secret' ) );
+		$this->assertSame( $before['user']['external_id'], UserIdentifier::get_user_data( $order )['user']['external_id'] );
+		$this->assertArrayNotHasKey( 'external_id_secret', OptionDefaults::get_all() );
 	}
 }
