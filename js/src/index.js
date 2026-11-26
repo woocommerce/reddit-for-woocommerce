@@ -16,16 +16,19 @@ import './data';
 import withAdminPageShell from '~/components/withAdminPageShell';
 import { addBaseEventProperties } from '~/utils/tracks';
 
-const GetStartedPage = lazy( () =>
-	import( /* webpackChunkName: "get-started-page" */ './pages/get-started' )
+const GetStartedPage = lazy(
+	() =>
+		import(
+			/* webpackChunkName: "get-started-page" */ './pages/get-started'
+		)
 );
 
-const Onboarding = lazy( () =>
-	import( /* webpackChunkName: "onboarding" */ './pages/onboarding' )
+const Onboarding = lazy(
+	() => import( /* webpackChunkName: "onboarding" */ './pages/onboarding' )
 );
 
-const Settings = lazy( () =>
-	import( /* webpackChunkName: "settings" */ './pages/settings' )
+const Settings = lazy(
+	() => import( /* webpackChunkName: "settings" */ './pages/settings' )
 );
 
 export const pagePaths = new Set();

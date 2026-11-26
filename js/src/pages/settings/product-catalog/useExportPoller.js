@@ -35,7 +35,7 @@ const useExportPoller = ( isPolling, onTick ) => {
 				if ( response ) {
 					onTick( response );
 				}
-			} catch ( error ) {}
+			} catch {}
 		};
 
 		if ( isPolling && ! intervalRef.current ) {
