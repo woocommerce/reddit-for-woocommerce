@@ -32,12 +32,14 @@ import './reddit-ads-promo.scss';
  *
  * @event rfw_reddit_ads_promo_shown
  * @property {string} context Context of the Reddit Ads Promo.
+ * @property {boolean} has_onboarded Always `false`, since the promo only shows before onboarding.
+ * @property {boolean} is_dismissed Whether the merchant had dismissed the promo, so the compact layout was shown instead of the full promo.
  */
 
 /**
  * Reddit Ads Promo component.
  *
- * @fires rfw_reddit_ads_promo_shown with `{ context: channel-visibility-meta-box }`.
+ * @fires rfw_reddit_ads_promo_shown with `{ context: 'channel-visibility-meta-box', has_onboarded: false, is_dismissed: false }` for the full promo, or `{ context: 'channel-visibility-meta-box', has_onboarded: false, is_dismissed: true }` for the compact layout after a dismiss.
  *
  * @return {JSX.Element} The Reddit Ads Promo component.
  */
@@ -51,10 +53,12 @@ const RedditAdsPromo = () => {
 		if ( ! hasTrackedRef.current && ! onboardingComplete ) {
 			recordRfwEvent( 'rfw_reddit_ads_promo_shown', {
 				context: CHANNEL_VISIBILITY_CONTEXT,
+				has_onboarded: Boolean( onboardingComplete ),
+				is_dismissed: Boolean( isDismissed ),
 			} );
 			hasTrackedRef.current = true;
 		}
-	}, [ onboardingComplete ] );
+	}, [ onboardingComplete, isDismissed ] );
 
 	const handleDismiss = () => {
 		set( PREFERENCES_STORE_NAMESPACE, CHANNEL_VISIBILITY_PROMO_KEY, true );
