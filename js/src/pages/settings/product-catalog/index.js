@@ -220,7 +220,7 @@ const ProductCatalog = () => {
 				indicator={ getIndicator() }
 				actions={ <CatalogRoleNotice /> }
 			>
-				{ lastExported && ! fileUrl && (
+				{ lastExported && ! fileUrl && hasExportableProducts && (
 					<div className="rfw-product-catalog__help">
 						<p>
 							{ __(
