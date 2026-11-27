@@ -2,7 +2,7 @@
 	"name": "reddit-for-woocommerce",
 	"title": "Reddit for WooCommerce",
 	"description": "Reddit for WooCommerce",
-	"version": "1.0.8",
+	"version": "1.1.0",
 	"author": "The WordPress Contributors",
 	"license": "GPL-3.0+",
 	"keywords": [
@@ -92,7 +92,10 @@
 		"uuid@<11.1.1": "^11.1.1",
 		"katex": "^0.18.2",
 		"postcss-selector-parser@<7.1.6": "^7.1.6",
-		"smol-toml": "^1.9.0"
+		"smol-toml": "^1.9.0",
+		"@wp-playground/storage": {
+			"isomorphic-git": "1.38.10"
+		}
 	},
 	"scripts": {
 		"prebuild": "composer install --no-dev",

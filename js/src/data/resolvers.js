@@ -134,6 +134,7 @@ export function getSettings() {
 					hasExportableProducts: Boolean(
 						response.has_exportable_products
 					),
+					collectPii: Boolean( response.collect_pii ),
 				} )
 			);
 		} catch ( error ) {

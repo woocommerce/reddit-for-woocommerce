@@ -9,8 +9,10 @@ import { createInterpolateElement } from '@wordpress/element';
  */
 import AppNotice from '~/components/app-notice';
 import AppButton from '~/components/app-button';
+import UnsupportedCurrencyMessage from '~/components/unsupported-currency-message';
 import useCreateCatalog from '~/hooks/useCreateCatalog';
 import useRedditAccountConfig from '~/hooks/useRedditAccountConfig';
+import { rfwData } from '~/constants';
 import './catalog-role-notice.scss';
 
 /**
@@ -111,7 +113,13 @@ const CatalogRoleNotice = () => {
 	const isPermissionError = catalogCreationError === 'PERMISSION_ERROR';
 	const isCatalogAlreadyExists =
 		catalogCreationError === 'CATALOG_ALREADY_EXISTS';
-	const isOtherError = ! isPermissionError && ! isCatalogAlreadyExists;
+	// Use the live store currency rather than the stored error, so the notice clears
+	// and the button re-enables as soon as the merchant switches to a supported currency.
+	const isUnsupportedCurrency = rfwData?.isCurrencySupported === false;
+	const isOtherError =
+		! isPermissionError &&
+		! isCatalogAlreadyExists &&
+		! isUnsupportedCurrency;
 
 	return (
 		<AppNotice
@@ -121,6 +129,7 @@ const CatalogRoleNotice = () => {
 		>
 			{ isPermissionError && permissionsErrorNotice }
 			{ isCatalogAlreadyExists && pixelAlreadyAttachedNotice }
+			{ isUnsupportedCurrency && <UnsupportedCurrencyMessage /> }
 			{ isOtherError && otherErrorNotice }
 			<AppButton
 				className="rfw-reddit-catalog-role-notice__create-catalog-button"
@@ -131,7 +140,7 @@ const CatalogRoleNotice = () => {
 						: __( 'Create Catalog', 'reddit-for-woocommerce' )
 				}
 				isBusy={ loading }
-				isDisabled={ loading }
+				isDisabled={ loading || isUnsupportedCurrency }
 				onClick={ () => {
 					createCatalog(
 						catalogCreationError === 'CATALOG_ALREADY_EXISTS'
