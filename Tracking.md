@@ -176,7 +176,7 @@ Clicking on the button to create a campaign on the Reddit Ads manager.
 #### Emitters
 - [`RedditAds`](js/src/pages/settings/reddit-ads/index.js#L43) When the user clicks on the button to create a campaign on the Reddit Ads manager.
 
-### [`rfw_reddit_ads_promo_create_campaign_click`](js/src/meta-boxes/order-attribution/reddit-ads-promo.js#L36)
+### [`rfw_reddit_ads_promo_create_campaign_click`](js/src/meta-boxes/order-attribution/reddit-ads-promo.js#L37)
 Reddit Ads Promo "Create campaign" button is clicked.
 #### Properties
 | name | type | description |
@@ -184,7 +184,7 @@ Reddit Ads Promo "Create campaign" button is clicked.
 `context` | `string` | Context of the Reddit Ads Promo.
 `href` | `string` | URL of the "Create campaign" button.
 #### Emitters
-- [`RedditAdsPromo`](js/src/meta-boxes/order-attribution/reddit-ads-promo.js#L58) with `{ context: 'order-attribution-meta-box', href: 'https://ads.reddit.com/create' }`.
+- [`RedditAdsPromo`](js/src/meta-boxes/order-attribution/reddit-ads-promo.js#L59) with `{ context: 'order-attribution-meta-box', href: 'https://ads.reddit.com/create' }`.
 
 ### [`rfw_reddit_ads_promo_dismiss_click`](js/src/meta-boxes/channel-visibility/promo-cta.js#L14)
 Reddit Ads Promo "Dismiss" button is clicked.
@@ -193,7 +193,7 @@ Reddit Ads Promo "Dismiss" button is clicked.
 | ---- | ---- | ----------- |
 `context` | `string` | Context of the Reddit Ads Promo.
 #### Emitters
-- [`PromoCTA`](js/src/meta-boxes/channel-visibility/promo-cta.js#L29) with `{ context: channel-visibility-meta-box }`.
+- [`PromoCTA`](js/src/meta-boxes/channel-visibility/promo-cta.js#L29) with `{ context: 'channel-visibility-meta-box' }`.
 
 ### [`rfw_reddit_ads_promo_get_started_click`](js/src/meta-boxes/channel-visibility/get-started-cta.js#L13)
 Reddit Ads Promo "Get started" button is clicked.
@@ -203,10 +203,10 @@ Reddit Ads Promo "Get started" button is clicked.
 `context` | `string` | Context of the Reddit Ads Promo.
 `href` | `string` | URL of the "Get started" button.
 #### Emitters
-- [`GetStartedCTA`](js/src/meta-boxes/channel-visibility/get-started-cta.js#L28) with `{ context: channel-visibility-meta-box, href: 'admin.php?page=wc-admin&path=%2Freddit%2Fstart' }`.
-- [`RedditAdsPromo`](js/src/meta-boxes/order-attribution/reddit-ads-promo.js#L58) with `{ context: 'order-attribution-meta-box', href: 'admin.php?page=wc-admin&path=%2Freddit%2Fstart' }`.
+- [`GetStartedCTA`](js/src/meta-boxes/channel-visibility/get-started-cta.js#L28) with `{ context: 'channel-visibility-meta-box', href: 'admin.php?page=wc-admin&path=%2Freddit%2Fstart' }`.
+- [`RedditAdsPromo`](js/src/meta-boxes/order-attribution/reddit-ads-promo.js#L59) with `{ context: 'order-attribution-meta-box', href: 'admin.php?page=wc-admin&path=%2Freddit%2Fstart' }`.
 
-### [`rfw_reddit_ads_promo_get_started_click`](js/src/meta-boxes/order-attribution/reddit-ads-promo.js#L28)
+### [`rfw_reddit_ads_promo_get_started_click`](js/src/meta-boxes/order-attribution/reddit-ads-promo.js#L29)
 Reddit Ads Promo "Get started" button is clicked.
 #### Properties
 | name | type | description |
@@ -214,8 +214,8 @@ Reddit Ads Promo "Get started" button is clicked.
 `context` | `string` | Context of the Reddit Ads Promo.
 `href` | `string` | URL of the "Get started" button.
 #### Emitters
-- [`GetStartedCTA`](js/src/meta-boxes/channel-visibility/get-started-cta.js#L28) with `{ context: channel-visibility-meta-box, href: 'admin.php?page=wc-admin&path=%2Freddit%2Fstart' }`.
-- [`RedditAdsPromo`](js/src/meta-boxes/order-attribution/reddit-ads-promo.js#L58) with `{ context: 'order-attribution-meta-box', href: 'admin.php?page=wc-admin&path=%2Freddit%2Fstart' }`.
+- [`GetStartedCTA`](js/src/meta-boxes/channel-visibility/get-started-cta.js#L28) with `{ context: 'channel-visibility-meta-box', href: 'admin.php?page=wc-admin&path=%2Freddit%2Fstart' }`.
+- [`RedditAdsPromo`](js/src/meta-boxes/order-attribution/reddit-ads-promo.js#L59) with `{ context: 'order-attribution-meta-box', href: 'admin.php?page=wc-admin&path=%2Freddit%2Fstart' }`.
 
 ### [`rfw_reddit_ads_promo_shown`](js/src/meta-boxes/channel-visibility/reddit-ads-promo.js#L27)
 Reddit Ads Promo banner is shown.
@@ -226,9 +226,11 @@ Reddit Ads Promo banner is shown.
 | name | type | description |
 | ---- | ---- | ----------- |
 `context` | `string` | Context of the Reddit Ads Promo.
+`has_onboarded` | `boolean` | Always `false`, since the promo only shows before onboarding.
+`is_dismissed` | `boolean` | Whether the merchant had dismissed the promo, so the compact layout was shown instead of the full promo.
 #### Emitters
-- [`RedditAdsPromo`](js/src/meta-boxes/channel-visibility/reddit-ads-promo.js#L44) with `{ context: channel-visibility-meta-box }`.
-- [`RedditAdsPromo`](js/src/meta-boxes/order-attribution/reddit-ads-promo.js#L58) with `{ context: 'order-attribution-meta-box' }`.
+- [`RedditAdsPromo`](js/src/meta-boxes/channel-visibility/reddit-ads-promo.js#L46) with `{ context: 'channel-visibility-meta-box', has_onboarded: false, is_dismissed: false }` for the full promo, or `{ context: 'channel-visibility-meta-box', has_onboarded: false, is_dismissed: true }` for the compact layout after a dismiss.
+- [`RedditAdsPromo`](js/src/meta-boxes/order-attribution/reddit-ads-promo.js#L59) with `{ context: 'order-attribution-meta-box', has_onboarded: false }` for the "Get started" promo, or `{ context: 'order-attribution-meta-box', has_onboarded: true }` for the "Create campaign" promo.
 
 ### [`rfw_reddit_ads_promo_shown`](js/src/meta-boxes/order-attribution/reddit-ads-promo.js#L18)
 Reddit Ads Promo banner is shown.
@@ -239,9 +241,10 @@ Reddit Ads Promo banner is shown.
 | name | type | description |
 | ---- | ---- | ----------- |
 `context` | `string` | Context of the Reddit Ads Promo.
+`has_onboarded` | `boolean` | Whether Reddit onboarding is complete. `false` for the "Get started" promo, `true` for the "Create campaign" promo.
 #### Emitters
-- [`RedditAdsPromo`](js/src/meta-boxes/channel-visibility/reddit-ads-promo.js#L44) with `{ context: channel-visibility-meta-box }`.
-- [`RedditAdsPromo`](js/src/meta-boxes/order-attribution/reddit-ads-promo.js#L58) with `{ context: 'order-attribution-meta-box' }`.
+- [`RedditAdsPromo`](js/src/meta-boxes/channel-visibility/reddit-ads-promo.js#L46) with `{ context: 'channel-visibility-meta-box', has_onboarded: false, is_dismissed: false }` for the full promo, or `{ context: 'channel-visibility-meta-box', has_onboarded: false, is_dismissed: true }` for the compact layout after a dismiss.
+- [`RedditAdsPromo`](js/src/meta-boxes/order-attribution/reddit-ads-promo.js#L59) with `{ context: 'order-attribution-meta-box', has_onboarded: false }` for the "Get started" promo, or `{ context: 'order-attribution-meta-box', has_onboarded: true }` for the "Create campaign" promo.
 
 ### [`rfw_reddit_go_to_dashboard_button_click`](js/src/pages/settings/reddit-ads/index.js#L28)
 Clicking on the button to go to the Reddit Ads dashboard.
