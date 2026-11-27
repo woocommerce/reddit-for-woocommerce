@@ -56,6 +56,8 @@ const faqItems = [
 			'What needs to be true for Shopping/DPAs to work well?',
 			'reddit-for-woocommerce'
 		),
+		// Keep the existing trailing space for now, so this dependency upgrade doesn't change a translatable string.
+		// eslint-disable-next-line @wordpress/i18n-no-flanking-whitespace
 		answer: __(
 			'Your catalog must be healthy (no critical errors) and kept fresh with scheduled refresh so price and availability are current. Pixel + CAPI should fire purchase and view events reliably, with product IDs matching the feed exactly. Build product sets that mirror how you actually want to advertise—top sellers, new arrivals, or in-stock under a price point—so delivery stays relevant. ',
 			'reddit-for-woocommerce'

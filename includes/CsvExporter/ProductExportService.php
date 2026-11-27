@@ -16,6 +16,7 @@ namespace RedditForWooCommerce\CsvExporter;
 
 use RedditForWooCommerce\Config;
 use RedditForWooCommerce\Utils\Helper;
+use RedditForWooCommerce\Utils\CurrencyValidator;
 use RedditForWooCommerce\Admin\Export\BatchExportJob;
 use RedditForWooCommerce\Utils\Storage\Options;
 use RedditForWooCommerce\Utils\Storage\OptionDefaults;
@@ -127,10 +128,9 @@ class ProductExportService {
 			array( $this, 'trigger_export_callback' )
 		);
 
-		add_filter(
+		add_action(
 			'wp_ajax_' . Helper::with_prefix( 'export_status' ),
-			array( $this, 'check_export_status' ),
-			10
+			array( $this, 'check_export_status' )
 		);
 
 		add_action(
@@ -348,10 +348,32 @@ class ProductExportService {
 	}
 
 	/**
+	 * Ends the AJAX request with HTTP 403 unless the current user can manage the plugin.
+	 *
+	 * The admin nonce only protects against CSRF, so every admin AJAX callback must
+	 * call this before reading data, changing options, scheduling jobs or calling
+	 * the Ad Partner API.
+	 *
+	 * @since 1.0.7
+	 *
+	 * @return void
+	 */
+	private function ensure_user_can_manage(): void {
+		if ( ! Helper::current_user_can_manage() ) {
+			wp_send_json_error(
+				array(
+					'message' => __( 'You do not have permission to perform this action.', 'reddit-for-woocommerce' ),
+				),
+				403
+			);
+		}
+	}
+
+	/**
 	 * Handles the AJAX request to initiate the product catalog export.
 	 *
 	 * This method:
-	 * - Verifies the security nonce.
+	 * - Verifies the security nonce and the user's capability.
 	 * - Attempts to start the export process.
 	 * - Sends a JSON success or error response.
 	 *
@@ -359,6 +381,7 @@ class ProductExportService {
 	 */
 	public function trigger_export_callback(): void {
 		check_ajax_referer( 'admin_nonce', 'security' );
+		$this->ensure_user_can_manage();
 
 		if ( ! Helper::has_products() ) {
 			wp_send_json_error( array( 'code' => Helper::with_prefix( 'no_products_found' ) ) );
@@ -385,6 +408,7 @@ class ProductExportService {
 	 */
 	public function check_export_status() {
 		check_ajax_referer( 'admin_nonce', 'security' );
+		$this->ensure_user_can_manage();
 
 		$is_job_in_progress = $this->job->is_job_in_progress( self::ACTION_HOOK );
 		$file_url           = Options::get( OptionDefaults::EXPORT_FILE_URL );
@@ -428,6 +452,17 @@ class ProductExportService {
 			}
 		}
 
+		// Store currency isn't one Reddit's Catalog API accepts, skip the request entirely.
+		if ( ! CurrencyValidator::is_supported() ) {
+			Options::set( OptionDefaults::CATALOG_ERROR, 'UNSUPPORTED_CURRENCY' );
+			return;
+		}
+
+		// Clear an error left from a previous unsupported currency, so a failure below isn't hidden behind it.
+		if ( 'UNSUPPORTED_CURRENCY' === Options::get( OptionDefaults::CATALOG_ERROR ) ) {
+			Options::delete( OptionDefaults::CATALOG_ERROR );
+		}
+
 		// The catalog not exists on Reddit, create it.
 		$logger = wc_get_logger();
 		$logger->info( 'Catalog not exists on Reddit, creating it.' );
@@ -447,6 +482,7 @@ class ProductExportService {
 
 			if ( ! empty( $catalog_data ) && ! empty( $catalog_data['id'] ) ) {
 				Options::set( OptionDefaults::CATALOG_ID, sanitize_text_field( $catalog_data['id'] ) );
+				Options::delete( OptionDefaults::CATALOG_ERROR );
 				// Delete the feed status to create a new feed.
 				Options::delete( OptionDefaults::FEED_STATUS );
 				$logger->info( 'Catalog created successfully.' );
@@ -500,6 +536,7 @@ class ProductExportService {
 	 */
 	public function create_catalog_manually(): void {
 		check_ajax_referer( 'admin_nonce', 'security' );
+		$this->ensure_user_can_manage();
 
 		// Bail early if the catalog already exists.
 		$catalog_id = Options::get( OptionDefaults::CATALOG_ID );
@@ -510,6 +547,23 @@ class ProductExportService {
 					'message' => __( 'Catalog already exists.', 'reddit-for-woocommerce' ),
 				)
 			);
+		}
+
+		// Store currency isn't one Reddit's Catalog API accepts, bail before deleting or creating a catalog.
+		if ( ! CurrencyValidator::is_supported() ) {
+			Options::set( OptionDefaults::CATALOG_ERROR, 'UNSUPPORTED_CURRENCY' );
+
+			wp_send_json_error(
+				array(
+					'error_code' => 'UNSUPPORTED_CURRENCY',
+					'message'    => __( 'Store currency is not supported by Reddit for WooCommerce.', 'reddit-for-woocommerce' ),
+				)
+			);
+		}
+
+		// Clear an error left from a previous unsupported currency, so a failure below isn't hidden behind it.
+		if ( 'UNSUPPORTED_CURRENCY' === Options::get( OptionDefaults::CATALOG_ERROR ) ) {
+			Options::delete( OptionDefaults::CATALOG_ERROR );
 		}
 
 		// Delete the existing catalog to allow the creation of a new catalog if the delete_existing_catalog parameter is set to true.
@@ -563,7 +617,7 @@ class ProductExportService {
 
 			wp_send_json_error(
 				array(
-					'code'       => (string) $error_body['error']['code'] ?? '',
+					'code'       => (string) ( $error_body['error']['code'] ?? '' ),
 					'error_code' => $catalog_error,
 					'message'    => $error_message,
 				)

@@ -8,14 +8,14 @@ A WooCommmerce Extension inspired by [Create Woo Extension](https://github.com/w
 
 -   [NPM](https://www.npmjs.com/)
 -   [Composer](https://getcomposer.org/download/)
--   [wp-env](https://developer.wordpress.org/block-editor/reference-guides/packages/packages-env/)
+-   [wp-env](https://developer.wordpress.org/block-editor/reference-guides/packages/packages-env/) (needs Node 22.13 or later)
 
 ### Installation and Build
 
 ```
 npm install
 npm run build
-wp-env start
+npm run env:start
 ```
 
-Visit the added page at http://localhost:8888/wp-admin/admin.php?page=wc-admin&path=%2Fexample.
+Visit the added page at http://localhost:8889/wp-admin/admin.php?page=wc-admin&path=%2Fexample.

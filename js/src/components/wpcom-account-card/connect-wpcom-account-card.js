@@ -38,7 +38,7 @@ const ConnectWPComAccountCard = () => {
 		try {
 			const d = await fetchJetpackConnect();
 			window.location.href = d.url;
-		} catch ( error ) {
+		} catch {
 			createNotice(
 				'error',
 				__(

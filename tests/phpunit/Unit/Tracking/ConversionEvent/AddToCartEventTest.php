@@ -110,4 +110,35 @@ final class AddToCartEventTest extends WP_UnitTestCase {
 
 		$this->assertSame( 3.45, $event->get_value() );
 	}
+
+	/**
+	 * The hashed customer match keys flow through to events[].user alongside the
+	 * existing device identifiers, and the click ID stays at the event level.
+	 */
+	public function test_build_payload_passes_match_keys_to_event_user(): void {
+		$user_data = array(
+			'user'     => array(
+				'ip_address'   => '203.0.113.10',
+				'user_agent'   => 'UA',
+				'uuid'         => 'pixel-uuid',
+				'email'        => hash( 'sha256', 'member@example.com' ),
+				'phone_number' => hash( 'sha256', '+14155550111' ),
+				'external_id'  => hash( 'sha256', '7' ),
+			),
+			'click_id' => 'click-id',
+		);
+
+		$event   = new AddToCartEvent( 0, 1 );
+		$payload = $event->build_payload(
+			array(
+				'conversion_id' => 'abc_123',
+				'user_data'     => $user_data,
+			)
+		);
+
+		$events = $payload['data']['events'][0];
+
+		$this->assertSame( $user_data['user'], $events['user'] );
+		$this->assertSame( 'click-id', $events['click_id'] );
+	}
 }
