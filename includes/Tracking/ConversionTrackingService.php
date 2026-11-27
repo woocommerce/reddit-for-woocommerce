@@ -226,7 +226,17 @@ class ConversionTrackingService implements ServiceStatusInterface {
 	 * @return void
 	 */
 	public function handle_async_add_to_cart(): void {
-		check_ajax_referer( 'capi_nonce', 'security' );
+		/*
+		 * No nonce verification, by design. These are public, unauthenticated
+		 * tracking beacons: they perform no privileged action and mutate no site
+		 * state — they only forward an analytics event to Reddit. The nonce this
+		 * endpoint used to require was printed into the page HTML and so was
+		 * captured by full-page caches; once a cached page outlived the nonce
+		 * lifetime (12–24h) every event fired from it was rejected and silently
+		 * lost. A nopriv nonce is also shared by all logged-out visitors, so it
+		 * never provided real CSRF protection. Requests remain consent-gated,
+		 * input-sanitized, and deduplicated by event_id.
+		 */
 
 		$data = $this->get_validated_payload(
 			function ( array $payload ): bool {
@@ -275,7 +285,7 @@ class ConversionTrackingService implements ServiceStatusInterface {
 	 * @return void
 	 */
 	public function handle_async_view_content(): void {
-		check_ajax_referer( 'capi_nonce', 'security' );
+		// Public tracking beacon; intentionally not nonce-gated. See handle_async_add_to_cart().
 
 		$data = $this->get_validated_payload();
 
@@ -313,7 +323,7 @@ class ConversionTrackingService implements ServiceStatusInterface {
 	 * @return void
 	 */
 	public function handle_async_page_view(): void {
-		check_ajax_referer( 'capi_nonce', 'security' );
+		// Public tracking beacon; intentionally not nonce-gated. See handle_async_add_to_cart().
 
 		$data = $this->get_validated_payload();
 

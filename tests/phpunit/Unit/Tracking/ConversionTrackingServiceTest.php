@@ -7,6 +7,10 @@
  * `?add-to-cart=ID` GET flow, which carries no client-generated event ID, and
  * how the public AJAX tracking endpoints reject invalid requests.
  *
+ * Also checks that the public tracking beacons process events even when no valid
+ * nonce is present (e.g. a request from a page served from a cache older than the
+ * nonce lifetime).
+ *
  * @package RedditForWooCommerce\Tests\Unit\Tracking
  */
 
@@ -81,7 +85,7 @@ class ConversionTrackingServiceTest extends WP_UnitTestCase {
 	 * Cleans up request superglobals modified during a test.
 	 */
 	public function tear_down(): void {
-		unset( $_POST[ Helper::with_prefix( 'event_id' ) ], $_POST['payload'], $_REQUEST['security'] );
+		unset( $_POST[ Helper::with_prefix( 'event_id' ) ], $_POST['payload'], $_POST['security'], $_REQUEST['security'] );
 		Options::delete( OptionDefaults::PIXEL_ID );
 
 		foreach ( $this->original_server as $key => $value ) {
@@ -93,6 +97,58 @@ class ConversionTrackingServiceTest extends WP_UnitTestCase {
 		}
 
 		parent::tear_down();
+	}
+
+	/**
+	 * A PageVisit beacon with no nonce still reaches the tracker.
+	 *
+	 * Before, the handler called check_ajax_referer(), which would
+	 * wp_die() here and fail the test.
+	 */
+	public function test_page_view_processes_without_nonce(): void {
+		$_POST['payload'] = wp_slash( wp_json_encode( array( 'conversionId' => 'evt-page' ) ) );
+
+		$tracker = $this->createMock( ConversionTrackerInterface::class );
+		$tracker->expects( $this->once() )
+			->method( 'track_page_view' )
+			->with( 'evt-page' );
+
+		( new ConversionTrackingService( $tracker ) )->handle_async_page_view();
+	}
+
+	/**
+	 * A ViewContent beacon with no nonce still reaches the tracker.
+	 */
+	public function test_view_content_processes_without_nonce(): void {
+		$_POST['payload'] = wp_slash( wp_json_encode( array(
+			'products'     => array( 'id' => 123 ),
+			'conversionId' => 'evt-view',
+		) ) );
+
+		$tracker = $this->createMock( ConversionTrackerInterface::class );
+		$tracker->expects( $this->once() )
+			->method( 'track_view_content' )
+			->with( 123, 'evt-view' );
+
+		( new ConversionTrackingService( $tracker ) )->handle_async_view_content();
+	}
+
+	/**
+	 * An AddToCart beacon with no nonce still reaches the tracker.
+	 */
+	public function test_add_to_cart_processes_without_nonce(): void {
+		$_POST['payload'] = wp_slash( wp_json_encode( array(
+			'productId'    => 55,
+			'quantity'     => 2,
+			'conversionId' => 'evt-cart',
+		) ) );
+
+		$tracker = $this->createMock( ConversionTrackerInterface::class );
+		$tracker->expects( $this->once() )
+			->method( 'track_add_to_cart' )
+			->with( 55, 2, 'evt-cart' );
+
+		( new ConversionTrackingService( $tracker ) )->handle_async_add_to_cart();
 	}
 
 	/**

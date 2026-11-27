@@ -1,5 +1,9 @@
 *** Reddit for WooCommerce Changelog ***
 
+= 1.1.0 - 2026-11-25 =
+* Add - Send hashed customer match keys (email, phone number, external ID) with Reddit conversion events when Advanced Sharing is enabled.
+* Dev - Update dompurify to 3.4.18 to resolve Dependabot security alerts.
+
 = 1.0.8 - 2026-11-16 =
 * Dev - Tested with PHP 8.5.
 * Dev - Updates to local development files and dependencies to support Node 24.
