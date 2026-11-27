@@ -89,13 +89,6 @@ class ProductExportService {
 	public function register_hooks(): void {
 		$this->job->cache_builder->register();
 
-		add_filter(
-			Helper::with_prefix( 'filter_builder_row' ),
-			array( $this, 'allow_only_physical_products' ),
-			10,
-			2
-		);
-
 		add_action(
 			Helper::with_prefix( 'onboarding_complete' ),
 			array( $this, 'start_export_after_onboarding' )
@@ -256,9 +249,15 @@ class ProductExportService {
 	 * Initiates the product export by clearing previous state and triggering product scanning.
 	 *
 	 * This method:
+	 * - Validates the export environment (filesystem).
 	 * - Deletes previously saved file path and URL options.
-	 * - Triggers the cache builder to compute exportable products.
+	 * - Triggers the cache builder to compute exportable physical products.
 	 * - Does not immediately begin file writing — that is triggered once caching completes.
+	 *
+	 * Product eligibility (has products, has physical products) is not checked here.
+	 * The cache builder filters to physical products only, and start_writing() handles
+	 * the case where the resulting cache is empty. User-facing guards live in
+	 * trigger_export_callback().
 	 *
 	 * @since 0.1.0
 	 *
@@ -290,13 +289,22 @@ class ProductExportService {
 	 * Starts writing the export file from offset 0.
 	 *
 	 * This method is hooked to run after exportable product IDs have been fully cached.
-	 * It schedules the first export batch asynchronously.
+	 * If the cache is empty (e.g. all products are virtual/downloadable), it ensures the
+	 * catalog is created and returns without scheduling batches. Otherwise it schedules
+	 * the first export batch asynchronously.
 	 *
 	 * @since 0.1.0
 	 *
 	 * @return void
 	 */
 	public function start_writing(): void {
+		$product_ids = Options::get( OptionDefaults::EXPORT_PRODUCT_IDS );
+
+		if ( empty( $product_ids ) ) {
+			$this->maybe_create_catalog();
+			return;
+		}
+
 		as_enqueue_async_action(
 			Helper::with_prefix( self::ACTION_HOOK ),
 			array( 'offset' => 0 ),
@@ -374,6 +382,7 @@ class ProductExportService {
 	 *
 	 * This method:
 	 * - Verifies the security nonce and the user's capability.
+	 * - Checks for published products.
 	 * - Attempts to start the export process.
 	 * - Sends a JSON success or error response.
 	 *
@@ -384,16 +393,22 @@ class ProductExportService {
 		$this->ensure_user_can_manage();
 
 		if ( ! Helper::has_products() ) {
-			wp_send_json_error( array( 'code' => Helper::with_prefix( 'no_products_found' ) ) );
+			wp_send_json_error(
+				array( 'message' => __( 'No products found. Please create products to generate the CSV.', 'reddit-for-woocommerce' ) )
+			);
+			return;
 		}
 
 		$status = $this->start_export();
 
 		if ( true === $status || null === $status ) {
 			wp_send_json_success();
+			return;
 		}
 
-		wp_send_json_error();
+		wp_send_json_error(
+			array( 'message' => __( 'Export could not be started. Please try again or check that your server can write files.', 'reddit-for-woocommerce' ) )
+		);
 	}
 
 	/**
@@ -430,13 +445,28 @@ class ProductExportService {
 	}
 
 	/**
+	 * Whether the store has at least one product the export would include.
+	 *
+	 * @since n.e.x.t
+	 *
+	 * @return bool
+	 */
+	public function has_exportable_products(): bool {
+		$cache_builder = $this->job->cache_builder;
+
+		return method_exists( $cache_builder, 'has_exportable_products' )
+			? $cache_builder->has_exportable_products()
+			: Helper::has_products();
+	}
+
+	/**
 	 * Creates the product catalog if it not exists on Reddit.
 	 *
 	 * This method checks if the catalog exists on Reddit and if not, it creates it.
 	 *
-	 * This method is hooked to {@see Helper::with_prefix( 'batch_export_job_complete' )}.
-	 * It is triggered automatically after the final export batch has finished and the
-	 * CSV feed file has been successfully written.
+	 * This method is hooked to {@see Helper::with_prefix( 'batch_export_job_complete' )}, so it
+	 * runs after the final export batch has written the CSV feed file. It is also called by
+	 * start_writing() when there are no products to export, so the catalog still exists.
 	 *
 	 * @since 1.0.3
 	 */
@@ -693,12 +723,17 @@ class ProductExportService {
 	 *
 	 * {@see https://business.reddithelp.com/s/article/dynamic-product-ads}
 	 *
+	 * @deprecated n.e.x.t Products are filtered when the product ID cache is built, see
+	 *             ProductIdCacheBuilder::handle_batch(). This method is no longer hooked.
+	 *
 	 * @param array      $row     Row of a CSV describing product properties.
 	 * @param WC_Product $product A WooCommerce product.
 	 *
 	 * @return array
 	 */
 	public function allow_only_physical_products( $row, $product ) {
+		wc_deprecated_function( __METHOD__, 'n.e.x.t' );
+
 		if ( ! $product instanceof WC_Product ) {
 			return null;
 		}

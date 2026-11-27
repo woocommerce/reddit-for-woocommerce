@@ -32,6 +32,7 @@ const useSettings = () => {
 			isPiiCollectionEnabled: settings.collectPii,
 			isCampaignCreated: settings.campaignCreated,
 			shouldTriggerExport: settings.triggerExport,
+			hasExportableProducts: settings.hasExportableProducts,
 			lastExportTimeStamp: settings.lastExportTimeStamp,
 			exportFileUrl: settings.exportFileUrl,
 			hasFinishedResolution: selector.hasFinishedResolution(

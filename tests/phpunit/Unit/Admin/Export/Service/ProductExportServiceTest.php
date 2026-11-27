@@ -94,9 +94,9 @@ class ProductExportServiceTest extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Tests that start_export() returns false if export jobs are already scheduled.
+	 * Tests that start_export() returns null if export jobs are already scheduled.
 	 */
-	public function test_start_export_returns_false_if_jobs_already_scheduled(): void {
+	public function test_start_export_returns_null_if_jobs_already_scheduled(): void {
 		as_schedule_single_action(
 			time() + 60,
 			Helper::with_prefix( ProductExportService::ACTION_HOOK )
@@ -119,10 +119,13 @@ class ProductExportServiceTest extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Tests that start_writing() enqueues the first export batch with offset 0.
+	 * Tests that start_writing() enqueues the first export batch with offset 0
+	 * when the product ID cache is populated.
 	 */
 	public function test_start_writing_enqueues_initial_batch(): void {
 		as_unschedule_all_actions( Helper::with_prefix( ProductExportService::ACTION_HOOK ) );
+
+		Options::set( OptionDefaults::EXPORT_PRODUCT_IDS, array( 1 ) );
 
 		$this->service->start_writing();
 
@@ -130,6 +133,51 @@ class ProductExportServiceTest extends WP_UnitTestCase {
 			Helper::with_prefix( ProductExportService::ACTION_HOOK ),
 			array( 'offset' => 0 )
 		) !== false );
+
+		Options::delete( OptionDefaults::EXPORT_PRODUCT_IDS );
+	}
+
+	/**
+	 * Tests that start_writing() does not enqueue a batch, creates the catalog, and doesn't
+	 * create a CSV when the product ID cache is empty.
+	 */
+	public function test_start_writing_returns_early_on_empty_cache(): void {
+		as_unschedule_all_actions( Helper::with_prefix( ProductExportService::ACTION_HOOK ) );
+
+		Options::set( OptionDefaults::EXPORT_PRODUCT_IDS, array() );
+
+		$catalog_mock = $this->createMock( CatalogApi::class );
+		$catalog_mock->method( 'get' )->willReturn( new \WP_Error( 'not_found', 'Not found' ) );
+		$catalog_mock->expects( $this->once() )->method( 'create' )->willReturn( new \WP_Error( 'test', 'Test' ) );
+		$this->api->catalog = $catalog_mock;
+
+		$this->writer->expects( $this->never() )->method( 'create_file' );
+
+		$this->service->start_writing();
+
+		$this->assertFalse(
+			as_has_scheduled_action(
+				Helper::with_prefix( ProductExportService::ACTION_HOOK ),
+				array( 'offset' => 0 )
+			),
+			'No export batch should be scheduled when the product ID cache is empty.'
+		);
+
+		Options::delete( OptionDefaults::EXPORT_PRODUCT_IDS );
+	}
+
+	/**
+	 * Tests that allow_only_physical_products() still filters rows and flags the deprecation.
+	 */
+	public function test_allow_only_physical_products_is_deprecated_but_still_filters_rows(): void {
+		$this->setExpectedDeprecated( ProductExportService::class . '::allow_only_physical_products' );
+
+		$physical = new \WC_Product_Simple();
+		$virtual  = new \WC_Product_Simple();
+		$virtual->set_virtual( true );
+
+		$this->assertSame( array( 'id' => 1 ), $this->service->allow_only_physical_products( array( 'id' => 1 ), $physical ) );
+		$this->assertNull( $this->service->allow_only_physical_products( array( 'id' => 2 ), $virtual ) );
 	}
 
 	/**

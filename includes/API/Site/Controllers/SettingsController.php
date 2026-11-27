@@ -10,6 +10,8 @@ namespace RedditForWooCommerce\API\Site\Controllers;
 use WP_Error;
 use WP_REST_Response;
 use RedditForWooCommerce\Config;
+use RedditForWooCommerce\ServiceKey;
+use RedditForWooCommerce\ServiceContainer;
 use RedditForWooCommerce\Utils\Storage\Options;
 use RedditForWooCommerce\Utils\Storage\OptionDefaults;
 use RedditForWooCommerce\Utils\Helper;
@@ -132,16 +134,18 @@ class SettingsController extends RESTBaseController {
 		$timestamp        = Options::get( OptionDefaults::LAST_EXPORT_TIMESTAMP );
 		$csv_path         = Options::get( OptionDefaults::EXPORT_FILE_PATH );
 		$campaign_created = ! empty( Options::get( OptionDefaults::CAMPAIGN_IDS ) );
+		$has_exportable   = ServiceContainer::get( ServiceKey::PRODUCT_EXPORT_SERVICE )->has_exportable_products();
 
 		return rest_ensure_response(
 			array(
-				'capi_enabled'          => 'yes' === Options::get( OptionDefaults::CONVERSIONS_ENABLED ),
-				'trigger_export'        => ! file_exists( $csv_path ) && Helper::has_products() && (int) $timestamp <= ( time() - DAY_IN_SECONDS ),
-				'last_export_timestamp' => Helper::get_formatted_timestamp( $timestamp ),
-				'export_file_url'       => file_exists( $csv_path ) ? Options::get( OptionDefaults::EXPORT_FILE_URL ) : '',
-				'products_token'        => Options::get( OptionDefaults::WCS_PRODUCTS_TOKEN ),
-				'campaign_created'      => $campaign_created,
-				'collect_pii'           => 'yes' === Options::get( OptionDefaults::COLLECT_PII ),
+				'capi_enabled'            => 'yes' === Options::get( OptionDefaults::CONVERSIONS_ENABLED ),
+				'trigger_export'          => ! file_exists( $csv_path ) && $has_exportable && (int) $timestamp <= ( time() - DAY_IN_SECONDS ),
+				'has_exportable_products' => $has_exportable,
+				'last_export_timestamp'   => Helper::get_formatted_timestamp( $timestamp ),
+				'export_file_url'         => file_exists( $csv_path ) ? Options::get( OptionDefaults::EXPORT_FILE_URL ) : '',
+				'products_token'          => Options::get( OptionDefaults::WCS_PRODUCTS_TOKEN ),
+				'campaign_created'        => $campaign_created,
+				'collect_pii'             => 'yes' === Options::get( OptionDefaults::COLLECT_PII ),
 			)
 		);
 	}
