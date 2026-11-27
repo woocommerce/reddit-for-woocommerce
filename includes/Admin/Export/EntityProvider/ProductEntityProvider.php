@@ -71,7 +71,9 @@ class ProductEntityProvider implements ExportableEntityProviderInterface {
 	/**
 	 * Resolves the given product IDs into `WC_Product` instances.
 	 *
-	 * Skips IDs that do not resolve to valid product objects.
+	 * Skips IDs that do not resolve to valid product objects, and products
+	 * that are no longer published. The IDs were cached when the export
+	 * started, so a product can be unpublished before its row is written.
 	 *
 	 * @since 0.1.0
 	 *
@@ -82,6 +84,7 @@ class ProductEntityProvider implements ExportableEntityProviderInterface {
 		return wc_get_products(
 			array(
 				'include' => $ids,
+				'status'  => 'publish',
 				'return'  => 'objects',
 				'limit'   => count( $ids ),
 			)

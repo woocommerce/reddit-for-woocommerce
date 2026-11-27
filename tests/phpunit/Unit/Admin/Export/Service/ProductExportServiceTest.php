@@ -191,4 +191,18 @@ class ProductExportServiceTest extends WP_UnitTestCase {
 		Options::delete( OptionDefaults::EXPORT_FILE_URL );
 		Options::delete( OptionDefaults::EXPORT_PRODUCT_IDS );
 	}
+
+	public function test_allow_only_physical_products_drops_virtual_and_downloadable_products(): void {
+		$row = array( 'id' => '1' );
+
+		$physical     = new \WC_Product_Simple();
+		$virtual      = new \WC_Product_Simple();
+		$downloadable = new \WC_Product_Simple();
+		$virtual->set_virtual( true );
+		$downloadable->set_downloadable( true );
+
+		$this->assertSame( $row, $this->service->allow_only_physical_products( $row, $physical ) );
+		$this->assertNull( $this->service->allow_only_physical_products( $row, $virtual ) );
+		$this->assertNull( $this->service->allow_only_physical_products( $row, $downloadable ) );
+	}
 }
