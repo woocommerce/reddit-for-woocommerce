@@ -153,6 +153,9 @@ class ProductIdCacheBuilder implements CacheBuilderInterface {
 			 * the list of product IDs to be exported. It signals that the export writing process
 			 * (e.g., CSV generation) can now be initiated.
 			 *
+			 * It also fires when no product qualifies for export, in which case the cached
+			 * list is empty and no CSV is written.
+			 *
 			 * @since 0.1.0
 			 *
 			 * @hook reddit_for_woocommerce_export_products_cache_completed
