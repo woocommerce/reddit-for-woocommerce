@@ -188,7 +188,7 @@ class ProductIdCacheBuilder implements CacheBuilderInterface {
 	 * Uses the same rules as handle_batch(): the product must be visible in the Reddit
 	 * catalog and physical (not virtual and not downloadable).
 	 *
-	 * @since 1.0.9
+	 * @since n.e.x.t
 	 *
 	 * @return bool
 	 */

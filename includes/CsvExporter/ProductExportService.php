@@ -317,7 +317,7 @@ class ProductExportService {
 	 * Empties the CSV file once a Reddit feed pulls from it, so products that can no
 	 * longer be exported drop out of the catalog instead of staying listed from the last export.
 	 *
-	 * @since 1.0.9
+	 * @since n.e.x.t
 	 *
 	 * @return void
 	 */
@@ -469,7 +469,7 @@ class ProductExportService {
 	/**
 	 * Whether the store has at least one product the export would include.
 	 *
-	 * @since 1.0.9
+	 * @since n.e.x.t
 	 *
 	 * @return bool
 	 */
@@ -745,7 +745,7 @@ class ProductExportService {
 	 *
 	 * {@see https://business.reddithelp.com/s/article/dynamic-product-ads}
 	 *
-	 * @deprecated 1.0.9 Products are filtered when the product ID cache is built, see
+	 * @deprecated n.e.x.t Products are filtered when the product ID cache is built, see
 	 *             ProductIdCacheBuilder::handle_batch(). This method is no longer hooked.
 	 *
 	 * @param array      $row     Row of a CSV describing product properties.
@@ -754,7 +754,7 @@ class ProductExportService {
 	 * @return array
 	 */
 	public function allow_only_physical_products( $row, $product ) {
-		wc_deprecated_function( __METHOD__, '1.0.9' );
+		wc_deprecated_function( __METHOD__, 'n.e.x.t' );
 
 		if ( ! $product instanceof WC_Product ) {
 			return null;
